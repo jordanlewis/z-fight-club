@@ -1,0 +1,2 @@
+The makefile will convert game.dia into a pdf suitable for including into
+the design pdf, and run pdflatex on design.tex to turn it into a pdf.
