@@ -3,26 +3,66 @@
 \title{z-fight-club design document}
 \author{Joe Doliner \and Jordan Lewis \and Nick Russo \and Matthew Steffen \and Youlian Simidjiysky}
 
-\begin{document}
-\maketitle
+\begin{document} \maketitle
 \begin{abstract}
 This document contains the high-level and component-level design of
 z-fight-club's project for CMSC 23800.
 \end{abstract}
 \section{High-Level Design}
 \subsection{Game Feel}
+This is a racing game. What is it like? Does it have grappling hooks?
 \subsection{Component Architecture}
 \includegraphics[scale=0.2]{game.pdf}
 
 \section{Component-Level Design}
+Each component has a list of its responsibilities and an interface. These are
+enumerated for each component below.
 \subsection{Scheduler}
+The scheduler is the top-level component of the system. It is responsible for
+the main loop of the game, and for making sure that each component is run
+when it needs to be without taking up more time than is it available for it.
+So, the scheduler needs to tell physics, AI, controls, networking, and graphics
+to conditionally update based on need every game loop
 \subsection{World}
+The world is the state of the system. It is a passive component that receives
+and handles requests to get or set different state attributes. Some examples
+of state that belongs to the world component are car
+position/velocity/orientation vectors, lighting information, camera information,
+and score variables if we end up having those. This component along with physics
+could possibly be the same as the Engine component in the above diagram.
 \subsection{Physics}
-\subsection{Graphics}
+The physics component is an intermediary between agents and the world. It is
+responsible for fielding movement requests from agents (is that it?), ensuring
+that they are legal requests, calculating how said requests modify the world,
+and finally updating the world to match the calculation.
 \subsection{Agent}
+Agents are the in-game entities corresponding to car drivers. They come in
+two or three categories: AI agents, human agents, and possibly network agents.
+They are responsible for collecting input from different sources depending on
+their category, interpreting these inputs into actions suitable to tell the
+physics component, and issuing these actions to the physics component.
 \subsubsection{AI}
+The AI component serves as the controlling input to AI agents. It is responsible
+for analyzing game state and making control decisions for each individual AI
+agent currently instantiated in the syste, and sending those decisions to
+each corresponding agent.
 \subsubsection{Controls}
-\subsection{Sound}
+The controls component serves as the controlling input to human agents. It
+is responsible for sampling (or being notified of?) user input and handing it
+to the corresponding agent.
 \subsection{Networking}
+The networking component is responsible for listening for network input and
+doing the right thing with this input. The right thing may include world
+synchronization and network agent control.
+\subsection{Graphics}
+The graphics component is the primary output of the system. It provides the
+visual feedback necessary for the player to see into the game world and observe
+how her input affects it. It is responsible for translating the state given
+by the world component into an on-screen representation in an efficient manner.
+\subsection{Sound}
+The sound component translates events such as crashes, explosions, or engine
+activity into audio output, and may also keep an ambient music track playing.
+It fields requests like "play the crash noise" or "stop revving car C's engine"
+and mixes and outputs corresponding sounds as it sees fit.
 
 \end{document}
