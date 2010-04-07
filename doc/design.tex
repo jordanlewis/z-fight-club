@@ -32,9 +32,12 @@ and score variables if we end up having those. This component along with physics
 could possibly be the same as the Engine component in the above diagram.
 \subsection{Physics}
 The physics component is an intermediary between agents and the world. It is
-responsible for fielding movement requests from agents (is that it?), ensuring
-that they are legal requests, calculating how said requests modify the world,
-and finally updating the world to match the calculation.
+responsible for fielding movement requests from agents, ensuring that they are
+legal requests, calculating how said requests modify the world, and finally
+updating the world to match the calculation. It is also responsible for
+receiving update requests from the scheduler, calculating how the world looks
+after a time delta fom the current state, and updating the world to that new
+state.
 \subsection{Agent}
 Agents are the in-game entities corresponding to car drivers. They come in
 two or three categories: AI agents, human agents, and possibly network agents.
