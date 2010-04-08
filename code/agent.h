@@ -3,17 +3,24 @@
 
 #include "vector.h"
 
+typedef enum {
+    BRAKE = 0,
+    ACCELERATE,
+    NEUTRAL,
+    REVERSE,
+    nEngineState
+} EngineState_t
+
 class Agent
 {
-    bool is_braking;       /* Brake on or off? */
-    bool is_accelerating;  /* Accelerating or not? */
-    float turn_angle;      /* Angle of turn, 0 = no turn, radians */
+    EngineState_t	engineState;	/* what the engine is doing right now */
+    float 		turn_angle;     /* Angle of turn, 0 = no turn, radians */
 
-    Rayf_t pos;		   /* car's position and velocity */
-    float velocity;	   /* I think we need this so that cars at rest still have am orientation */
+    Rayf_t 		pos;		/* car's position and velocity */
+    Vec3f_t 		orientation;	/* the direction the car is facing */
 
   public:
-    Agent (Vec3f_t);  /* Constructor; Initial position */
+    Agent (Vec3f_t);  	/* Constructor; Initial position */
     ~Agent ();        /* Destructor */
 
     /* The below methods are the interface between the generic agent implemented
@@ -21,6 +28,8 @@ class Agent
 
     void brake (bool);      /* Brake on or off? */
     void accelerate (bool); /* Acceleration on or off? */
+    void reverse (bool);    /* Reverse on or off */
+    void EngineState(EngineState_t) /* sets the engine State */
     void turn (float);      /* Turning? Angle of turn, 0 = no turn */
 }
 
