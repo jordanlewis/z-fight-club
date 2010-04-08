@@ -1,0 +1,57 @@
+Coding conventions:
+(first draft by Jordan, feel free to raise disagreements or to add more rules)
+
+1. Tabs/spaces
+   Configure your editor to never write tab characters, and to use 4 spaces
+   per 'tab'. An exception exists for C++ access specifiers (public:, etc):
+   use 2 spaces before those.  Put a space in between function signatures
+   declarations and argument lists. That space is optional when calling the
+   function.
+   Examples:
+
+   class foo
+   {
+     public:
+       void function (int);
+   };
+
+   foo(3);
+
+
+2. Curly braces
+
+   Put braces on their own lines. Example:
+
+   void function (int arg)
+   {
+       if (0 == arg)
+       {
+           arg = 1;
+           return;
+       }
+   }
+
+3. Variable naming
+
+   Classes should be StudlyCase.
+   Typedefs should be StudlyCase_t.
+   Functions and variables should be camelCase or lower_case_with_underlines.
+   Namespaces should be lower_case.
+   Enum values should be ALLCAPS, and enum max values should be nEnumName
+
+4. Comments
+   Use either /* */ or // form for single line comments.
+   Use /* */ for multi-line comments.
+
+5. Switch/case
+
+   switch (val)
+   {
+       case 1: short_operation; break;
+       case 2:
+           more;
+           operations;
+           break;
+       default:
+           break;
+   }
