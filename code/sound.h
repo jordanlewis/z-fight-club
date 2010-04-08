@@ -3,28 +3,43 @@
 
 namespace sound{
 
-    // sound_descriptor keeps track of a playable sound 
-    // sound_handle keeps track of a instance playing or waiting to be played
-    typedef int sound_descriptor;
+    // use strings to uniquely identify playable sounds that may have been registered with the server
+    // sound_handle uniquely identifies a sound instance in the queue, scheduled for play
     typedef int sound_handle;
 
     class server {
     private:
-	table<sound_descriptor, sound_resource> sound_library; // register adds items here
-	priority_queue<handle, sound_descriptor, attime> sound_queue; // play and loop add here
+	table<string, sound_resource> sound_library; // register adds items here
+	priority_queue<handle, sound_descriptor, start_time> sound_queue; // play and loop add here
                                                                       // stop and stopall remove items
                                                                       // pause and pause all do... different things
 
     public:
-	sound_descriptor register(string);
-	sound_handle play(sound_descriptor, attime); // -1 is failure, positive is a handle to be used for stopping same sound
-	sound_handle loop(sound_descriptor, repeat); // play sound some number of times, negative -1 for indefinitely
+	// takes directory to scan for sound files
+	// will probably preload all of them for simplicity
+	server(string);
 
-	int stop(sound_handle); // stop sound playing as handle
-	int stopall(); // stop all sounds
+	// load sound identified by the string, add to table, returns success or failure
+	// may want to register all available sounds during server initialization
+	int register(string);
 
-	int pause(sound_handle); // stop sound playing as handle
-	int pauseall(); // pause all sounds
+	// look up string in table, calls register if not found
+	// play sound some number of times, -1 means indefinitely
+	// returns -1 on failure, or positive int as handle to be used to stop/pause the same sound
+	sound_handle loop(string, start_time, repeat);
+
+	// calls loop with repeat==1
+	sound_handle play(string, start_time);
+
+	// stop particular sound
+	int stop(sound_handle);
+	// stop all sounds
+	int stopall();
+
+	// pause particular sound
+	int pause(sound_handle);
+	// pause all sounds
+	int pauseall();
     };
 
     class sound_resource {
