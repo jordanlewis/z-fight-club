@@ -9,7 +9,7 @@ typedef enum {
     NEUTRAL,
     REVERSE,
     nEngineState
-} EngineState_t
+} EngineState_t;
 
 class Agent
 {
@@ -29,8 +29,8 @@ class Agent
     void brake (bool);      /* Brake on or off? */
     void accelerate (bool); /* Acceleration on or off? */
     void reverse (bool);    /* Reverse on or off */
-    void EngineState(EngineState_t) /* sets the engine State */
+    void EngineState(EngineState_t); /* sets the engine State */
     void turn (float);      /* Turning? Angle of turn, 0 = no turn */
-}
+};
 
 #endif

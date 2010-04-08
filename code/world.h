@@ -1,12 +1,14 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include "agent.h"
+
 class World
 {
-    Agent &agent[]; /* the agents in the world */
+    class Agent *agent[]; /* the agents in the world */
     
   public:
     World(int nAgents);
-}
+};
 
 #endif
