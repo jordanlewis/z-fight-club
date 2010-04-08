@@ -12,7 +12,7 @@ namespace sound
     {
       private:
         
-        table<string, sound_resource> sound_library; // load_sound adds items here
+        map<string, sound_resource> sound_library; // load_sound adds items here
         priority_queue<handle, sound_resource, start_time> sound_queue; // play and loop add here
                                                                       // stop and stopall remove items
                                                                       // pause and pause all do... different things
