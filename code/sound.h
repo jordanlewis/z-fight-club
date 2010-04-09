@@ -1,6 +1,11 @@
 #ifndef SOUND_H
 #define SOUND_H
 
+#include <string>
+#include <map>
+#include <queue>
+using namespace std;
+
 namespace sound
 {
 
@@ -8,14 +13,33 @@ namespace sound
     // sound_handle uniquely identifies a sound instance in the queue, scheduled for play
     typedef int sound_handle;
 
+    class sound_resource
+    {
+        // low level metadata needed to actually play the sound
+        // eg. pointer to sound data in memory, sound format details
+    };
+
+    class playing_sound
+    {
+      private:
+        sound_handle id;
+        sound_resource* s;
+        time_t start_time;
+        int repeat;
+      public:
+    };
+    // Need to define less<playing_sound>
+
     class server
     {
       private:
         
-        map<string, sound_resource> sound_library; // load_sound adds items here
-        priority_queue<handle, sound_resource, start_time> sound_queue; // play and loop add here
-                                                                      // stop and stopall remove items
-                                                                      // pause and pause all do... different things
+        // map<Key, Data, Compare, Alloc>
+        map<const string, sound_resource*> sound_library; // load_sound adds items here
+        // priority_queue<T, Sequence, Compare>
+        priority_queue<playing_sound> sound_queue; // play and loop add here
+                                                   // stop and stopall remove items
+                                                   // pause and pause all do... different things
 
       public:
         // takes directory to scan for sound files
@@ -28,10 +52,10 @@ namespace sound
         // look up string in table, calls load_sound if not found
         // play sound some number of times, -1 means indefinitely
         // returns -1 on failure, or positive int as handle to be used to stop/pause the same sound
-        sound_handle loop(string, start_time, repeat);
+        sound_handle loop(string, time_t start_time, int repeat);
 
         // calls loop with repeat==1
-        sound_handle play(string, start_time);
+        sound_handle play(string, time_t start_time);
 
         // stop particular sound
         int stop(sound_handle);
@@ -42,12 +66,6 @@ namespace sound
         int pause(sound_handle);
         // pause all sounds
         int pauseall();
-    };
-
-    class sound_resource
-    {
-        // low level metadata needed to actually play the sound
-        // eg. pointer to sound data in memory, sound format details
     };
 
 }
