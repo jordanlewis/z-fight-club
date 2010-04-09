@@ -40,6 +40,13 @@ namespace sound
         priority_queue<playing_sound> sound_queue; // play and loop add here
                                                    // stop and stopall remove items
                                                    // pause and pause all do... different things
+        int go();
+        // for each sound in priority_queue with start_time < now()
+        // pop it off the queue
+        // play it
+        // if repeat == -1, requeue at start_time+resource.length
+        // if repeat > 1, requeue at start_time+resource.length, decrementing repeat
+        // if repeat == 1 or repeat == 0, do nothing
 
       public:
         // takes directory to scan for sound files

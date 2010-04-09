@@ -12,7 +12,8 @@
 #ifndef _MATRIX_H_
 #define _MATRIX_H_
 
-#include "defs.h"
+// #include "defs.h"
+#include <assert.h>
 #include "vector.h"
 
 /*! \brief a 3x3 matrix */

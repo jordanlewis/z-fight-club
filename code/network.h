@@ -2,13 +2,14 @@
 #define NETWORK_H
 
 #include <vector>
+#include "world.h"
 
 namespace network{
 
     //Stores the client's connection info
     class client_info {
 	short identifier;  //Unique identifier assigned on connection establish
-	char[16] ip_addr;
+	char ip_addr[16];
 	short port;
     };
 
