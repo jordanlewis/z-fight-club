@@ -1,14 +1,15 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include <vector>
 #include "agent.h"
 
 class World
 {
-    class Agent *agent[]; /* the agents in the world */
-    
+    std::vector<Agent::Agent> agents; /* the agents in the world */
+
   public:
-    World(int nAgents);
+    World();
 };
 
 #endif
