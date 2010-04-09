@@ -56,6 +56,13 @@ static inline float Clampf (float x)
 
 /***** 2D functions *****/
 
+//! \brief set a vector to be all 0s
+//! \param v the vector
+static inline void ZeroV2f (Vec2f_t v)
+{
+    v[0] = v[1] = 0.0f;
+}
+
 //! \brief dot product
 //! \param v1 an argument vector
 //! \param v2 an argument vector
@@ -188,6 +195,13 @@ static inline void ScaledAddV2f (Vec2f_t u, float s, Vec2f_t v, Vec2f_t dst)
 
 
 /***** 3D functions *****/
+
+//! \brief set a vector to be all 0s
+//! \param v the vector
+static inline void ZeroV3f (Vec3f_t v)
+{
+    v[0] = v[1] = v[2] = 0.0f;
+}
 
 //! \brief 3D vector dot product
 //! \param v1 an argument vector
@@ -359,6 +373,14 @@ static inline void CrossV3f (Vec3f_t v1, Vec3f_t v2, Vec3f_t dst)
 }
 
 /***** 4D functions *****/
+
+//! \brief set a vector to be all 0s
+//! \param v the vector
+static inline void ZeroV4f (Vec2f_t v)
+{
+    v[0] = v[1] = v[2] = v[3] = 0.0f;
+}
+
 
 /*! \brief vector copy
  *  \param src the source vector
