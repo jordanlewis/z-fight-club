@@ -1,9 +1,10 @@
 CFLAGS = -Wall -std=c99
-CXXFLAGS = -Wall
+CXXFLAGS = -Wall -pedantic
 
-OBJECTS = matrix.o
+OBJECTS = matrix.o scheduler.o agent.o
 PRECOMPILED_HEADERS = agent.gch collision.gch matrix.gch network.gch \
-                      physics.gch quat.gch sound.gch vector.gch world.gch
+                      physics.gch quat.gch scheduler.gch sound.gch vector.gch \
+                      world.gch
 
 test: header_test
 header_test: $(PRECOMPILED_HEADERS)
