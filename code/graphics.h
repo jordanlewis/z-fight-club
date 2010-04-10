@@ -1,7 +1,7 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-namespace graphics {
+namespace Graphics {
 
 	class Graphics {
 	  public:
@@ -11,7 +11,6 @@ namespace graphics {
 		void render();
 		
 	};
-
 }
 
 #endif
