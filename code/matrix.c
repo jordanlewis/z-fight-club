@@ -21,24 +21,24 @@
 
 /***** Mat3x3f_t operations *****/
 
-#define I(i,j)	(3*(j-1)+i-1)
-#define M(i,j)	m[I(i,j)]
-#define D(i,j)	dst[I(i,j)]
+#define I(i,j)    (3*(j-1)+i-1)
+#define M(i,j)    m[I(i,j)]
+#define D(i,j)    dst[I(i,j)]
 
 extern void IdentityM3f (Mat3x3f_t m)
 {
     for (int i = 1;  i <= 3;  i++) {
-	for (int j = 1;  j <= 3;  j++) {
-	    M(i,j) = (i == j);
-	}
+    for (int j = 1;  j <= 3;  j++) {
+        M(i,j) = (i == j);
+    }
     }
 }
 
-#define M1(i,j)	m1[I(i,j)]
-#define M2(i,j)	m2[I(i,j)]
+#define M1(i,j)    m1[I(i,j)]
+#define M2(i,j)    m2[I(i,j)]
 void MultMM3f (Mat3x3f_t m1, Mat3x3f_t m2, Mat3x3f_t dst)
 {
-    float t1, t2;		// temporary values to avoid aliasing between m1 and dst
+    float t1, t2;        // temporary values to avoid aliasing between m1 and dst
 
     assert (m2 != dst);
 
@@ -71,18 +71,18 @@ void MultMM3f (Mat3x3f_t m1, Mat3x3f_t m2, Mat3x3f_t dst)
 
 /***** Mat4x4f_t operations *****/
 
-#define I(i,j)	(4*(j-1)+i-1)
-#define M(i,j)	m[I(i,j)]
-#define D(i,j)	dst[I(i,j)]
+#define I(i,j)    (4*(j-1)+i-1)
+#define M(i,j)    m[I(i,j)]
+#define D(i,j)    dst[I(i,j)]
 
 /* LoadIdentityM4f:
  */
 void LoadIdentityM4f (Mat4x4f_t m)
 {
     for (int i = 1;  i <= 4;  i++) {
-	for (int j = 1;  j <= 4;  j++) {
-	    M(i,j) = (i == j) ? 1.0 : 0.0;
-	}
+        for (int j = 1;  j <= 4;  j++) {
+            M(i,j) = (i == j) ? 1.0 : 0.0;
+        }
     }
 }
 
@@ -91,9 +91,9 @@ void LoadIdentityM4f (Mat4x4f_t m)
 void LoadIsoScaleM4f (float s, Mat4x4f_t m)
 {
     for (int i = 1;  i <= 4;  i++) {
-	for (int j = 1;  j <= 4;  j++) {
-	    M(i,j) = (i == j) ? s : 0.0;
-	}
+        for (int j = 1;  j <= 4;  j++) {
+            M(i,j) = (i == j) ? s : 0.0;
+        }
     }
     M(4,4) = 1.0;
 }
@@ -191,8 +191,8 @@ void TranslateM4f (float tx, float ty, float tz, Mat4x4f_t m, Mat4x4f_t dst)
     D(4,4) = tx*M(4,1) + ty*M(4,2) + tz*M(4,3) + M(4,4);
 }
 
-#define M1(i,j)	m1[I(i,j)]
-#define M2(i,j)	m2[I(i,j)]
+#define M1(i,j)    m1[I(i,j)]
+#define M2(i,j)    m2[I(i,j)]
 
 /* MultMM4f
  *
@@ -200,7 +200,7 @@ void TranslateM4f (float tx, float ty, float tz, Mat4x4f_t m, Mat4x4f_t dst)
  */
 void MultMM4f (Mat4x4f_t m1, Mat4x4f_t m2, Mat4x4f_t dst)
 {
-    float t1, t2, t3;		// temporary values to avoid aliasing between m1 and dst
+    float t1, t2, t3;        // temporary values to avoid aliasing between m1 and dst
 
     assert (m2 != dst);
 
@@ -244,45 +244,45 @@ bool InverseM4f (Mat4x4f_t m, Mat4x4f_t dst)
 {
 
   // NOTE: we do the computation in double precision to get better results
-    double Tbt34C12 = M(3,1)*M(4,2) - M(3,2)*M(4,1);		// 2x2 subdeterminants
+    double Tbt34C12 = M(3,1)*M(4,2) - M(3,2)*M(4,1);        // 2x2 subdeterminants
     double Tbt34C13 = M(3,1)*M(4,3) - M(3,3)*M(4,1);
     double Tbt34C14 = M(3,1)*M(4,4) - M(3,4)*M(4,1);
     double Tbt34C23 = M(3,2)*M(4,3) - M(3,3)*M(4,2);
     double Tbt34C24 = M(3,2)*M(4,4) - M(3,4)*M(4,2);
     double Tbt34C34 = M(3,3)*M(4,4) - M(3,4)*M(4,3);
-    double Tbt24C12 = M(2,1)*M(4,2) - M(2,2)*M(4,1);		// 2x2 subdeterminants
+    double Tbt24C12 = M(2,1)*M(4,2) - M(2,2)*M(4,1);        // 2x2 subdeterminants
     double Tbt24C13 = M(2,1)*M(4,3) - M(2,3)*M(4,1);
     double Tbt24C14 = M(2,1)*M(4,4) - M(2,4)*M(4,1);
     double Tbt24C23 = M(2,2)*M(4,3) - M(2,3)*M(4,2);
     double Tbt24C24 = M(2,2)*M(4,4) - M(2,4)*M(4,2);
     double Tbt24C34 = M(2,3)*M(4,4) - M(2,4)*M(4,3);
-    double Tbt23C12 = M(2,1)*M(3,2) - M(2,2)*M(3,1);		// 2x2 subdeterminants
+    double Tbt23C12 = M(2,1)*M(3,2) - M(2,2)*M(3,1);        // 2x2 subdeterminants
     double Tbt23C13 = M(2,1)*M(3,3) - M(2,3)*M(3,1);
     double Tbt23C14 = M(2,1)*M(3,4) - M(2,4)*M(3,1);
     double Tbt23C23 = M(2,2)*M(3,3) - M(2,3)*M(3,2);
     double Tbt23C24 = M(2,2)*M(3,4) - M(2,4)*M(3,2);
     double Tbt23C34 = M(2,3)*M(3,4) - M(2,4)*M(3,3);
 
-    double sd11 = M(2,2)*Tbt34C34 - M(2,3)*Tbt34C24 + M(2,4)*Tbt34C23;	// 3x3 subdeterminants
+    double sd11 = M(2,2)*Tbt34C34 - M(2,3)*Tbt34C24 + M(2,4)*Tbt34C23;    // 3x3 subdeterminants
     double sd12 = M(2,1)*Tbt34C34 - M(2,3)*Tbt34C14 + M(2,4)*Tbt34C13;
     double sd13 = M(2,1)*Tbt34C24 - M(2,2)*Tbt34C14 + M(2,4)*Tbt34C12;
     double sd14 = M(2,1)*Tbt34C23 - M(2,2)*Tbt34C13 + M(2,3)*Tbt34C12;
-    double sd21 = M(1,2)*Tbt34C34 - M(1,3)*Tbt34C24 + M(1,4)*Tbt34C23;	// 3x3 subdeterminants
+    double sd21 = M(1,2)*Tbt34C34 - M(1,3)*Tbt34C24 + M(1,4)*Tbt34C23;    // 3x3 subdeterminants
     double sd22 = M(1,1)*Tbt34C34 - M(1,3)*Tbt34C14 + M(1,4)*Tbt34C13;
     double sd23 = M(1,1)*Tbt34C24 - M(1,2)*Tbt34C14 + M(1,4)*Tbt34C12;
     double sd24 = M(1,1)*Tbt34C23 - M(1,2)*Tbt34C13 + M(1,3)*Tbt34C12;
-    double sd31 = M(1,2)*Tbt24C34 - M(1,3)*Tbt24C24 + M(1,4)*Tbt24C23;	// 3x3 subdeterminants
+    double sd31 = M(1,2)*Tbt24C34 - M(1,3)*Tbt24C24 + M(1,4)*Tbt24C23;    // 3x3 subdeterminants
     double sd32 = M(1,1)*Tbt24C34 - M(1,3)*Tbt24C14 + M(1,4)*Tbt24C13;
     double sd33 = M(1,1)*Tbt24C24 - M(1,2)*Tbt24C14 + M(1,4)*Tbt24C12;
     double sd34 = M(1,1)*Tbt24C23 - M(1,2)*Tbt24C13 + M(1,3)*Tbt24C12;
-    double sd41 = M(1,2)*Tbt23C34 - M(1,3)*Tbt23C24 + M(1,4)*Tbt23C23;	// 3x3 subdeterminants
+    double sd41 = M(1,2)*Tbt23C34 - M(1,3)*Tbt23C24 + M(1,4)*Tbt23C23;    // 3x3 subdeterminants
     double sd42 = M(1,1)*Tbt23C34 - M(1,3)*Tbt23C14 + M(1,4)*Tbt23C13;
     double sd43 = M(1,1)*Tbt23C24 - M(1,2)*Tbt23C14 + M(1,4)*Tbt23C12;
     double sd44 = M(1,1)*Tbt23C23 - M(1,2)*Tbt23C13 + M(1,3)*Tbt23C12;
 
     double det = (M(1,1)*sd11 - M(1,2)*sd12 + M(1,3)*sd13 - M(1,4)*sd14);
     if ((det > -EPSILON) && (det < EPSILON))
-	return false;
+    return false;
     double detInv = 1.0 / det;
 
     D(1,1) = sd11*detInv;
@@ -310,6 +310,6 @@ bool InverseM4f (Mat4x4f_t m, Mat4x4f_t dst)
 void PrintM4f (Mat4x4f_t m)
 {
     for (int i = 1;  i <= 4;  i++) {
-	printf ("| %7f %7f %7f %7f |\n", M(i,1), M(i,2), M(i,3), M(i,4));
+        printf ("| %7f %7f %7f %7f |\n", M(i,1), M(i,2), M(i,3), M(i,4));
     }
 }

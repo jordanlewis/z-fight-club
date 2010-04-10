@@ -39,14 +39,14 @@ extern void *CheckMalloc (size_t nbytes);
  */
 extern void CheckError (const char *file, int line);
 
-#define NEW(ty)		(ty *)CheckMalloc(sizeof(ty))
-#define NEWVEC(ty, n)	(ty *)CheckMalloc(sizeof(ty)*(n))
-#define FREE(p)		free(p)
+#define NEW(ty)       (ty *)CheckMalloc(sizeof(ty))
+#define NEWVEC(ty, n) (ty *)CheckMalloc(sizeof(ty)*(n))
+#define FREE(p)       free(p)
 
 #ifdef NDEBUG
 #  define CHECK_ERROR
 #else
-#  define CHECK_ERROR	CheckError (__FILE__, __LINE__);
+#  define CHECK_ERROR CheckError (__FILE__, __LINE__);
 #endif
 
 #endif /* !_DEFS_H_ */

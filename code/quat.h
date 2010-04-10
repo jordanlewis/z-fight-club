@@ -16,8 +16,8 @@
 #include "vector.h"
 #include "matrix.h"
 
-typedef float Quatf_t[4];	//!< single-precision quaternion; the coordinates
-				//! are (x, y, z, w)
+typedef float Quatf_t[4];    //!< single-precision quaternion; the coordinates
+                //! are (x, y, z, w)
 
 /*! \brief convert an axis/angle pair to a unit quaternion
  *  \param axis the axis vector
@@ -44,17 +44,17 @@ static inline void ToAxisAngle (Quatf_t q, Vec3f_t axis, float *theta)
 {
     float w2 = q[3]*q[3];
     if (w2 < (1.0 - EPSILON)) {
-	*theta = 2.0 * acosf(q[3]);
-	float s = 1.0 / sqrtf(1.0 - w2);
-	axis[0] = s * q[0];
-	axis[1] = s * q[1];
-	axis[2] = s * q[2];
+    *theta = 2.0 * acosf(q[3]);
+    float s = 1.0 / sqrtf(1.0 - w2);
+    axis[0] = s * q[0];
+    axis[1] = s * q[1];
+    axis[2] = s * q[2];
     }
     else {  // return e1
-	*theta = 0.0;
-	axis[0] = 1.0;
-	axis[1] = 0.0;
-	axis[2] = 0.0;
+    *theta = 0.0;
+    axis[0] = 1.0;
+    axis[1] = 0.0;
+    axis[2] = 0.0;
     }
 
 }
@@ -63,7 +63,7 @@ static inline void ToAxisAngle (Quatf_t q, Vec3f_t axis, float *theta)
  */
 static inline void ToRotMatrix (Quatf_t q, Mat4x4f_t dst)
 {
-#define M(r,c)		dst[4*(c)+(r)]
+#define M(r,c)        dst[4*(c)+(r)]
     float x2 = 2.0 * q[0] * q[0];
     float xy = 2.0 * q[0] * q[1];
     float xz = 2.0 * q[0] * q[2];
@@ -182,12 +182,12 @@ static inline void NormalizeQuatf (Quatf_t q, Quatf_t dst)
 {
     float len = QuatMagnitudef(q);
     if (len > EPSILON)
-	ScaleQuatf (1.0 / len, q, dst);
+    ScaleQuatf (1.0 / len, q, dst);
     else {
-	dst[0] = 0.0;
-	dst[1] = 0.0;
-	dst[2] = 0.0;
-	dst[3] = 1.0;
+    dst[0] = 0.0;
+    dst[1] = 0.0;
+    dst[2] = 0.0;
+    dst[3] = 1.0;
     }
 }
 
@@ -202,12 +202,12 @@ static inline bool InverseQuatf (Quatf_t q, Quatf_t dst)
     float mag2 = QuatMagnitudeSqf (q);
 
     if (mag2 > EPSILON) {
-	ConjugateQuatf (q, dst);
-	ScaleQuatf (1.0 / mag2, dst, dst);
-	return true;
+    ConjugateQuatf (q, dst);
+    ScaleQuatf (1.0 / mag2, dst, dst);
+    return true;
     }
     else
-	return false;
+    return false;
 
 }
 
@@ -270,26 +270,26 @@ static inline void SlerpQuatf (Quatf_t q1, float t, Quatf_t q2, Quatf_t dst)
 
     if (dp > 0.9995) {
       // the quats are close, so use lerp
-	LerpQuatf (q1, t, q2, dst);
+    LerpQuatf (q1, t, q2, dst);
     }
     else {
       // ensure that -1 <= dp < 1; we know already that dp <= 0.9995
-	if (dp < -1.0f) dp = -1.0f;
-	float theta = t * acosf(dp);
+    if (dp < -1.0f) dp = -1.0f;
+    float theta = t * acosf(dp);
       // q = normalze (q2 - dp * q1)
-	Quatf_t q;
-	q[0] = q2[0] - dp*q1[0];
-	q[1] = q2[1] - dp*q1[1];
-	q[2] = q2[2] - dp*q1[2];
-	q[3] = q2[3] - dp*q1[3];
+    Quatf_t q;
+    q[0] = q2[0] - dp*q1[0];
+    q[1] = q2[1] - dp*q1[1];
+    q[2] = q2[2] - dp*q1[2];
+    q[3] = q2[3] - dp*q1[3];
         NormalizeQuatf (dst, dst);
       // dst = cos(theta) * q1 + sin(theta) * q
-	float c = cosf(theta);
-	float s = sinf(theta);
-	dst[0] = c * q1[0] + s * q[0];
-	dst[1] = c * q1[1] + s * q[1];
-	dst[2] = c * q1[2] + s * q[2];
-	dst[3] = c * q1[3] + s * q[3];
+    float c = cosf(theta);
+    float s = sinf(theta);
+    dst[0] = c * q1[0] + s * q[0];
+    dst[1] = c * q1[1] + s * q[1];
+    dst[2] = c * q1[2] + s * q[2];
+    dst[3] = c * q1[3] + s * q[3];
     }
 
 }

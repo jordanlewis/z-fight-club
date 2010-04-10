@@ -16,10 +16,10 @@
 #include "vector.h"
 
 /*! \brief a 3x3 matrix */
-typedef float		Mat3x3f_t[9];
+typedef float        Mat3x3f_t[9];
 
 /*! \brief a 4x4 matrix */
-typedef float		Mat4x4f_t[16];
+typedef float        Mat4x4f_t[16];
 
 
 
@@ -49,7 +49,7 @@ extern void LoadIdentityM3f (Mat3x3f_t m);
 static inline void MultMV3f (Mat3x3f_t mat, Vec3f_t v, Vec3f_t dst)
 {
     for (int i = 0;  i < 3;  i++) {
-	dst[i] = mat[0+i] * v[0] + mat[3+i] * v[1] + mat[6+i] * v[2];
+        dst[i] = mat[0+i] * v[0] + mat[3+i] * v[1] + mat[6+i] * v[2];
     }
 }
 
@@ -67,15 +67,15 @@ extern void MultMM3f (Mat3x3f_t m1, Mat3x3f_t m2, Mat3x3f_t dst);
 static inline float DetM3f (Mat3x3f_t m)
 {
     return m[0]*(m[4]*m[8] - m[7]*m[5])
-	 - m[3]*(m[1]*m[8] - m[7]*m[2])
-	 + m[6]*(m[1]*m[5] - m[4]*m[2]);
+         - m[3]*(m[1]*m[8] - m[7]*m[2])
+         + m[6]*(m[1]*m[5] - m[4]*m[2]);
 }
 
 
 /***** Matrix4f_t utilities *****/
 
 /* index for column-major layout */
-#define _I(r,c)		(4*(c)+(r))
+#define _I(r,c) (4*(c)+(r))
 
 /*! \brief matrix copy
  *  \param src the source matrix

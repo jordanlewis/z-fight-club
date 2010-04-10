@@ -20,24 +20,24 @@
 /*! \brief a small value for testing if something is close to 0 */
 #define EPSILON 1e-6
 
-typedef float		Vec2f_t[2];	//!< 2D vector (used for texture coords)
-typedef float		Vec3f_t[3];	//!< 3D vector
-typedef float		Vec4f_t[4];	//!< 4D vector
-typedef float		Color_t[4];	//!< RGBA color representation
-typedef unsigned char	RGB_t[3];	//!< Byte representation of colors
-typedef unsigned char	RGBA_t[4];	//!< Byte representation of colors
+typedef float        Vec2f_t[2];    //!< 2D vector (used for texture coords)
+typedef float        Vec3f_t[3];    //!< 3D vector
+typedef float        Vec4f_t[4];    //!< 4D vector
+typedef float        Color_t[4];    //!< RGBA color representation
+typedef unsigned char    RGB_t[3];    //!< Byte representation of colors
+typedef unsigned char    RGBA_t[4];    //!< Byte representation of colors
 
 /*! \brief a ray */
 typedef struct {
-    Vec3f_t	orig;			//!< the origin of the ray
-    Vec3f_t	dir;			//!< the direction of the ray, which should be
-					//!< a unit vector
+    Vec3f_t    orig;            //!< the origin of the ray
+    Vec3f_t    dir;            //!< the direction of the ray, which should be
+                    //!< a unit vector
 } Rayf_t;
 
 /*! \brief a plane */
 typedef struct {
-    Vec3f_t	n;			//!< the plane's unit normal vector
-    float	d;			//!< the signed distance to the origin
+    Vec3f_t    n;            //!< the plane's unit normal vector
+    float    d;            //!< the signed distance to the origin
 } Planef_t;
 
 
@@ -464,12 +464,12 @@ static float ranf ()
 
 //! \brief generate a random unit vector.
 //  \param v this output parameter will hold the random vector. 
-static void RandVec (Vec3f_t v)
+static inline void RandVec (Vec3f_t v)
 {
     do {
-	v[0] = 2.0 * ranf() - 1.0;
-	v[1] = 2.0 * ranf() - 1.0;
-	v[2] = 2.0 * ranf() - 1.0;
+    v[0] = 2.0 * ranf() - 1.0;
+    v[1] = 2.0 * ranf() - 1.0;
+    v[2] = 2.0 * ranf() - 1.0;
     } while (LengthSqV3f(v) < EPSILON);
 }
 
