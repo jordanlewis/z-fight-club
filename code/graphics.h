@@ -5,7 +5,8 @@ namespace graphics {
 
 	class Graphics {
 	  public:
-		Graphics()
+		Graphics();
+		~Graphics();
 		  
 		void render();
 		
