@@ -11,7 +11,7 @@ CXXFLAGS = -Wall -pedantic
 
 C_SRCS   = $(wildcard *.c)
 CPP_SRCS = $(wildcard *.cpp)
-OBJECTS  = $(C_SRCS:.c=.o) $(CPP_SRCS:.c=.o)
+OBJECTS  = $(notdir $(C_SRCS:.c=.o) $(CPP_SRCS:.c=.o))
 
 HEADERS             = $(wildcard *.h)
 PRECOMPILED_HEADERS = $(HEADERS:.h=.gch)
