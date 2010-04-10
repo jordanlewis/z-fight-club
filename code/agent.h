@@ -6,6 +6,21 @@
 
 namespace Agent
 {
+    /* \brief Class Path
+     * \brief a path for an agent to follow
+     */
+    class Path
+    {
+        std::vector<Vec3f_t>		knots;		/* !< knots defining the path */
+        std::vector<float>		precision;	/* !< how closely we want to follow the knots */
+
+	public:
+	Path ();
+	Path (std::vector<Vec3f_t>);
+	~Path();
+
+	Path *PathToPath(Vec3f_t position, float urgency);
+    };
 
     typedef enum {
 	BRAKE = 0,
@@ -23,7 +38,7 @@ namespace Agent
 	Rayf_t 		pos;		/* !<car's position and velocity */
 	Vec3f_t 	orientation;	/* !<the direction the car is facing */
 
-	Vec3f_t<Path>	pathStack;	/* !<paths for the agent to follow */
+    std::vector<Path>	pathStack;	/* !<paths for the agent to follow */
 
 	public:
 	Agent (Vec3f_t);  	/* Constructor; Initial position */
@@ -38,20 +53,6 @@ namespace Agent
     };
 
 
-    /* \brief Class Path
-     * \brief a path for an agent to follow
-     */
-    class Path
-    {
-	Vector<Vec3f_t>		knots;		/* !< knots defining the path */
-	Vector<float>		precision;	/* !< how closely we want to follow the knots */
-
-	public:
-	Path ();
-	Path (Vector<Vec3f_t>);
-	~Path();
-
-	Path *PathToPath(Vec3f_t position, float urgency);
-    }
+}
 
 #endif
