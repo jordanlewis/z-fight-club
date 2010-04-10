@@ -2,10 +2,11 @@
 #define PHYSICS_H
 
 #include "vector.h"
+#include "world.h"
 
 namespace physics
 {
-    void simulate(); /* step the world forward. */
+    void simulate(World *world, float dt); /* step the world forward by dt. */
 }
 
 #endif
