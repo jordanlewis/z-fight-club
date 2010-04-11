@@ -2,8 +2,7 @@
 #define NETWORK_H
 
 #include <vector>
-
-#include "compiled_libraries/include/enet/enet.h"
+#include <enet/enet.h>
 
 #include "world.h"
 
@@ -17,7 +16,7 @@ namespace network{
         short port;
     };
 
-    class client {
+    class Client {
         class World net_world; // The latest world recieved on the network
 
       public:
@@ -35,7 +34,7 @@ namespace network{
         };
     
     //Server class
-    class server {
+    class Server {
         //vector<class client_info> clients; //will change this soon
         
 	ENetAddress enet_address;
@@ -46,7 +45,8 @@ namespace network{
 	
     public:
 	/* Member Functions */
-        int init();
+	//server();
+	Server(unsigned int addr, unsigned int port, int max_conns);
 	int push_net_world(short client_id); //sends out a copy of the world
                                              //to client client_id
         int listen(); //Listen for incoming connections

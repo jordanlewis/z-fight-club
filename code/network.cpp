@@ -1,28 +1,30 @@
-#include "compiled_libraries/include/enet/enet.h"
+#include <enet/enet.h>
 #include "network.h"
 
 #include <iostream>
+
+#define DEFAULT_NETWORK_PORT 6888
+#define DEFAULT_MAX_SERVER_CONNECTIONS 16
 
 using namespace std;
 using namespace network;
 
 namespace network {
-    int server::init()
+    Server::Server(unsigned int addr = ENET_HOST_ANY,
+	   unsigned int port = DEFAULT_NETWORK_PORT,
+	   int max_conns = DEFAULT_MAX_SERVER_CONNECTIONS)
     {
 	//gethostname()
     
-	enet_address.host = ENET_HOST_ANY;
-	enet_address.port = 6669;
+	enet_address.host = addr;
+	enet_address.port = port;
 	
-	enet_server = enet_host_create(&enet_address, 16, 0, 0);
+	enet_server = enet_host_create(&enet_address, max_conns, 0, 0);
 
 	if (enet_server == NULL)
 	{
 	    cerr << "ENet could not initialize server" << endl;
-	    return -1;
 	}
-	
-	return 0;
 	
     }
     
@@ -41,18 +43,18 @@ namespace network {
     
 }
 
-
+/*
 int main(int argc, const char * argv[]){
     
     network_init();
     
-    class server new_server;
-    new_server.init();
+    Server new_server;
+    //new_server.init();
     
-    class client new_client;
+    Client new_client;
     //new_client.init();
 
     return 0;
     
 }
-
+*/
