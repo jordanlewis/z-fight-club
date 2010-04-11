@@ -49,7 +49,7 @@ namespace Agent
          * in agent.c and the two types of agent controllers - AI or Input. */
     
         void EngineState(EngineState_t); /* sets the engine State */
-        void turn (float);      /* Turning? Angle of turn, 0 = no turn */
+        void Turn (float);      /* Turning? Angle of turn, 0 = no turn */
     };
 
 
