@@ -1,10 +1,12 @@
 OS = $(shell uname -s)
 
 ifeq ($(OS),Darwin)
-  LDFLAGS = -framework GLUT -framework OpenGL -framework Foundation
+  GLFLAGS = -framework GLUT -framework OpenGL -framework Foundation
 else
-  LDFLAGS = -lglut -lGL -lGLU -lm
+  GLFLAGS = -lglut -lGL -lGLU -lm
 endif
+
+LDFLAGS = $(GLFLAGS)
 
 CFLAGS = -Wall --std=gnu99
 CXXFLAGS = -Wall -pedantic
