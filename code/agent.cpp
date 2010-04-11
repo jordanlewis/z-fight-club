@@ -3,7 +3,7 @@
 /* \brief initialize an agent class
  * \param position the agent's initial position
  */
-Agent::Agent(Vec3f_t position) 
+Agent::Agent::Agent(Vec3f_t position) 
 {
     engineState = NEUTRAL;
     turn_angle = 0.0f;
@@ -17,19 +17,19 @@ Agent::Agent(Vec3f_t position)
  * \param position the agent's initial position
  * \param orientation the agent's initial orientation
  */
-Agent::Agent(Vec3f_t position, Vec3f_t orientation)
+Agent::Agent::Agent(Vec3f_t position, Vec3f_t orientation)
 {
     engineState = NEUTRAL;
     turn_angle = 0.0f;
     CopyV3f(position, pos.orig);
     ZeroV3f(pos.dir);
-    CopyV3f(orientation, this.orientation);
+    CopyV3f(orientation, this->orientation);
 }
 
 /* \brief set engine state
  * \param engineState
  */
-void Agent::EngineState(EngineState_t newState)
+void Agent::Agent::EngineState(EngineState_t newState)
 {
     engineState = newState;
 }
@@ -37,7 +37,7 @@ void Agent::EngineState(EngineState_t newState)
 /* \brief turn 
  * \param turnAngle
  */
-void Agent::Turn(float newTurn_angle)
+void Agent::Agent::Turn(float newTurn_angle)
 {
     turn_angle = newTurn_angle;
 }
