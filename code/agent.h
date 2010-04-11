@@ -4,55 +4,29 @@
 #include "vector.h"
 #include <vector>
 
-namespace Agent
+class SteerInfo
 {
-    /* \brief Class Path
-     * \brief a path for an agent to follow
-     */
-    class Path
-    {
-        std::vector<Vec3f_t>        knots;        /* !< knots defining the path */
-        std::vector<float>        precision;    /* !< how closely we want to follow the knots */
-
     public:
-        Path ();
-        Path (std::vector<Vec3f_t>);
-        ~Path();
+    float acceleration;
+    float rotation;
+};
 
-        Path *PathToPath(Vec3f_t position, float urgency);
-    };
+class Agent
+{
+    public:
+    SteerInfo steerInfo;   /* !<car's steering info, set by AI/human */
+    Rayf_t    pos;         /* !<car's position and velocity */
+    float     orientation; /* !<the direction the car is facing, radians */
 
-    typedef enum {
-        BRAKE = 0,
-        ACCELERATE,
-        NEUTRAL,
-        REVERSE,
-        nEngineState
-    } EngineState_t;
+    Agent (Vec3f_t);      /* Constructor; Initial position */
+    Agent (Vec3f_t, float); /* Constructor; Initial position and orientation */
+    ~Agent ();        /* Destructor */
 
-    class Agent
-    {
-        EngineState_t    engineState;    /* !<what the engine is doing right now */
-        float         turn_angle;     /* !<Angle of turn, 0 = no turn, radians */
-    
-        Rayf_t         pos;        /* !<car's position and velocity */
-        Vec3f_t     orientation;    /* !<the direction the car is facing */
-    
-        std::vector<Path>    pathStack;    /* !<paths for the agent to follow */
-    
-      public:
-        Agent (Vec3f_t);      /* Constructor; Initial position */
-        Agent (Vec3f_t, Vec3f_t); /* Constructor; Initial position and orientation */
-        ~Agent ();        /* Destructor */
-    
-        /* The below methods are the interface between the generic agent implemented
-         * in agent.c and the two types of agent controllers - AI or Input. */
-    
-        void EngineState(EngineState_t); /* sets the engine State */
-        void Turn (float);      /* Turning? Angle of turn, 0 = no turn */
-    };
+    /* The below method is the interface between the generic agent
+        * implemented in agent.c and the two types of agent controllers - AI
+        * or Input. */
 
-
-}
+    void SetSteering (SteerInfo &); /* Change desired steering */
+};
 
 #endif

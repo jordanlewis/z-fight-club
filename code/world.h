@@ -9,11 +9,11 @@
 class World
 {  
     std::vector<Polygon> environment; /* The Environmental geometry */
-    std::vector<Agent::Agent> agents; /* the agents in the world */
 
     Graphics::Camera camera;
 
   public:
+    std::vector<Agent> agents; /* the agents in the world */
     World();
 };
 

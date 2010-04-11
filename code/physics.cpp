@@ -1,4 +1,5 @@
 #include <math.h>
+#include "physics.h"
 #include "vector.h"
 #include "world.h"
 #include "agent.h"
@@ -22,12 +23,11 @@ static void updateAgentKinematic(Agent::Agent *agent, float dt)
     /* Velocity += acceleration * time */
     ScaleV3f(agent->steerInfo.acceleration, agent->pos.dir, agent->pos.dir);
 
-    return;
 }
 
 void physics::simulate(World *world, float dt)
 {
-    for (int i = 0; i < world->agents.size(); i++)
+    for (unsigned int i = 0; i < world->agents.size(); i++)
     {
         updateAgentKinematic(&world->agents[i], dt);
     }
