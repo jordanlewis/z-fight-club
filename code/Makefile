@@ -18,22 +18,19 @@ OBJECTS  = $(notdir $(C_SRCS:.c=.o) $(CPP_SRCS:.cpp=.o))
 HEADERS             = $(wildcard *.h)
 PRECOMPILED_HEADERS = $(HEADERS:.h=.gch)
 LIBRARIES           = enet
-#OBJECTS = matrix.o scheduler.o agent.o
-#PRECOMPILED_HEADERS = agent.gch collision.gch matrix.gch network.gch \
-                      physics.gch quat.gch scheduler.gch sound.gch vector.gch \
-                      world.gch
 
-.PHONY: clean test
+.PHONY: test
 
-test: libraries header_test
+test: libraries header_test object_test
 header_test: $(PRECOMPILED_HEADERS)
 object_test: $(OBJECTS)
 libraries: $(LIBRARIES)
 
 enet: 
-	cd $(PWD)/packaged_libraries/enet-1.2.1; \
-	./configure --prefix=$(PWD)/compiled_libraries; \
-	make; make install
+	cd $(PWD)/packaged_libraries/enet-1.2.1 && \
+	./configure --prefix=$(PWD)/compiled_libraries && \
+	make && make install
+
 
 .PHONY: clean
 clean:
