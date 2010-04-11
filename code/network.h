@@ -2,7 +2,11 @@
 #define NETWORK_H
 
 #include <vector>
+
+#include "compiled_libraries/include/enet/enet.h"
+
 #include "world.h"
+
 
 namespace network{
 
@@ -30,16 +34,29 @@ namespace network{
         int update_world(); //Copy the contents of net_world into the_world
         };
     
-        class server {
+    //Server class
+    class server {
         //vector<class client_info> clients; //will change this soon
         
+	ENetAddress enet_address;
+	ENetHost *enet_server;
+
         int world_seq; //Latest world image.
         class World *the_world;  //The definitive image of the world
-    
-        int push_net_world(short client_id); //sends out a copy of the world
+	
+    public:
+	/* Member Functions */
+        int init();
+	int push_net_world(short client_id); //sends out a copy of the world
                                              //to client client_id
         int listen(); //Listen for incoming connections
+	
+	
     };
+
+    /* General Networking functions */
+
+    int network_init(); //Initialize the network code.
 
 }
 
