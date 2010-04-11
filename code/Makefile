@@ -27,8 +27,8 @@ object_test: $(OBJECTS)
 libraries: $(LIBRARIES)
 
 enet: 
-	cd $(PWD)/packaged_libraries/enet-1.2.1 && \
-	./configure --prefix=$(PWD)/compiled_libraries && \
+	cd "$(PWD)/packaged_libraries/enet-1.2.1" && \
+	./configure --prefix="$(PWD)/compiled_libraries" && \
 	make && make install
 
 
