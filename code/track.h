@@ -4,13 +4,14 @@
 #include <vector>
 #include <string>
 #include "vector.h"
+#include <fstream>
 
 typedef enum
 {
     WALL = 0,
     ENTRY,
     EXIT,
-    nEdgeKind
+    NEdgeKind
 } EdgeKind_t;
 
 typedef enum
@@ -74,5 +75,10 @@ class Map
 	std::vector<Vec3f_t>	vertex;		/* !< vertex array */
 	std::vector<Sector>	sector;		/* !< sector array */
 	std::vector<Lane>	lane;		/* !< lane array */
+
+	Map();
+	Map(fstream);
+	~Map();
+	Intersect(Vec3f_t start, Vec3f_t end);
 };
 #endif

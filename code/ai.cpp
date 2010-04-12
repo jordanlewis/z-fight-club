@@ -50,6 +50,16 @@ void Align (Kinematic *car, float maxRotation, float target, SteerInfo *steer)
     }
 }
 
+void Cruise (Kinematic *car, float maxAccel, Path *path, SteerInfo *steer)
+{
+    Vec3f_t dist;
+    SubV3f(path->knots.front(), car->pos, dist);
+    if (LengthV3f(dist) < path->precision.front())
+	path->index++;
+    
+    Seek(car, maxAccel, path->knots[path->index], steer);
+}
+
 AIController::AIController(Agent &agent)
 {
     this->agent = &agent;
