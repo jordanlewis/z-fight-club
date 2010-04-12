@@ -10,9 +10,23 @@ z-fight-club's project for CMSC 23800.
 \end{abstract}
 \section{High-Level Design}
 \subsection{Game Feel}
-This is a racing game. What is it like? Does it have grappling hooks?
+This is a racing game. What is it like? Does it have grappling hooks?  We have no clue... yet.
 \subsection{Component Architecture}
 \includegraphics[scale=0.2]{game.pdf}
+
+\subsection{Group organization}
+\subsubsection{Communication}
+Communication is done primariliy over the z-fight-club@lists.uchicago.edu maling list and the irc channel \#z-fight-club on irc.freenode.net.  We also meet in person immediately after class (6:00pm Tuesday Thursday).  We are using a git repository hosted at github.com/jordanlewis/z-fight-club for version control.  Group decisions are made based upon, *ahem*, ``rough consensus and running code.''
+\subsubsection{Group Responsibilities}
+Everyone is taking part in general design discussions and overall project maintenance/documentation.  For the time being, we have assigned pairs of people to each major module.  The assignments are as follows:
+\begin{itemize}
+\item Agents (AI):  Joe Doliner \& Jordan Lewis
+\item Graphics:  Joe Doliner \& Matthew Steffan
+\item Networking:  Nick Russo \& Youlian Simidjiyski 
+\item Physics:  Jordan Lewis \& Youlian Simidjiyski
+\item Sound:  Nick Russo \& Matthew Steffan
+\end{itemize}
+\subsection{Coding Style} A coding style document (style.txt) is maintained internally, but will not be inserted here in order to reduce document clutter.
 
 \section{Component-Level Design}
 Each component has a list of its responsibilities and an interface. These are
@@ -108,7 +122,37 @@ to the corresponding agent.
 \subsection{Networking}
 The networking component is responsible for listening for network input and
 doing the right thing with this input. The right thing may include world
-synchronization and network agent control.
+synchronization and network agent control.  Networking will be done in the client-server fashion, with one central server holding a ``master'' copy of the world, while all clients attempt to remain in synch with the server.  The server periodically propagates the world data structure to all connected clients, and the clients update their own ``world'' data structures to approximate the server through a dead reckoning process.
+
+\subsubsection{Implementation}
+
+Networking will be done using the enet library, a networking library that runs over UDP that attempts to find a compromise between UDP's speed and TCP's reliability and feature set.
+
+\paragraph{Server}
+The server accepts incoming connections, and periodically recieves the world state of all connected clients.  The server uses these world states to run its own internal instance of the game, and the server periodically propagates the world state of its internal instance to all connected clients.  
+
+%The only interesting thing server-side is that when the server calculates its internal state, it does not immediately apply all changes called by the agent.  Instead, it introduces some internal latency (equal to the expected one-way travel time from the server to the clients) in order to make the clients' dead-reckoning simulations more accurate. <-- Might implement this, need to think more about it.
+
+\paragraph{Client} The client periodically propagates its state to the server, and periodically recieves updated state information from the server.  The client will always be some number of game cycles ahead of the most recently recieved server frame.  When the client recieves a server frame, the client repeatedly runs its physics simulation (which, in our case, should be fairly quick) upon the world frame in order to approximate the current state of the world.  So long as the approximate server state is sufficiently close to the client state, the fields in the world are linearly nudged towards the approximate server state over the next few frames.  If the approximate server state is too far from the client state, we declare the client state unsalvageable and we replace it with the approximate server state.  The client will also artificially introduce a latency into its own user's commands to better approximate the server.
+ 
+\subsubsection{Interface}
+
+\paragraph{Called by Networking}
+The networking function needs access to the physics simulation in order to perform its dead reckoning process.  It must also be able to fetch the current state of the world and set the current state of the world.  Therefore, networking needs the following functions:
+\begin{itemize} 
+\item world::poll()
+\item world::set()
+\item physics::simulate()
+\end{itemize}
+
+\paragraph{Offered by Networking}
+Networking needs to export functions allowing us to initialize a server and connect to or disconnect from a server.  Otherwise, networking should not be called by any other modules, as the networking module automatically and periodically updates the world state on its own.
+\begin{itemize}
+\item Server::Server(int addr, int port, int max\_connections)
+\item Client::connect(int addr, int port)
+\item Client::disconnect()
+\end{itemize}
+
 \subsection{Graphics}
 The graphics component is the primary output of the system. It provides the
 visual feedback necessary for the player to see into the game world and observe
