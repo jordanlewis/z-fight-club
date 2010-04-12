@@ -6,7 +6,7 @@
 
 class SteerInfo
 {
-    public:
+  public:
     float acceleration;
     float rotation;
 };
@@ -14,7 +14,7 @@ class SteerInfo
 class Agent
 {
     static unsigned int maxId; /* !<highest id number we've reached */
-    public:
+  public:
     unsigned int id;       /* !<internal id number */
     SteerInfo steerInfo;   /* !<car's steering info, set by AI/human */
     Rayf_t    pos;         /* !<car's position and velocity */
