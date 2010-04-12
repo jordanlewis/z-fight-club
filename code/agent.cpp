@@ -1,10 +1,13 @@
 #include "agent.h"
 
+unsigned int Agent::maxId = 0;  /* !<highest id number we've reached */
+
 /* \brief initialize an agent class
  * \param position the agent's initial position
  */
 Agent::Agent(Vec3f_t position)
 {
+    id = maxId++; /* Get next ID, increment maxId */
     CopyV3f(position, pos.orig);
     ZeroV3f(pos.dir);
     orientation = 0; /* facing into the z direction */
@@ -16,6 +19,7 @@ Agent::Agent(Vec3f_t position)
  */
 Agent::Agent(Vec3f_t position, float orientation)
 {
+    id = maxId++;
     CopyV3f(position, pos.orig);
     ZeroV3f(pos.dir);
     this->orientation = orientation;
