@@ -1,5 +1,6 @@
+\begin{verbatim}
+
 Coding conventions:
-(first draft by Jordan, feel free to raise disagreements or to add more rules)
 
 1. Tabs/spaces
    Configure your editor to never write tab characters, and to use 4 spaces
@@ -55,3 +56,5 @@ Coding conventions:
        default:
            break;
    }
+
+\end{verbatim}
