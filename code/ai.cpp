@@ -8,6 +8,11 @@ AIController::AIController(Agent &agent)
     this->agent = &agent;
 }
 
+AIController::run()
+{
+
+}
+
 void AIManager::control(Agent &agent)
 {
     AIController *newController = new AIController(agent);
