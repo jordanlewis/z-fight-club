@@ -36,7 +36,7 @@ The scheduler is the top-level component of the system. It is responsible for
 the main loop of the game, and for making sure that each component is run
 when it needs to be without taking up more time than is it available for it.
 So, the scheduler needs to tell physics, AI, controls, networking, and graphics
-to conditionally update based on need every game loop
+to conditionally update based on need every game loop.
 \subsection{World}
 The world is the state of the system. It is a passive component that receives
 and handles requests to get or set different state attributes. Some examples
@@ -68,7 +68,7 @@ the physics class as well, but it is unclear whether such general functions
 belong in the physics class or in some external physics utility library.
 
 \begin{itemize}
-\item simulate()
+\item simulate(world, dt)
 \end{itemize}
 
 \subsection{Agent}
@@ -163,5 +163,10 @@ The sound component translates events such as crashes, explosions, or engine
 activity into audio output, and may also keep an ambient music track playing.
 It fields requests like "play the crash noise" or "stop revving car C's engine"
 and mixes and outputs corresponding sounds as it sees fit.
+
+\section{Style}
+This is transcribed directly from doc/style.txt.
+
+\input{"style.txt"}
 
 \end{document}
