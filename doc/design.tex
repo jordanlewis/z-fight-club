@@ -9,8 +9,19 @@ This document contains the high-level and component-level design of
 z-fight-club's project for CMSC 23800.
 \end{abstract}
 \section{High-Level Design}
-\subsection{Game Feel}
-This is a racing game. What is it like? Does it have grappling hooks?  We have no clue... yet.
+\subsection{Game Mechanics}
+This is a racing game. As such, an individual race will be structured as
+an n-lap competition of m cars, where the goal is to cross the finish line
+before any other car.
+
+A set of races will consist of multiple races of the same or different tracks,
+where the ranking of each race decides the placing of cars behind the starting
+line of the next one. In an m-car race, the nth placing car gets m - n points.
+
+Optionally, cars will have redeployable grappling hooks that can be used to
+temporarily anchor onto a piece of terrain to tighten a tight, high-speed turn.
+\subsection{Graphics/Art direction}
+
 \subsection{Component Architecture}
 \includegraphics[scale=0.2]{game.pdf}
 
@@ -26,7 +37,7 @@ Everyone is taking part in general design discussions and overall project mainte
 \item Physics:  Jordan Lewis \& Youlian Simidjiyski
 \item Sound:  Nick Russo \& Matthew Steffan
 \end{itemize}
-\subsection{Coding Style} A coding style document (style.txt) is maintained internally, but will not be inserted here in order to reduce document clutter.
+\subsection{Coding Style} A coding style document (style.txt) is maintained internally, and is inserted as plaintext at the end of this document.
 
 \section{Component-Level Design}
 Each component has a list of its responsibilities and an interface. These are
