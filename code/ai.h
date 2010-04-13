@@ -19,6 +19,10 @@ class Path
     ~Path();
 
     Path *PathToPath(Vec3f_t position, float urgency);
+    const std::vector<Vec3f_t> *get_knots() const;
+    const std::vector<float> *get_precision() const;
+    void increase_index(int);
+    int get_index() const;
 };
 
 class AIController

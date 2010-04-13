@@ -14,7 +14,6 @@ class World
 
   public:
     std::vector<Agent> agents; /* the agents in the world */
-    World();
 };
 
 #endif

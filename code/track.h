@@ -77,8 +77,8 @@ class Map
 	std::vector<Lane>	lane;		/* !< lane array */
 
 	Map();
-	Map(fstream);
+	Map(std::fstream);
 	~Map();
-	Intersect(Vec3f_t start, Vec3f_t end);
+	void Intersect(Vec3f_t start, Vec3f_t end); // added void to shut up the compiler. are we hoping for a bool here?
 };
 #endif

@@ -5,7 +5,30 @@
 #include "vector.h"
 #include "agent.h"
 
-void Seek (Kinematic *car, float maxAccel, Vec3f_t target, SteerInfo *steer)
+const std::vector<Vec3f_t>* Path::get_knots() const
+{
+    return &(this->knots);
+}
+
+const std::vector<float>* Path::get_precision() const
+{
+    return &(this->precision);
+}
+
+void Path::increase_index(int n)
+{
+    this->index += n;
+    return;
+}
+
+int Path::get_index() const
+{
+    return this->index;
+}
+
+
+
+void Seek (Kinematic *car, float maxAccel, const Vec3f_t target, SteerInfo *steer)
 {
     Vec3f_t diff;
     SubV3f(target, car->pos, diff);
@@ -53,11 +76,12 @@ void Align (Kinematic *car, float maxRotation, float target, SteerInfo *steer)
 void Cruise (Kinematic *car, float maxAccel, Path *path, SteerInfo *steer)
 {
     Vec3f_t dist;
-    SubV3f(path->knots.front(), car->pos, dist);
-    if (LengthV3f(dist) < path->precision.front())
-	path->index++;
+    const float* a = path->get_knots()->front();
+    SubV3f(a, car->pos, dist);
+    if (LengthV3f(dist) < path->get_precision()->front())
+	path->increase_index(1);
     
-    Seek(car, maxAccel, path->knots[path->index], steer);
+    Seek(car, maxAccel, (*path->get_knots())[path->get_index()], steer);
 }
 
 AIController::AIController(Agent &agent)
