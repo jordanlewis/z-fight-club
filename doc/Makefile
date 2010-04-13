@@ -1,12 +1,17 @@
-ifeq ($(OS),Darwin)
-  DOXYGEN = /Applications/Doxygen.app/Contents/Resources/doxygen
+OS = $(shell uname -s)
+
+ifeq ($(shell which doxygen),)
+  ifeq ($(OS),Darwin)
+      DOXYGEN = /Applications/Doxygen.app/Contents/Resources/doxygen
+  else
+      DOXYGEN = /usr/bin/doxygen
+  endif
 else
-  DOXYGEN = /usr/bin/doxygen
+    DOXYGEN = doxygen
 endif
 
-
 all: design.pdf doxygen
-
+	
 design.pdf: game.png
 	pdflatex design.tex
 
