@@ -12,16 +12,16 @@ endif
 
 all: design.pdf doxygen
 	
-design.pdf: game.png
+design.pdf: game.pdf
 	pdflatex design.tex
 
-game.png: game.dia
-	dia -t png --export=game.png game.dia
+game.pdf: game.dia
+	dia -t pdf --export=game.pdf game.dia
 
 doxygen:
 	$(DOXYGEN) Doxyfile
 
 clean:
-	rm -rf game.png design.pdf design.log design.aux doxygen
+	rm -rf game.pdf design.pdf design.log design.aux doxygen
 
 .PHONY: design.pdf
