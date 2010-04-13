@@ -18,6 +18,7 @@ OBJECTS  = $(notdir $(C_SRCS:.c=.o) $(CPP_SRCS:.cpp=.o))
 HEADERS             = $(wildcard *.h)
 PRECOMPILED_HEADERS = $(HEADERS:.h=.gch)
 
+all: game
 
 .PHONY: test
 
@@ -28,7 +29,10 @@ object_test: $(OBJECTS)
 
 .PHONY: clean
 clean:
-	rm -f $(PRECOMPILED_HEADERS) $(OBJECTS) -r compiled_libraries
+	rm -f $(PRECOMPILED_HEADERS) $(OBJECTS) game
 
 %.gch: %.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+game: $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
