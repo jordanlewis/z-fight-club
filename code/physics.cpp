@@ -4,9 +4,6 @@
 #include "world.h"
 #include "agent.h"
 
-#define PI 3.1415926535
-
-
 static void updateAgentKinematic(Agent::Agent *agent, float dt)
 {
     /* Position += velocity * time */
@@ -14,7 +11,7 @@ static void updateAgentKinematic(Agent::Agent *agent, float dt)
 
     /* Orientation += rotation * time */
     agent->orientation += agent->steerInfo.rotation;
-    agent->orientation = fmodf(agent->orientation, 2 * PI);
+    agent->orientation = fmodf(agent->orientation, 2 * M_PI);
     /* Update velocity vector so it lies along orientation */
     float speed = LengthV3f(agent->pos.dir);
     agent->pos.dir[0] = sin(agent->orientation) * speed;

@@ -10,8 +10,9 @@
  */
 class Path
 {
-    std::vector<Vec3f_t> knots;     /* !< knots defining the path */
-    std::vector<float>   precision; /* !< how closely we want to follow the knots */
+    int			    index;	/* !< the first knot we haven't passed */
+    std::vector<Vec3f_t>    knots;	/* !< knots defining the path */
+    std::vector<float>	    precision;	/* !< how closely we want to follow the knots */
   public:
     Path ();
     Path (std::vector<Vec3f_t>);
