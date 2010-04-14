@@ -83,53 +83,48 @@ belong in the physics class or in some external physics utility library.
 \end{itemize}
 
 \subsection{Agent}
-Agents are the in-game entities corresponding to car drivers. They come in
-two or three categories: AI agents, human agents, and possibly network agents.
-They are responsible for collecting input from different sources depending on
-their category, interpreting these inputs into actions suitable to tell the
-physics component, and issuing these actions to the physics component.
+Agents are the in-game entities corresponding to cars. They contain the
+physical parameters of the car, such as position, velocity, orientation, maximum
+accleration, or turning radius. These parameters are alterable only by the
+physics layer. They also contain steering parameters, which consist of a linear
+acceleraton and a rotational velocity. Their movements are controlled by setting
+these steering parameters.
 
 \subsubsection{Interface}
-
-\paragraph{Called by agent}
-\begin{itemize}
-\item accelerate()
-\item brake()
-\item turnLeft()
-\item turnRight()
-\item jump()
-\item shoot()
-\end{itemize}
-The meaning of these functions is hopefully pretty self explanatory. They should be implemented in the world class. Accelerate, brake and turn{Left,Right} should be as simple as modifying fields in it.
-Jump and shoot need to be a bit more complicated, it seems like we'll need to do some scheduling. It's also not entirely clear that we'll be supporting these features.
 
 \paragraph{Offered by agent}
 \begin{itemize}
-\item takeEvent(char keyEvent)
+\item setSteering(SteerInfo \&)
+\item getKinematic(Kinematic *)
 \end{itemize}
-The agent also needs to be able to take raw key events and process them into the above calls.
+The getKinematic function returns a struct of physical read-only parameters
+suitable for a component which wishes to learn about what the car is currently
+doing, such as AI.
 
-\subsubsection{AI}
+\subsection{AI}
 The AI component serves as the controlling input to AI agents. It is responsible
 for analyzing game state and making control decisions for each individual AI
 agent currently instantiated in the syste, and sending those decisions to
-each corresponding agent.
+each corresponding agent. The AI component is split up into an AIController
+class, which is in charge of controlling an individual agent, and an AIManager
+class, which is in charge of keeping track of AIControllers.
 
 \subsubsection{Interface}
 
-\paragraph{Called by AI}
-AI should get direct control of an agent instance.
-
-It also needs to be able to poll the world and get its own position and velocity as well as those of the cars in its immediate surroundings. This can really just be one function though:
+\paragraph{Offered by AI}
 \begin{itemize}
-\item poll()
+\item AIManager::control(Agent)
+\item AIManager::release(Agent)
+\item AIManager::run()
+\item AIController::run()
 \end{itemize}
-A major design question I have is whether the AI should just sit in a seperate thread (or process even) and just grab data and send its descisions back up through an agent or if the world should ping the AI for its decisions. The first one would allow for the most code reuse between human and computer players but it seems like threading issues might get in the way.
 
-\subsubsection{Controls}
-The controls component serves as the controlling input to human agents. It
-is responsible for sampling (or being notified of?) user input and handing it
-to the corresponding agent.
+\subsection{Input}
+The input component serves as the controlling input to human agents. It
+is responsible for sampling (or being notified of?) user input, translating
+that digital input (i.e. pressing forward? pressing left?) into analog
+steering information suitable for giving to an Agent, and sending that steering
+information to input-controlled agents.
 \subsection{Networking}
 The networking component is responsible for listening for network input and
 doing the right thing with this input. The right thing may include world

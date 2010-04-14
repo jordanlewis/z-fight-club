@@ -10,7 +10,7 @@ class World
 {  
     std::vector<Polygon> environment; /* The Environmental geometry */
 
-    Graphics::Camera camera;
+    Camera camera;
 
   public:
     std::vector<Agent> agents; /* the agents in the world */

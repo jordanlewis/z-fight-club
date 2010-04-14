@@ -77,8 +77,8 @@ class Map
 	std::vector<Lane>	lane;		/* !< lane array */
 
 	Map();
-	Map(fstream);
+	// Map(fstream); I'm not sure what type an fstream is, but this line doesn't compile
 	~Map();
-	Intersect(Vec3f_t start, Vec3f_t end);
+	bool Intersect(Vec3f_t start, Vec3f_t end);
 };
 #endif
