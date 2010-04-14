@@ -47,6 +47,9 @@ int main(int argc, char *argv[])
     world.agents.push_back(a);
 
     Kinematic *k = new Kinematic;
+
+    done = 0;
+
     while (!done) {
         glClear(GL_COLOR_BUFFER_BIT);
 
