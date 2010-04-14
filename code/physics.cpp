@@ -4,7 +4,7 @@
 #include "world.h"
 #include "agent.h"
 
-static void updateAgentKinematic(Agent::Agent *agent, float dt)
+void Physics::updateAgentKinematic(Agent::Agent *agent, float dt)
 {
     /* Position += velocity * time */
     ScaledAddV3f(agent->pos.orig, dt, agent->pos.dir, agent->pos.orig);
@@ -23,10 +23,15 @@ static void updateAgentKinematic(Agent::Agent *agent, float dt)
 
 }
 
-void physics::simulate(World *world, float dt)
+void Physics::simulate(float dt)
 {
     for (unsigned int i = 0; i < world->agents.size(); i++)
     {
         updateAgentKinematic(&world->agents[i], dt);
     }
+}
+
+Physics::Physics(World *world)
+{
+    this->world = world;
 }
