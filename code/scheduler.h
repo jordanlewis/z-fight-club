@@ -4,6 +4,7 @@
 #include <queue>
 #include "world.h"
 #include "graphics.h"
+#include "physics.h"
 
 typedef enum
 {
@@ -27,7 +28,10 @@ class ComponentEvent
 class Scheduler
 {
     std::priority_queue <ComponentEvent> eventQueue; /* !<queue of events */
+
     Graphics graphics;
+    World world;
+    Physics physics;
   public:
     Scheduler();
     void schedule(ComponentEvent &evt);

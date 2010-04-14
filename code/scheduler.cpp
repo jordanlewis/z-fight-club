@@ -22,6 +22,7 @@ Scheduler::Scheduler()
 {
     eventQueue = std::priority_queue<ComponentEvent>();
     graphics.InitGraphics();
+    physics.initPhysics(&world);
 }
 
 void Scheduler::schedule(ComponentEvent &evt)
@@ -32,6 +33,9 @@ void Scheduler::schedule(ComponentEvent &evt)
 void Scheduler::loopForever(World *world)
 {
     int done = 0;
+    double now;
+    double last = GetTime();
+
     while (!done)
     {
 	/* Grab input from SDL loop */
@@ -44,8 +48,14 @@ void Scheduler::loopForever(World *world)
 	    }
 	}
 
-        double now = GetTime();
+        now = GetTime();
+        physics.simulate(now - last);
+        last = now;
 
+        graphics.render(world);
+
+
+#ifdef USING_COMPLICATED_SCHEDULER
 	if (eventQueue.empty())
 	    continue;
 
@@ -63,5 +73,7 @@ void Scheduler::loopForever(World *world)
                 default: break;
             }
         }
+#endif
+
     }
 }
