@@ -23,7 +23,7 @@ void Scheduler::loopForever(World *world)
 {
     while (1)
     {
-        double now = GetTime();
+        double now = 0; /* = GetTime(); FIXME: this line prevents compilation */
         const ComponentEvent &evt = eventQueue.top();
 
         if (evt.at < now)

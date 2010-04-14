@@ -1,9 +1,10 @@
+TARGET = racer
 OS = $(shell uname -s)
 
 ifeq ($(OS),Darwin)
-  GLFLAGS = -framework GLUT -framework OpenGL -framework Foundation
+  GLFLAGS = -framework GLUT -framework OpenGL -framework Foundation #FIXME this is out of date
 else
-  GLFLAGS = -lglut -lGL -lGLU -lm
+  GLFLAGS = -lSDL -lm
 endif
 
 LDFLAGS = $(GLFLAGS) -lenet
@@ -21,14 +22,16 @@ PRECOMPILED_HEADERS = $(HEADERS:.h=.gch)
 
 .PHONY: test
 
-test: header_test object_test
+test: header_test object_test $(TARGET)
 header_test: $(PRECOMPILED_HEADERS)
 object_test: $(OBJECTS)
 
+$(TARGET):      $(OBJECTS)
+	g++ $(CXXFLAGS) -o $(TARGET) $(OBJECTS) $(LDFLAGS)
 
 .PHONY: clean
 clean:
-	rm -f $(PRECOMPILED_HEADERS) $(OBJECTS) -r compiled_libraries
+	rm -f $(PRECOMPILED_HEADERS) $(OBJECTS) -r compiled_libraries $(TARGET)
 
 %.gch: %.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@

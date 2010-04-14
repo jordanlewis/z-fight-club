@@ -28,7 +28,6 @@ namespace network {
 	
     }
     
-    
     int network_init()
     {
 	if (enet_initialize() != 0)

@@ -50,12 +50,12 @@ void *CheckMalloc (size_t nbytes)
 #ifndef NDEBUG
 /* CheckError:
  */
-void CheckError (const char *file, int lnum)
+/* void CheckError (const char *file, int lnum)
 {
     GLenum err = glGetError ();
     if (err != GL_NO_ERROR) {
 	fprintf (stderr, "Error [%s:%d]: %s\n", file, lnum, gluErrorString(err));
     }
-}
+}*/
 #endif
 
