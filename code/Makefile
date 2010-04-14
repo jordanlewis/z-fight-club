@@ -22,16 +22,18 @@ PRECOMPILED_HEADERS = $(HEADERS:.h=.gch)
 
 .PHONY: test
 
-test: header_test object_test $(TARGET)
+all: $(TARGET)
+test: $(TARGET)
+	./$<
 header_test: $(PRECOMPILED_HEADERS)
 object_test: $(OBJECTS)
 
-$(TARGET):      $(OBJECTS)
-	g++ $(CXXFLAGS) -o $(TARGET) $(OBJECTS) $(LDFLAGS)
+$(TARGET): $(OBJECTS)
+	g++ $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 .PHONY: clean
 clean:
-	rm -f $(PRECOMPILED_HEADERS) $(OBJECTS) -r compiled_libraries $(TARGET)
+	rm -f $(PRECOMPILED_HEADERS) $(OBJECTS) $(TARGET)
 
 %.gch: %.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@

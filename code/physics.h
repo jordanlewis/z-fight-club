@@ -3,10 +3,15 @@
 
 #include "vector.h"
 #include "world.h"
+#include "agent.h"
 
-namespace physics
+class Physics
 {
-    void simulate(World *world, float dt); /* step the world forward by dt. */
-}
+    World *world; /* our world */
+    void updateAgentKinematic(Agent::Agent *agent, float dt);
+  public:
+    Physics(World *world); /* constructor; initialize with a world */
+    void simulate(float dt); /* step the world forward by dt. */
+};
 
 #endif
