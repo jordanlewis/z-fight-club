@@ -1,5 +1,6 @@
 #include "graphics.h"
-#include "SDL/SDL.h"
+#include <SDL/SDL.h>
+#include "world.h"
 
 Graphics::Graphics()
 {
@@ -27,4 +28,8 @@ void Graphics::InitGraphics()
     }
 
     SDL_WM_SetCaption("Racer", "racer");
+}
+
+void Graphics::render(const World * const world)
+{
 }

@@ -1,5 +1,6 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
+#include "world.h"
 
 class Graphics {
     public:
@@ -7,7 +8,7 @@ class Graphics {
 	~Graphics();
 
 	void InitGraphics();
-	void render();
+	void render(const World * const world);
 
 };
     
