@@ -36,7 +36,6 @@ class Agent
 
     Agent (Vec3f_t);      /* Constructor; Initial position */
     Agent (Vec3f_t, float); /* Constructor; Initial position and orientation */
-    ~Agent ();        /* Destructor */
 
     /* The below method is the interface between the generic agent
         * implemented in agent.c and the two types of agent controllers - AI
