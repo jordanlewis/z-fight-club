@@ -1,4 +1,5 @@
-TARGET = racer
+BUILDDIR = build
+TARGET = $(BUILDDIR)/racer
 OS = $(shell uname -s)
 
 ifeq ($(OS),Darwin)
@@ -14,17 +15,21 @@ CXXFLAGS = -Wall -pedantic -ggdb
 
 C_SRCS   = $(wildcard *.c)
 CPP_SRCS = $(wildcard *.cpp)
-OBJECTS  = $(notdir $(C_SRCS:.c=.o) $(CPP_SRCS:.cpp=.o))
+OBJECTS  = $(addprefix $(BUILDDIR)/, $(notdir $(C_SRCS:.c=.o) $(CPP_SRCS:.cpp=.o)))
+
 
 HEADERS             = $(wildcard *.h)
-PRECOMPILED_HEADERS = $(HEADERS:.h=.gch)
-
+PRECOMPILED_HEADERS = $(addprefix $(BUILDDIR)/, $(HEADERS:.h=.gch))
 
 .PHONY: test
 
-all: $(TARGET)
-test: $(TARGET)
-	./$<
+all: $(BUILDDIR) $(TARGET)
+
+$(BUILDDIR):
+	mkdir $@
+
+test: all
+	./$(TARGET)
 header_test: $(PRECOMPILED_HEADERS)
 object_test: $(OBJECTS)
 
@@ -33,7 +38,13 @@ $(TARGET): $(OBJECTS)
 
 .PHONY: clean
 clean:
-	rm -f $(PRECOMPILED_HEADERS) $(OBJECTS) $(TARGET)
+	rm -rf $(BUILDDIR)
 
-%.gch: %.h
+#	rm -f$(PRECOMPILED_HEADERS) $(OBJECTS) $(TARGET)
+
+$(BUILDDIR)/%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+$(BUILDDIR)/%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+$(BUILDDIR)%.gch: %.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
