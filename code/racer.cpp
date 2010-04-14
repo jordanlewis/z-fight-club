@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
 
     SDL_WM_SetCaption("Gears", "gears");
 
+    done = 0;
     while (!done) {
 	SDL_Event event;
 
