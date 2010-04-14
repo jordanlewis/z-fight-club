@@ -4,7 +4,7 @@ OS = $(shell uname -s)
 ifeq ($(OS),Darwin)
   GLFLAGS = -framework GLUT -framework OpenGL -framework Foundation #FIXME this is out of date
 else
-  GLFLAGS = -lSDL -lm
+  GLFLAGS = -lSDL -lm -lGL
 endif
 
 LDFLAGS = $(GLFLAGS) -lenet
