@@ -14,6 +14,11 @@ void Physics::updateAgentKinematic(Agent::Agent *agent, float dt)
     /* Position' = position + velocity * time */
     ScaledAddV3f(oldk.pos, dt, oldk.vel, newk.pos);
 
+    if (newk.pos[0] > world->xMax) newk.pos[0] = world->xMax;
+    if (newk.pos[0] < 0) newk.pos[0] = 0;
+    if (newk.pos[2] > world->zMax) newk.pos[0] = world->zMax;
+    if (newk.pos[2] < 0) newk.pos[2] = 0;
+
     /* Orientation' = orientation + rotation * time */
     newk.orientation = oldk.orientation + s.rotation * dt;
     newk.orientation = fmodf(newk.orientation, 2 * M_PI);

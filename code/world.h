@@ -7,12 +7,14 @@
 #include "polygon.h"
 
 class World
-{  
+{
     std::vector<Polygon> environment; /* The Environmental geometry */
 
     Camera camera;
 
   public:
+    static float xMax;
+    static float zMax;
     std::vector<Agent> agents; /* the agents in the world */
     World();
 };
