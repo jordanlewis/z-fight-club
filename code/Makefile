@@ -9,8 +9,8 @@ endif
 
 LDFLAGS = $(GLFLAGS) -lenet
 
-CFLAGS = -Wall --std=gnu99 
-CXXFLAGS = -Wall -pedantic 
+CFLAGS = -Wall --std=gnu99 -ggdb
+CXXFLAGS = -Wall -pedantic -ggdb
 
 C_SRCS   = $(wildcard *.c)
 CPP_SRCS = $(wildcard *.cpp)
