@@ -11,9 +11,9 @@ float        Agent::maxRotate = .3; /*XXX .3 is a random value; tweak this */
 Agent::Agent(Vec3f_t position)
 {
     id = maxId++; /* Get next ID, increment maxId */
-    CopyV3f(position, pos.orig);
-    ZeroV3f(pos.dir);
-    orientation = 0; /* facing into the z direction */
+    CopyV3f(position, kinematic.pos);
+    ZeroV3f(kinematic.vel);
+    kinematic.orientation = 0; /* facing into the z direction */
 }
 
 /* \brief initialize an agent class
@@ -23,16 +23,31 @@ Agent::Agent(Vec3f_t position)
 Agent::Agent(Vec3f_t position, float orientation)
 {
     id = maxId++;
-    CopyV3f(position, pos.orig);
-    ZeroV3f(pos.dir);
-    this->orientation = orientation;
+    CopyV3f(position, kinematic.pos);
+    ZeroV3f(kinematic.vel);
+    kinematic.orientation = orientation;
 }
 
-void Agent::getKinematic (Kinematic *kinematic)
+/* \brief get current kinematic for agent
+ */
+Kinematic &Agent::getKinematic ()
 {
-    CopyV3f(pos.orig, kinematic->pos);
-    CopyV3f(pos.dir, kinematic->vel);
-    kinematic->orientation = orientation;
+    return kinematic;
+}
+
+/* \brief set kinematic for agent
+ * \param kinematic a Kinematic object with the desired new parameters
+ */
+void Agent::setKinematic (Kinematic &kinematic)
+{
+    this->kinematic = kinematic;
+}
+
+/* \brief get current steering information for agent
+ */
+SteerInfo &Agent::getSteering ()
+{
+    return steerInfo;
 }
 
 /* \brief set desired steering information for agent

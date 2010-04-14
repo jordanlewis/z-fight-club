@@ -6,20 +6,25 @@
 
 void Physics::updateAgentKinematic(Agent::Agent *agent, float dt)
 {
-    /* Position += velocity * time */
-    ScaledAddV3f(agent->pos.orig, dt, agent->pos.dir, agent->pos.orig);
+    Kinematic &oldk = agent->getKinematic();
+    SteerInfo &s = agent->getSteering();
 
-    /* Orientation += rotation * time */
-    agent->orientation += agent->steerInfo.rotation * dt;
-    agent->orientation = fmodf(agent->orientation, 2 * M_PI);
+    Kinematic newk;
+
+    /* Position' = position + velocity * time */
+    ScaledAddV3f(oldk.pos, dt, oldk.vel, newk.pos);
+
+    /* Orientation' = orientation + rotation * time */
+    newk.orientation = oldk.orientation + s.rotation * dt;
+    newk.orientation = fmodf(newk.orientation, 2 * M_PI);
     /* Update velocity vector so it lies along orientation */
-    float speed = LengthV3f(agent->pos.dir);
-    agent->pos.dir[0] = sin(agent->orientation) * speed;
-    agent->pos.dir[2] = cos(agent->orientation) * speed;
+    float speed = LengthV3f(oldk.vel);
+    newk.vel[0] = sin(newk.orientation) * speed;
+    newk.vel[1] = oldk.vel[1];
+    newk.vel[2] = cos(newk.orientation) * speed;
 
     /* Velocity += acceleration * time */
-    ScaledAddV3f(agent->pos.dir, agent->steerInfo.acceleration * dt,
-                 agent->pos.dir, agent->pos.dir);
+    ScaledAddV3f(newk.vel, s.acceleration * dt, newk.vel, newk.vel);
 
 }
 
