@@ -41,6 +41,15 @@ void Physics::simulate(float dt)
     }
 }
 
+void Physics::initPhysics(World *world)
+{
+    this->world = world;
+}
+
+Physics::Physics()
+{
+}
+
 Physics::Physics(World *world)
 {
     this->world = world;

@@ -10,7 +10,9 @@ class Physics
     World *world; /* our world */
     void updateAgentKinematic(Agent::Agent *agent, float dt);
   public:
+    Physics();             /* constructor; set world later with initPhysics*/
     Physics(World *world); /* constructor; initialize with a world */
+    void initPhysics(World *world);
     void simulate(float dt); /* step the world forward by dt. */
 };
 
