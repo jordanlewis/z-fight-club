@@ -1,6 +1,8 @@
 #include "scheduler.h"
 #include "world.h"
-#include "defs.h"
+extern "C" {
+    #include "defs.h"
+}
 
 
 ComponentEvent::ComponentEvent(double when, Component_t which)
@@ -23,7 +25,7 @@ void Scheduler::loopForever(World *world)
 {
     while (1)
     {
-        double now = 0; /* = GetTime(); FIXME: this line prevents compilation */
+        double now = GetTime();
         const ComponentEvent &evt = eventQueue.top();
 
         if (evt.at < now)

@@ -31,7 +31,7 @@ $(TARGET):      $(OBJECTS)
 
 .PHONY: clean
 clean:
-	rm -f $(PRECOMPILED_HEADERS) $(OBJECTS) -r compiled_libraries $(TARGET)
+	rm -f $(PRECOMPILED_HEADERS) $(OBJECTS) $(TARGET)
 
 %.gch: %.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
