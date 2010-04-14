@@ -8,13 +8,13 @@
 
 class World
 {  
-    std::vector<Polygon> environment; /* The Environmental geometry */
+//    std::vector<Polygon> environment; /* The Environmental geometry */
 
-    Camera camera;
+ //   Camera camera;
 
   public:
     std::vector<Agent> agents; /* the agents in the world */
-    World();
+  //  World();
 };
 
 #endif
