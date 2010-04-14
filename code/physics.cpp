@@ -10,7 +10,7 @@ static void updateAgentKinematic(Agent::Agent *agent, float dt)
     ScaledAddV3f(agent->pos.orig, dt, agent->pos.dir, agent->pos.orig);
 
     /* Orientation += rotation * time */
-    agent->orientation += agent->steerInfo.rotation;
+    agent->orientation += agent->steerInfo.rotation * dt;
     agent->orientation = fmodf(agent->orientation, 2 * M_PI);
     /* Update velocity vector so it lies along orientation */
     float speed = LengthV3f(agent->pos.dir);
@@ -18,7 +18,8 @@ static void updateAgentKinematic(Agent::Agent *agent, float dt)
     agent->pos.dir[2] = cos(agent->orientation) * speed;
 
     /* Velocity += acceleration * time */
-    ScaleV3f(agent->steerInfo.acceleration, agent->pos.dir, agent->pos.dir);
+    ScaledAddV3f(agent->pos.dir, agent->steerInfo.acceleration * dt,
+                 agent->pos.dir, agent->pos.dir);
 
 }
 
