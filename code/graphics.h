@@ -1,16 +1,14 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-namespace Graphics {
-    
-    class Graphics {
-      public:
-        Graphics();
-        ~Graphics();
+class Graphics {
+    public:
+	Graphics();
+	~Graphics();
 
-        void render();
+	void InitGraphics();
+	void render();
 
-    };
-}
+};
     
 #endif

@@ -11,7 +11,6 @@
 int main(int argc, char *argv[])
 {
     Scheduler scheduler;
-    scheduler.InitGraphics();
     
     World world;
 

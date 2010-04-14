@@ -3,6 +3,7 @@
 
 #include <queue>
 #include "world.h"
+#include "graphics.h"
 
 typedef enum
 {
@@ -26,11 +27,11 @@ class ComponentEvent
 class Scheduler
 {
     std::priority_queue <ComponentEvent> eventQueue; /* !<queue of events */
+    Graphics graphics;
   public:
     Scheduler();
     void schedule(ComponentEvent &evt);
     void loopForever(World *world);
-    void InitGraphics();
 };
 
 #endif
