@@ -8,13 +8,12 @@
 #include "world.h"
 #include "agent.h"
 
-using namespace std;
-
 class PObject;
 
 class Physics
 {
     World *world; /* our world */
+
     __gnu_cxx::hash_map<int, PObject *> pobjects;
     dWorldID odeWorld;
     dSpaceID odeSpace;

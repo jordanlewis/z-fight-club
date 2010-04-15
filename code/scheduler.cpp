@@ -2,10 +2,7 @@
 #include "world.h"
 #include "SDL/SDL.h"
 #include <queue>
-extern "C" {
-    #include "defs.h"
-}
-
+#include "defs.h"
 
 ComponentEvent::ComponentEvent(double when, Component_t which)
 {

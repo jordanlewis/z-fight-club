@@ -2,34 +2,42 @@ BUILDDIR = build
 TARGET = $(BUILDDIR)/racer
 OS = $(shell uname -s)
 
+CFLAGS = -Wall --std=gnu99 -ggdb
+CXXFLAGS = -Wall -Wno-deprecated -ggdb
+
+LDFLAGS = 
+
 ifeq ($(OS),Darwin)
   GLFLAGS = -framework GLUT -framework OpenGL -framework Foundation #FIXME this is out of date
+  
+  # Gets libraries downloaded by MacPorts
+  CFLAGS   += -I/opt/local/include
+  CXXFLAGS += -I/opt/local/include
+
+  LDFLAGS  += -L/opt/local/lib
 else
-  GLFLAGS = -lSDL -lm
+  GLFLAGS = -lm
 endif
 
-LDFLAGS = $(GLFLAGS) -lenet -lode
-
-CFLAGS = -Wall --std=gnu99 -ggdb
-CXXFLAGS = -Wall -Wno-deprecated -pedantic -ggdb
+LDFLAGS += $(GLFLAGS) -lenet -lSDL -lode
 
 C_SRCS   = $(wildcard *.c)
 CPP_SRCS = $(wildcard *.cpp)
 OBJECTS  = $(addprefix $(BUILDDIR)/, $(notdir $(C_SRCS:.c=.o) $(CPP_SRCS:.cpp=.o)))
 
 
-HEADERS             = $(wildcard *.h)
-PRECOMPILED_HEADERS = $(addprefix $(BUILDDIR)/, $(HEADERS:.h=.gch))
-
-.PHONY: test
+all: game
 
 all: $(BUILDDIR) $(TARGET)
+	echo "LDFLAGS: $(LDFLAGS)"
 
 $(BUILDDIR):
 	mkdir $@
 
+.PHONY: test
 test: all
 	./$(TARGET)
+
 header_test: $(PRECOMPILED_HEADERS)
 object_test: $(OBJECTS)
 
@@ -38,7 +46,7 @@ $(TARGET): $(OBJECTS)
 
 .PHONY: clean
 clean:
-	rm -rf $(BUILDDIR)
+	rm -f $(PRECOMPILED_HEADERS) $(OBJECTS) game
 
 #	rm -f$(PRECOMPILED_HEADERS) $(OBJECTS) $(TARGET)
 
@@ -48,3 +56,6 @@ $(BUILDDIR)/%.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 $(BUILDDIR)%.gch: %.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+game: $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
