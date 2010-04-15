@@ -18,11 +18,11 @@ bool ComponentEvent::operator< (const ComponentEvent &evt) const
     return evt.at < at;
 }
 
-Scheduler::Scheduler()
+Scheduler::Scheduler() : physics(&world)
 {
+    physics = Physics(&world);
     eventQueue = std::priority_queue<ComponentEvent>();
     graphics.InitGraphics();
-    physics.initPhysics(&world);
 }
 
 void Scheduler::schedule(ComponentEvent &evt)
