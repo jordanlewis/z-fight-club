@@ -2,6 +2,11 @@ The makefile will convert game.dia into a pdf suitable for including into
 the design pdf, and run pdflatex on design.tex to turn it into a pdf.
 
 Project Dependencies:
-	The enet library (enet.bespin.org)
-    	The SDL library (http://www.libsdl.org/index.php)
+	ENet network communication layer library
+         http://enet.bespin.org/
 
+    	Simple DirectMedia Layer (SDL) cross-platform multimedia library
+         http://www.libsdl.org/
+
+    	Open Dynamics Engine (ODE) rigid body dynamics simulation library
+         http://www.ode.org/

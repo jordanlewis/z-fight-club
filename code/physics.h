@@ -7,15 +7,13 @@
 #include "world.h"
 #include "agent.h"
 
-using namespace std;
-using namespace __gnu_cxx;
-
 class PObject;
 
 class Physics
 {
     World *world; /* our world */
-    hash_map<int, PObject *> pobjects;
+
+    __gnu_cxx::hash_map<int, PObject *> pobjects;
     dWorldID odeWorld;
     dSpaceID odeSpace;
     void updateAgentKinematic(Agent::Agent *agent, float dt);

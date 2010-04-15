@@ -4,7 +4,6 @@
 #include <string>
 #include <map>
 #include <queue>
-using namespace std;
 
 // use strings to uniquely identify playable sounds that may have been loaded by the server
 // sound_handle uniquely identifies a sound instance in the queue, scheduled for play
