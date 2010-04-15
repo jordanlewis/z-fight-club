@@ -8,6 +8,8 @@
 #include "world.h"
 #include "agent.h"
 
+using namespace std;
+
 void Physics::updateAgentKinematic(Agent::Agent *agent, float dt)
 {
     Kinematic &oldk = agent->getKinematic();
