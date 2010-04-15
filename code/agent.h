@@ -31,7 +31,9 @@ class Agent
 
   public:
     unsigned int id;       /* !<internal id number */
-
+    static float height;
+    static float width;
+    static float depth;
 
     Agent (Vec3f_t);      /* Constructor; Initial position */
     Agent (Vec3f_t, float); /* Constructor; Initial position and orientation */
