@@ -18,7 +18,7 @@ else
   GLFLAGS = -lm
 endif
 
-LDFLAGS += $(GLFLAGS) -lenet -lSDL 
+LDFLAGS += $(GLFLAGS) -lenet -lSDL -lode
 
 C_SRCS   = $(wildcard *.c)
 CPP_SRCS = $(wildcard *.cpp)
@@ -31,7 +31,7 @@ PRECOMPILED_HEADERS = $(addprefix $(BUILDDIR)/, $(HEADERS:.h=.gch))
 .PHONY: test
 
 all: $(BUILDDIR) $(TARGET)
-	@echo "LDFLAGS: $(LDFLAGS)"
+	echo "LDFLAGS: $(LDFLAGS)"
 
 $(BUILDDIR):
 	mkdir $@
