@@ -1,5 +1,6 @@
 #include <math.h>
 #include <ode/ode.h>
+#include <ext/hash_map>
 #include "physics.h"
 #include "vector.h"
 #include "world.h"

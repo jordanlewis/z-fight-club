@@ -11,7 +11,7 @@ endif
 LDFLAGS = $(GLFLAGS) -lenet -lode
 
 CFLAGS = -Wall --std=gnu99 -ggdb
-CXXFLAGS = -Wall --std=c++0x -pedantic -ggdb
+CXXFLAGS = -Wall -Wno-deprecated -pedantic -ggdb
 
 C_SRCS   = $(wildcard *.c)
 CPP_SRCS = $(wildcard *.cpp)
