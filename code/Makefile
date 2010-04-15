@@ -2,16 +2,21 @@ BUILDDIR = build
 TARGET = $(BUILDDIR)/racer
 OS = $(shell uname -s)
 
-ifeq ($(OS),Darwin)
-  GLFLAGS = -framework GLUT -framework OpenGL -framework Foundation #FIXME this is out of date
-else
-  GLFLAGS = -lSDL -lm
-endif
-
-LDFLAGS = $(GLFLAGS) -lenet
-
 CFLAGS = -Wall --std=gnu99 -ggdb
 CXXFLAGS = -Wall -pedantic -ggdb
+
+LDFLAGS = $(GLFLAGS) -lenet -lSDL 
+
+ifeq ($(OS),Darwin)
+  GLFLAGS = -framework GLUT -framework OpenGL -framework Foundation #FIXME this is out of date
+  
+  CFLAGS   += -I/opt/local/include
+  CXXFLAGS += -I/opt/local/include
+
+  LDFLAGS  += -L/opt/local/lib
+else
+  GLFLAGS = -lm
+endif
 
 C_SRCS   = $(wildcard *.c)
 CPP_SRCS = $(wildcard *.cpp)
