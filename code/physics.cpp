@@ -44,6 +44,8 @@ void Physics::simulate(float dt)
 void Physics::initPhysics(World *world)
 {
     this->world = world;
+    world->ode_world = dWorldCreate();
+    world->ode_space = dHashSpaceCreate(0);
 }
 
 Physics::Physics()

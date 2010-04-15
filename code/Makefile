@@ -3,7 +3,7 @@ TARGET = $(BUILDDIR)/racer
 OS = $(shell uname -s)
 
 CFLAGS = -Wall --std=gnu99 -ggdb
-CXXFLAGS = -Wall -pedantic -ggdb
+CXXFLAGS = -Wall -ggdb
 
 LDFLAGS = 
 
