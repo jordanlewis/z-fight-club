@@ -46,7 +46,7 @@ $(TARGET): $(OBJECTS)
 
 .PHONY: clean
 clean:
-	rm -f $(PRECOMPILED_HEADERS) $(OBJECTS) game
+	rm -rf $(BUILDDIR)
 
 #	rm -f$(PRECOMPILED_HEADERS) $(OBJECTS) $(TARGET)
 
@@ -57,5 +57,5 @@ $(BUILDDIR)/%.o: %.c
 $(BUILDDIR)%.gch: %.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-game: $(OBJECTS)
+$(BUILDDIR)/game: $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
