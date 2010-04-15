@@ -26,7 +26,7 @@ CPP_SRCS = $(wildcard *.cpp)
 OBJECTS  = $(addprefix $(BUILDDIR)/, $(notdir $(C_SRCS:.c=.o) $(CPP_SRCS:.cpp=.o)))
 
 
-all: game
+all: $(BUILDDIR)/game
 
 all: $(BUILDDIR) $(TARGET)
 	echo "LDFLAGS: $(LDFLAGS)"
