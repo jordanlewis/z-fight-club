@@ -16,9 +16,6 @@ class Polygon {
                          NOTE: We may decide to go with quaternions later
                          */
   public:
-    Polygon();
-    ~Polygon();
-    
     void Render();
 };
 

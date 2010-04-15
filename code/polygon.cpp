@@ -1,9 +1,6 @@
 #include "polygon.h"
 
-Polygon::Polygon()
+void Polygon::Render()
 {
-}
-
-Polygon::~Polygon()
-{
+    // do nothing for now
 }

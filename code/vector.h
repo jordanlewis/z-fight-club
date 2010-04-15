@@ -44,10 +44,10 @@ typedef struct {
 /***** Scalar functions *****/
 
 //! \brief Square a number
-static inline float Sqrf (float x) { return (x*x); }
+static inline float Sqrf (const float x) { return (x*x); }
 
 //! \brief clamp a float value to [0.0,1.0]
-static inline float Clampf (float x)
+static inline float Clampf (const float x)
 {
     if (x < 0.0) return 0.0;
     else if (x > 1.0) return 1.0;
@@ -67,7 +67,7 @@ static inline void ZeroV2f (Vec2f_t v)
 //! \param v1 an argument vector
 //! \param v2 an argument vector
 //! \return the dot produce of \a v1 and \a v2
-static inline float DotV2f (Vec2f_t v1, Vec2f_t v2)
+static inline float DotV2f (const Vec2f_t v1, const Vec2f_t v2)
 {
     return ((v1[0]*v2[0]) + (v1[1]*v2[1]));
 }
@@ -75,7 +75,7 @@ static inline float DotV2f (Vec2f_t v1, Vec2f_t v2)
 //! \brief return the length squared of a vector
 //! \param v the argument vector
 //! \return the square of the length of \a v
-static inline float LengthSqV2f (Vec2f_t v)
+static inline float LengthSqV2f (const Vec2f_t v)
 {
     return DotV2f (v, v);
 }
@@ -83,7 +83,7 @@ static inline float LengthSqV2f (Vec2f_t v)
 //! vector length
 //! \param v the argument vector
 //! \return the length of \a v
-static inline float LengthV2f (Vec2f_t v)
+static inline float LengthV2f (const Vec2f_t v)
 {
     return sqrt (LengthSqV2f(v));
 }
@@ -95,7 +95,7 @@ static inline float LengthV2f (Vec2f_t v)
  *
  *  sets the vector \a dst to \a s * \a v.
  */
-static inline void ScaleV2f (float s, Vec2f_t v, Vec2f_t dst)
+static inline void ScaleV2f (const float s, const Vec2f_t v, Vec2f_t dst)
 {
     dst[0] = s*v[0];
     dst[1] = s*v[1];
@@ -135,7 +135,7 @@ static inline void ClampV2f (Vec2f_t v)
  *
  * sets the vector \a dst to the negation of \a v
  */
-static inline void NegV2f (Vec2f_t v, Vec2f_t dst)
+static inline void NegV2f (const Vec2f_t v, Vec2f_t dst)
 {
     dst[0] = -v[0];
     dst[1] = -v[1];
@@ -147,7 +147,7 @@ static inline void NegV2f (Vec2f_t v, Vec2f_t dst)
  *
  * sets the vector \a dst to \a src
  */
-static inline void CopyV2f (Vec2f_t src, Vec2f_t dst)
+static inline void CopyV2f (const Vec2f_t src, Vec2f_t dst)
 {
     dst[0] = src[0];
     dst[1] = src[1];
@@ -160,7 +160,7 @@ static inline void CopyV2f (Vec2f_t src, Vec2f_t dst)
  *
  * sets the vector \a dst to \a u + \a v
  */
-static inline void AddV2f (Vec2f_t u, Vec2f_t v, Vec2f_t dst)
+static inline void AddV2f (const Vec2f_t u, const Vec2f_t v, Vec2f_t dst)
 {
     dst[0] = u[0] + v[0];
     dst[1] = u[1] + v[1];
@@ -173,7 +173,7 @@ static inline void AddV2f (Vec2f_t u, Vec2f_t v, Vec2f_t dst)
  *
  * sets the vector \a dst to \a u - \a v
  */
-static inline void SubV2f (Vec2f_t u, Vec2f_t v, Vec2f_t dst)
+static inline void SubV2f (const Vec2f_t u, const Vec2f_t v, Vec2f_t dst)
 {
     dst[0] = u[0] - v[0];
     dst[1] = u[1] - v[1];
@@ -187,7 +187,7 @@ static inline void SubV2f (Vec2f_t u, Vec2f_t v, Vec2f_t dst)
  * 
  *  sets the vector \a dst to \a u + \a s * \a v
  */
-static inline void ScaledAddV2f (Vec2f_t u, float s, Vec2f_t v, Vec2f_t dst)
+static inline void ScaledAddV2f (const Vec2f_t u, const float s, const Vec2f_t v, Vec2f_t dst)
 {
     dst[0] = u[0] + s*v[0];
     dst[1] = u[1] + s*v[1];
@@ -207,7 +207,7 @@ static inline void ZeroV3f (Vec3f_t v)
 //! \param v1 an argument vector
 //! \param v2 an argument vector
 //! \return the dot produce of \a v1 and \a v2
-static inline float DotV3f (Vec3f_t v1, Vec3f_t v2)
+static inline float DotV3f (const Vec3f_t v1, const Vec3f_t v2)
 {
     return ((v1[0]*v2[0]) + (v1[1]*v2[1]) + (v1[2]*v2[2]));
 }
@@ -215,7 +215,7 @@ static inline float DotV3f (Vec3f_t v1, Vec3f_t v2)
 //! \brief return the length squared of a 3D vector
 //! \param v the argument vector
 //! \return the square of the length of \a v
-static inline float LengthSqV3f (Vec3f_t v)
+static inline float LengthSqV3f (const Vec3f_t v)
 {
     return DotV3f (v, v);
 }
@@ -333,7 +333,7 @@ static inline void ScaledAddV3f (Vec3f_t u, float s, Vec3f_t v, Vec3f_t dst)
  *
  * sets the vector \a dst to \a u - \a v
  */
-static inline void SubV3f (Vec3f_t u, Vec3f_t v, Vec3f_t dst)
+static inline void SubV3f (const Vec3f_t u, const Vec3f_t v, Vec3f_t dst)
 {
     dst[0] = u[0] - v[0];
     dst[1] = u[1] - v[1];
@@ -451,7 +451,7 @@ static inline void InitPlanef (Vec3f_t norm, float d, Planef_t *plane)
 //! \param plane the plane
 //! \param pt the point
 //! \return the signed distance
-static inline float DistanceToPlanef (Planef_t *plane, Vec3f_t pt)
+static inline float DistanceToPlanef (const Planef_t *plane, const Vec3f_t pt)
 {
     return DotV3f (plane->n, pt) + plane->d;
 }

@@ -25,8 +25,7 @@ CPP_SRCS = $(wildcard *.cpp)
 OBJECTS  = $(addprefix $(BUILDDIR)/, $(notdir $(C_SRCS:.c=.o) $(CPP_SRCS:.cpp=.o)))
 
 
-HEADERS             = $(wildcard *.h)
-PRECOMPILED_HEADERS = $(addprefix $(BUILDDIR)/, $(HEADERS:.h=.gch))
+all: game
 
 .PHONY: test
 
@@ -46,7 +45,7 @@ $(TARGET): $(OBJECTS)
 
 .PHONY: clean
 clean:
-	rm -rf $(BUILDDIR)
+	rm -f $(PRECOMPILED_HEADERS) $(OBJECTS) game
 
 #	rm -f$(PRECOMPILED_HEADERS) $(OBJECTS) $(TARGET)
 
@@ -56,3 +55,6 @@ $(BUILDDIR)/%.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 $(BUILDDIR)%.gch: %.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+game: $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@

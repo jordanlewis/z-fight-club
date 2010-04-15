@@ -1,9 +1,21 @@
 #include "camera.h"
 
-Camera::Camera()
+Graphics::Camera::Camera()
 {
+    // do nothing for now
 }
 
-Camera::~Camera()
+Graphics::Camera::~Camera()
 {
+    // do nothing for now
+}
+        
+void Graphics::Camera::SetTarget(Vec3f_t target)
+{
+    return;
+}
+
+void Graphics::Camera::SetProjectionMatrix()
+{
+    return;
 }
