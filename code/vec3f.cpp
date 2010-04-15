@@ -175,9 +175,9 @@ float Vec3f::operator[](int index) const
 
 bool Vec3f::operator==(const Vec3f &o) const
 {
-    return (abs(x == o.x) < EPSILON &&
-            abs(y == o.y) < EPSILON &&
-	    abs(z == o.z) < EPSILON);
+    return (abs(x - o.x) < EPSILON &&
+            abs(y - o.y) < EPSILON &&
+	    abs(z - o.z) < EPSILON);
 }
 
 // --------- Additional Functions --------- 
