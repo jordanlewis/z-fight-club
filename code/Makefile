@@ -8,7 +8,7 @@ else
   GLFLAGS = -lSDL -lm
 endif
 
-LDFLAGS = $(GLFLAGS) -lenet
+LDFLAGS = $(GLFLAGS) -lenet -lode
 
 CFLAGS = -Wall --std=gnu99 -ggdb
 CXXFLAGS = -Wall -pedantic -ggdb
