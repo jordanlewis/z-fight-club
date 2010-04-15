@@ -1,4 +1,5 @@
 #include <math.h>
+#include <ode/ode.h>
 #include "physics.h"
 #include "vector.h"
 #include "world.h"
@@ -41,18 +42,50 @@ void Physics::simulate(float dt)
     }
 }
 
-void Physics::initPhysics(World *world)
+void Physics::initPhysics()
 {
-    this->world = world;
-    world->ode_world = dWorldCreate();
-    world->ode_space = dHashSpaceCreate(0);
-}
+    odeWorld = dWorldCreate();
+    odeSpace = dHashSpaceCreate(0);
+    for (unsigned int i = 0; i < world->agents.size(); i++)
+    {
+        Agent &agent = world->agents[i];
+        Kinematic &k = agent.getKinematic();
+        PObject *pobj = new PObject(this, &k, 100, agent.width, agent.height,
+                                    agent.depth);
 
-Physics::Physics()
-{
+        pobj->kinematicToOde();
+
+        pobjects[agent.id] = pobj;
+    }
 }
 
 Physics::Physics(World *world)
 {
     this->world = world;
+}
+
+PObject::PObject(Physics *physics, Kinematic *kinematic, float mass,
+                 float xDim, float yDim, float zDim)
+{
+    this->physics = physics;
+    this->kinematic = kinematic;
+    // allocate a dynamics body and collisions geometry with given dimensions
+    this->body = dBodyCreate(physics->getOdeWorld());
+    this->geom = dCreateBox(physics->getOdeSpace(), xDim, yDim, zDim);
+    // give mass to body
+    dMassSetBox(&this->mass, 1.0f, xDim, yDim, zDim);
+    dMassAdjust(&this->mass, mass); // random mass, should change
+    // connect body to geometry
+    dGeomSetBody(geom, body);
+}
+
+void PObject::kinematicToOde()
+{
+    Kinematic *k = kinematic;
+    dQuaternion q;
+
+    dBodySetPosition(body, k->pos[0], k->pos[1], k->pos[2]);
+    // get orientation as angle around y axis; give that quat to the body
+    dQFromAxisAndAngle(q, 0, 1, 0, kinematic->orientation);
+    dBodySetQuaternion(body, q);
 }
