@@ -3,6 +3,7 @@
 
 #include <ode/ode.h>
 #include <ext/hash_map>
+#include <cmath>
 #include "vector.h"
 #include "world.h"
 #include "agent.h"

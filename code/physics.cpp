@@ -1,6 +1,8 @@
 #include <math.h>
 #include <ode/ode.h>
 #include <ext/hash_map>
+#include <iostream>
+
 #include "physics.h"
 #include "vector.h"
 #include "world.h"
@@ -37,6 +39,7 @@ void Physics::updateAgentKinematic(Agent::Agent *agent, float dt)
 
 void Physics::simulate(float dt)
 {
+    std::cout << "Simulating!" << endl;
     for (unsigned int i = 0; i < world->agents.size(); i++)
     {
         updateAgentKinematic(&world->agents[i], dt);
@@ -80,6 +83,7 @@ PObject::PObject(Physics *physics, Kinematic *kinematic, float mass,
     dGeomSetBody(geom, body);
 }
 
+//Copys the kinematic info into ODE's representation
 void PObject::kinematicToOde()
 {
     Kinematic *k = kinematic;
@@ -90,3 +94,48 @@ void PObject::kinematicToOde()
     dQFromAxisAndAngle(q, 0, 1, 0, kinematic->orientation);
     dBodySetQuaternion(body, q);
 }
+
+//Copys the ode info into the associated kinematic struct
+void PObject::odeToKinematic(){
+
+    dQuaternion q_result, q_base;
+    float norm;
+    const dReal *b_info;
+    //this const dReal* is actually a quaternion
+    const dReal* q_current = dBodyGetQuaternion(body);
+    
+    //Fill in kinematic angle
+    dQFromAxisAndAngle(q_base, 0, 1, 0, 0);
+    //Want: q_result = q_current*q_base*q_current^{-1}, so...
+    //Step1:  q_result = q_current*q_base
+    dQMultiply0(q_result, q_current, q_base);
+    //Step2:  q_result = q_result*q_current^{-1}
+    dQMultiply2(q_result, q_result, q_current);
+    
+    /*Project to X-Z plane (Ignore the Y component), renormalize, and 
+      calculate rotation around the Y axis*/
+    norm = sqrt(q_result[1]*q_result[1] + q_result[3]*q_result[3]);
+    if (norm == 0) {
+	cerr << "Error:  Agent facing directly upwards.  Setting kinematic" 
+	     << "theta to 0." << endl;
+	kinematic->orientation = 0;
+    }
+    else {
+	//Normalize vectors  
+	q_result[1] = q_result[1]/norm;
+	q_result[3] = q_result[3]/norm;
+	//Calculate theta
+	kinematic->orientation = atan2(q_result[1], q_result[3]);
+    }
+
+    //Fill in kinematic position and velocty
+    b_info = dBodyGetPosition(body);
+    kinematic->pos[0] = b_info[0];
+    kinematic->pos[1] = b_info[1];
+    kinematic->pos[2] = b_info[2];
+    b_info = dBodyGetLinearVel(body);
+    kinematic->vel[0] = b_info[0];
+    kinematic->vel[1] = b_info[1];
+    kinematic->vel[2] = b_info[2];
+}
+
