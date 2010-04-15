@@ -2,19 +2,20 @@
 #define PHYSICS_H
 
 #include <ode/ode.h>
-#include <unordered_map>
+#include <ext/hash_map>
 #include "vector.h"
 #include "world.h"
 #include "agent.h"
 
 using namespace std;
+using namespace __gnu_cxx;
 
 class PObject;
 
 class Physics
 {
     World *world; /* our world */
-    unordered_map<int, PObject *> pobjects;
+    hash_map<int, PObject *> pobjects;
     dWorldID odeWorld;
     dSpaceID odeSpace;
     void updateAgentKinematic(Agent::Agent *agent, float dt);

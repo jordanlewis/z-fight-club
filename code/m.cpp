@@ -5,7 +5,7 @@ int main()
 {
 //    World the_world;
 
-    Scheduler *the_scheduler;
+    //Scheduler *the_scheduler;
 //    the_scheduler->loopForever(&the_world);
     
     return 0;

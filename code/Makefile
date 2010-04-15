@@ -10,6 +10,7 @@ LDFLAGS =
 ifeq ($(OS),Darwin)
   GLFLAGS = -framework GLUT -framework OpenGL -framework Foundation #FIXME this is out of date
   
+  # Gets libraries downloaded by MacPorts
   CFLAGS   += -I/opt/local/include
   CXXFLAGS += -I/opt/local/include
 
@@ -27,16 +28,16 @@ OBJECTS  = $(addprefix $(BUILDDIR)/, $(notdir $(C_SRCS:.c=.o) $(CPP_SRCS:.cpp=.o
 
 all: game
 
-.PHONY: test
-
 all: $(BUILDDIR) $(TARGET)
 	echo "LDFLAGS: $(LDFLAGS)"
 
 $(BUILDDIR):
 	mkdir $@
 
+.PHONY: test
 test: all
 	./$(TARGET)
+
 header_test: $(PRECOMPILED_HEADERS)
 object_test: $(OBJECTS)
 
