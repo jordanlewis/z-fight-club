@@ -5,7 +5,7 @@ OS = $(shell uname -s)
 CFLAGS = -Wall --std=gnu99 -ggdb
 CXXFLAGS = -Wall -pedantic -ggdb
 
-LDFLAGS = $(GLFLAGS) -lenet -lSDL 
+LDFLAGS = 
 
 ifeq ($(OS),Darwin)
   GLFLAGS = -framework GLUT -framework OpenGL -framework Foundation #FIXME this is out of date
@@ -18,6 +18,8 @@ else
   GLFLAGS = -lm
 endif
 
+LDFLAGS += $(GLFLAGS) -lenet -lSDL 
+
 C_SRCS   = $(wildcard *.c)
 CPP_SRCS = $(wildcard *.cpp)
 OBJECTS  = $(addprefix $(BUILDDIR)/, $(notdir $(C_SRCS:.c=.o) $(CPP_SRCS:.cpp=.o)))
@@ -29,6 +31,7 @@ PRECOMPILED_HEADERS = $(addprefix $(BUILDDIR)/, $(HEADERS:.h=.gch))
 .PHONY: test
 
 all: $(BUILDDIR) $(TARGET)
+	@echo "LDFLAGS: $(LDFLAGS)"
 
 $(BUILDDIR):
 	mkdir $@

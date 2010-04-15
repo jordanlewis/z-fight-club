@@ -15,7 +15,6 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     //Scheduler scheduler;
-    
     //World world;
 
     cout << "Hello, world!";
