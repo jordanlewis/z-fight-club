@@ -23,7 +23,6 @@ Scheduler::Scheduler(World *world, Graphics *graphics, Physics *physics)
     this->world = world;
     this->graphics = graphics;
     this->physics = physics;
-    graphics->InitGraphics();
 }
 
 void Scheduler::schedule(ComponentEvent &evt)
@@ -36,8 +35,6 @@ void Scheduler::loopForever()
     int done = 0;
     double now;
     double last = GetTime();
-
-    physics->initPhysics();
 
     cout << "Looping forever..." << endl;
     while (!done)
