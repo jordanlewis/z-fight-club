@@ -1,5 +1,5 @@
 #include "agent.h"
-#include "vector.h"
+#include "vec3f.h"
 
 unsigned int Agent::maxId = 0;    /* !<highest id number we've reached */
 float        Agent::maxAccel = 10;  /*XXX 10 is a random value; tweak this */
@@ -11,11 +11,10 @@ float        Agent::depth = 40;
 /* \brief initialize an agent class
  * \param position the agent's initial position
  */
-Agent::Agent(Vec3f_t position)
+Agent::Agent(Vec3f position)
 {
     id = maxId++; /* Get next ID, increment maxId */
-    CopyV3f(position, kinematic.pos);
-    ZeroV3f(kinematic.vel);
+    kinematic.pos = position;
     kinematic.orientation = 0; /* facing into the z direction */
 }
 
@@ -23,11 +22,10 @@ Agent::Agent(Vec3f_t position)
  * \param position the agent's initial position
  * \param orientation the agent's initial orientation
  */
-Agent::Agent(Vec3f_t position, float orientation)
+Agent::Agent(Vec3f position, float orientation)
 {
     id = maxId++;
-    CopyV3f(position, kinematic.pos);
-    ZeroV3f(kinematic.vel);
+    kinematic.pos = position;
     kinematic.orientation = orientation;
 }
 

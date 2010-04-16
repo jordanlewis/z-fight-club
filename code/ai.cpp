@@ -2,10 +2,10 @@
 #include <math.h>
 #include <stdlib.h>
 #include "ai.h"
-#include "vector.h"
+#include "vec3f.h"
 #include "agent.h"
 
-const std::vector<Vec3f_t>* Path::get_knots() const
+const std::vector<Vec3f>* Path::get_knots() const
 {
     return &(this->knots);
 }
@@ -28,14 +28,14 @@ int Path::get_index() const
 
 
 
-void Seek (Kinematic *car, float maxAccel, const Vec3f_t target, SteerInfo *steer)
+void Seek (Kinematic *car, float maxAccel, const Vec3f target, SteerInfo *steer)
 {
-    Vec3f_t diff;
-    SubV3f(target, car->pos, diff);
-    NormalizeV3f(diff);
-    ScaleV3f(maxAccel, diff, diff);
+    Vec3f diff;
+    diff = target - car->pos;
+    diff.normalize();
+    diff *= maxAccel;
 
-    steer->acceleration = LengthV3f(diff);
+    steer->acceleration = diff.length();
     steer->rotation = 0;
 }
 
@@ -75,10 +75,10 @@ void Align (Kinematic *car, float maxRotation, float target, SteerInfo *steer)
 
 void Cruise (Kinematic *car, float maxAccel, Path *path, SteerInfo *steer)
 {
-    Vec3f_t dist;
-    const float* a = path->get_knots()->front();
-    SubV3f(a, car->pos, dist);
-    if (LengthV3f(dist) < path->get_precision()->front())
+    Vec3f dist;
+    Vec3f a = path->get_knots()->front();
+    dist = a - car->pos;
+    if (dist.length() < path->get_precision()->front())
 	path->increase_index(1);
     
     Seek(car, maxAccel, (*path->get_knots())[path->get_index()], steer);

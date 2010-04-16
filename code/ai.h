@@ -2,7 +2,7 @@
 #define AI_H
 
 #include <vector>
-#include "vector.h"
+#include "vec3f.h"
 #include "agent.h"
 
 /* \brief Class Path
@@ -12,14 +12,14 @@ class Path
 {
   public:
     int			    index;	/* !< the first knot we haven't passed */
-    std::vector<Vec3f_t>    knots;	/* !< knots defining the path */
+    std::vector<Vec3f>    knots;	/* !< knots defining the path */
     std::vector<float>	    precision;	/* !< how closely we want to follow the knots */
     Path ();
-    Path (std::vector<Vec3f_t>);
+    Path (std::vector<Vec3f>);
     ~Path();
 
-    Path *PathToPath(Vec3f_t position, float urgency);
-    const std::vector<Vec3f_t> *get_knots() const;
+    Path *PathToPath(Vec3f position, float urgency);
+    const std::vector<Vec3f> *get_knots() const;
     const std::vector<float> *get_precision() const;
     void increase_index(int);
     int get_index() const;

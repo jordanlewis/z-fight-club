@@ -1,14 +1,14 @@
 #ifndef AGENT_H
 #define AGENT_H
 
-#include "vector.h"
+#include "vec3f.h"
 #include <vector>
 
 class Kinematic
 {
   public:
-    Vec3f_t pos;
-    Vec3f_t vel;
+    Vec3f pos;
+    Vec3f vel;
 
     float orientation;
 };
@@ -35,8 +35,8 @@ class Agent
     static float width;
     static float depth;
 
-    Agent (Vec3f_t);      /* Constructor; Initial position */
-    Agent (Vec3f_t, float); /* Constructor; Initial position and orientation */
+    Agent (Vec3f);      /* Constructor; Initial position */
+    Agent (Vec3f, float); /* Constructor; Initial position and orientation */
 
     /* The below method is the interface between the generic agent
      * implemented in agent.c and the two types of agent controllers - AI
