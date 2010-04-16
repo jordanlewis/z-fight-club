@@ -107,7 +107,7 @@ void Physics::simulate(float dt)
 /*
 void Physics::simulate(float dt)
 {
-    cout << "Simulating!" << endl;
+    
     for (unsigned int i = 0; i < world->agents.size(); i++)
     {
         updateAgentKinematic(&world->agents[i], dt);
@@ -197,19 +197,19 @@ void PObject::steeringToOde()
 //Copys the ode info into the associated kinematic struct
 void PObject::odeToKinematic(){
 
-    dQuaternion q_result, q_base;
+    dQuaternion q_result, q_result1, q_base;
     float norm;
     const dReal *b_info;
     //this const dReal* is actually a quaternion
     const dReal* q_current = dBodyGetQuaternion(body);
     
     //Fill in kinematic angle
-    dQFromAxisAndAngle(q_base, 0, 1, 0, 0);
+    q_base[0]=0; q_base[1] = 0; q_base[2] = 0; q_base[3]=1;
     //Want: q_result = q_current*q_base*q_current^{-1}, so...
     //Step1:  q_result = q_current*q_base
-    dQMultiply0(q_result, q_current, q_base);
+    dQMultiply0(q_result1, q_current, q_base);
     //Step2:  q_result = q_result*q_current^{-1}
-    dQMultiply2(q_result, q_result, q_current);
+    dQMultiply2(q_result, q_result1, q_current);
     
     /*Project to X-Z plane (Ignore the Y component), renormalize, and 
       calculate rotation around the Y axis*/
@@ -225,6 +225,7 @@ void PObject::odeToKinematic(){
 	q_result[3] = q_result[3]/norm;
 	//Calculate theta
 	kinematic->orientation = atan2(q_result[1], q_result[3]);
+	//cout << "Calculated orientation as " << kinematic->orientation << endl;
     }
 
     //Fill in kinematic position and velocty
