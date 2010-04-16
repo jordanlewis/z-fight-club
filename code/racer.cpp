@@ -25,14 +25,16 @@ int main(int argc, char *argv[])
 
     Vec3f pos = Vec3f(100, 0, 100);
     Agent agent(pos);
-    world->registerAgent(agent);
-    physics->initAgent(agent);
-
 
     SteerInfo steer;
     steer.acceleration = 0.001;
     steer.rotation = 0;
-    world->agents[0].setSteering(steer);
+    agent.setSteering(steer);
+
+    world->registerAgent(agent);
+    physics->initAgent(agent);
+
+
 
     scheduler.loopForever();
 
