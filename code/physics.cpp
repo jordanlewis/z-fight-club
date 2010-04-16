@@ -42,12 +42,22 @@ void Physics::updateAgentKinematic(Agent::Agent *agent, float dt)
 
 void Physics::simulate(float dt)
 {
-    std::cout << "Simulating!" << endl;
+    dWorldStep(odeWorld, dt);
+    for (vector<Agent>::iterator iter = world->agents.begin();
+	 iter != world->agents.end(); iter++){
+	pobjects[iter->id]->odeToKinematic();
+    }
+}
+
+/*
+void Physics::simulate(float dt)
+{
     for (unsigned int i = 0; i < world->agents.size(); i++)
     {
         updateAgentKinematic(&world->agents[i], dt);
     }
 }
+*/
 
 void Physics::initPhysics()
 {
