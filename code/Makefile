@@ -48,10 +48,35 @@ clean:
 	rm -rf $(BUILDDIR)
 
 $(OBJECTS): $(CPP_SRCS) $(C_SRCS)
-	for D in $(LIBDIRS); do make -C $$D; done
+	make -C Agents
+	make -C Engine
+	make -C Graphics
+	make -C Network
+	make -C Physics
+	make -C Parser
+	make -C Sound
+	make -C Utilities
 
-$(LIBDIRS): $(wildcard $@/*)
-	make -C $@
+Agents: $(wildcard Agents/*)
+	make -C Agents
+
+Graphics: $(wildcard Graphics/*)
+	make -C Graphics
+
+Network: $(wildcard Network/*)
+	make -C Network
+
+Physics: $(wildcard Physics/*)
+	make -C Physics
+
+Parser: $(wildcard Parser/*)
+	make -C Parser
+
+Sound: $(wildcard Sound/*)
+	make -C Sound
+
+Utilities: $(wildcard Utilities/*)
+	make -C Utilities
 
 $(BUILDDIR)/%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
