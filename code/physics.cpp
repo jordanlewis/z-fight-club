@@ -7,6 +7,7 @@
 #include "vector.h"
 #include "world.h"
 #include "agent.h"
+#include "vec3f.h"
 
 using namespace std;
 
@@ -56,8 +57,9 @@ void Physics::initPhysics()
     {
         Agent &agent = world->agents[i];
         Kinematic &k = agent.getKinematic();
-        PObject *pobj = new PObject(this, &k, 100, agent.width, agent.height,
-                                    agent.depth);
+        SteerInfo &s = agent.getSteering();
+        PObject *pobj = new PObject(this, &k, &s, 100, agent.width,
+                                    agent.height, agent.depth);
 
         pobj->kinematicToOde();
 
@@ -70,11 +72,12 @@ Physics::Physics(World *world)
     this->world = world;
 }
 
-PObject::PObject(Physics *physics, Kinematic *kinematic, float mass,
-                 float xDim, float yDim, float zDim)
+PObject::PObject(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
+                 float mass, float xDim, float yDim, float zDim)
 {
     this->physics = physics;
     this->kinematic = kinematic;
+    this->steering = steering;
     // allocate a dynamics body and collisions geometry with given dimensions
     this->body = dBodyCreate(physics->getOdeWorld());
     this->geom = dCreateBox(physics->getOdeSpace(), xDim, yDim, zDim);
@@ -95,6 +98,17 @@ void PObject::kinematicToOde()
     // get orientation as angle around y axis; give that quat to the body
     dQFromAxisAndAngle(q, 0, 1, 0, kinematic->orientation);
     dBodySetQuaternion(body, q);
+}
+
+//Translates the object's steering info into ODE forces
+void PObject::steeringToOde()
+{
+    const dReal* angVel = dBodyGetAngularVel(body);
+    dBodySetAngularVel(body, angVel[0], steering->rotation, angVel[2]);
+
+    Vec3f f = Vec3f(sin(kinematic->orientation),0,cos(kinematic->orientation));
+    f *= steering->acceleration * mass.mass;
+    dBodyAddForce(body, f[0], f[1], f[2]);
 }
 
 //Copys the ode info into the associated kinematic struct

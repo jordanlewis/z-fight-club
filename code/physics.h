@@ -31,14 +31,16 @@ class PObject
 {
     Physics *physics; // The physics object this PObject belongs to
     Kinematic *kinematic; //A kinematic bound to this object
+    SteerInfo *steering; // Steering info bound to this object
     dBodyID body; //an ODE body object that we will use to simulate physics
     dMass mass;   //an ODE mass object giving us this object's mass info
     dGeomID geom; //an ODE geom object used if our body is to be collidable
   public:
-    PObject(Physics *physics, Kinematic *kinematic, float mass,
-            float xDim, float yDim, float zDim);
+    PObject(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
+            float mass, float xDim, float yDim, float zDim);
     void odeToKinematic(); //writes (syncs) the body coords into the kinematic
     void kinematicToOde(); //writes (syncs) the kinematic into ODE
+    void steeringToOde();  //translates steering info into ODE forces
 };
 
 #endif
