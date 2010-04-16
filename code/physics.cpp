@@ -122,8 +122,6 @@ void Physics::initAgent(Agent &agent)
     PObject *pobj = new PObject(this, &k, &s, 100, agent.width,
                                 agent.height, agent.depth);
 
-    pobj->kinematicToOde();
-
     pobjects[agent.id] = pobj;
 }
 
@@ -163,11 +161,7 @@ PObject::PObject(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
     this->body = dBodyCreate(physics->getOdeWorld());
 
     // set initial position and rotation
-    dBodySetPosition(body, kinematic->pos[0], kinematic->pos[1],
-                     kinematic->pos[2]);
-    dQuaternion q;
-    dQFromAxisAndAngle(q, 0, 1, 0, kinematic->orientation);
-    dBodySetQuaternion(body, q);
+    kinematicToOde();
 
     this->geom = dCreateBox(physics->getOdeSpace(), xDim, yDim, zDim);
     // give mass to body
