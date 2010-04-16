@@ -175,9 +175,24 @@ float Vec3f::operator[](int index) const
 
 bool Vec3f::operator==(const Vec3f &o) const
 {
-    return (abs(x - o.x) < EPSILON &&
-            abs(y - o.y) < EPSILON &&
-	    abs(z - o.z) < EPSILON);
+    return (abs(x == o.x) < EPSILON &&
+            abs(y == o.y) < EPSILON &&
+	    abs(z == o.z) < EPSILON);
+}
+
+// --------- Normalization --------- 
+Vec3f Vec3f::norm() const
+{
+    float len = length();
+    return Vec3f(x/len,y/len,z/len);
+}
+
+void Vec3f::normalizeMe()
+{
+    float len = length();
+    x /= len;
+    y /= len;
+    z /= len;
 }
 
 // --------- Additional Functions --------- 
