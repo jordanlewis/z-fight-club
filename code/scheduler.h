@@ -29,13 +29,13 @@ class Scheduler
 {
     std::priority_queue <ComponentEvent> eventQueue; /* !<queue of events */
 
-    Graphics graphics;
-    World world;
-    Physics physics;
+    Graphics *graphics;
+    World *world;
+    Physics *physics;
   public:
-    Scheduler();
+    Scheduler(World *world, Graphics *graphics, Physics *physics);
     void schedule(ComponentEvent &evt);
-    void loopForever(World *world);
+    void loopForever();
 };
 
 #endif

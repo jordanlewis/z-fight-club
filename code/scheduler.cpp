@@ -1,8 +1,11 @@
+#include <queue>
+#include <iostream>
+#include <SDL/SDL.h>
 #include "scheduler.h"
 #include "world.h"
-#include "SDL/SDL.h"
-#include <queue>
 #include "defs.h"
+
+using namespace std;
 
 ComponentEvent::ComponentEvent(double when, Component_t which)
 {
@@ -15,11 +18,12 @@ bool ComponentEvent::operator< (const ComponentEvent &evt) const
     return evt.at < at;
 }
 
-Scheduler::Scheduler() : physics(&world)
+Scheduler::Scheduler(World *world, Graphics *graphics, Physics *physics)
 {
-    physics = Physics(&world);
-    eventQueue = std::priority_queue<ComponentEvent>();
-    graphics.InitGraphics();
+    this->world = world;
+    this->graphics = graphics;
+    this->physics = physics;
+    graphics->InitGraphics();
 }
 
 void Scheduler::schedule(ComponentEvent &evt)
@@ -27,12 +31,15 @@ void Scheduler::schedule(ComponentEvent &evt)
     eventQueue.push(evt);
 }
 
-void Scheduler::loopForever(World *world)
+void Scheduler::loopForever()
 {
     int done = 0;
     double now;
     double last = GetTime();
 
+    physics->initPhysics();
+
+    cout << "Looping forever..." << endl;
     while (!done)
     {
 	/* Grab input from SDL loop */
@@ -45,11 +52,16 @@ void Scheduler::loopForever(World *world)
 	    }
 	}
 
+
+
         now = GetTime();
-        physics.simulate(now - last);
+        if (now - last > 0)
+        {
+            physics->simulate(now - last);
+        }
         last = now;
 
-        graphics.render(world);
+        graphics->render(world);
 
 
 #ifdef USING_COMPLICATED_SCHEDULER
