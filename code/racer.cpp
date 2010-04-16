@@ -14,15 +14,22 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    //Scheduler scheduler;
-    //World world;
+    World *world = new World;
+    Graphics *graphics = new Graphics;
+    Physics *physics = new Physics(world);
+    Scheduler scheduler(world, graphics, physics);
 
-    cout << "Hello, world!";
+    Vec3f pos = Vec3f(100, 0, 100);
+    Agent agent(pos);
+    world->agents.push_back(agent);
+
+
+    SteerInfo steer;
+    steer.acceleration = 0.001;
+    steer.rotation = 0;
+    world->agents[0].setSteering(steer);
+
+    scheduler.loopForever();
+
     return 0;
-
-    //scheduler.loopForever(&world);
-    //Vec3f a = Vec3f(1,0,0);
-    //Vec3f b = Vec3f(1,0,0);
-
-    //cout << a << endl;
 }
