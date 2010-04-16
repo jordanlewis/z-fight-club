@@ -4,10 +4,10 @@
 #include <iostream>
 
 #include "physics.h"
-#include "vector.h"
-#include "world.h"
-#include "agent.h"
-#include "vec3f.h"
+#include "../Utilities/vector.h"
+#include "../Engine/world.h"
+#include "../Agents/agent.h"
+#include "../Utilities/vec3f.h"
 
 #define MAX_CONTACTS 8
 

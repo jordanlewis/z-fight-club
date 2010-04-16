@@ -3,8 +3,8 @@
 
 #include <queue>
 #include "world.h"
-#include "graphics.h"
-#include "physics.h"
+#include "../Graphics/graphics.h"
+#include "../Physics/physics.h"
 
 typedef enum
 {

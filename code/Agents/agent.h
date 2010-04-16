@@ -1,7 +1,7 @@
 #ifndef AGENT_H
 #define AGENT_H
 
-#include "vec3f.h"
+#include "../Utilities/vec3f.h"
 #include <vector>
 
 class Kinematic

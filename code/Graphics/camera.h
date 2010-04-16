@@ -1,7 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "vector.h"
+#include "../Utilities/vector.h"
 
 class Camera {
     /* The position, orientation, and up vector for the Camera.
