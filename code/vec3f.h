@@ -81,6 +81,9 @@ class Vec3f {
     //! \brief returns the magnitude of this vector
     float length() const;
 
+    //! \brief normalizes this vector
+    float normalize();
+
     //! \brief takes the dot product with another vector
     float dot(const Vec3f&) const;
 };

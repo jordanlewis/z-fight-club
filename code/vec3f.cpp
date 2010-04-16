@@ -187,6 +187,20 @@ float Vec3f::length() const
     return sqrt((x*x)+(y*y)+(z*z));
 }
 
+float Vec3f::normalize()
+{
+    float s = length();
+    if (s < EPSILON) return 0.0;
+    s = sqrt(s);
+    float d = 1.0 / s;
+
+    x *= d;
+    y *= d;
+    z *= d;
+
+    return s;
+}
+
 float Vec3f::dot(const Vec3f &o) const
 {
     return ((x*o.x) + (y*o.y) + (z*o.z));
