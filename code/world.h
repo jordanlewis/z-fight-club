@@ -20,6 +20,8 @@ class World
     dSpaceID ode_space;
     std::vector<Agent> agents; /* the agents in the world */
 
+    void registerAgent(Agent &agent);
+
     World();
 };
 

@@ -9,3 +9,8 @@ World::World()
     environment = std::vector<Polygon>();
     agents      = std::vector<Agent>();
 }
+
+void World::registerAgent(Agent &agent)
+{
+    agents.push_back(agent);
+}
