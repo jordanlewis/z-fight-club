@@ -180,6 +180,21 @@ bool Vec3f::operator==(const Vec3f &o) const
 	    abs(z == o.z) < EPSILON);
 }
 
+// --------- Normalization --------- 
+Vec3f Vec3f::norm() const
+{
+    float len = length();
+    return Vec3f(x/len,y/len,z/len);
+}
+
+void Vec3f::normalizeMe()
+{
+    float len = length();
+    x /= len;
+    y /= len;
+    z /= len;
+}
+
 // --------- Additional Functions --------- 
 
 float Vec3f::length() const

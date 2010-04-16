@@ -76,6 +76,14 @@ class Vec3f {
 
     bool operator==(const Vec3f&) const;
 
+    // --------- Normalization --------- 
+
+    //! \brief returns the unit vector that points in the direction of this vector
+    Vec3f norm() const;
+
+    //! \brief normalizes this vector
+    void normalizeMe();
+
     // --------- Additional Functions --------- 
     
     //! \brief returns the magnitude of this vector
