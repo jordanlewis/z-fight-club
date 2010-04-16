@@ -1,6 +1,6 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
-#include "world.h"
+#include "../Engine/world.h"
 
 class Graphics {
     public:

@@ -1,5 +1,5 @@
 #include "graphics.h"
-#include "world.h"
+#include "../Engine/world.h"
 #include <SDL/SDL.h>
 
 #if defined(__APPLE__) && defined(__MACH__)

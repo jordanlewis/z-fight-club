@@ -1,5 +1,5 @@
 #include "agent.h"
-#include "vec3f.h"
+#include "../Utilities/vec3f.h"
 
 unsigned int Agent::maxId = 0;    /* !<highest id number we've reached */
 float        Agent::maxAccel = 10;  /*XXX 10 is a random value; tweak this */

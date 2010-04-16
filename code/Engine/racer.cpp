@@ -1,5 +1,5 @@
 /*
- * racer.c
+ * racer.cpp
  *
  * main racer file
  */
@@ -8,7 +8,7 @@
 #include <SDL/SDL.h>
 #include "scheduler.h"
 
-#include "vec3f.h"
+#include "../Utilities/vec3f.h"
 
 using namespace std;
 

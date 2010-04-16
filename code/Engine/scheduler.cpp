@@ -3,7 +3,7 @@
 #include <SDL/SDL.h>
 #include "scheduler.h"
 #include "world.h"
-#include "defs.h"
+#include "../Utilities/defs.h"
 
 using namespace std;
 

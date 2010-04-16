@@ -2,7 +2,7 @@
 #define AI_H
 
 #include <vector>
-#include "vec3f.h"
+#include "../Utilities/vec3f.h"
 #include "agent.h"
 
 /* \brief Class Path
