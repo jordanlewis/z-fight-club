@@ -17,12 +17,17 @@ class Physics
     __gnu_cxx::hash_map<int, PObject *> pobjects;
     dWorldID odeWorld;
     dSpaceID odeSpace;
+    dJointGroupID odeContacts;
+
     void updateAgentKinematic(Agent::Agent *agent, float dt);
   public:
     Physics(World *world); /* constructor; initialize with a world */
+    ~Physics();
     const dWorldID & getOdeWorld() { return odeWorld; };
     const dSpaceID & getOdeSpace() { return odeSpace; };
+    const dJointGroupID & getOdeContacts() { return odeContacts; };
     void initPhysics();
+    void initAgent(Agent &agent);
     void simulate(float dt); /* step the world forward by dt. */
 };
 
