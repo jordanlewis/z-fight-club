@@ -1,21 +1,25 @@
-CXXFLAGS = -Wall -pedantic -g
+CXXFLAGS = -Wall -pedantic -g -I../..
 CFLAGS   = -Wall -pedantic -std=c99 -g
+LDFLAGS = -L../../build -lm
 
 TARGET = target
 
 SRCS    = $(wildcard *.cpp)
 HEADERS = $(wildcard *.h)
 
-OBJECTS = $(SRCS:.cpp=.o)
 
-$(TARGET): $(OBJECTS) $(HEADERS)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+$(TARGET): ../../build/vec3f.o main.o
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
-main: main.o
-	$(CXX) $(CXXFLAGS) -o $@ $^
+../../build/vec3f.o:
+	make -C ../.. build/vec3f.o
 
-headers: $(HEADERS)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+main.o: main.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $^
+
+
+
+
 
 .PHONY: test clean pvars
 pvars:
@@ -27,4 +31,4 @@ test: $(TARGET)
 	./$(TARGET)
 
 clean:
-	rm -r $(OBJECTS) $(TARGET) main headers
+	rm -rf $(OBJECTS) $(TARGET) main headers

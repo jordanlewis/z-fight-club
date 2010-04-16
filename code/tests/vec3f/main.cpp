@@ -1,10 +1,11 @@
 #include<iostream>
-#include"vec3f.h"
+#include<cmath>
+#include<vec3f.h>
 
 using namespace std;
 
 int main(int argc, char *argv []) {
-	cout << (abs(-0) < 10e-6 ? "True" : "False") << endl;
+	cout << (abs((float)-0) < 10e-6 ? "True" : "False") << endl;
 	Vec3f a, b(1,0,0);
 
 	cout << "Non-const:" << endl;
