@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 
     world->registerAgent(agent);
     physics->initAgent(agent);
-
+    physics->initGeom(PlaneInfo(0,1,0,-100, physics->getOdeSpace()));
 
 
     scheduler.loopForever();

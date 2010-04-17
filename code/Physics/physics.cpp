@@ -10,11 +10,13 @@
 #include "../Utilities/vec3f.h"
 
 #define MAX_CONTACTS 8
+#define GRAVITY -9.8
 
 using namespace std;
 
 static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 {
+    cout << "Collision Callback!" << endl;
     Physics *p = (Physics *) data;
 
     dWorldID odeWorld = p->getOdeWorld();
@@ -41,6 +43,7 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
                                  sizeof(dContact));
     if (numCollisions > 0)
     {
+	cout << "zOMG a collision!" << endl;
         dMatrix3 RI;
         dRSetIdentity (RI);
         for (int i = 0; i < numCollisions; i++)
@@ -120,9 +123,22 @@ void Physics::initAgent(Agent &agent)
     Kinematic &k = agent.getKinematic();
     SteerInfo &s = agent.getSteering();
     PAgent *pobj = new PAgent(this, &k, &s, 100,
-			      BoxInfo(agent.width, agent.height, agent.depth));
+			      BoxInfo(agent.width, agent.height, agent.depth,
+				      this->odeSpace));
 
     pagents[agent.id] = pobj;
+}
+
+void Physics::initGeom(SphereInfo info){
+    new PGeom(this, info);
+}
+
+void Physics::initGeom(BoxInfo info){
+    new PGeom(this, info);
+}
+
+void Physics::initGeom(PlaneInfo info){
+    new PGeom(this, info);
 }
 
 void Physics::initPhysics()
@@ -135,7 +151,7 @@ void Physics::initPhysics()
     dWorldSetAutoDisableFlag(odeWorld, 1);
     dWorldSetContactMaxCorrectingVel(odeWorld, 0.1);
     dWorldSetContactSurfaceLayer(odeWorld, 0.001);
-
+    dWorldSetGravity(odeWorld, 0,GRAVITY,0);
 }
 
 Physics::Physics(World *world)

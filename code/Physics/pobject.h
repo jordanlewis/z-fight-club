@@ -46,6 +46,8 @@ class PlaneInfo{
     PlaneInfo(float a, float b, float c, float d, dSpaceID space = 0){
 	this->space = space;
 	this->a = a; this->b = b; this->c = c; this->d = d;
+	cout << "Plane initialized at "<< a <<"x + " << b << "y + "
+	     << c << "z = " << d << "." << endl;
     }
 };
 
