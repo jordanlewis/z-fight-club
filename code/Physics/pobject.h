@@ -8,6 +8,7 @@ using namespace std;
 
 class Physics;
 
+//Packages info for a sphere of radius r
 class SphereInfo{
  public:
     dSpaceID space;
@@ -17,6 +18,7 @@ class SphereInfo{
     }
 };
 
+//Packages info for a box of dimensions lx*ly*lz
 class BoxInfo{
  public:
     dSpaceID space;
@@ -26,22 +28,33 @@ class BoxInfo{
     }
 };
 
+//NYI
 class CylinderInfo{
     
 };
 
+//NYI
 class CCylinderInfo{
     
 };
 
+//Packages info for the plane defined by ax+by+cz = d;
 class PlaneInfo{
-    
+ public:
+    dSpaceID space;
+    float a, b, c, d;
+    PlaneInfo(float a, float b, float c, float d, dSpaceID space = 0){
+	this->space = space;
+	this->a = a; this->b = b; this->c = c; this->d = d;
+    }
 };
 
+//NYI
 class RayInfo{
 
 };
 
+//Stores geometry info for use in ODE collision calculations
 class PGeom
 {
  protected:
@@ -52,11 +65,14 @@ class PGeom
     PGeom(Physics *physics, BoxInfo info);
     PGeom(Physics *physics, CylinderInfo info); //NYI
     PGeom(Physics *physics, CCylinderInfo info); //NYI
-    PGeom(Physics *physics, PlaneInfo info); //NYI
+    PGeom(Physics *physics, PlaneInfo info);
     PGeom(Physics *physics, RayInfo info); //NYI
 };
 
-
+/*
+ * Stores both dynamics and geometry info for use in ODE.  Provides methods to
+ * synchronize kinematic interface with ODE
+ */
 class PMoveable: public PGeom 
 {
  protected:
@@ -69,17 +85,16 @@ class PMoveable: public PGeom
     PMoveable(Physics *physics, Kinematic *kinematic, float mass,
 	      BoxInfo info);
     PMoveable(Physics *physics, Kinematic *kinematic, float mass,
-	      CylinderInfo info);
+	      CylinderInfo info); //NYI
     PMoveable(Physics *physics, Kinematic *kinematic, float mass,
-	      CCylinderInfo info);
+	      CCylinderInfo info); //NYI
     PMoveable(Physics *physics, Kinematic *kinematic, float mass,
-	      PlaneInfo info);
-    PMoveable(Physics *physics, Kinematic *kinematic, float mass,
-	      RayInfo info);
+	      RayInfo info); //NYI
     void odeToKinematic(); //writes (syncs) the body coords into the kinematic
-    void kinematicToOde();
+    void kinematicToOde(); //writes (syncs) the kinematic coords into the body
 };
 
+// Same as PMoveable, but adds steering info and related interfaces
 class PAgent: public PMoveable
 {
  protected:
@@ -90,13 +105,11 @@ class PAgent: public PMoveable
     PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
 	   float mass, BoxInfo info);
     PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
-	   float mass, CylinderInfo info);
+	   float mass, CylinderInfo info); //NYI
     PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering, 
-	   float mass, CCylinderInfo info);
+	   float mass, CCylinderInfo info); //NYI
     PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
-	   float mass, PlaneInfo info);
-    PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
-	   float mass, RayInfo info);
-    void steeringToOde();
+	   float mass, RayInfo info); //NYI
+    void steeringToOde(); //Write steering info into the ODE structs
 };
 #endif

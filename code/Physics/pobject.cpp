@@ -1,15 +1,24 @@
 #include "pobject.h"
 
+//Create a spherical geometry
 PGeom::PGeom(Physics *physics, SphereInfo info){
     this->physics = physics; 
     geom = dCreateSphere(info.space, info.radius);
 }
 
+//Create a boxy geometry
 PGeom::PGeom(Physics *physics, BoxInfo info){
     this->physics = physics;
     geom = dCreateBox(info.space, info.lx, info.ly, info.lz);
 }
 
+//Create a planar geometry
+PGeom::PGeom(Physics *physics, PlaneInfo info){
+    this->physics = physics;
+    geom = dCreatePlane(info.space, info.a, info.b, info.c, info.d);
+}
+
+//Create a spherical body and associated geometry
 PMoveable::PMoveable(Physics *physics, Kinematic *kinematic, float mass,
 		     SphereInfo info) : PGeom(physics, info){
     //Create a body, give it mass, and bind it to the geom
