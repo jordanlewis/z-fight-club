@@ -27,24 +27,20 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
         return;
 
     dContact contact[MAX_CONTACTS];
-    for (unsigned int i = 0; i < MAX_CONTACTS; i++)
-    {
-        contact[i].surface.mode = dContactBounce | dContactSoftCFM;
-        contact[i].surface.mu = dInfinity;
-        contact[i].surface.mu2 = 0;
-        contact[i].surface.bounce = 0.1;
-        contact[i].surface.bounce_vel = 0.1;
-        contact[i].surface.soft_cfm = 0.01;
-    }
 
     int numCollisions = dCollide(o1, o2, MAX_CONTACTS, &contact[0].geom,
                                  sizeof(dContact));
     if (numCollisions > 0)
     {
-        dMatrix3 RI;
-        dRSetIdentity (RI);
+        cout << numCollisions << " collisions detected" << endl;
         for (int i = 0; i < numCollisions; i++)
         {
+            contact[i].surface.mode = dContactBounce;
+            contact[i].surface.mu = dInfinity;
+            contact[i].surface.mu2 = 0;
+            contact[i].surface.bounce = 0.9;
+            contact[i].surface.bounce_vel = 0.1;
+
             dJointID c = dJointCreateContact (odeWorld, odeContacts, contact+i);
             dJointAttach(c, b1, b2);
         }
@@ -120,7 +116,8 @@ void Physics::initAgent(Agent &agent)
     Kinematic &k = agent.getKinematic();
     SteerInfo &s = agent.getSteering();
     PAgent *pobj = new PAgent(this, &k, &s, 100,
-			      BoxInfo(agent.width, agent.height, agent.depth));
+                              BoxInfo(agent.width, agent.height, agent.depth,
+                                      this->getOdeSpace()));
 
     pagents[agent.id] = pobj;
 }
@@ -133,8 +130,6 @@ void Physics::initPhysics()
     odeContacts = dJointGroupCreate(0);
 
     dWorldSetAutoDisableFlag(odeWorld, 1);
-    dWorldSetContactMaxCorrectingVel(odeWorld, 0.1);
-    dWorldSetContactSurfaceLayer(odeWorld, 0.001);
 
 }
 
