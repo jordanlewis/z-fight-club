@@ -1,5 +1,7 @@
 #include "pobject.h"
 
+#define DEBUG
+
 //Create a spherical geometry
 PGeom::PGeom(Physics *physics, SphereInfo info){
     this->physics = physics; 
@@ -113,7 +115,15 @@ void PMoveable::odeToKinematic(){
     kinematic->vel[1] = b_info[1];
     kinematic->vel[2] = b_info[2];
 
-    cout << kinematic->pos << endl;
+#ifdef DEBUG
+    int prec = cout.precision(2);
+    ios::fmtflags flags = cout.setf(ios::fixed,ios::floatfield);
+    cout << "Body " << body << ": pos" << kinematic->pos
+         << " vel" << kinematic->vel << " dir "
+         << kinematic->orientation << endl;
+    cout.setf(flags,ios::floatfield);
+    cout.precision(prec);
+#endif
 }
 
 
