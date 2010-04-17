@@ -13,7 +13,7 @@ class SphereInfo{
  public:
     dSpaceID space;
     float radius;
-    SphereInfo(float radius, dSpaceID space = 0) {
+    SphereInfo(float radius, dSpaceID space) {
 	this->space = space; this->radius = radius;
     }
 };
@@ -23,7 +23,7 @@ class BoxInfo{
  public:
     dSpaceID space;
     float lx, ly, lz;
-    BoxInfo(float lx, float ly, float lz, dSpaceID space = 0){
+    BoxInfo(float lx, float ly, float lz, dSpaceID space){
 	this->space = space; this->lx = lx; this->ly = ly; this->lz = lz;
     }
 };
@@ -43,7 +43,7 @@ class PlaneInfo{
  public:
     dSpaceID space;
     float a, b, c, d;
-    PlaneInfo(float a, float b, float c, float d, dSpaceID space = 0){
+    PlaneInfo(float a, float b, float c, float d, dSpaceID space){
 	this->space = space;
 	this->a = a; this->b = b; this->c = c; this->d = d;
     }
