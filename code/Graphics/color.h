@@ -12,7 +12,7 @@
 #ifndef COLOR_H_
 #define COLOR_H_
 
-Class Color
+class Color
 {
     int dimension; /* !< 3 or four fields */
   public:
@@ -21,5 +21,5 @@ Class Color
     Color(float, float, float);
     Color(float, float, float, float);
     ~Color();
-}
+};
 #endif /* !COLOR_H_ */

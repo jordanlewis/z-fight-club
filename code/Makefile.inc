@@ -3,7 +3,7 @@ OS = $(shell uname -s)
 CFLAGS = -Wall --std=gnu99 -ggdb
 CXXFLAGS = -Wall -Wno-deprecated -ggdb
 
-LDFLAGS = -lenet -lSDL -lode
+LDFLAGS = -lenet -lSDL -lode -lGL -lGLU
 
 ifeq ($(OS),Darwin)
   GLFLAGS = -framework GLUT -framework OpenGL -framework Foundation

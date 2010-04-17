@@ -11,14 +11,16 @@
 
 Graphics::Graphics()
 {
+    initialized = false;
 }
 
 Graphics::~Graphics()
 {
 }
 
-void Graphics::InitGraphics()
+void Graphics::initGraphics()
 {
+    /* set up SDL */
     int wres = 800, hres = 640;
     int colorDepth = 32;
     SDL_Surface *screen;
@@ -35,8 +37,27 @@ void Graphics::InitGraphics()
     }
 
     SDL_WM_SetCaption("Racer", "racer");
+
+    /* set up Opengl */
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    SDL_GL_SwapBuffers();
 }
 
 void Graphics::render(const World * const world)
 {
+
+}
+
+int Graphics::sphere(Vec3f position, float radius, Color color)
+{
+    if (initialized) {
+	glPushMatrix();
+	glTranslatef(position.x, position.y, position.z);
+	gluSphere(NULL, radius, 18, 12);
+	glPopMatrix();
+	return 0;
+    }
+    else
+	return -1;
 }
