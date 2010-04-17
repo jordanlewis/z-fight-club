@@ -9,9 +9,11 @@
 #include "../Agents/agent.h"
 #include "pobject.h"
 
+
 class PGeom;
 class PMoveable;
 class PAgent;
+class SphereInfo; class BoxInfo; class PlaneInfo;
 
 class Physics
 {
@@ -31,6 +33,9 @@ class Physics
     const dJointGroupID & getOdeContacts() { return odeContacts; };
     void initPhysics();
     void initAgent(Agent &agent);
+    void initGeom(SphereInfo info);
+    void initGeom(BoxInfo info);
+    void initGeom(PlaneInfo info);
     void simulate(float dt); /* step the world forward by dt. */
 };
 
