@@ -1,20 +1,20 @@
 #include "pobject.h"
 
-PGeom::PGeom(Physics *physics, SphereInfo *info){
+PGeom::PGeom(Physics *physics, SphereInfo info){
     this->physics = physics; 
-    geom = dCreateSphere(info->space, info->radius);
+    geom = dCreateSphere(info.space, info.radius);
 }
 
-PGeom::PGeom(Physics *physics, BoxInfo *info){
+PGeom::PGeom(Physics *physics, BoxInfo info){
     this->physics = physics;
-    geom = dCreateBox(info->space, info->lx, info->ly, info->lz);
+    geom = dCreateBox(info.space, info.lx, info.ly, info.lz);
 }
 
 PMoveable::PMoveable(Physics *physics, Kinematic *kinematic, float mass,
-		     SphereInfo *info) : PGeom(physics, info){
+		     SphereInfo info) : PGeom(physics, info){
     //Create a body, give it mass, and bind it to the geom
     body = dBodyCreate(physics->getOdeWorld());
-    dMassSetSphereTotal(&this->mass, mass, info->radius);
+    dMassSetSphereTotal(&this->mass, mass, info.radius);
     dBodySetMass(body, &this->mass);
     dGeomSetBody(geom, body);
     
@@ -24,10 +24,10 @@ PMoveable::PMoveable(Physics *physics, Kinematic *kinematic, float mass,
 }
 
 PMoveable::PMoveable(Physics *physics, Kinematic *kinematic, float mass,
-		     BoxInfo *info) : PGeom(physics, info){
+		     BoxInfo info) : PGeom(physics, info){
     //Create a body, give it mass, and bind it to the geom
     body = dBodyCreate(physics->getOdeWorld());
-    dMassSetBoxTotal(&this->mass, mass, info->lx, info->ly, info->lz);
+    dMassSetBoxTotal(&this->mass, mass, info.lx, info.ly, info.lz);
     dBodySetMass(body, &this->mass);
     dGeomSetBody(geom, body);
 
@@ -36,8 +36,14 @@ PMoveable::PMoveable(Physics *physics, Kinematic *kinematic, float mass,
     kinematicToOde();
 }
 
-PAgent::PAgent(Physics *physics, Kinematic *Kinematic, SteerInfo *steering,
-	       float mass, SphereInfo *info) : PMoveable(physics, kinematic,
+PAgent::PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
+	       float mass, SphereInfo info) : PMoveable(physics, kinematic,
+							 mass, info) {
+    this->steering = steering;
+}
+
+PAgent::PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
+	       float mass, BoxInfo info) : PMoveable(physics, kinematic,
 							 mass, info) {
     this->steering = steering;
 }

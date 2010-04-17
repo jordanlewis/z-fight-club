@@ -86,7 +86,7 @@ void Physics::simulate(float dt)
     for (vector<Agent>::iterator iter = world->agents.begin();
          iter != world->agents.end(); iter++)
     {
-        PObject *p = pobjects[iter->id];
+        PAgent *p = pagents[iter->id];
         p->kinematicToOde();
         p->steeringToOde();
     }
@@ -99,7 +99,7 @@ void Physics::simulate(float dt)
     for (vector<Agent>::iterator iter = world->agents.begin();
          iter != world->agents.end(); iter++)
     {
-        pobjects[iter->id]->odeToKinematic();
+        pagents[iter->id]->odeToKinematic();
     }
 
 }
@@ -119,10 +119,10 @@ void Physics::initAgent(Agent &agent)
 {
     Kinematic &k = agent.getKinematic();
     SteerInfo &s = agent.getSteering();
-    PObject *pobj = new PObject(this, &k, &s, 100, agent.width,
-                                agent.height, agent.depth);
+    PAgent *pobj = new PAgent(this, &k, &s, 100,
+			      BoxInfo(agent.width, agent.height, agent.depth));
 
-    pobjects[agent.id] = pobj;
+    pagents[agent.id] = pobj;
 }
 
 void Physics::initPhysics()
@@ -150,94 +150,3 @@ Physics::~Physics()
     dWorldDestroy(odeWorld);
     dCloseODE();
 }
-
-PObject::PObject(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
-                 float mass, float xDim, float yDim, float zDim)
-{
-    this->physics = physics;
-    this->kinematic = kinematic;
-    this->steering = steering;
-    // allocate a dynamics body and collisions geometry with given dimensions
-    this->body = dBodyCreate(physics->getOdeWorld());
-
-    // set initial position and rotation
-    kinematicToOde();
-
-    this->geom = dCreateBox(physics->getOdeSpace(), xDim, yDim, zDim);
-    // give mass to body
-    dMassSetBox(&this->mass, 1.0f, xDim, yDim, zDim);
-    dMassAdjust(&this->mass, mass); // random mass, should change
-    // connect body to geometry
-    dGeomSetBody(geom, body);
-}
-
-//Copys the kinematic info into ODE's representation
-void PObject::kinematicToOde()
-{
-    Kinematic *k = kinematic;
-    dQuaternion q;
-
-    dBodySetPosition(body, k->pos[0], k->pos[1], k->pos[2]);
-    // get orientation as angle around y axis; give that quat to the body
-    dQFromAxisAndAngle(q, 0, 1, 0, kinematic->orientation);
-    dBodySetQuaternion(body, q);
-}
-
-//Translates the object's steering info into ODE forces
-void PObject::steeringToOde()
-{
-    const dReal* angVel = dBodyGetAngularVel(body);
-    dBodySetAngularVel(body, angVel[0], steering->rotation, angVel[2]);
-
-    Vec3f f = Vec3f(sin(kinematic->orientation),0,cos(kinematic->orientation));
-    f *= steering->acceleration * mass.mass;
-    dBodyAddForce(body, f[0], f[1], f[2]);
-}
-
-//Copys the ode info into the associated kinematic struct
-void PObject::odeToKinematic(){
-
-    dQuaternion q_result, q_result1, q_base;
-    float norm;
-    const dReal *b_info;
-    //this const dReal* is actually a quaternion
-    const dReal* q_current = dBodyGetQuaternion(body);
-    
-    //Fill in kinematic angle
-    q_base[0]=0; q_base[1] = 0; q_base[2] = 0; q_base[3]=1;
-    //Want: q_result = q_current*q_base*q_current^{-1}, so...
-    //Step1:  q_result = q_current*q_base
-    dQMultiply0(q_result1, q_current, q_base);
-    //Step2:  q_result = q_result*q_current^{-1}
-    dQMultiply2(q_result, q_result1, q_current);
-    
-    /*Project to X-Z plane (Ignore the Y component), renormalize, and 
-      calculate rotation around the Y axis*/
-    norm = sqrt(q_result[1]*q_result[1] + q_result[3]*q_result[3]);
-    if (norm == 0) {
-	cerr << "Error:  Agent facing directly upwards.  Setting kinematic" 
-	     << "theta to 0." << endl;
-	kinematic->orientation = 0;
-    }
-    else {
-	//Normalize vectors  
-	q_result[1] = q_result[1]/norm;
-	q_result[3] = q_result[3]/norm;
-	//Calculate theta
-	kinematic->orientation = atan2(q_result[1], q_result[3]);
-	//cout << "Calculated orientation as " << kinematic->orientation << endl;
-    }
-
-    //Fill in kinematic position and velocty
-    b_info = dBodyGetPosition(body);
-    kinematic->pos[0] = b_info[0];
-    kinematic->pos[1] = b_info[1];
-    kinematic->pos[2] = b_info[2];
-    b_info = dBodyGetLinearVel(body);
-    kinematic->vel[0] = b_info[0];
-    kinematic->vel[1] = b_info[1];
-    kinematic->vel[2] = b_info[2];
-
-    cout << kinematic->pos << endl;
-}
-

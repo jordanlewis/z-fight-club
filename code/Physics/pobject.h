@@ -4,9 +4,9 @@
 #include "physics.h"
 #include <iostream>
 
-class Physics
-
 using namespace std;
+
+class Physics;
 
 class SphereInfo{
  public:
@@ -48,12 +48,12 @@ class PGeom
     Physics *physics; // The physics object this PGeom belongs to
     dGeomID geom;
  public:
-    PGeom(Physics *physics, SphereInfo *info);
-    PGeom(Physics *physics, BoxInfo *info);
-    PGeom(Physics *physics, CylinderInfo *info); //NYI
-    PGeom(Physics *physics, CCylinderInfo *info); //NYI
-    PGeom(Physics *physics, PlaneInfo *info); //NYI
-    PGeom(Physics *physics, RayInfo *info); //NYI
+    PGeom(Physics *physics, SphereInfo info);
+    PGeom(Physics *physics, BoxInfo info);
+    PGeom(Physics *physics, CylinderInfo info); //NYI
+    PGeom(Physics *physics, CCylinderInfo info); //NYI
+    PGeom(Physics *physics, PlaneInfo info); //NYI
+    PGeom(Physics *physics, RayInfo info); //NYI
 };
 
 
@@ -65,17 +65,17 @@ class PMoveable: public PGeom
     dMass mass;
  public:
     PMoveable(Physics *physics, Kinematic *kinematic, float mass,
-	      SphereInfo *info);
+	      SphereInfo info);
     PMoveable(Physics *physics, Kinematic *kinematic, float mass,
-	      BoxInfo *info);
+	      BoxInfo info);
     PMoveable(Physics *physics, Kinematic *kinematic, float mass,
-	      CylinderInfo *info);
+	      CylinderInfo info);
     PMoveable(Physics *physics, Kinematic *kinematic, float mass,
-	      CCylinderInfo *info);
+	      CCylinderInfo info);
     PMoveable(Physics *physics, Kinematic *kinematic, float mass,
-	      PlaneInfo *info);
+	      PlaneInfo info);
     PMoveable(Physics *physics, Kinematic *kinematic, float mass,
-	      RayInfo *info);
+	      RayInfo info);
     void odeToKinematic(); //writes (syncs) the body coords into the kinematic
     void kinematicToOde();
 };
@@ -86,17 +86,17 @@ class PAgent: public PMoveable
     SteerInfo *steering;
  public:
     PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering, 
-	   float mass, SphereInfo *info);
+	   float mass, SphereInfo info);
     PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
-	   float mass, BoxInfo *info);
+	   float mass, BoxInfo info);
     PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
-	   float mass, CylinderInfo *info);
+	   float mass, CylinderInfo info);
     PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering, 
-	   float mass, CCylinderInfo *info);
+	   float mass, CCylinderInfo info);
     PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
-	   float mass, PlaneInfo *info);
+	   float mass, PlaneInfo info);
     PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
-	   float mass, RayInfo *info);
+	   float mass, RayInfo info);
     void steeringToOde();
 };
 #endif
