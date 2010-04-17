@@ -7,14 +7,17 @@
 #include "../Utilities/vector.h"
 #include "../Engine/world.h"
 #include "../Agents/agent.h"
+#include "pobject.h"
 
-class PObject;
+class PGeom;
+class PMoveable;
+class PAgent;
 
 class Physics
 {
     World *world; /* our world */
 
-    __gnu_cxx::hash_map<int, PObject *> pobjects;
+    __gnu_cxx::hash_map<int, PAgent *> pagents;
     dWorldID odeWorld;
     dSpaceID odeSpace;
     dJointGroupID odeContacts;
@@ -32,6 +35,7 @@ class Physics
 };
 
 /* Links ODE to our game world. */
+/*
 class PObject
 {
     Physics *physics; // The physics object this PObject belongs to
@@ -47,5 +51,5 @@ class PObject
     void kinematicToOde(); //writes (syncs) the kinematic into ODE
     void steeringToOde();  //translates steering info into ODE forces
 };
-
+*/
 #endif
