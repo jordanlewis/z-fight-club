@@ -11,6 +11,10 @@
  * All rights reserved.
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "defs.h"
 #include <sys/time.h>
 #if defined(__APPLE__) && defined(__MACH__)
@@ -59,3 +63,6 @@ void *CheckMalloc (size_t nbytes)
 }*/
 #endif
 
+#ifdef __cplusplus
+}
+#endif

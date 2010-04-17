@@ -11,6 +11,10 @@
  * All rights reserved.
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef _DEFS_H_
 #define _DEFS_H_
 
@@ -50,3 +54,7 @@ extern void CheckError (const char *file, int line);
 #endif
 
 #endif /* !_DEFS_H_ */
+
+#ifdef __cplusplus
+}
+#endif
