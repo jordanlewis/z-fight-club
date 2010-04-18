@@ -8,7 +8,7 @@ $(TARGET): ../../build/vec3f.o main.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 ../../build/vec3f.o:
-	make -C ../../Utilities ../build/vec3f.o
+	make -C ../.. all
 
 main.o: main.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $^

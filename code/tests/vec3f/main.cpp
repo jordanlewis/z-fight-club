@@ -85,7 +85,7 @@ int main(int argc, char *argv []) {
 	cout << "a - 2*d = " << a-2*d << endl;
 
 	cout << endl << "Equality" << endl;
-	cout << "a-2*d == a*b: " << ((a-2*d) == (a*b*d)) << " [1]" << endl;
+	cout << "a-2*d == a*b: " << ((a-2*d) == (a*b)) << " [1]" << endl;
 	cout << "a == b        " << (a == b) << " [0]" << endl;
 
 	cout << endl << "Copying and Assignment" << endl;
