@@ -1,4 +1,7 @@
 #include "camera.h"
+#include <SDL/SDL.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 
 Camera::Camera()
 {
@@ -10,12 +13,17 @@ Camera::~Camera()
     // do nothing for now
 }
         
-void Camera::SetTarget(Vec3f_t target)
+void Camera::setTarget(Vec3f_t target)
 {
     return;
 }
-
-void Camera::SetProjectionMatrix()
+void Camera::setProjectionMatrix()
 {
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluLookAt(pos[0], pos[1], pos[2], target[0], target[1], target[2], up[0], up[1], up[2]);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective((GLdouble) FOVY, (GLdouble) wres / (GLdouble) hres, zNear, zFar);
     return;
 }

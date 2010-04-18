@@ -37,27 +37,35 @@ void Graphics::initGraphics()
     }
 
     SDL_WM_SetCaption("Racer", "racer");
+}
 
-    /* set up Opengl */
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+void Graphics::render(World * world)
+{
+    world->camera.setProjectionMatrix();
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_COLOR_MATERIAL);
+    glCullFace(GL_BACK);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_DEPTH_TEST);
+
+    glClearColor(.2f, .2, .8f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    unsigned int i;
+    for (i = 0; i < world->agents.size(); i++) {
+	render(&(world->agents[i]));
+    }
     SDL_GL_SwapBuffers();
 }
 
-void Graphics::render(const World * const world)
-{
-
-}
-
-int Graphics::sphere(Vec3f position, float radius, Color color)
+void Graphics::render(Agent * agent)
 {
     if (initialized) {
 	glPushMatrix();
-	glTranslatef(position.x, position.y, position.z);
-	gluSphere(NULL, radius, 18, 12);
+	glTranslatef(agent->kinematic.pos.x, agent->kinematic.pos.y, agent->kinematic.pos.z);
+	gluSphere(NULL, 1.0, 18, 12);
 	glPopMatrix();
-	return 0;
-    }
-    else
-	return -1;
+    } /* else */
+	/* error */
 }
