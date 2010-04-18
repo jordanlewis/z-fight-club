@@ -8,7 +8,7 @@
  * All rights reserved.
  */
 
-#include "../Utilities/defs.h"
+#include "Utilities/defs.h"
 #include "track-parser.h"
 #include "json.h"
 #include <string.h>

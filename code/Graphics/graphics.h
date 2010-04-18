@@ -1,7 +1,7 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
-#include "../Engine/world.h"
-#include "../Utilities/vec3f.h"
+#include "Engine/world.h"
+#include "Utilities/vec3f.h"
 #include "color.h"
 
 class Graphics {

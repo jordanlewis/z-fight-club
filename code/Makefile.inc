@@ -1,7 +1,7 @@
 OS = $(shell uname -s)
 
-CFLAGS   = -Wall --std=gnu99 -ggdb
-CXXFLAGS = -Wall -Wno-deprecated -ggdb
+CFLAGS   = -Wall --std=gnu99 -ggdb -I.
+CXXFLAGS = -Wall -Wno-deprecated -ggdb -I.
 
 LDFLAGS  = -lenet -lSDL -lode 
 

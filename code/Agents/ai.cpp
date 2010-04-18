@@ -2,7 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include "ai.h"
-#include "../Utilities/vec3f.h"
+#include "Utilities/vec3f.h"
 #include "agent.h"
 
 const std::vector<Vec3f>* Path::get_knots() const
