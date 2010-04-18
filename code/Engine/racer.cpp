@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 
     Scheduler scheduler(world, graphics, physics);
 
-    /*Vec3f pos = Vec3f(100, 0, 100);
+    Vec3f pos = Vec3f(0, 0, 0);
     Agent agent(pos);
 
     SteerInfo steer;
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     agent.setSteering(steer);
 
     world->registerAgent(agent);
-    physics->initAgent(agent); */
+    /* physics->initAgent(agent); */
 
 
 

@@ -52,11 +52,11 @@ void Scheduler::loopForever()
 
 
         now = GetTime();
-        if (now - last > 0)
+        /* if (now - last > 0)
         {
             physics->simulate(now - last);
         }
-        last = now;
+        last = now; */
 
         graphics->render(world);
 

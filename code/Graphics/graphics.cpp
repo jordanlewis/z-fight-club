@@ -37,16 +37,29 @@ void Graphics::initGraphics()
     }
 
     SDL_WM_SetCaption("Racer", "racer");
+    initialized = true;
+
 }
 
 void Graphics::render(World * world)
 {
+    GLfloat light_position[]={ 10.0, 10.0, -10.0, 1.0 };
+    GLfloat light_color[]={ 1.0, 1.0, 1.0, 1.0 };
+    GLfloat ambient_color[]={ 0.2, 0.2, 0.2, 1.0 };
+    GLfloat mat_specular[]={ 1.0, 1.0, 1.0, 1.0 };
+
     world->camera.setProjectionMatrix();
     glShadeModel(GL_SMOOTH);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position );
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_color );
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_color );
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color );
     glEnable(GL_CULL_FACE);
     glEnable(GL_COLOR_MATERIAL);
     glCullFace(GL_BACK);
     glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
     glEnable(GL_DEPTH_TEST);
 
     glClearColor(.2f, .2, .8f, 1.0f);
@@ -64,7 +77,8 @@ void Graphics::render(Agent * agent)
     if (initialized) {
 	glPushMatrix();
 	glTranslatef(agent->kinematic.pos.x, agent->kinematic.pos.y, agent->kinematic.pos.z);
-	gluSphere(NULL, 1.0, 18, 12);
+	GLUquadric *quad = gluNewQuadric();
+	gluSphere(quad, 1.0, 18, 12);
 	glPopMatrix();
     } /* else */
 	/* error */
