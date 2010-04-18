@@ -1,7 +1,13 @@
 #include "camera.h"
 #include <SDL/SDL.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+
+#if defined (__APPLE__) && defined (__MACH__)
+#  include <OpenGL/gl.h>
+#  include <OpenGL/glu.h>
+#else
+#  include <GL/gl.h>
+#  include <GL/glu.h>
+#endif
 
 Camera::Camera()
 {
