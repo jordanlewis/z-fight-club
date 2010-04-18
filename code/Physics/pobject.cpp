@@ -2,43 +2,18 @@
 
 #define DEBUG
 
-//Create a spherical geometry
-PGeom::PGeom(Physics *physics, SphereInfo info){
-    this->physics = physics; 
-    geom = dCreateSphere(info.space, info.radius);
-}
-
-//Create a boxy geometry
-PGeom::PGeom(Physics *physics, BoxInfo info){
+PGeom::PGeom(Physics *physics, GeomInfo *info){
     this->physics = physics;
-    geom = dCreateBox(info.space, info.lx, info.ly, info.lz);
-}
-
-//Create a planar geometry
-PGeom::PGeom(Physics *physics, PlaneInfo info){
-    this->physics = physics;
-    geom = dCreatePlane(info.space, info.a, info.b, info.c, info.d);
-}
-
-//Create a spherical body and associated geometry
-PMoveable::PMoveable(Physics *physics, Kinematic *kinematic, float mass,
-		     SphereInfo info) : PGeom(physics, info){
-    //Create a body, give it mass, and bind it to the geom
-    body = dBodyCreate(physics->getOdeWorld());
-    dMassSetSphereTotal(&this->mass, mass, info.radius);
-    dBodySetMass(body, &this->mass);
-    dGeomSetBody(geom, body);
-    
-    //Sync Kinematic info -- initial position and orientation
-    this->kinematic = kinematic;
-    kinematicToOde();
+    geom = info->createGeom();
 }
 
 PMoveable::PMoveable(Physics *physics, Kinematic *kinematic, float mass,
-		     BoxInfo info) : PGeom(physics, info){
+                     GeomInfo *info) : PGeom(physics, info)
+{
     //Create a body, give it mass, and bind it to the geom
     body = dBodyCreate(physics->getOdeWorld());
-    dMassSetBoxTotal(&this->mass, mass, info.lx, info.ly, info.lz);
+    info->createMass(&this->mass, mass);
+
     dBodySetMass(body, &this->mass);
     dGeomSetBody(geom, body);
 
@@ -48,14 +23,9 @@ PMoveable::PMoveable(Physics *physics, Kinematic *kinematic, float mass,
 }
 
 PAgent::PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
-	       float mass, SphereInfo info) : PMoveable(physics, kinematic,
-							 mass, info) {
-    this->steering = steering;
-}
-
-PAgent::PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
-	       float mass, BoxInfo info) : PMoveable(physics, kinematic,
-							 mass, info) {
+               float mass, GeomInfo *info) : PMoveable(physics, kinematic,
+                                                       mass, info)
+{
     this->steering = steering;
 }
 
