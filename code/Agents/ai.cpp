@@ -32,7 +32,7 @@ void Seek (Kinematic *car, float maxAccel, const Vec3f target, SteerInfo *steer)
 {
     Vec3f diff;
     diff = target - car->pos;
-    diff.normalizeMe();
+    diff.normalize();
     diff *= maxAccel;
 
     steer->acceleration = diff.length();

@@ -181,13 +181,13 @@ bool Vec3f::operator==(const Vec3f &o) const
 }
 
 // --------- Normalization --------- 
-Vec3f Vec3f::norm() const
+Vec3f Vec3f::unit() const
 {
     float len = length();
     return Vec3f(x/len,y/len,z/len);
 }
 
-void Vec3f::normalizeMe()
+void Vec3f::normalize()
 {
     float len = length();
     x /= len;

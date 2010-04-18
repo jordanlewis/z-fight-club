@@ -90,16 +90,16 @@ int main(int argc, char *argv []) {
 
 	cout << endl << "Copying and Assignment" << endl;
 	a = b;
-	cout << "a = b        => " << a << endl;
+	cout << "a = b        => " << a << " [0,1,0]" << endl;
 	a = Vec3f(d);
-	cout << "a = Vec3f(d) => " << a << endl;
+	cout << "a = Vec3f(d) => " << a << " [1,0,0]" << endl;
 
 	cout << endl << "Normalization" << endl;
 	a += (d+b);
-	cout << "a                = " << a << endl;
-	cout << "a.norm()         = " << a.norm() << endl;
-	a.normalizeMe();
-	cout << "a.normalizeMe() => " << a << endl;
+	cout << "a                =  " << a << endl;
+	cout << "a.unit()         =  " << a.unit() << endl;
+	a.normalize();
+	cout << "a.normalize()    => " << a << endl;
 
 	return 0;
 }

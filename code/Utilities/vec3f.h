@@ -79,18 +79,15 @@ class Vec3f {
     // --------- Normalization --------- 
 
     //! \brief returns the unit vector that points in the direction of this vector
-    Vec3f norm() const;
+    Vec3f unit() const;
 
     //! \brief normalizes this vector
-    void normalizeMe();
+    void normalize();
 
     // --------- Additional Functions --------- 
     
     //! \brief returns the magnitude of this vector
     float length() const;
-
-    //! \brief normalizes this vector
-    float normalize();
 
     //! \brief takes the dot product with another vector
     float dot(const Vec3f&) const;
