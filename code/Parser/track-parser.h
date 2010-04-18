@@ -13,7 +13,7 @@
 #ifndef _TRACK_PARSER_H_
 #define _TRACK_PARSER_H_
 
-#include "../Utilities/vector.h"	// for the Vec3f_t type
+#include "Utilities/vector.h"	// for the Vec3f_t type
 
 typedef struct struct_sect Sector_t;
 typedef struct struct_edge Edge_t;
