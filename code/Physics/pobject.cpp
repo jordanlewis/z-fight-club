@@ -2,13 +2,14 @@
 
 #define DEBUG
 
-PGeom::PGeom(Physics *physics, GeomInfo *info){
-    this->physics = physics;
-    geom = info->createGeom();
+PGeom::PGeom(Physics *physics, GeomInfo *info)
+            : physics(physics),  geom(info->createGeom())
+{
 }
 
 PMoveable::PMoveable(Physics *physics, Kinematic *kinematic, float mass,
-                     GeomInfo *info) : PGeom(physics, info)
+                     GeomInfo *info)
+                    : PGeom(physics, info), kinematic(kinematic)
 {
     //Create a body, give it mass, and bind it to the geom
     body = dBodyCreate(physics->getOdeWorld());
@@ -18,15 +19,13 @@ PMoveable::PMoveable(Physics *physics, Kinematic *kinematic, float mass,
     dGeomSetBody(geom, body);
 
     //Sync Kinematic info -- initial position and orientation
-    this->kinematic = kinematic;
     kinematicToOde();
 }
 
 PAgent::PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
-               float mass, GeomInfo *info) : PMoveable(physics, kinematic,
-                                                       mass, info)
+               float mass, GeomInfo *info)
+              : PMoveable(physics, kinematic, mass, info), steering(steering)
 {
-    this->steering = steering;
 }
 
 //Copys the kinematic info into ODE's representation

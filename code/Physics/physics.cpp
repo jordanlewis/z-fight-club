@@ -133,9 +133,8 @@ void Physics::initPhysics()
 
 }
 
-Physics::Physics(World *world)
+Physics::Physics(World *world) : world(world)
 {
-    this->world = world;
 }
 
 Physics::~Physics()
