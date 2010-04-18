@@ -10,7 +10,16 @@
 
 class World
 {
+  private:
     std::vector<Polygon> environment; /* The Environmental geometry */
+
+    // Prevent construction, destruction, copying, or assignment in singleton
+    World();
+    ~World();
+    World(const World&);
+    World& operator=(const World&);
+
+    static World _instance;
 
   public:
     Camera camera;
@@ -22,7 +31,8 @@ class World
 
     void registerAgent(Agent &agent);
 
-    World();
+    static World &getInstance();
+
 };
 
 #endif

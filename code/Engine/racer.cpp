@@ -14,7 +14,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    World *world = new World;
+    World *world = &(World::getInstance());
     Graphics *graphics = new Graphics;
     Physics *physics = new Physics(world);
 
