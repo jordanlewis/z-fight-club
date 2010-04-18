@@ -1,7 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "Utilities/vector.h"
+#include "Utilities/vec3f.h"
 
 class Camera {
     /* The position, orientation, and up vector for the Camera.
@@ -10,7 +10,7 @@ class Camera {
     */
     float FOVY;
 
-    Vec3f_t pos,
+    Vec3f pos,
             up,
             target;
 
@@ -23,7 +23,7 @@ class Camera {
     Camera();
     ~Camera();
     
-    void setTarget(Vec3f_t target);
+    void setTarget(Vec3f target);
     void setProjectionMatrix(); //Maybe this should be protected, and we call
                                 //graphics a friend class, then it won't be
                                 //visible to people that don't need it.

@@ -1,11 +1,21 @@
 #include "camera.h"
+#include "../Utilities/vec3f.h"
 #include <SDL/SDL.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 
 Camera::Camera()
 {
-    // do nothing for now
+    FOVY = 65.0;
+
+    pos = Vec3f(0.0f, 10.0f, 0.0f);
+    up = Vec3f(1.0f, 0.0f, 0.0f);
+    target = Vec3f(0.0f, 0.0f, 0.0f);
+
+    wres = 800;
+    hres = 600;
+    zNear = 0.1f;
+    zFar = 100.0f;
 }
 
 Camera::~Camera()
@@ -13,7 +23,7 @@ Camera::~Camera()
     // do nothing for now
 }
         
-void Camera::setTarget(Vec3f_t target)
+void Camera::setTarget(Vec3f target)
 {
     return;
 }
