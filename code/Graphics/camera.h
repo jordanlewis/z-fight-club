@@ -8,15 +8,23 @@ class Camera {
        NOTE: we may again use quaternions for this, or represent it in spherical
              coordinates
     */
-    Vec3f_t position,
+    float FOVY;
+
+    Vec3f_t pos,
             up,
             target;
+
+    int	wres,
+	hres;
+
+    float zNear,
+	  zFar;
   public:
     Camera();
     ~Camera();
     
-    void SetTarget(Vec3f_t target);
-    void SetProjectionMatrix(); //Maybe this should be protected, and we call
+    void setTarget(Vec3f_t target);
+    void setProjectionMatrix(); //Maybe this should be protected, and we call
                                 //graphics a friend class, then it won't be
                                 //visible to people that don't need it.
 };

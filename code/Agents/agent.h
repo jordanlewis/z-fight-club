@@ -26,7 +26,6 @@ class Agent
     static float maxAccel;     /* !<how fast we're allowed to accelerate */
     static float maxRotate;    /* !<how fast we're allowed to rotate */
 
-    Kinematic kinematic;   /* !<car's current kinematic */
     SteerInfo steerInfo;   /* !<car's steering info, set by AI/human */
 
   public:
@@ -34,6 +33,7 @@ class Agent
     static float height;
     static float width;
     static float depth;
+    Kinematic kinematic;   /* !<car's current kinematic */
 
     Agent (Vec3f);      /* Constructor; Initial position */
     Agent (Vec3f, float); /* Constructor; Initial position and orientation */

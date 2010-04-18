@@ -11,9 +11,9 @@
 class World
 {
     std::vector<Polygon> environment; /* The Environmental geometry */
-    Camera camera;
 
   public:
+    Camera camera;
     static float xMax;
     static float zMax;
     dWorldID ode_world;
