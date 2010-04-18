@@ -4,10 +4,10 @@
 #include <iostream>
 
 #include "physics.h"
-#include "../Utilities/vector.h"
-#include "../Engine/world.h"
-#include "../Agents/agent.h"
-#include "../Utilities/vec3f.h"
+#include "Utilities/vector.h"
+#include "Engine/world.h"
+#include "Agents/agent.h"
+#include "Utilities/vec3f.h"
 
 #define MAX_CONTACTS 8
 
@@ -115,9 +115,9 @@ void Physics::initAgent(Agent &agent)
 {
     Kinematic &k = agent.getKinematic();
     SteerInfo &s = agent.getSteering();
-    PAgent *pobj = new PAgent(this, &k, &s, 100,
-                              BoxInfo(agent.width, agent.height, agent.depth,
-                                      this->getOdeSpace()));
+    BoxInfo geom = BoxInfo(agent.width, agent.height, agent.depth,
+                                      this->getOdeSpace());
+    PAgent *pobj = new PAgent(this, &k, &s, 100, &geom);
 
     pagents[agent.id] = pobj;
 }

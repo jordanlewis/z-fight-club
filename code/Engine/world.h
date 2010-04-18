@@ -4,9 +4,9 @@
 #include <ode/ode.h>
 
 #include <vector>
-#include "../Agents/agent.h"
-#include "../Graphics/camera.h"
-#include "../Graphics/polygon.h"
+#include "Agents/agent.h"
+#include "Graphics/camera.h"
+#include "Graphics/polygon.h"
 
 class World
 {

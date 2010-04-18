@@ -1,5 +1,5 @@
 #include "world.h"
-#include "../Graphics/polygon.h"
+#include "Graphics/polygon.h"
 
 float World::xMax = 1000; // XXX this probably will depend on tracks
 float World::zMax = 1000; // XXX this too

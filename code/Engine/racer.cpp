@@ -8,7 +8,7 @@
 #include <SDL/SDL.h>
 #include "scheduler.h"
 
-#include "../Utilities/vec3f.h"
+#include "Utilities/vec3f.h"
 
 using namespace std;
 
