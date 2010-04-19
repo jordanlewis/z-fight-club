@@ -7,6 +7,7 @@
 #include "Agents/agent.h"
 #include "Graphics/camera.h"
 #include "Graphics/polygon.h"
+#include "Parser/track-parser.h"
 
 class World
 {
@@ -20,19 +21,20 @@ class World
     World& operator=(const World&);
 
     static World _instance;
-
-  public:
     Camera camera;
-    static float xMax;
+    TrackData_t *track;
+  public:
+    static float xMax;   /* XXX what are these? */
     static float zMax;
     dWorldID ode_world;
     dSpaceID ode_space;
     std::vector<Agent *> agents; /* the agents in the world */
 
     void registerAgent(Agent *agent);
-
+    void loadTrack(char *file);
     static World &getInstance();
 
+    friend class Graphics;
 };
 
 #endif
