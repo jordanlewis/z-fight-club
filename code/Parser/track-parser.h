@@ -13,6 +13,10 @@
 #ifndef _TRACK_PARSER_H_
 #define _TRACK_PARSER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 #include "Utilities/vector.h"	// for the Vec3f_t type
 
@@ -80,4 +84,7 @@ TrackData_t *LoadTrackData (const char *file);
  */
 void FreeTrackData (TrackData_t *data);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* !_TRACK_PARSER_H_ */

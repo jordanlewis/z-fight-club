@@ -1,6 +1,8 @@
 #include "world.h"
 #include "Graphics/polygon.h"
-#include "Parser/track-parser.h"
+extern "C" {
+    #include "Parser/track-parser.h"
+}
 
 float World::xMax = 1000; // XXX this probably will depend on tracks
 float World::zMax = 1000; // XXX this too
@@ -15,7 +17,7 @@ World::World()
 
 World::~World()
 {
-    /* FreeTrackData(track); */
+    FreeTrackData(track);
 }
 
 void World::registerAgent(Agent *agent)
@@ -25,7 +27,7 @@ void World::registerAgent(Agent *agent)
 
 void World::loadTrack(char *file)
 {
-    /* track = LoadTrackData(file); */
+    track = LoadTrackData(file);
     if (!track)
 	; /* error */
 }

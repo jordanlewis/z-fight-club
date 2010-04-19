@@ -16,6 +16,9 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     World    &world    = World::getInstance();
+    if (argc > 1)
+	world.loadTrack(argv[1]);
+
     Graphics &graphics = Graphics::getInstance();
     Physics *physics = new Physics(&world);
 
