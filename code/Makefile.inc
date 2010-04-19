@@ -1,7 +1,8 @@
 OS = $(shell uname -s)
 
-CFLAGS   = -Wall --std=gnu99 -ggdb -DdSINGLE -I.
-CXXFLAGS = -Wall -Wno-deprecated -ggdb -DdSINGLE -I.
+ODEFLAGS = $(shell ode-config --cflags)
+CFLAGS   = -Wall --std=gnu99 -ggdb $(ODEFLAGS) -I.
+CXXFLAGS = -Wall -Wno-deprecated -ggdb $(ODEFLAGS) -I.
 
 LDFLAGS  = -lenet -lSDL -lode 
 
