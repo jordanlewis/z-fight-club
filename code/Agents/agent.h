@@ -42,9 +42,9 @@ class Agent
      * implemented in agent.c and the two types of agent controllers - AI
      * or Input. */
 
-    void setKinematic (Kinematic &kinematic); /* !< set agent's kinematic */
+    void setKinematic (const Kinematic &kinematic); /* !< set agent's kinematic */
     Kinematic &getKinematic ();     /* !< get agent's kinematic */
-    void setSteering (SteerInfo &); /* !< Change desired steering */
+    void setSteering (const SteerInfo &); /* !< Change desired steering */
     SteerInfo &getSteering ();      /* !< Change desired steering */
 };
 

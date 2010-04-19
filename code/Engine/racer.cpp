@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     steer.rotation = 0;
     agent.setSteering(steer);
 
-    world.registerAgent(agent);
+    world.registerAgent(&agent);
     /* physics->initAgent(agent); */
 
     scheduler.loopForever();

@@ -7,7 +7,7 @@ PGeom::PGeom(Physics *physics, GeomInfo *info)
 {
 }
 
-PMoveable::PMoveable(Physics *physics, Kinematic *kinematic, float mass,
+PMoveable::PMoveable(Physics *physics, const Kinematic *kinematic, float mass,
                      GeomInfo *info)
                     : PGeom(physics, info), kinematic(kinematic)
 {
@@ -22,8 +22,8 @@ PMoveable::PMoveable(Physics *physics, Kinematic *kinematic, float mass,
     kinematicToOde();
 }
 
-PAgent::PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
-               float mass, GeomInfo *info)
+PAgent::PAgent(Physics *physics, const Kinematic *kinematic,
+               const SteerInfo *steering, float mass, GeomInfo *info)
               : PMoveable(physics, kinematic, mass, info), steering(steering)
 {
 }
@@ -31,7 +31,7 @@ PAgent::PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
 //Copys the kinematic info into ODE's representation
 void PMoveable::kinematicToOde()
 {
-    Kinematic *k = kinematic;
+    const Kinematic *k = kinematic;
     dQuaternion q;
 
     dBodySetPosition(body, k->pos[0], k->pos[1], k->pos[2]);
@@ -41,7 +41,8 @@ void PMoveable::kinematicToOde()
 }
 
 //Copys the ode info into the associated kinematic struct
-void PMoveable::odeToKinematic(){
+const Kinematic &PMoveable::odeToKinematic(){
+    Kinematic &k = outputKinematic;
 
     dQuaternion q_result, q_result1, q_base;
     float norm;
@@ -63,36 +64,37 @@ void PMoveable::odeToKinematic(){
     if (norm == 0) {
 	cerr << "Error:  Agent facing directly upwards.  Setting kinematic" 
 	     << "theta to 0." << endl;
-	kinematic->orientation = 0;
+	k.orientation = 0;
     }
     else {
 	//Normalize vectors  
 	q_result[1] = q_result[1]/norm;
 	q_result[3] = q_result[3]/norm;
 	//Calculate theta
-	kinematic->orientation = atan2(q_result[1], q_result[3]);
-	//cout << "Calculated orientation as " << kinematic->orientation << endl;
+	k.orientation = atan2(q_result[1], q_result[3]);
+	//cout << "Calculated orientation as " << k.orientation << endl;
     }
 
     //Fill in kinematic position and velocty
     b_info = dBodyGetPosition(body);
-    kinematic->pos[0] = b_info[0];
-    kinematic->pos[1] = b_info[1];
-    kinematic->pos[2] = b_info[2];
+    k.pos[0] = b_info[0];
+    k.pos[1] = b_info[1];
+    k.pos[2] = b_info[2];
     b_info = dBodyGetLinearVel(body);
-    kinematic->vel[0] = b_info[0];
-    kinematic->vel[1] = b_info[1];
-    kinematic->vel[2] = b_info[2];
+    k.vel[0] = b_info[0];
+    k.vel[1] = b_info[1];
+    k.vel[2] = b_info[2];
 
 #ifdef DEBUG
     int prec = cout.precision(2);
     ios::fmtflags flags = cout.setf(ios::fixed,ios::floatfield);
-    cout << "Body " << body << ": pos" << kinematic->pos
-         << " vel" << kinematic->vel << " dir "
-         << kinematic->orientation << endl;
+    cout << "Body " << body << ": pos" << k.pos
+         << " vel" << k.vel << " dir "
+         << k.orientation << endl;
     cout.setf(flags,ios::floatfield);
     cout.precision(prec);
 #endif
+    return k;
 }
 
 

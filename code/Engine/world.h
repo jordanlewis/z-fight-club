@@ -27,9 +27,9 @@ class World
     static float zMax;
     dWorldID ode_world;
     dSpaceID ode_space;
-    std::vector<Agent> agents; /* the agents in the world */
+    std::vector<Agent *> agents; /* the agents in the world */
 
-    void registerAgent(Agent &agent);
+    void registerAgent(Agent *agent);
 
     static World &getInstance();
 

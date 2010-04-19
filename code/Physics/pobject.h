@@ -26,13 +26,14 @@ class PGeom
 class PMoveable: public PGeom
 {
  protected:
-    Kinematic *kinematic;
+    const Kinematic *kinematic;
+    Kinematic outputKinematic;
     dBodyID body;
     dMass mass;
  public:
-    PMoveable(Physics *physics, Kinematic *kinematic, float mass,
+    PMoveable(Physics *physics, const Kinematic *kinematic, float mass,
               GeomInfo *info);
-    void odeToKinematic(); //writes (syncs) the body coords into the kinematic
+    const Kinematic &odeToKinematic(); //writes (syncs) the body coords into the kinematic
     void kinematicToOde(); //writes (syncs) the kinematic coords into the body
 };
 
@@ -40,10 +41,10 @@ class PMoveable: public PGeom
 class PAgent: public PMoveable
 {
  protected:
-    SteerInfo *steering;
+    const SteerInfo *steering;
  public:
-    PAgent(Physics *physics, Kinematic *kinematic, SteerInfo *steering,
-           float mass, GeomInfo *info);
+    PAgent(Physics *physics, const Kinematic *kinematic,
+           const SteerInfo *steering, float mass, GeomInfo *info);
     void steeringToOde(); //Write steering info into the ODE structs
 };
 #endif

@@ -9,14 +9,14 @@ World World::_instance = World();
 World::World()
 {
     environment = std::vector<Polygon>();
-    agents      = std::vector<Agent>();
+    agents      = std::vector<Agent *>();
 }
 
 World::~World()
 {
 }
 
-void World::registerAgent(Agent &agent)
+void World::registerAgent(Agent *agent)
 {
     agents.push_back(agent);
 }

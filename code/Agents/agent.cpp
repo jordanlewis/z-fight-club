@@ -39,7 +39,7 @@ Kinematic &Agent::getKinematic ()
 /* \brief set kinematic for agent
  * \param kinematic a Kinematic object with the desired new parameters
  */
-void Agent::setKinematic (Kinematic &kinematic)
+void Agent::setKinematic (const Kinematic &kinematic)
 {
     this->kinematic = kinematic;
 }
@@ -54,7 +54,7 @@ SteerInfo &Agent::getSteering ()
 /* \brief set desired steering information for agent
  * \param steerInfo a SteerInfo object with the desired new parameters
  */
-void Agent::setSteering(SteerInfo &steerInfo)
+void Agent::setSteering(const SteerInfo &steerInfo)
 {
     this->steerInfo = steerInfo;
 }

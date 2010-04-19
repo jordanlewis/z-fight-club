@@ -71,7 +71,7 @@ void Graphics::render(World * world)
 
     unsigned int i;
     for (i = 0; i < world->agents.size(); i++) {
-	render(&(world->agents[i]));
+	render(world->agents[i]);
     }
     SDL_GL_SwapBuffers();
 }
