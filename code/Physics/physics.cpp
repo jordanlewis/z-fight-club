@@ -13,6 +13,8 @@
 
 using namespace std;
 
+Physics Physics::_instance;
+
 static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 {
     Physics *p = (Physics *) data;
@@ -134,7 +136,7 @@ void Physics::initPhysics()
 
 }
 
-Physics::Physics(World *world) : world(world)
+Physics::Physics() : world(&World::getInstance())
 {
 }
 
@@ -145,3 +147,9 @@ Physics::~Physics()
     dWorldDestroy(odeWorld);
     dCloseODE();
 }
+
+Physics &Physics::getInstance()
+{
+    return _instance;
+}
+

@@ -7,6 +7,8 @@
 
 using namespace std;
 
+Scheduler Scheduler::_instance;
+
 ComponentEvent::ComponentEvent(double when, Component_t which)
 {
     at = when;
@@ -18,11 +20,11 @@ bool ComponentEvent::operator< (const ComponentEvent &evt) const
     return evt.at < at;
 }
 
-Scheduler::Scheduler(World *world, Graphics *graphics, Physics *physics)
+Scheduler::Scheduler() :
+    world(&World::getInstance()),
+    graphics(&Graphics::getInstance()),
+    physics(&Physics::getInstance())
 {
-    this->world = world;
-    this->graphics = graphics;
-    this->physics = physics;
 }
 
 void Scheduler::schedule(ComponentEvent &evt)
@@ -85,3 +87,13 @@ void Scheduler::loopForever()
 
     }
 }
+
+Scheduler::~Scheduler()
+{
+}
+
+Scheduler &Scheduler::getInstance()
+{
+    return _instance;
+}
+
