@@ -4,9 +4,9 @@
 unsigned int Agent::maxId = 0;    /* !<highest id number we've reached */
 float        Agent::maxAccel = 10;  /*XXX 10 is a random value; tweak this */
 float        Agent::maxRotate = .3; /*XXX .3 is a random value; tweak this */
-float        Agent::height = 5;
-float        Agent::width = 10;
-float        Agent::depth = 40;
+float        Agent::height = 2;
+float        Agent::width = 2;
+float        Agent::depth = 2;
 
 /* \brief initialize an agent class
  * \param position the agent's initial position
