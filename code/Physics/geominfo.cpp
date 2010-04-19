@@ -1,6 +1,8 @@
 #include <ode/ode.h>
 #include "geominfo.h"
 
+#define PI 3.1415
+
 PlaneInfo::PlaneInfo(float a, float b, float c, float d, dSpaceID space)
                     : space(space), a(a), b(b), c(c), d(d)
 {}
@@ -17,10 +19,13 @@ dGeomID PlaneInfo::createGeom()  { return dCreatePlane(space, a, b, c, d); }
 
 void SphereInfo::createMass(dMass * mass, float massVal)
 {
-    dMassSetSphereTotal(mass, massVal, radius);
+    dMassSetSphere(mass, massVal/(2*PI*radius), radius);
+    
+    //dMassSetSphereTotal(mass, massVal, radius);
 }
 
 void BoxInfo::createMass(dMass * mass, float massVal)
 {
-    dMassSetBoxTotal(mass, massVal, lx, ly, lz);
+    dMassSetBox(mass, massVal/(lx*ly*lz), lx, ly, lz);
+    //dMassSetBoxTotal(mass, massVal, lx, ly, lz);
 }
