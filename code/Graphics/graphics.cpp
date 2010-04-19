@@ -3,11 +3,15 @@
 #include <SDL/SDL.h>
 
 #if defined(__APPLE__) && defined(__MACH__)
-#  include <GLUT/glut.h>
+#  include <OpenGL/gl.h>
+#  include <OpenGL/glu.h>
 #else
 #  define GL_GLEXT_PROTOTYPES
-#  include <GL/glut.h>
+#  include <GL/gl.h>
+#  include <GL/glu.h>
 #endif
+
+Graphics Graphics::_instance = Graphics();
 
 Graphics::Graphics()
 {
@@ -75,11 +79,16 @@ void Graphics::render(World * world)
 void Graphics::render(Agent * agent)
 {
     if (initialized) {
-	glPushMatrix();
-	glTranslatef(agent->kinematic.pos.x, agent->kinematic.pos.y, agent->kinematic.pos.z);
-	GLUquadric *quad = gluNewQuadric();
-	gluSphere(quad, 1.0, 18, 12);
-	glPopMatrix();
+    	glPushMatrix();
+    	glTranslatef(agent->kinematic.pos.x, agent->kinematic.pos.y, agent->kinematic.pos.z);
+    	GLUquadric *quad = gluNewQuadric();
+    	gluSphere(quad, 1.0, 18, 12);
+    	glPopMatrix();
     } /* else */
 	/* error */
+}
+
+Graphics &Graphics::getInstance()
+{
+    return _instance;
 }

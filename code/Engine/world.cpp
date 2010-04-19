@@ -4,7 +4,7 @@
 float World::xMax = 1000; // XXX this probably will depend on tracks
 float World::zMax = 1000; // XXX this too
 
-World World::_instance;
+World World::_instance = World();
 
 World::World()
 {
@@ -12,11 +12,15 @@ World::World()
     agents      = std::vector<Agent>();
 }
 
+World::~World()
+{
+}
+
 void World::registerAgent(Agent &agent)
 {
     agents.push_back(agent);
 }
 
-World &getInstance() {
+World &World::getInstance() {
     return World::_instance;
 }

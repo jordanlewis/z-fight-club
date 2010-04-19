@@ -5,17 +5,25 @@
 #include "../Utilities/vec3f.h"
 #include "color.h"
 
-class Graphics {
-    	bool 	initialized;	/* !<is opengl ready to go */
-    public:
-	Graphics();
-	~Graphics();
+class Graphics
+{
+  private:
+    Graphics();
+    ~Graphics();
+    Graphics(const Graphics&);
+    Graphics &operator=(const Graphics &);
+    static Graphics _instance;
 
-	void initGraphics();
-	void render(World * world);	
-	void render(Agent * agent);
-	int sphere(Vec3f, float, Color);
-	int arrow(Vec3f, Vec3f);
+    bool initialized;    /* !<is opengl ready to go */
+        
+  public:
+    void initGraphics();
+    void render(World * world);	
+    void render(Agent * agent);
+    int sphere(Vec3f, float, Color);
+    int arrow(Vec3f, Vec3f);
+
+    static Graphics &getInstance();
 };
     
 #endif

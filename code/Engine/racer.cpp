@@ -14,14 +14,14 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    World *world = &(World::getInstance());
-    Graphics *graphics = new Graphics;
-    Physics *physics = new Physics(world);
+    World    &world    = World::getInstance();
+    Graphics &graphics = Graphics::getInstance();
+    Physics *physics = new Physics(&world);
 
-    graphics->initGraphics();
+    graphics.initGraphics();
     physics->initPhysics();
 
-    Scheduler scheduler(world, graphics, physics);
+    Scheduler scheduler(&world, &graphics, physics);
 
     Vec3f pos = Vec3f(0, 0, 0);
     Agent agent(pos);
@@ -31,10 +31,8 @@ int main(int argc, char *argv[])
     steer.rotation = 0;
     agent.setSteering(steer);
 
-    world->registerAgent(agent);
+    world.registerAgent(agent);
     /* physics->initAgent(agent); */
-
-
 
     scheduler.loopForever();
 
