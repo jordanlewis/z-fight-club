@@ -13,6 +13,7 @@
 #ifndef _TRACK_PARSER_H_
 #define _TRACK_PARSER_H_
 
+#include <stdint.h>
 #include "Utilities/vector.h"	// for the Vec3f_t type
 
 typedef struct struct_sect Sector_t;
