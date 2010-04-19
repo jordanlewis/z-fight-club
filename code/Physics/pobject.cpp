@@ -2,17 +2,17 @@
 
 #define DEBUG
 
-PGeom::PGeom(Physics *physics, GeomInfo *info)
-            : physics(physics),  geom(info->createGeom())
+PGeom::PGeom(GeomInfo *info)
+            : geom(info->createGeom())
 {
 }
 
-PMoveable::PMoveable(Physics *physics, const Kinematic *kinematic, float mass,
+PMoveable::PMoveable(const Kinematic *kinematic, float mass,
                      GeomInfo *info)
-                    : PGeom(physics, info), kinematic(kinematic)
+                    : PGeom(info), kinematic(kinematic)
 {
     //Create a body, give it mass, and bind it to the geom
-    body = dBodyCreate(physics->getOdeWorld());
+    body = dBodyCreate(Physics::getInstance().getOdeWorld());
     info->createMass(&this->mass, mass);
 
     dBodySetMass(body, &this->mass);
@@ -22,9 +22,9 @@ PMoveable::PMoveable(Physics *physics, const Kinematic *kinematic, float mass,
     kinematicToOde();
 }
 
-PAgent::PAgent(Physics *physics, const Kinematic *kinematic,
-               const SteerInfo *steering, float mass, GeomInfo *info)
-              : PMoveable(physics, kinematic, mass, info), steering(steering)
+PAgent::PAgent(const Kinematic *kinematic, const SteerInfo *steering,
+               float mass, GeomInfo *info)
+              : PMoveable(kinematic, mass, info), steering(steering)
 {
 }
 
