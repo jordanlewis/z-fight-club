@@ -35,7 +35,7 @@ void Camera::setTarget(Vec3f target)
 }
 void Camera::setProjectionMatrix()
 {
-    glMatrixMode(GL_PROJECTION);
+    glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(pos[0], pos[1], pos[2], target[0], target[1], target[2], up[0], up[1], up[2]);
     glMatrixMode(GL_PROJECTION);
