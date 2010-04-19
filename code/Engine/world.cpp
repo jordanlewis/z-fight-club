@@ -15,7 +15,7 @@ World::World()
 
 World::~World()
 {
-    FreeTrackData(track);
+    /* FreeTrackData(track); */
 }
 
 void World::registerAgent(Agent *agent)
@@ -25,7 +25,7 @@ void World::registerAgent(Agent *agent)
 
 void World::loadTrack(char *file)
 {
-    track = LoadTrackData(file);
+    /* track = LoadTrackData(file); */
     if (!track)
 	; /* error */
 }
