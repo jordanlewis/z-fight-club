@@ -19,13 +19,13 @@ dGeomID PlaneInfo::createGeom()  { return dCreatePlane(space, a, b, c, d); }
 
 void SphereInfo::createMass(dMass * mass, float massVal)
 {
-    dMassSetSphere(mass, massVal/(2*PI*radius), radius);
-    
-    //dMassSetSphereTotal(mass, massVal, radius);
+    //dMassSetSphere(mass, massVal/((4/3)*PI*radius*radius*radius), radius);
+    dMassSetSphereTotal(mass, massVal, radius);
 }
 
 void BoxInfo::createMass(dMass * mass, float massVal)
 {
-    dMassSetBox(mass, massVal/(lx*ly*lz), lx, ly, lz);
-    //dMassSetBoxTotal(mass, massVal, lx, ly, lz);
+    //dMassSetBox(mass, massVal/(lx*ly*lz), lx, ly, lz);
+    dMassSetZero(mass);
+    dMassSetBoxTotal(mass, massVal, lx, ly, lz);
 }
