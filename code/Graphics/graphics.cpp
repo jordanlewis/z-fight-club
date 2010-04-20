@@ -123,6 +123,8 @@ void Graphics::render()
 
     glEnable(GL_LIGHTING);
 
+    render(world->track);
+
     // We should figure out how to use iterators and use one here
     unsigned int i;
     for (i = 0; i < world->agents.size(); i++) {
@@ -154,13 +156,18 @@ void Graphics::render(Agent * agent)
 
 void Graphics::render(TrackData_t *track)
 {
-    int i;
+    int i, j;
     /* load in the vertices */
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, 0, track->verts);
 
     /* draw sectors */
     for (i = 0; i < track->nSects; i++) {
+	uint16_t lineIndices[track->sects[i].nEdges];
+	for (j = 0; j < track->sects[i].nEdges; j++) {
+	    lineIndices[j] = track->sects[i].edges[j].start;
+	}
+	glDrawElements(GL_LINE_LOOP, track->sects[i].nEdges, GL_UNSIGNED_SHORT, lineIndices);
     }
 
     glDisableClientState(GL_VERTEX_ARRAY);

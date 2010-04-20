@@ -14,7 +14,7 @@ Camera::Camera()
 {
     FOVY = 65.0;
 
-    pos = Vec3f(10.0f, 10.0f, 10.0f);
+    pos = Vec3f(50.0f, 50.0f, 10.0f);
     up = Vec3f(0.0f, 1.0f, 0.0f);
     target = Vec3f(0.0f, 0.0f, 0.0f);
 
