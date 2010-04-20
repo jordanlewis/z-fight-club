@@ -139,11 +139,9 @@ void Graphics::render(Agent * agent)
     if (!initialized)
 	; /* error */
     
-    DrawCube(agent->kinematic.pos);
-    DrawArrow(agent->kinematic.pos,agent->kinematic.vel);
+    glMatrixMode(GL_MODELVIEW);
 
     glPushMatrix();
-    //glLoadIdentity();
 
     glTranslatef(agent->kinematic.pos.x, agent->kinematic.pos.y, agent->kinematic.pos.z);
     GLUquadric *quad = gluNewQuadric();
