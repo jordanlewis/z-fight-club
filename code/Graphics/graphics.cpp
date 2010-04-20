@@ -147,6 +147,7 @@ void Graphics::render(Agent * agent)
     GLUquadric *quad = gluNewQuadric();
     gluSphere(quad, 0.1, 18, 12);
     DrawArrow(Vec3f(0.0, 0.0, 0.0), agent->kinematic.vel);
+    DrawArrow(Vec3f(0.0, 0.0, 0.0), agent->kinematic.orientation_v);
 
     glPopMatrix();
 }
