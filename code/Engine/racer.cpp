@@ -22,8 +22,6 @@ int main(int argc, char *argv[])
     if (argc > 1)
 	world.loadTrack(argv[1]);
 
-    World     &world    = World::getInstance();
-
     if (argc > 1) {
 	    world.loadTrack(argv[1]);
     }
