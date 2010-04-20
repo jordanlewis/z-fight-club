@@ -68,10 +68,10 @@ class Vec3f {
     // --------- Element Access --------- 
     
     //! \brief accesses the ith element of this vector
-    float &operator[](int index);
+    float &operator[](int);
 
     //! \brief returns the ith element of this vector
-    float operator[](int index) const;
+    float operator[](int) const;
 
     // --------- Equality --------- 
 
@@ -106,7 +106,7 @@ class Vec3f {
 // --------- Scalar Multiplication --------- 
 //! \brief Multiplies a vector by a scalar and returns the result.
 //         This allows for the more traditional notation s * v
-Vec3f operator*(const float &s, const Vec3f&);
+Vec3f operator*(const float&, const Vec3f&);
 
 // --------- Stream Output --------- 
 //! \brief Writes this vector to the given output stream.

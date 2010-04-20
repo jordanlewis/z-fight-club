@@ -2,17 +2,8 @@
 #define AGENT_H
 
 #include "Utilities/vec3f.h"
+#include "kinematic.h"
 #include <vector>
-
-class Kinematic
-{
-  public:
-    Vec3f pos;
-    Vec3f vel;
-    Vec3f orientation_v;
-
-    float orientation;
-};
 
 class SteerInfo
 {
@@ -47,5 +38,9 @@ class Agent
     void setSteering (const SteerInfo &); /* !< Change desired steering */
     SteerInfo &getSteering ();      /* !< Change desired steering */
 };
+
+//! \brief Writes this agent to the given output stream.
+//         This will be used for debugging.
+std::ostream &operator<<(std::ostream&, const Agent&);
 
 #endif

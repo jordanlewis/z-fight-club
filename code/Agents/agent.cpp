@@ -58,3 +58,9 @@ void Agent::setSteering(const SteerInfo &steerInfo)
 {
     this->steerInfo = steerInfo;
 }
+
+std::ostream &operator<<(std::ostream &os, const Agent &agent)
+{
+    os << agent.kinematic << std::endl;
+    return os;
+}
