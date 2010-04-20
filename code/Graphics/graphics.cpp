@@ -100,16 +100,28 @@ void Graphics::render(World * world)
     glEnable(GL_CULL_FACE);
     glEnable(GL_COLOR_MATERIAL);
     glCullFace(GL_BACK);
-    glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_DEPTH_TEST);
 
     glClearColor(.2f, .2, .8f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    glDisable(GL_LIGHTING);
+
+    glColor3f(0.4,0.3,0.4);
+
+    glBegin(GL_QUADS);
+      glVertex3f(-5,0,-5);
+      glVertex3f(-5,0,5);
+      glVertex3f(5,0,5);
+      glVertex3f(5,0,-5);
+    glEnd();
+
+    glEnable(GL_LIGHTING);
+
     unsigned int i;
     for (i = 0; i < world->agents.size(); i++) {
-	render(world->agents[i]);
+	    render(world->agents[i]);
     }
     arrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(2.0f, 0.0f, 0.0f));
     arrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(0.0f, 2.0f, 0.0f));
@@ -121,6 +133,7 @@ void Graphics::render(Agent * agent)
 {
     if (!initialized)
 	; /* error */
+    
     glPushMatrix();
     glTranslatef(agent->kinematic.pos.x, agent->kinematic.pos.y, agent->kinematic.pos.z);
     GLUquadric *quad = gluNewQuadric();
