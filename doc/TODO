@@ -1,8 +1,25 @@
 This file should hold issues to be discussed at our soonest
 convenience, either after class meeting or when we're all on IRC.
 
+--------------------------------------------------------
 Unified error handling system.
+ ala syslog, with priority and facility (Jordan)
 
 Asset handling: SDL_image, SDL_sound, SDL_RWops, PhysicsFS?
+ getopts, option for asset directory, track file
 
-Networking: enet, SDL_net?
+Networking:
+ Nick: look into enet and SDL_net
+ Youlian: check out SDL_net
+
+Testing:
+ cleanup/rename racer.cpp, pull out world/agent configuration
+ so different devs can use different configs at build-time
+
+by Apr 27:
+ getopts (Nick)
+ track with constraining walls, in good view of camera (Joe, Jordan)
+ ai that can try to round the track (Joe, Jordan)
+ car trails, (past and future) (Joe, Matt)
+ velocity (linear and angular?) limiting (Youlian, Jordan)
+--------------------------------------------------------
