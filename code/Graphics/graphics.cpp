@@ -108,11 +108,12 @@ void Graphics::render(World * world)
 
     glDisable(GL_LIGHTING);
 
-    glColor3f(0.4,0.3,0.4);
 
     glBegin(GL_QUADS);
+        glColor3f(0.4,0.3,0.4);
       glVertex3f(-5,0,-5);
       glVertex3f(-5,0,5);
+        glColor3f(0.2,0.4,0.4);
       glVertex3f(5,0,5);
       glVertex3f(5,0,-5);
     glEnd();
