@@ -21,9 +21,13 @@ class Input
 {
     TurnState_t turnState;
     EngineState_t engineState;
+    Agent *agent;
 
     static Input _instance;
-    Agent *agent;
+    Input();
+    ~Input();
+    Input(const Input&);
+    Input &operator=(const Input&);
 
   public:
     void setTurnState(TurnState_t newState);

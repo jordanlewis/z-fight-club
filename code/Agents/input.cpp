@@ -3,10 +3,6 @@
 
 Input Input::_instance;
 
-Input &Input::getInstance()
-{
-    return _instance;
-}
 void Input::setTurnState(TurnState_t newState)
 {
     turnState = newState;
@@ -38,4 +34,17 @@ void Input::updateAgent()
         default: break;
     }
     agent->setSteering(steerInfo);
+}
+
+Input &Input::getInstance()
+{
+    return _instance;
+}
+
+Input::Input()
+{
+}
+
+Input::~Input()
+{
 }
