@@ -3,7 +3,7 @@
 
 unsigned int Agent::maxId = 0;    /* !<highest id number we've reached */
 float        Agent::maxAccel = 10;  /*XXX 10 is a random value; tweak this */
-float        Agent::maxRotate = .3; /*XXX .3 is a random value; tweak this */
+float        Agent::maxRotate = 2; /*XXX .3 is a random value; tweak this */
 float        Agent::height = 2;
 float        Agent::width = 2;
 float        Agent::depth = 2;
