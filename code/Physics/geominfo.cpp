@@ -3,14 +3,21 @@
 
 #define PI 3.1415
 
-PlaneInfo::PlaneInfo(float a, float b, float c, float d, dSpaceID space)
-                    : space(space), a(a), b(b), c(c), d(d)
+GeomInfo::GeomInfo(float bounce, float mu1, float mu2)
+    : bounce(bounce), mu1(mu1), mu2(mu2)
 {}
-BoxInfo::BoxInfo(float lx, float ly, float lz, dSpaceID space)
-                : space(space), lx(lx), ly(ly), lz(lz)
+
+PlaneInfo::PlaneInfo(float a, float b, float c, float d, 
+		     float bounce, float mu1, float mu2, dSpaceID space)
+    : GeomInfo(bounce, mu1, mu2), space(space), a(a), b(b), c(c), d(d)
 {}
-SphereInfo::SphereInfo(float radius, dSpaceID space)
-                      : space(space), radius(radius)
+BoxInfo::BoxInfo(float lx, float ly, float lz, 
+		 float bounce, float mu1, float mu2, dSpaceID space)
+    : GeomInfo(bounce, mu1, mu2), space(space), lx(lx), ly(ly), lz(lz)
+{}
+SphereInfo::SphereInfo(float radius, 
+		       float bounce, float mu1, float mu2, dSpaceID space)
+    : GeomInfo(bounce, mu1, mu2), space(space), radius(radius)
 {}
 
 dGeomID SphereInfo::createGeom() { return dCreateSphere (space, radius); }
@@ -26,6 +33,5 @@ void SphereInfo::createMass(dMass * mass, float massVal)
 void BoxInfo::createMass(dMass * mass, float massVal)
 {
     //dMassSetBox(mass, massVal/(lx*ly*lz), lx, ly, lz);
-    dMassSetZero(mass);
     dMassSetBoxTotal(mass, massVal, lx, ly, lz);
 }

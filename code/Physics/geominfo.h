@@ -5,9 +5,13 @@
 
 class GeomInfo
 {
-  public:
-    virtual dGeomID createGeom() = 0;
-    virtual void createMass(dMass *, float) = 0;
+ protected:
+    float bounce;
+    float mu1, mu2;
+    GeomInfo(float bounce, float mu1, float mu2);
+ public:
+    virtual dGeomID createGeom() {return 0;};
+    virtual void createMass(dMass *, float) {return;};
 };
 
 class SphereInfo : public GeomInfo
@@ -15,7 +19,8 @@ class SphereInfo : public GeomInfo
  public:
     dSpaceID space;
     float radius;
-    SphereInfo(float radius, dSpaceID space);
+    SphereInfo(float radius, 
+	       float bounce, float mu1, float mu2, dSpaceID space);
     dGeomID createGeom();
     void createMass(dMass *, float);
 };
@@ -26,7 +31,8 @@ class BoxInfo : public GeomInfo
  public:
     dSpaceID space;
     float lx, ly, lz;
-    BoxInfo(float lx, float ly, float lz, dSpaceID space);
+    BoxInfo(float lx, float ly, float lz,
+	    float bounce, float mu1, float mu2, dSpaceID space);
     dGeomID createGeom();
     void createMass(dMass *, float);
 };
@@ -38,7 +44,8 @@ class PlaneInfo : public GeomInfo
  public:
     dSpaceID space;
     float a, b, c, d;
-    PlaneInfo(float a, float b, float c, float d, dSpaceID space);
+    PlaneInfo(float a, float b, float c, float d,
+	      float bounce, float mu1, float mu2, dSpaceID space);
     dGeomID createGeom();
 };
 

@@ -124,7 +124,7 @@ void Physics::initAgent(Agent &agent)
     Kinematic &k = agent.getKinematic();
     SteerInfo &s = agent.getSteering();
     BoxInfo geom = BoxInfo(agent.width, agent.height, agent.depth,
-                                      this->getOdeSpace());
+			   .8, 0, 0, this->getOdeSpace());
     PAgent *pobj = new PAgent(&k, &s, 100, &geom);
 
     pagents[agent.id] = pobj;
