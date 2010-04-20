@@ -5,6 +5,7 @@
 #include "world.h"
 #include "Graphics/graphics.h"
 #include "Physics/physics.h"
+#include "Sound/sound.h"
 
 typedef enum
 {
@@ -31,6 +32,7 @@ class Scheduler
 
     World    *world;
     Graphics *graphics;
+    Sound    *sound;
     Physics  *physics;
 
     static Scheduler _instance;

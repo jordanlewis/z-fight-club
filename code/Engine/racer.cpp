@@ -11,8 +11,10 @@
 #include "Agents/input.h"
 #include "Physics/physics.h"
 #include "Graphics/graphics.h"
+#include "Sound/sound.h"
 
 #include "Utilities/vec3f.h"
+#include "Utilities/defs.h"
 
 using namespace std;
 
@@ -23,12 +25,14 @@ int main(int argc, char *argv[])
 	world.loadTrack(argv[1]);
 
     Graphics  &graphics = Graphics::getInstance();
+    Sound     &sound    = Sound::getInstance();
     Physics   &physics  = Physics::getInstance();
     Scheduler &scheduler = Scheduler::getInstance();
     Input     &input = Input::getInstance();
 
 
     graphics.initGraphics();
+    sound.initSound();
     physics.initPhysics();
 
 
@@ -50,6 +54,7 @@ int main(int argc, char *argv[])
     physics.initAgent(agent2);
 
     input.controlAgent(&agent);
+    // sound.schedule_sound("test.wav", GetTime()+10, Vec3f(0,0,0));
 
     scheduler.loopForever();
 

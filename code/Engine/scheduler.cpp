@@ -24,6 +24,7 @@ bool ComponentEvent::operator< (const ComponentEvent &evt) const
 Scheduler::Scheduler() :
     world(&World::getInstance()),
     graphics(&Graphics::getInstance()),
+    sound(&Sound::getInstance()),
     physics(&Physics::getInstance())
 {
 }
@@ -88,6 +89,7 @@ void Scheduler::loopForever()
         last = now;
 
         graphics->render();
+        sound->process_queue();
 
         usleep(10000);
 
