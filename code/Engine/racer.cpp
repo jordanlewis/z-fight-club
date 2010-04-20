@@ -22,10 +22,6 @@ int main(int argc, char *argv[])
     if (argc > 1)
 	world.loadTrack(argv[1]);
 
-    if (argc > 1) {
-	    world.loadTrack(argv[1]);
-    }
-
     Graphics  &graphics = Graphics::getInstance();
     Physics   &physics  = Physics::getInstance();
     Scheduler &scheduler = Scheduler::getInstance();
