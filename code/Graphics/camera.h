@@ -11,14 +11,14 @@ class Camera {
     float FOVY;
 
     Vec3f pos,
-            up,
-            target;
+          up,
+          target;
 
-    int	wres,
-	hres;
+    int wres,
+        hres;
 
     float zNear,
-	  zFar;
+          zFar;
   public:
     Camera();
     ~Camera();
