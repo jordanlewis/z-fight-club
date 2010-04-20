@@ -1,3 +1,8 @@
-This file should hold issues to be discussed at our soonest convenience, either after class meeting or when we're all on IRC.
+This file should hold issues to be discussed at our soonest
+convenience, either after class meeting or when we're all on IRC.
 
 Unified error handling system.
+
+Asset handling: SDL_image, SDL_sound, SDL_RWops, PhysicsFS?
+
+Networking: enet, SDL_net?
