@@ -156,22 +156,26 @@ void Graphics::render(Agent * agent)
 
 void Graphics::render(TrackData_t *track)
 {
-    int i, j;
-    /* load in the vertices */
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, track->verts);
+    if (!initialized)
+	; /* error */
+    if (track) {
+	int i, j;
+	/* load in the vertices */
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, track->verts);
 
-    /* draw sectors */
-    for (i = 0; i < track->nSects; i++) {
-	uint16_t *lineIndices = new uint16_t[track->sects[i].nEdges];
-	for (j = 0; j < track->sects[i].nEdges; j++) {
-	    lineIndices[j] = track->sects[i].edges[j].start;
+	/* draw sectors */
+	for (i = 0; i < track->nSects; i++) {
+	    uint16_t *lineIndices = new uint16_t[track->sects[i].nEdges];
+	    for (j = 0; j < track->sects[i].nEdges; j++) {
+		lineIndices[j] = track->sects[i].edges[j].start;
+	    }
+	    glDrawElements(GL_LINE_LOOP, track->sects[i].nEdges, GL_UNSIGNED_SHORT, lineIndices);
+	    delete [] lineIndices;
 	}
-	glDrawElements(GL_LINE_LOOP, track->sects[i].nEdges, GL_UNSIGNED_SHORT, lineIndices);
-	delete [] lineIndices;
-    }
 
-    glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
+    }
 }
 
 Graphics &Graphics::getInstance()
