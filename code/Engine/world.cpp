@@ -7,7 +7,7 @@ extern "C" {
 float World::xMax = 1000; // XXX this probably will depend on tracks
 float World::zMax = 1000; // XXX this too
 
-World World::_instance = World();
+World World::_instance;
 
 World::World()
 {
@@ -34,5 +34,5 @@ void World::loadTrack(char *file)
 
 World &World::getInstance() 
 {
-    return World::_instance;
+    return _instance;
 }

@@ -6,8 +6,11 @@
 
 #include <iostream>
 #include <SDL/SDL.h>
-#include "scheduler.h"
 #include "math.h"
+#include "scheduler.h"
+#include "Agents/input.h"
+#include "Physics/physics.h"
+#include "Graphics/graphics.h"
 
 #include "Utilities/vec3f.h"
 
@@ -19,13 +22,21 @@ int main(int argc, char *argv[])
     if (argc > 1)
 	world.loadTrack(argv[1]);
 
-    Graphics &graphics = Graphics::getInstance();
-    Physics *physics = new Physics(&world);
+    World     &world    = World::getInstance();
+
+    if (argc > 1) {
+	    world.loadTrack(argv[1]);
+    }
+
+    Graphics  &graphics = Graphics::getInstance();
+    Physics   &physics  = Physics::getInstance();
+    Scheduler &scheduler = Scheduler::getInstance();
+    Input     &input = Input::getInstance();
+
 
     graphics.initGraphics();
-    physics->initPhysics();
+    physics.initPhysics();
 
-    Scheduler scheduler(&world, &graphics, physics);
 
     Vec3f pos = Vec3f(-8, .3, 0);
     Vec3f pos2 = Vec3f(30, 0, 0);
@@ -40,9 +51,11 @@ int main(int argc, char *argv[])
     agent2.setSteering(steer);
 
     world.registerAgent(&agent);
-    physics->initAgent(agent);
+    physics.initAgent(agent);
     world.registerAgent(&agent2);
-    physics->initAgent(agent2);
+    physics.initAgent(agent2);
+
+    input.controlAgent(&agent);
 
     scheduler.loopForever();
 

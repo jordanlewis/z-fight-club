@@ -3,9 +3,12 @@
 #include <SDL/SDL.h>
 #include "scheduler.h"
 #include "world.h"
+#include "Agents/input.h"
 #include "Utilities/defs.h"
 
 using namespace std;
+
+Scheduler Scheduler::_instance;
 
 ComponentEvent::ComponentEvent(double when, Component_t which)
 {
@@ -18,11 +21,11 @@ bool ComponentEvent::operator< (const ComponentEvent &evt) const
     return evt.at < at;
 }
 
-Scheduler::Scheduler(World *world, Graphics *graphics, Physics *physics)
+Scheduler::Scheduler() :
+    world(&World::getInstance()),
+    graphics(&Graphics::getInstance()),
+    physics(&Physics::getInstance())
 {
-    this->world = world;
-    this->graphics = graphics;
-    this->physics = physics;
 }
 
 void Scheduler::schedule(ComponentEvent &evt)
@@ -36,20 +39,46 @@ void Scheduler::loopForever()
     double now;
     double last = GetTime();
 
+    Input &input = Input::getInstance();
+
     cout << "Looping forever..." << endl;
     while (!done)
     {
-	/* Grab input from SDL loop */
-	SDL_Event SDLevt;
-	while (SDL_PollEvent(&SDLevt)) {
-	    switch(SDLevt.type) {
-		case SDL_QUIT:
-		    done = 1;
-		    break;
-	    }
-	}
+        /* Grab input from SDL loop */
+        SDL_Event SDLevt;
+        while (SDL_PollEvent(&SDLevt)) {
+            switch(SDLevt.type) {
+                case SDL_KEYDOWN:
+                    switch (SDLevt.key.keysym.sym) {
+                        case SDLK_LEFT:
+                            input.setTurnState(LEFT); break;
+                        case SDLK_RIGHT:
+                            input.setTurnState(RIGHT); break;
+                        case SDLK_UP:
+                            input.setEngineState(ACCELERATE); break;
+                        case SDLK_DOWN:
+                            input.setEngineState(REVERSE); break;
+                        default: break;
+                    } break;
+                case SDL_KEYUP:
+                    switch (SDLevt.key.keysym.sym) {
+                        case SDLK_LEFT:
+                        case SDLK_RIGHT:
+                            input.setTurnState(STRAIGHT); break;
+                        case SDLK_UP:
+                        case SDLK_DOWN:
+                            input.setEngineState(NEUTRAL); break;
+                        default: break;
+                    } break;
+                case SDL_QUIT:
+                    done = 1;
+                    break;
+                default:
+                    break;
+            }
+        }
 
-
+        input.updateAgent();
 
         now = GetTime();
         if (now - last > 0)
@@ -64,8 +93,8 @@ void Scheduler::loopForever()
 
 
 #ifdef USING_COMPLICATED_SCHEDULER
-	if (eventQueue.empty())
-	    continue;
+        if (eventQueue.empty())
+            continue;
 
         const ComponentEvent &evt = eventQueue.top();
         if (evt.at < now)
@@ -85,3 +114,13 @@ void Scheduler::loopForever()
 
     }
 }
+
+Scheduler::~Scheduler()
+{
+}
+
+Scheduler &Scheduler::getInstance()
+{
+    return _instance;
+}
+

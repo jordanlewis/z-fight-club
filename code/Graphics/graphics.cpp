@@ -15,7 +15,7 @@ extern "C" {
 #  include <GL/glu.h>
 #endif
 
-Graphics Graphics::_instance = Graphics();
+Graphics Graphics::_instance;
 
 Graphics::Graphics()
 {

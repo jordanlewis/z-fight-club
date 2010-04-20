@@ -23,15 +23,21 @@ class Physics
     dJointGroupID odeContacts;
 
     void updateAgentKinematic(Agent::Agent *agent, float dt);
-  public:
-    Physics(World *world); /* constructor; initialize with a world */
+
+    static Physics _instance;
+    Physics();
     ~Physics();
+    Physics(const Physics&);
+    Physics &operator=(const Physics&);
+  public:
     const dWorldID & getOdeWorld() { return odeWorld; };
     const dSpaceID & getOdeSpace() { return odeSpace; };
     const dJointGroupID & getOdeContacts() { return odeContacts; };
     void initPhysics();
     void initAgent(Agent &agent);
     void simulate(float dt); /* step the world forward by dt. */
+
+    static Physics &getInstance();
 };
 
 /* Links ODE to our game world. */
