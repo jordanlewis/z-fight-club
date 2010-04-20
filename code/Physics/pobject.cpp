@@ -61,9 +61,9 @@ const Kinematic &PMoveable::odeToKinematic(){
     dQMultiply2(q_result, q_result1, q_current);
 
     //Write this result into kinematic's orientation_v
-    k.orientation_v[1] = q_result[1];
-    k.orientation_v[2] = q_result[2];
-    k.orientation_v[3] = q_result[3];
+    k.orientation_v[0] = q_result[1];
+    k.orientation_v[1] = q_result[2];
+    k.orientation_v[2] = q_result[3];
     
     //Calculate and write the orientation projected onto the X-Z plane
 
