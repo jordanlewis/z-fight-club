@@ -4,6 +4,9 @@
 #include "../Agents/agent.h"
 #include "../Utilities/vec3f.h"
 #include "color.h"
+extern "C" {
+#include "Parser/track-parser.h"
+}
 
 class Graphics
 {
@@ -15,13 +18,14 @@ class Graphics
     static Graphics _instance;
 
     bool initialized;    /* !<is opengl ready to go */
+    void arrow(Vec3f, Vec3f);
         
   public:
     void initGraphics();
     void render(World * world);	
     void render(Agent * agent);
+    void render(TrackData_t *track);
     int sphere(Vec3f, float, Color);
-    int arrow(Vec3f, Vec3f);
 
     static Graphics &getInstance();
 };

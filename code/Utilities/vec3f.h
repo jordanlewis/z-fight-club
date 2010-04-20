@@ -2,6 +2,7 @@
 #define VEC3F_H
 
 #include <iostream>
+#include <vector>
 
 class Vec3f {
     /*! \brief Checks if the vector is very small, and, if so, sets it to 0
@@ -91,6 +92,15 @@ class Vec3f {
 
     //! \brief takes the dot product with another vector
     float dot(const Vec3f&) const;
+
+    //! \brief project the vector along another vector
+    Vec3f project(const Vec3f&) const;
+
+    //! \brief return a vector perpendicular to this one
+    Vec3f perp() const;
+
+    //! \brief return a vector perpendicular to this one and another one
+    Vec3f perp(const Vec3f&) const;
 };
 
 // --------- Scalar Multiplication --------- 
@@ -102,5 +112,10 @@ Vec3f operator*(const float &s, const Vec3f&);
 //! \brief Writes this vector to the given output stream.
 //         This will allow us to debug with cout << Vec3f
 std::ostream &operator<<(std::ostream&, const Vec3f&);
+
+// ---------- Vertex Array ---------
+// ! \brief Create an array of floats usable by opengl
+// 	out of an array of floats
+float *makeArray(const std::vector<Vec3f>);
 
 #endif
