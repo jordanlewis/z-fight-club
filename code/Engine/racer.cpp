@@ -6,8 +6,11 @@
 
 #include <iostream>
 #include <SDL/SDL.h>
-#include "scheduler.h"
 #include "math.h"
+#include "scheduler.h"
+#include "Agents/input.h"
+#include "Physics/physics.h"
+#include "Graphics/graphics.h"
 
 #include "Utilities/vec3f.h"
 
@@ -23,9 +26,10 @@ int main(int argc, char *argv[])
     }
 
     Graphics  &graphics = Graphics::getInstance();
-    Physics   &physics  = Physics::getInstance(); 
+    Physics   &physics  = Physics::getInstance();
     Scheduler &scheduler = Scheduler::getInstance();
-    
+    Input     &input = Input::getInstance();
+
 
     graphics.initGraphics();
     physics.initPhysics();
@@ -47,6 +51,8 @@ int main(int argc, char *argv[])
     physics.initAgent(agent);
     world.registerAgent(&agent2);
     physics.initAgent(agent2);
+
+    input.controlAgent(&agent);
 
     scheduler.loopForever();
 
