@@ -59,7 +59,14 @@ const Kinematic &PMoveable::odeToKinematic(){
     dQMultiply0(q_result1, q_current, q_base);
     //Step2:  q_result = q_result*q_current^{-1}
     dQMultiply2(q_result, q_result1, q_current);
+
+    //Write this result into kinematic's orientation_v
+    k.orientation_v[1] = q_result[1];
+    k.orientation_v[2] = q_result[2];
+    k.orientation_v[3] = q_result[3];
     
+    //Calculate and write the orientation projected onto the X-Z plane
+
     /*Project to X-Z plane (Ignore the Y component), renormalize, and 
       calculate rotation around the Y axis*/
     norm = sqrt(q_result[1]*q_result[1] + q_result[3]*q_result[3]);

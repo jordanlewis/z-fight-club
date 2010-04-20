@@ -9,6 +9,7 @@ class Kinematic
   public:
     Vec3f pos;
     Vec3f vel;
+    Vec3f orientation_v;
 
     float orientation;
 };
