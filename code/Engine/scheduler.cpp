@@ -87,7 +87,7 @@ void Scheduler::loopForever()
         }
         last = now;
 
-        graphics->render(world);
+        graphics->render();
 
         usleep(10000);
 

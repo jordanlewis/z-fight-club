@@ -49,7 +49,7 @@ void Graphics::initGraphics()
 
 }
 
-void Graphics::arrow(Vec3f pos, Vec3f dir)
+void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
 {
     if (!initialized)
 	; /* error */
@@ -83,14 +83,17 @@ void Graphics::arrow(Vec3f pos, Vec3f dir)
     delete [] rawVerts;
 }
 
-void Graphics::render(World * world)
+void Graphics::render()
 {
+    World *world = &World::getInstance();
+
     GLfloat light_position[]={ 10.0, 10.0, -10.0, 1.0 };
     GLfloat light_color[]={ 1.0, 1.0, 1.0, 1.0 };
     GLfloat ambient_color[]={ 0.2, 0.2, 0.2, 1.0 };
     GLfloat mat_specular[]={ 1.0, 1.0, 1.0, 1.0 };
 
     world->camera.setProjectionMatrix();
+
     glShadeModel(GL_SMOOTH);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );
     glLightfv(GL_LIGHT0, GL_POSITION, light_position );
@@ -108,7 +111,7 @@ void Graphics::render(World * world)
 
     glDisable(GL_LIGHTING);
 
-
+    // A floor is useful, but this should be cleaned up soon
     glBegin(GL_QUADS);
         glColor3f(0.4,0.3,0.4);
       glVertex3f(-5,0,-5);
@@ -120,13 +123,14 @@ void Graphics::render(World * world)
 
     glEnable(GL_LIGHTING);
 
+    // We should figure out how to use iterators and use one here
     unsigned int i;
     for (i = 0; i < world->agents.size(); i++) {
 	    render(world->agents[i]);
     }
-    arrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(2.0f, 0.0f, 0.0f));
-    arrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(0.0f, 2.0f, 0.0f));
-    arrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(0.0f, 0.0f, 2.0f));
+    DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(2.0f, 0.0f, 0.0f));
+    DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(0.0f, 2.0f, 0.0f));
+    DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(0.0f, 0.0f, 2.0f));
     SDL_GL_SwapBuffers();
 }
 
@@ -135,11 +139,17 @@ void Graphics::render(Agent * agent)
     if (!initialized)
 	; /* error */
     
+    DrawCube(agent->kinematic.pos);
+    DrawArrow(agent->kinematic.pos,agent->kinematic.vel);
+
     glPushMatrix();
+    //glLoadIdentity();
+
     glTranslatef(agent->kinematic.pos.x, agent->kinematic.pos.y, agent->kinematic.pos.z);
     GLUquadric *quad = gluNewQuadric();
     gluSphere(quad, 0.1, 18, 12);
-    arrow(Vec3f(0.0, 0.0, 0.0), agent->kinematic.vel);
+    DrawArrow(Vec3f(0.0, 0.0, 0.0), agent->kinematic.vel);
+
     glPopMatrix();
 }
 
@@ -153,7 +163,6 @@ void Graphics::render(TrackData_t *track)
     /* draw sectors */
     for (i = 0; i < track->nSects; i++) {
     }
-    
 
     glDisableClientState(GL_VERTEX_ARRAY);
 }
@@ -162,3 +171,28 @@ Graphics &Graphics::getInstance()
 {
     return _instance;
 }
+
+void Graphics::DrawCube(Vec3f center)
+{
+    glBegin(GL_QUADS);
+    Vec3f toDraw = center;
+    float inc[2][4] = {{-0.5,0.5,0.5,-0.5},
+                       {-0.5,-0.5,0.5,0.5}};
+    for(int i=0;i<3;i++) {
+        int a = (i+1)%3,
+            b = (i+2)%3;
+        for(int k=1; k>=-1; k-=2) {
+            toDraw[i] += (0.5*k);
+            for(int j=0; j<4; j++) {
+                toDraw[a] += inc[0][j];
+                toDraw[b] += inc[1][j];
+                glVertex3f(toDraw.x,toDraw.y,toDraw.z);
+                toDraw[a] = center[a];
+                toDraw[b] = center[b];
+            }
+            toDraw[i] = center[i];
+        }
+    }
+    glEnd();
+}
+

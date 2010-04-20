@@ -18,14 +18,24 @@ class Graphics
     static Graphics _instance;
 
     bool initialized;    /* !<is opengl ready to go */
-    void arrow(Vec3f, Vec3f);
+
+    /*! \brief Draws an arrow at "center" pointing in the direction "dir"
+     *         This exists for debugging purposes, particularly problems with matrix transformations
+     */
+    void DrawArrow(Vec3f, Vec3f);
+    /*! \brief Draws a unit cube at "center" without using any matrix transformations
+     *         This exists for debugging purposes, particularly problems with matrix transformations
+     */
+    void DrawCube(Vec3f);
         
   public:
     void initGraphics();
-    void render(World * world);	
+    void render();	
     void render(Agent * agent);
     void render(TrackData_t *track);
     int sphere(Vec3f, float, Color);
+
+
 
     static Graphics &getInstance();
 };
