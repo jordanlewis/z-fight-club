@@ -29,7 +29,7 @@ $(BUILDDIR):
 	mkdir -p $(addprefix $(BUILDDIR)/, $(LIBDIRS))
 
 $(CTAGS): $(HEADERS) $(C_SRCS) $(CPP_SRCS)
-	ctags -R
+	ctags -R --c++-kinds=+p --fields=+iaS --extra=+q
 
 object_test: $(OBJECTBUILDS)
 
