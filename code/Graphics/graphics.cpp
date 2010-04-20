@@ -2,6 +2,10 @@
 #include "Engine/world.h"
 #include <SDL/SDL.h>
 
+extern "C" {
+#include "Parser/track-parser.h"
+}
+
 #if defined(__APPLE__) && defined(__MACH__)
 #  include <OpenGL/gl.h>
 #  include <OpenGL/glu.h>
@@ -45,6 +49,40 @@ void Graphics::initGraphics()
 
 }
 
+void Graphics::arrow(Vec3f pos, Vec3f dir)
+{
+    if (!initialized)
+	; /* error */
+
+    float l = dir.length();
+    /* the 6 verts we need for the arrow */
+    std::vector<Vec3f> verts;
+    verts.push_back(pos);
+    verts.push_back(pos + dir);
+
+    /* make perpendicular vectors */
+    Vec3f p1 = dir.perp();
+    Vec3f p2 = dir.perp(p1);
+
+    verts.push_back(pos + (dir * 0.7f) + (p1 * l * 0.3f));
+    verts.push_back(pos + (dir * 0.7f) - (p1 * l * 0.3f));
+    verts.push_back(pos + (dir * 0.7f) + (p2 * l * 0.3f));
+    verts.push_back(pos + (dir * 0.7f) - (p2 * l * 0.3f));
+
+    /* vertex array in opengl usable form */
+    float *rawVerts = makeArray(verts);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    glVertexPointer(3, GL_FLOAT, 0, rawVerts);
+    uint16_t lineIndices[2 * 5] = {0, 1, 1, 2, 1, 3, 1, 4, 1, 5}; /* 2 indices per line, 5 lines */
+    glDrawElements(GL_LINES, 2 * 5, GL_UNSIGNED_SHORT, lineIndices);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+
+    delete [] rawVerts;
+}
+
 void Graphics::render(World * world)
 {
     GLfloat light_position[]={ 10.0, 10.0, -10.0, 1.0 };
@@ -78,14 +116,29 @@ void Graphics::render(World * world)
 
 void Graphics::render(Agent * agent)
 {
-    if (initialized) {
-    	glPushMatrix();
-    	glTranslatef(agent->kinematic.pos.x, agent->kinematic.pos.y, agent->kinematic.pos.z);
-    	GLUquadric *quad = gluNewQuadric();
-    	gluSphere(quad, 1.0, 18, 12);
-    	glPopMatrix();
-    } /* else */
-	/* error */
+    if (!initialized)
+	; /* error */
+    glPushMatrix();
+    glTranslatef(agent->kinematic.pos.x, agent->kinematic.pos.y, agent->kinematic.pos.z);
+    GLUquadric *quad = gluNewQuadric();
+    gluSphere(quad, 0.1, 18, 12);
+    arrow(Vec3f(0.0, 0.0, 0.0), agent->kinematic.vel);
+    glPopMatrix();
+}
+
+void Graphics::render(TrackData_t *track)
+{
+    int i;
+    /* load in the vertices */
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, track->verts);
+
+    /* draw sectors */
+    for (i = 0; i < track->nSects; i++) {
+    }
+    
+
+    glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 Graphics &Graphics::getInstance()

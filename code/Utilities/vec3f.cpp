@@ -1,5 +1,6 @@
 #include "vec3f.h"
 #include <cmath>
+#include <vector>
 
 #define EPSILON 2e-6
 
@@ -207,6 +208,31 @@ float Vec3f::dot(const Vec3f &o) const
     return ((x*o.x) + (y*o.y) + (z*o.z));
 }
 
+Vec3f Vec3f::project(const Vec3f& v) const
+{
+    return v * v.dot(*this);
+}
+
+Vec3f Vec3f::perp() const
+{
+    Vec3f u = Vec3f(1.0, 0.0, 0.0);
+
+    /* check to see if the vectors are perpendicular */
+    if (((*this) * u).length() < EPSILON)
+	u = Vec3f(0.0, 1.0, 0.0);
+
+    u -= u.project(*this);
+    u.normalize();
+    return u;
+}
+
+Vec3f Vec3f::perp(const Vec3f &v) const
+{
+    Vec3f p = ((*this) * v);
+    p.normalize();
+    return p;
+}
+
 // --------- Stream Output --------- 
 
 std::ostream &operator<<(std::ostream &os, const Vec3f &o)
@@ -222,4 +248,16 @@ Vec3f operator*(const float &s, const Vec3f &v)
     return Vec3f(s*v.x,s*v.y,s*v.z);
 }
 
+// --------- Vertex Array Functions --------
+float *makeArray(const std::vector<Vec3f> array)
+{
+    unsigned int i, j;
+    float *verts = new float[3 * array.size()];
+
+    for (i = 0; i < array.size(); i++)
+	for (j = 0; j < 3; j++)
+	    verts[i*3 + j] = array[i][j];
+
+    return verts;
+}
 #undef EPSILON
