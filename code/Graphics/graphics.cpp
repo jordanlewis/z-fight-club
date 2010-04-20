@@ -163,11 +163,12 @@ void Graphics::render(TrackData_t *track)
 
     /* draw sectors */
     for (i = 0; i < track->nSects; i++) {
-	uint16_t lineIndices[track->sects[i].nEdges];
+	uint16_t *lineIndices = new uint16_t[track->sects[i].nEdges];
 	for (j = 0; j < track->sects[i].nEdges; j++) {
 	    lineIndices[j] = track->sects[i].edges[j].start;
 	}
 	glDrawElements(GL_LINE_LOOP, track->sects[i].nEdges, GL_UNSIGNED_SHORT, lineIndices);
+	delete [] lineIndices;
     }
 
     glDisableClientState(GL_VERTEX_ARRAY);
