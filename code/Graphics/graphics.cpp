@@ -111,6 +111,9 @@ void Graphics::render(World * world)
     for (i = 0; i < world->agents.size(); i++) {
 	render(world->agents[i]);
     }
+    arrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(2.0f, 0.0f, 0.0f));
+    arrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(0.0f, 2.0f, 0.0f));
+    arrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(0.0f, 0.0f, 2.0f));
     SDL_GL_SwapBuffers();
 }
 
