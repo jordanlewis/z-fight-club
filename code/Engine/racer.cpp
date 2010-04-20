@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     physics.initPhysics();
 
 
-    Vec3f pos = Vec3f(-8, .3, 0);
+    Vec3f pos = Vec3f(-8, .3, .3);
     Vec3f pos2 = Vec3f(30, 0, 0);
     Agent agent(pos, M_PI / 2);
     Agent agent2(pos2, -M_PI / 2);

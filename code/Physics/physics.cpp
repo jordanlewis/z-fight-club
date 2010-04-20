@@ -81,10 +81,13 @@ void Physics::updateAgentKinematic(Agent::Agent *agent, float dt)
 
 void Physics::simulate(float dt)
 {
-    for (vector<Agent *>::iterator iter = world->agents.begin();
-         iter != world->agents.end(); iter++)
+    vector<Agent *>::iterator iter;
+    PAgent *p;
+    Agent *a;
+    for (iter = world->agents.begin(); iter != world->agents.end(); iter++)
     {
-        PAgent *p = pagents[(*iter)->id];
+        a = (*iter);
+        p = pagents[a->id];
         p->kinematicToOde();
         p->steeringToOde();
     }
@@ -94,11 +97,13 @@ void Physics::simulate(float dt)
     dJointGroupEmpty(odeContacts);
 
 
-    for (vector<Agent *>::iterator iter = world->agents.begin();
-         iter != world->agents.end(); iter++)
+    for (iter = world->agents.begin(); iter != world->agents.end(); iter++)
     {
-        const Kinematic &k = pagents[(*iter)->id]->odeToKinematic();
-        (*iter)->setKinematic(k);
+        a = (*iter);
+        p = pagents[a->id];
+        const Kinematic &k = pagents[a->id]->odeToKinematic();
+        a->setKinematic(k);
+        p->resetOdeAngularVelocity();
     }
 
 }

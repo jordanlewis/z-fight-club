@@ -28,7 +28,8 @@ PAgent::PAgent(const Kinematic *kinematic, const SteerInfo *steering,
 {
 }
 
-//Copys the kinematic info into ODE's representation
+/* \brief Copys the kinematic info into ODE's representation
+ */
 void PMoveable::kinematicToOde()
 {
     const Kinematic *k = kinematic;
@@ -40,7 +41,8 @@ void PMoveable::kinematicToOde()
     dBodySetQuaternion(body, q);
 }
 
-//Copys the ode info into the associated kinematic struct
+/* /brief Copys the ode info into the associated kinematic struct
+ */
 const Kinematic &PMoveable::odeToKinematic(){
     Kinematic &k = outputKinematic;
 
@@ -98,13 +100,31 @@ const Kinematic &PMoveable::odeToKinematic(){
 }
 
 
-//Translates the object's steering info into ODE forces
+/* \brief Translates the object's steering info into ODE forces and angular
+ * \brief velocity.
+ * \warning Since we add the angular velocity component directly to ODE's
+ * \warning angular velocity for this object, we must remember to call
+ * \warning agent.resetOdeAngularVelocity() after stepping ODE. And make sure
+ * \warning that steering.rotation doesn't change until after that call.
+ */
 void PAgent::steeringToOde()
 {
     const dReal* angVel = dBodyGetAngularVel(body);
-    dBodySetAngularVel(body, angVel[0], steering->rotation, angVel[2]);
+    dBodySetAngularVel(body, angVel[0], angVel[1] + steering->rotation,
+                       angVel[2]);
 
     Vec3f f = Vec3f(sin(kinematic->orientation),0,cos(kinematic->orientation));
     f *= steering->acceleration * mass.mass;
     dBodyAddForce(body, f[0], f[1], f[2]);
+}
+
+/* \brief subtracts the artificially injected angular velocity from SteerInfo
+ * \brief from ODE's conception of the body's angular velocity. this is to be
+ * \brief called after stepping ODE.
+ */
+void PAgent::resetOdeAngularVelocity()
+{
+    const dReal* angVel = dBodyGetAngularVel(body);
+    dBodySetAngularVel(body, angVel[0], angVel[1] - steering->rotation,
+                       angVel[2]);
 }
