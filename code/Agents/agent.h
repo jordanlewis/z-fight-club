@@ -23,13 +23,12 @@ class SteerInfo
 class Agent
 {
     static unsigned int maxId; /* !<highest id number we've reached */
-    static float maxAccel;     /* !<how fast we're allowed to accelerate */
-    static float maxRotate;    /* !<how fast we're allowed to rotate */
-
     SteerInfo steerInfo;   /* !<car's steering info, set by AI/human */
 
   public:
     unsigned int id;       /* !<internal id number */
+    static float maxAccel;     /* !<how fast we're allowed to accelerate */
+    static float maxRotate;    /* !<how fast we're allowed to rotate */
     static float height;
     static float width;
     static float depth;
