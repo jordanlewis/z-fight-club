@@ -16,8 +16,6 @@ class PAgent;
 
 class Physics
 {
-    World *world; /* our world */
-
     __gnu_cxx::hash_map<int, PAgent *> pagents;
     dWorldID odeWorld;
     dSpaceID odeSpace;
