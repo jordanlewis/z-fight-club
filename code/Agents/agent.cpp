@@ -11,11 +11,8 @@ float        Agent::depth = 2;
 /* \brief initialize an agent class
  * \param position the agent's initial position
  */
-Agent::Agent(Vec3f position)
+Agent::Agent(Vec3f position) : steerInfo(), id(maxId++), kinematic(position)
 {
-    id = maxId++; /* Get next ID, increment maxId */
-    kinematic.pos = position;
-    kinematic.orientation = 0; /* facing into the z direction */
 }
 
 /* \brief initialize an agent class
@@ -23,10 +20,9 @@ Agent::Agent(Vec3f position)
  * \param orientation the agent's initial orientation
  */
 Agent::Agent(Vec3f position, float orientation)
+            : steerInfo(), id(maxId++), kinematic(position, Vec3f(0,0,0),
+                                                  orientation)
 {
-    id = maxId++;
-    kinematic.pos = position;
-    kinematic.orientation = orientation;
 }
 
 /* \brief get current kinematic for agent
