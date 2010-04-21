@@ -1,6 +1,7 @@
 code/build
 code/tests/vec3f/target
 code/tests/vec3f/main.o
+code/Makefile.testsetup
 code/tags
 doc/design.aux
 doc/design.pdf
