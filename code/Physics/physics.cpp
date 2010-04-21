@@ -10,6 +10,7 @@
 #include "Utilities/vec3f.h"
 
 #define MAX_CONTACTS 8
+#define GRAVITY -9.8
 
 using namespace std;
 
@@ -27,10 +28,16 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 
     PGeom *g1 = (PGeom *)dGeomGetData(o1);
     PGeom *g2 = (PGeom *)dGeomGetData(o2);
-
+    
     float bounce = (g1->bounce + g2->bounce)*.5;
-    float mu1 = (g1->mu1 + g2->mu1)*.5;
-    float mu2 = (g1->mu2 + g2->mu2)*.5;
+    float mu1, mu2;
+
+    if (g1->mu1 == dInfinity || g2->mu1 == dInfinity) mu1 = dInfinity;
+    else mu1 = (g1->mu1 + g2->mu1)*.5;
+	
+    if (g1->mu2 == dInfinity || g2->mu2 == dInfinity) mu2 = dInfinity;
+    else mu2 = (g1->mu2 + g2->mu2)*.5;
+    
     int mode = 0;
     
     if (bounce > 1) bounce = 1;
@@ -156,6 +163,7 @@ void Physics::initPhysics()
     odeContacts = dJointGroupCreate(0);
 
     dWorldSetAutoDisableFlag(odeWorld, 1);
+    dWorldSetGravity(odeWorld, 0, GRAVITY, 0);
 
 }
 
