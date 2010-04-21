@@ -8,10 +8,10 @@
 #include <SDL/SDL.h>
 #include "math.h"
 #include "scheduler.h"
-#include "Agents/input.h"
 #include "Physics/physics.h"
 #include "Graphics/graphics.h"
 #include "Sound/sound.h"
+#include "input.h"
 
 #include "Utilities/vec3f.h"
 #include "Utilities/defs.h"
@@ -56,7 +56,13 @@ int main(int argc, char *argv[])
     world.registerAgent(agent2);
     physics.initAgent(agent2);
 
-    input.controlAgent(&agent);
+    /* Instantiate a playercontroller to handle input -> steering conversion for
+     * this agent */
+    PlayerController p(agent);
+    /* Tell input to send input to that playerController */
+    input.controlPlayer(p);
+
+
     // sound.schedule_sound("test.wav", GetTime()+10, Vec3f(0,0,0));
 
     scheduler.loopForever();

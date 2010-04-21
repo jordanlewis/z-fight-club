@@ -1,5 +1,5 @@
-#ifndef INPUT_H
-#define INPUT_H
+#ifndef PLAYER_H
+#define PLAYER_H
 
 #include "agent.h"
 
@@ -17,27 +17,19 @@ typedef enum {
     RIGHT = 2
 } TurnState_t;
 
-class Input
+class PlayerController
 {
     TurnState_t turnState;
     EngineState_t engineState;
-    Agent *agent;
-
-    static Input _instance;
-    Input();
-    ~Input();
-    Input(const Input&);
-    Input &operator=(const Input&);
+    Agent &agent;
 
   public:
     void setTurnState(TurnState_t newState);
     void setEngineState(EngineState_t newState);
 
-    void controlAgent(Agent *agent);
     void updateAgent();
 
-    static Input &getInstance();
+    PlayerController(Agent &agent);
 };
-
 
 #endif
