@@ -3,8 +3,10 @@
 #define DEBUG
 
 PGeom::PGeom(GeomInfo *info)
-            : geom(info->createGeom())
+    : geom(info->createGeom()),
+      bounce(info->bounce), mu1(info->mu1), mu2(info->mu2)
 {
+    dGeomSetData(geom, this);
 }
 
 PMoveable::PMoveable(const Kinematic *kinematic, float mass,
@@ -97,9 +99,9 @@ const Kinematic &PMoveable::odeToKinematic(){
 #ifdef DEBUG
     int prec = cout.precision(2);
     ios::fmtflags flags = cout.setf(ios::fixed,ios::floatfield);
-    cout << "Body " << body << ": pos" << k.pos
-         << " vel" << k.vel << " dir "
-         << k.orientation << endl;
+    //cout << "Body " << body << ": pos" << k.pos
+    //     << " vel" << k.vel << " dir "
+    //     << k.orientation << endl;
     cout.setf(flags,ios::floatfield);
     cout.precision(prec);
 #endif

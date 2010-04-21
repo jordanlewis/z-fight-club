@@ -15,6 +15,8 @@ class PGeom
  protected:
     dGeomID geom;
  public:
+    const float bounce;
+    const float mu1, mu2;
     PGeom(GeomInfo *info);
 };
 

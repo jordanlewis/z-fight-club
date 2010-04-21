@@ -6,10 +6,10 @@
 class GeomInfo
 {
  protected:
-    float bounce;
-    float mu1, mu2;
     GeomInfo(float bounce, float mu1, float mu2);
  public:
+    float bounce;
+    float mu1, mu2;
     virtual dGeomID createGeom() {return 0;};
     virtual void createMass(dMass *, float) {return;};
 };

@@ -4,6 +4,7 @@
 #include <ode/ode.h>
 #include <ext/hash_map>
 #include <cmath>
+#include <iostream>
 #include "Utilities/vector.h"
 #include "Engine/world.h"
 #include "Agents/agent.h"

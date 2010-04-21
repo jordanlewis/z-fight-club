@@ -24,6 +24,24 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 
     dBodyID b1 = dGeomGetBody(o1);
     dBodyID b2 = dGeomGetBody(o2);
+
+    PGeom *g1 = (PGeom *)dGeomGetData(o1);
+    PGeom *g2 = (PGeom *)dGeomGetData(o2);
+
+    float bounce = (g1->bounce + g2->bounce)*.5;
+    float mu1 = (g1->mu1 + g2->mu1)*.5;
+    float mu2 = (g1->mu2 + g2->mu2)*.5;
+    int mode = 0;
+    
+    if (bounce > 1) bounce = 1;
+    if (bounce < 0) bounce = 0;
+    if (mu1 < 0) mu1 = 0;
+    if (mu2 < 0) mu2 = 0;
+
+    if (bounce > 0) mode = mode | dContactBounce;
+    if (mu2 > 0) mode = mode | dContactMu2;
+    cout << "Bounce is: " << bounce << endl;
+
     // don't collide if the two bodies are connected by a normal joint
     if (b1 && b2 && dAreConnectedExcluding(b1, b2, dJointTypeContact))
         return;
@@ -37,10 +55,10 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
         cout << numCollisions << " collisions detected" << endl;
         for (int i = 0; i < numCollisions; i++)
         {
-            contact[i].surface.mode = dContactBounce;
-            contact[i].surface.mu = dInfinity;
-            contact[i].surface.mu2 = 0;
-            contact[i].surface.bounce = 0.9;
+            contact[i].surface.mode = mode;
+            contact[i].surface.mu = mu1;
+            contact[i].surface.mu2 = mu2;
+            contact[i].surface.bounce = bounce;
             contact[i].surface.bounce_vel = 0.1;
 
             dJointID c = dJointCreateContact (odeWorld, odeContacts, contact+i);
@@ -124,7 +142,7 @@ void Physics::initAgent(Agent &agent)
     Kinematic &k = agent.getKinematic();
     SteerInfo &s = agent.getSteering();
     BoxInfo geom = BoxInfo(agent.width, agent.height, agent.depth,
-			   .8, 0, 0, this->getOdeSpace());
+			   1, 0, 0, this->getOdeSpace());
     PAgent *pobj = new PAgent(&k, &s, 100, &geom);
 
     pagents[agent.id] = pobj;
