@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     physics.initPhysics();
 
     
-    PlaneInfo info = PlaneInfo(0, 1, 0, 10, 0, 250, 0, physics.getOdeSpace());
+    PlaneInfo info = PlaneInfo(0, 1, 0, 10, 0, 200, 0, physics.getOdeSpace());
     new PGeom(&info);
 
     Vec3f pos = Vec3f(-8, 20, .3);

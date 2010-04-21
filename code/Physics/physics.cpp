@@ -1,7 +1,6 @@
 #include <math.h>
 #include <ode/ode.h>
 #include <ext/hash_map>
-#include <iostream>
 
 #include "physics.h"
 #include "Utilities/vector.h"
@@ -32,6 +31,8 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
     float bounce = (g1->bounce + g2->bounce)*.5;
     float mu1, mu2;
 
+    dVector3 rel_vel = {0, 0, 0};
+
     if (g1->mu1 == dInfinity || g2->mu1 == dInfinity) mu1 = dInfinity;
     else mu1 = (g1->mu1 + g2->mu1)*.5;
 	
@@ -47,7 +48,6 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 
     if (bounce > 0) mode = mode | dContactBounce;
     if (mu2 > 0) mode = mode | dContactMu2;
-    cout << "Bounce is: " << bounce << endl;
 
     // don't collide if the two bodies are connected by a normal joint
     if (b1 && b2 && dAreConnectedExcluding(b1, b2, dJointTypeContact))
@@ -67,6 +67,22 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
             contact[i].surface.mu2 = mu2;
             contact[i].surface.bounce = bounce;
             contact[i].surface.bounce_vel = 0.1;
+
+	    //This is all horrendously wrong, but it's a start.
+	    //I mean... really horrendously wrong.  But will get fixed soon(TM)
+	    if (b1 != 0) 
+		{
+		dBodyGetPointVel(b1, contact[i].geom.pos[0],
+				 contact[i].geom.pos[1],
+				 contact[i].geom.pos[2], contact[i].fdir1);
+		}
+	    else if (b2 != 0) 
+		{
+		dBodyGetPointVel(b2, contact[i].geom.pos[0],
+				 contact[i].geom.pos[1],
+				 contact[i].geom.pos[2], contact[i].fdir1);
+		}
+
 
             dJointID c = dJointCreateContact (odeWorld, odeContacts, contact+i);
             dJointAttach(c, b1, b2);
