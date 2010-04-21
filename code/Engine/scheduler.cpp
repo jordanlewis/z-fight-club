@@ -3,7 +3,7 @@
 #include <SDL/SDL.h>
 #include "scheduler.h"
 #include "world.h"
-#include "Agents/input.h"
+#include "Engine/input.h"
 #include "Utilities/defs.h"
 
 using namespace std;
@@ -46,40 +46,7 @@ void Scheduler::loopForever()
     while (!done)
     {
         /* Grab input from SDL loop */
-        SDL_Event SDLevt;
-        while (SDL_PollEvent(&SDLevt)) {
-            switch(SDLevt.type) {
-                case SDL_KEYDOWN:
-                    switch (SDLevt.key.keysym.sym) {
-                        case SDLK_LEFT:
-                            input.setTurnState(LEFT); break;
-                        case SDLK_RIGHT:
-                            input.setTurnState(RIGHT); break;
-                        case SDLK_UP:
-                            input.setEngineState(ACCELERATE); break;
-                        case SDLK_DOWN:
-                            input.setEngineState(REVERSE); break;
-                        default: break;
-                    } break;
-                case SDL_KEYUP:
-                    switch (SDLevt.key.keysym.sym) {
-                        case SDLK_LEFT:
-                        case SDLK_RIGHT:
-                            input.setTurnState(STRAIGHT); break;
-                        case SDLK_UP:
-                        case SDLK_DOWN:
-                            input.setEngineState(NEUTRAL); break;
-                        default: break;
-                    } break;
-                case SDL_QUIT:
-                    done = 1;
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        input.updateAgent();
+        done = input.processInput();
 
         now = GetTime();
         if (now - last > 0)
