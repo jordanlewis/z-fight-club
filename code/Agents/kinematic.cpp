@@ -7,3 +7,8 @@ std::ostream &operator<<(std::ostream &os, const Kinematic &k)
     os << "Velocity: " << k.vel << std::endl;
     return os;
 }
+Kinematic::Kinematic(Vec3f pos, Vec3f vel, float orientation)
+                    : pos(pos), vel(vel), orientation(orientation),
+                      orientation_v(Vec3f(0,0,0))
+{
+}
