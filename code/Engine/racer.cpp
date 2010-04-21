@@ -48,9 +48,9 @@ int main(int argc, char *argv[])
     steer.acceleration = 1;
     agent2.setSteering(steer);
 
-    world.registerAgent(&agent);
+    world.registerAgent(agent);
     physics.initAgent(agent);
-    world.registerAgent(&agent2);
+    world.registerAgent(agent2);
     physics.initAgent(agent2);
 
     input.controlAgent(&agent);

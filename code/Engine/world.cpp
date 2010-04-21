@@ -20,9 +20,9 @@ World::~World()
     FreeTrackData(track);
 }
 
-void World::registerAgent(Agent *agent)
+void World::registerAgent(Agent &agent)
 {
-    agents.push_back(agent);
+    agents.push_back(&agent);
 }
 
 void World::loadTrack(char *file)
