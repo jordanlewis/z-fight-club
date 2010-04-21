@@ -1,7 +1,6 @@
 #include <math.h>
 #include <ode/ode.h>
 #include <ext/hash_map>
-#include <iostream>
 
 #include "physics.h"
 #include "Utilities/vector.h"
@@ -10,6 +9,7 @@
 #include "Utilities/vec3f.h"
 
 #define MAX_CONTACTS 8
+#define GRAVITY -9.8
 
 using namespace std;
 
@@ -27,10 +27,18 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 
     PGeom *g1 = (PGeom *)dGeomGetData(o1);
     PGeom *g2 = (PGeom *)dGeomGetData(o2);
-
+    
     float bounce = (g1->bounce + g2->bounce)*.5;
-    float mu1 = (g1->mu1 + g2->mu1)*.5;
-    float mu2 = (g1->mu2 + g2->mu2)*.5;
+    float mu1, mu2;
+
+    dVector3 rel_vel = {0, 0, 0};
+
+    if (g1->mu1 == dInfinity || g2->mu1 == dInfinity) mu1 = dInfinity;
+    else mu1 = (g1->mu1 + g2->mu1)*.5;
+	
+    if (g1->mu2 == dInfinity || g2->mu2 == dInfinity) mu2 = dInfinity;
+    else mu2 = (g1->mu2 + g2->mu2)*.5;
+    
     int mode = 0;
     
     if (bounce > 1) bounce = 1;
@@ -40,7 +48,6 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 
     if (bounce > 0) mode = mode | dContactBounce;
     if (mu2 > 0) mode = mode | dContactMu2;
-    cout << "Bounce is: " << bounce << endl;
 
     // don't collide if the two bodies are connected by a normal joint
     if (b1 && b2 && dAreConnectedExcluding(b1, b2, dJointTypeContact))
@@ -60,6 +67,22 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
             contact[i].surface.mu2 = mu2;
             contact[i].surface.bounce = bounce;
             contact[i].surface.bounce_vel = 0.1;
+
+	    //This is all horrendously wrong, but it's a start.
+	    //I mean... really horrendously wrong.  But will get fixed soon(TM)
+	    if (b1 != 0) 
+		{
+		dBodyGetPointVel(b1, contact[i].geom.pos[0],
+				 contact[i].geom.pos[1],
+				 contact[i].geom.pos[2], contact[i].fdir1);
+		}
+	    else if (b2 != 0) 
+		{
+		dBodyGetPointVel(b2, contact[i].geom.pos[0],
+				 contact[i].geom.pos[1],
+				 contact[i].geom.pos[2], contact[i].fdir1);
+		}
+
 
             dJointID c = dJointCreateContact (odeWorld, odeContacts, contact+i);
             dJointAttach(c, b1, b2);
@@ -158,6 +181,7 @@ void Physics::initPhysics()
     odeContacts = dJointGroupCreate(0);
 
     dWorldSetAutoDisableFlag(odeWorld, 1);
+    dWorldSetGravity(odeWorld, 0, GRAVITY, 0);
 
 }
 

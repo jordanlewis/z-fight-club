@@ -35,9 +35,12 @@ int main(int argc, char *argv[])
     sound.initSound();
     physics.initPhysics();
 
+    
+    PlaneInfo info = PlaneInfo(0, 1, 0, 10, 0, 200, 0, physics.getOdeSpace());
+    new PGeom(&info);
 
-    Vec3f pos = Vec3f(-8, .3, .3);
-    Vec3f pos2 = Vec3f(30, 0, 0);
+    Vec3f pos = Vec3f(-8, 20, .3);
+    Vec3f pos2 = Vec3f(30, 25, 0);
     Agent agent(pos, M_PI / 2);
     Agent agent2(pos2, -M_PI / 2);
 
