@@ -9,9 +9,6 @@
 #include "Utilities/vec3f.h"
 
 #define MAX_CONTACTS 8
-#define GRAVITY -9.8
-#define LINDAMP .2
-#define ANGDAMP .2
 
 using namespace std;
 
@@ -131,6 +128,51 @@ void Physics::updateAgentKinematic(Agent::Agent *agent, float dt)
 
     /* Velocity += acceleration * time */
     newk.vel += s.acceleration * dt * newk.vel;
+
+}
+
+void Physics::makeTrackGeoms()
+{
+    const TrackData_t *track = World::getInstance().getTrack();
+    Vec3f_t *vertices = new Vec3f_t[track->nVerts * 2];
+    int *triangles = new int[track->nSects * 3 * 4];
+    int curTri = 0;
+    int i, j;
+    Edge_t *e, *next;
+    dTriMeshDataID meshID = dGeomTriMeshDataCreate();
+
+    for (i = 0; i < track->nVerts; i++)
+    {
+        CopyV3f(track->verts[i], vertices[2 * i]);
+        CopyV3f(track->verts[i], vertices[2 * i + 1]);
+        vertices[2 * i + 1][1] += 10;
+    }
+
+    for (i = 0; i < track->nSects; i++)
+    {
+        for (j = 0; j < track->sects[i].nEdges; j++)
+        {
+            e = track->sects[i].edges + j;
+            next = e + 1;
+            if (e->kind == WALL_EDGE)
+            {
+                triangles[curTri * 3] = e->start * 2;
+                triangles[curTri * 3 + 1] = e->start * 2 + 1;
+                triangles[curTri * 3 + 2] = next->start * 2;
+                curTri++;
+                triangles[curTri * 3] = next->start * 2;
+                triangles[curTri * 3 + 1] = e->start * 2 + 1;
+                triangles[curTri * 3 + 2] = next->start * 2 + 1;
+                curTri++;
+            }
+        }
+    }
+    dGeomTriMeshDataBuildSingle(meshID,
+                                vertices, sizeof(Vec3f_t), track->nVerts * 2,
+                                triangles, 4 * track->nSects, sizeof(int) * 3);
+    TriMeshInfo info = TriMeshInfo(meshID, vertices, triangles, 0, 200, 0,
+                                   Physics::getInstance().getOdeSpace());
+    new PGeom(&info);
 
 }
 

@@ -32,6 +32,7 @@ class World
 
     void registerAgent(Agent &agent);
     void loadTrack(char *file);
+    const TrackData_t * getTrack();
     static World &getInstance();
 
     friend class Graphics;
