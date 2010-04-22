@@ -104,37 +104,6 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
     }
 }
 
-
-void Physics::updateAgentKinematic(Agent::Agent *agent, float dt)
-{
-    World &world = World::getInstance();
-    Kinematic &oldk = agent->getKinematic();
-    SteerInfo &s = agent->getSteering();
-
-    /* put the old position in the trail */
-    agent->trail.push_back(oldk.pos);
-
-    Kinematic newk;
-
-    if (newk.pos[0] > world.xMax) newk.pos[0] = world.xMax;
-    if (newk.pos[0] < 0) newk.pos[0] = 0;
-    if (newk.pos[2] > world.zMax) newk.pos[0] = world.zMax;
-    if (newk.pos[2] < 0) newk.pos[2] = 0;
-
-    /* Orientation' = orientation + rotation * time */
-    newk.orientation = oldk.orientation + s.rotation * dt;
-    newk.orientation = fmodf(newk.orientation, 2 * M_PI);
-    /* Update velocity vector so it lies along orientation */
-    float speed = oldk.vel.length();
-    newk.vel[0] = sin(newk.orientation) * speed;
-    newk.vel[1] = oldk.vel[1];
-    newk.vel[2] = cos(newk.orientation) * speed;
-
-    /* Velocity += acceleration * time */
-    newk.vel += s.acceleration * dt * newk.vel;
-
-}
-
 void Physics::makeTrackGeoms()
 {
     const TrackData_t *track = World::getInstance().getTrack();
@@ -209,17 +178,6 @@ void Physics::simulate(float dt)
     }
 
 }
-
-/*
-void Physics::simulate(float dt)
-{
-    
-    for (unsigned int i = 0; i < world.agents.size(); i++)
-    {
-        updateAgentKinematic(&world.agents[i], dt);
-    }
-}
-*/
 
 void Physics::initAgent(Agent &agent)
 {
