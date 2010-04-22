@@ -31,7 +31,7 @@ class World
     std::vector<Agent *> agents; /* the agents in the world */
 
     void registerAgent(Agent &agent);
-    void loadTrack(char *file);
+    void loadTrack(const char *file);
     const TrackData_t * getTrack();
     static World &getInstance();
 

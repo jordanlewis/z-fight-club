@@ -25,7 +25,7 @@ void World::registerAgent(Agent &agent)
     agents.push_back(&agent);
 }
 
-void World::loadTrack(char *file)
+void World::loadTrack(const char *file)
 {
     track = LoadTrackData(file);
     if (!track)

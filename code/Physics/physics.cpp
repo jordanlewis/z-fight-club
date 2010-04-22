@@ -219,9 +219,18 @@ Physics::Physics()
 
 Physics::~Physics()
 {
-    dJointGroupDestroy(odeContacts);
-    dSpaceDestroy(odeSpace);
-    dWorldDestroy(odeWorld);
+    if (odeContacts)
+    {
+        dJointGroupDestroy(odeContacts);
+    }
+    if (odeSpace)
+    {
+        dSpaceDestroy(odeSpace);
+    }
+    if (odeWorld)
+    {
+        dWorldDestroy(odeWorld);
+    }
     dCloseODE();
 }
 

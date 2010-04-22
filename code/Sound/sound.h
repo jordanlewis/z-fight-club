@@ -9,6 +9,8 @@
 #include <queue>
 using namespace std;
 
+#define SM_VOICES 8
+
 // use strings to uniquely identify playable sounds that may have been loaded by the server
 // sound_handle uniquely identifies a sound instance in the queue, scheduled for play
 typedef int sound_handle;
@@ -16,6 +18,15 @@ typedef int sound_handle;
 class sound_resource;
 // low level metadata needed to actually play the sound
 // eg. pointer to sound data in memory, sound format details
+
+typedef struct
+{
+        Sint16  *data;
+        int     length;
+        int     position;
+        int     l_vol;
+        int     r_vol;
+} SM_voice;
 
 class Sound;
 
@@ -27,9 +38,10 @@ class playing_sound
     double start_time;
     int repeat;
   public:
-    bool operator< (const playing_sound &s) const;
+    bool operator<(const playing_sound &s) const;
     playing_sound(const sound_resource* s, double start_time, int repeat);
     friend class Sound;
+    friend ostream &operator<<(ostream&, const playing_sound&);
   private:
     static sound_handle next_handle;
 };
@@ -42,15 +54,19 @@ class Sound
     Sound(const Sound&);
     Sound &operator=(const Sound &);
     void load_sound(const string sound_name);
+    SM_voice myvoices[SM_VOICES];
+    static int cur_voice;  
     static Sound _instance;
 
     bool initialized;    /* !<is SDL audio ready to go */
     SDL_AudioSpec audiospec;
+    string dir; // "tests/sounds/";
 
   public:
     void initSound();
     // needs directory to scan for sound files
     // will probably preload all of them for simplicity
+    void setDir(const char *dir);
     const sound_handle schedule_sound(const string sound_name, double start_time, Vec3f location);
     // ignoring location information, playing equally loud in both channels.
     // no support for looping, just schedule again if you want it again.
@@ -59,6 +75,8 @@ class Sound
 
     void process_queue();
     static Sound &getInstance();
+    void mixer(Uint8 *stream, int len);
+    void play(const playing_sound ps);
 
   private:
     // map<Key, Data, Compare, Alloc>
