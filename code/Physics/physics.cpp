@@ -10,6 +10,8 @@
 
 #define MAX_CONTACTS 8
 #define GRAVITY -9.8
+#define LINDAMP .2
+#define ANGDAMP .2
 
 using namespace std;
 
@@ -32,6 +34,7 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
     float mu1, mu2;
 
     dVector3 rel_vel = {0, 0, 0};
+    float norm = 0;
 
     if (g1->mu1 == dInfinity || g2->mu1 == dInfinity) mu1 = dInfinity;
     else mu1 = (g1->mu1 + g2->mu1)*.5;
@@ -80,11 +83,21 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 		{
 		dBodyGetPointVel(b2, contact[i].geom.pos[0],
 				 contact[i].geom.pos[1],
-				 contact[i].geom.pos[2], contact[i].fdir1);
+				 contact[i].geom.pos[2], rel_vel);
 		}
+	    
+	    norm = 0;
+	    for(int j=0; j < 2; j++){
+		contact[i].fdir1[j] -= rel_vel[j];
+		norm += contact[i].fdir1[j]*contact[i].fdir1[j];
+	    }
+	    norm = sqrt(norm);
+	    contact[i].surface.mu *= norm;
+	    contact[i].surface.mu2 *= norm;
+	    cout << "Friction coeff: " << contact[i].surface.mu << endl;
+	    cout << "Bounce: " << bounce << endl;
 
-
-            dJointID c = dJointCreateContact (odeWorld, odeContacts, contact+i);
+            dJointID c = dJointCreateContact(odeWorld, odeContacts, contact+i);
             dJointAttach(c, b1, b2);
         }
     }
@@ -180,7 +193,8 @@ void Physics::initPhysics()
 
     dWorldSetAutoDisableFlag(odeWorld, 1);
     dWorldSetGravity(odeWorld, 0, GRAVITY, 0);
-
+    dWorldSetLinearDamping(odeWorld, LINDAMP);
+    dWorldSetAngularDamping(odeWorld, ANGDAMP);
 }
 
 Physics::Physics() : world(&World::getInstance())

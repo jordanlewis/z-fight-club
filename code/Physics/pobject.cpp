@@ -66,6 +66,9 @@ const Kinematic &PMoveable::odeToKinematic(){
     k.orientation_v[0] = q_result[1];
     k.orientation_v[1] = q_result[2];
     k.orientation_v[2] = q_result[3];
+
+    cout << "Someone's orientation: (" << q_result[1] << ", " << q_result[2]
+	 << ", " << q_result[3] << ")" << endl;
     
     //Calculate and write the orientation projected onto the X-Z plane
 
