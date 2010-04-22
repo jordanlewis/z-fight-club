@@ -9,6 +9,7 @@
 #include "Utilities/vec3f.h"
 
 #define MAX_CONTACTS 8
+#define TIMESTEP 0.01
 
 using namespace std;
 
@@ -149,12 +150,19 @@ void Physics::makeTrackGeoms()
     }
 }
 
+
 void Physics::simulate(float dt)
 {
+    static float dtRemainder;
     World &world = World::getInstance();
     vector<Agent *>::iterator iter;
     PAgent *p;
     Agent *a;
+    int nSteps, i;
+    float nTimeSteps;
+
+    dt += dtRemainder * TIMESTEP;
+
     for (iter = world.agents.begin(); iter != world.agents.end(); iter++)
     {
         a = (*iter);
@@ -162,10 +170,16 @@ void Physics::simulate(float dt)
         p->kinematicToOde();
         p->steeringToOde();
     }
+    nTimeSteps = dt / TIMESTEP;
+    nSteps = floorf(nTimeSteps);
+    dtRemainder = nTimeSteps - nSteps;
 
-    dSpaceCollide(odeSpace, this, &nearCallback);
-    dWorldStep(odeWorld, dt);
-    dJointGroupEmpty(odeContacts);
+    for (i = 0; i < nSteps; i++)
+    {
+        dSpaceCollide(odeSpace, this, &nearCallback);
+        dWorldStep(odeWorld, TIMESTEP);
+        dJointGroupEmpty(odeContacts);
+    }
 
 
     for (iter = world.agents.begin(); iter != world.agents.end(); iter++)
