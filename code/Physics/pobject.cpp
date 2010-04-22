@@ -30,6 +30,17 @@ PAgent::PAgent(const Kinematic *kinematic, const SteerInfo *steering,
 {
 }
 
+
+void PGeom::setPos(Vec3f position)
+{
+    dGeomSetPosition(geom, position[0], position[1], position[2]);
+}
+
+void PGeom::setQuat(const dQuaternion rotation)
+{
+    dGeomSetQuaternion(geom, rotation);
+}
+
 /* \brief Copys the kinematic info into ODE's representation
  */
 void PMoveable::kinematicToOde()

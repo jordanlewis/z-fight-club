@@ -134,46 +134,46 @@ void Physics::updateAgentKinematic(Agent::Agent *agent, float dt)
 void Physics::makeTrackGeoms()
 {
     const TrackData_t *track = World::getInstance().getTrack();
-    Vec3f_t *vertices = new Vec3f_t[track->nVerts * 2];
-    int *triangles = new int[track->nSects * 3 * 4];
-    int curTri = 0;
-    int i, j;
-    Edge_t *e, *next;
-    dTriMeshDataID meshID = dGeomTriMeshDataCreate();
+    float depth = .1;
+    float height = 2;
+    float len;
 
-    for (i = 0; i < track->nVerts; i++)
-    {
-        CopyV3f(track->verts[i], vertices[2 * i]);
-        CopyV3f(track->verts[i], vertices[2 * i + 1]);
-        vertices[2 * i + 1][1] += 10;
-    }
+    Vec2f_t xzwall;
+    Vec3f_t wall;
+    int i, j;
+    float theta;
+    Edge_t *e, *next;
+    PGeom *geom;
+    dQuaternion quat;
+    Vec3f position;
 
     for (i = 0; i < track->nSects; i++)
     {
         for (j = 0; j < track->sects[i].nEdges; j++)
         {
             e = track->sects[i].edges + j;
-            next = e + 1;
+            if (j == track->sects[i].nEdges - 1)
+                next = e - 3;
+            else
+                next = e + 1;
             if (e->kind == WALL_EDGE)
             {
-                triangles[curTri * 3] = e->start * 2;
-                triangles[curTri * 3 + 1] = e->start * 2 + 1;
-                triangles[curTri * 3 + 2] = next->start * 2;
-                curTri++;
-                triangles[curTri * 3] = next->start * 2;
-                triangles[curTri * 3 + 1] = e->start * 2 + 1;
-                triangles[curTri * 3 + 2] = next->start * 2 + 1;
-                curTri++;
+                SubV3f(track->verts[e->start], track->verts[next->start], wall);
+                xzwall[0] = wall[0]; xzwall[1] = wall[2];
+                len = LengthV2f(xzwall);
+                BoxInfo box(len, height + wall[1], depth, 0, 200, 0, this->getOdeSpace());
+                theta = atan2(wall[2] , wall[0]);
+                geom = new PGeom(&box);
+                pgeoms.push_back(geom);
+                dQFromAxisAndAngle(quat, 0, 1, 0, -theta);
+                geom->setQuat(quat);
+                LerpV3f(track->verts[e->start], .5, track->verts[next->start],
+                        wall);
+                position = Vec3f(wall[0], wall[1], wall[2]);
+                geom->setPos(position);
             }
         }
     }
-    dGeomTriMeshDataBuildSingle(meshID,
-                                vertices, sizeof(Vec3f_t), track->nVerts * 2,
-                                triangles, 4 * track->nSects, sizeof(int) * 3);
-    TriMeshInfo info = TriMeshInfo(meshID, vertices, triangles, 0, 200, 0,
-                                   Physics::getInstance().getOdeSpace());
-    new PGeom(&info);
-
 }
 
 void Physics::simulate(float dt)
