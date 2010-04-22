@@ -242,7 +242,7 @@ void Graphics::renderBoxPGeoms()
      * TODO: find some way of representing all static world geometry, and stick
      * it in world so this awful abstraction fail doesn't break us.
      */
-    float sides[3];
+    dReal sides[3];
     GLdouble matrix[16];
     const dReal *pos;
     const dReal *R;
