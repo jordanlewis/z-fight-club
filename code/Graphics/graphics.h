@@ -4,6 +4,7 @@
 #include "../Agents/agent.h"
 #include "../Utilities/vec3f.h"
 #include "color.h"
+#include <vector>
 extern "C" {
 #include "Parser/track-parser.h"
 }
@@ -34,9 +35,8 @@ class Graphics
     void render(Agent * agent);
     void render(TrackData_t *track);
     void renderBoxPGeoms();
+    void render(std::vector<Vec3f>);
     int sphere(Vec3f, float, Color);
-
-
 
     static Graphics &getInstance();
 };

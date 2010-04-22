@@ -109,10 +109,10 @@ void Physics::updateAgentKinematic(Agent::Agent *agent, float dt)
     Kinematic &oldk = agent->getKinematic();
     SteerInfo &s = agent->getSteering();
 
-    Kinematic newk;
+    /* put the old position in the trail */
+    agent->trail.push_back(oldk.pos);
 
-    /* Position' = position + velocity * time */
-    newk.pos = oldk.pos + dt * oldk.vel;
+    Kinematic newk;
 
     if (newk.pos[0] > world.xMax) newk.pos[0] = world.xMax;
     if (newk.pos[0] < 0) newk.pos[0] = 0;

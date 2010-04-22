@@ -142,9 +142,10 @@ void Graphics::render(Agent * agent)
 {
     if (!initialized)
 	; /* error */
-    
-    glMatrixMode(GL_MODELVIEW);
 
+    agent->trail.push_back(agent->kinematic.pos);
+
+    glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
 
     glTranslatef(agent->kinematic.pos.x, agent->kinematic.pos.y, agent->kinematic.pos.z);
@@ -154,6 +155,7 @@ void Graphics::render(Agent * agent)
     DrawArrow(Vec3f(0.0, 0.0, 0.0), agent->kinematic.orientation_v);
 
     glPopMatrix();
+    render(agent->trail);
 }
 
 void Graphics::render(TrackData_t *track)
@@ -178,6 +180,26 @@ void Graphics::render(TrackData_t *track)
 
 	glDisableClientState(GL_VERTEX_ARRAY);
     }
+}
+
+void Graphics::render(std::vector<Vec3f> path)
+{
+    unsigned int i;
+
+    float *rawVerts = makeArray(path);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, rawVerts);
+
+    uint16_t *lineIndices = new uint16_t[path.size()];
+    for (i = 0; i < path.size(); i++)
+	lineIndices[i] = i;
+
+    glDrawElements(GL_LINE_STRIP, path.size(), GL_UNSIGNED_SHORT, lineIndices);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+
+    delete []rawVerts;
 }
 
 Graphics &Graphics::getInstance()
