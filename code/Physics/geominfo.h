@@ -54,4 +54,16 @@ class PlaneInfo : public GeomInfo
     dGeomID createGeom();
 };
 
+class TriMeshInfo : public GeomInfo
+{
+ public:
+    dSpaceID space;
+    dTriMeshDataID meshID;
+    const void * verts;
+    const void * tris;
+    TriMeshInfo(dTriMeshDataID meshID, const void * verts, const void * tris,
+                float bounce, float mu1, float mu2, dSpaceID space);
+    dGeomID createGeom();
+};
+
 #endif

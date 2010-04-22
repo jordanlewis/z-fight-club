@@ -32,6 +32,11 @@ void World::loadTrack(char *file)
 	; /* error */
 }
 
+const TrackData_t *World::getTrack()
+{
+    return track;
+}
+
 World &World::getInstance() 
 {
     return _instance;

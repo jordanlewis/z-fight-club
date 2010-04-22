@@ -9,7 +9,6 @@
 #include "Utilities/vec3f.h"
 
 #define MAX_CONTACTS 8
-#define GRAVITY -9.8
 
 using namespace std;
 
@@ -32,6 +31,7 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
     float mu1, mu2;
 
     dVector3 rel_vel = {0, 0, 0};
+    float norm = 0;
 
     if (g1->mu1 == dInfinity || g2->mu1 == dInfinity) mu1 = dInfinity;
     else mu1 = (g1->mu1 + g2->mu1)*.5;
@@ -80,11 +80,23 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 		{
 		dBodyGetPointVel(b2, contact[i].geom.pos[0],
 				 contact[i].geom.pos[1],
-				 contact[i].geom.pos[2], contact[i].fdir1);
+				 contact[i].geom.pos[2], rel_vel);
 		}
+	    
+	    norm = 0;
+	    for(int j=0; j < 2; j++){
+		contact[i].fdir1[j] -= rel_vel[j];
+		norm += contact[i].fdir1[j]*contact[i].fdir1[j];
+	    }
+	    norm = sqrt(norm);
+	    contact[i].surface.mu *= norm;
+	    contact[i].surface.mu2 *= norm;
+            /*
+	    cout << "Friction coeff: " << contact[i].surface.mu << endl;
+	    cout << "Bounce: " << bounce << endl;
+            */
 
-
-            dJointID c = dJointCreateContact (odeWorld, odeContacts, contact+i);
+            dJointID c = dJointCreateContact(odeWorld, odeContacts, contact+i);
             dJointAttach(c, b1, b2);
         }
     }
@@ -97,10 +109,10 @@ void Physics::updateAgentKinematic(Agent::Agent *agent, float dt)
     Kinematic &oldk = agent->getKinematic();
     SteerInfo &s = agent->getSteering();
 
-    Kinematic newk;
+    /* put the old position in the trail */
+    agent->trail.push_back(oldk.pos);
 
-    /* Position' = position + velocity * time */
-    newk.pos = oldk.pos + dt * oldk.vel;
+    Kinematic newk;
 
     if (newk.pos[0] > world.xMax) newk.pos[0] = world.xMax;
     if (newk.pos[0] < 0) newk.pos[0] = 0;
@@ -119,6 +131,51 @@ void Physics::updateAgentKinematic(Agent::Agent *agent, float dt)
     /* Velocity += acceleration * time */
     newk.vel += s.acceleration * dt * newk.vel;
 
+}
+
+void Physics::makeTrackGeoms()
+{
+    const TrackData_t *track = World::getInstance().getTrack();
+    float depth = .1;
+    float height = 2;
+    float len;
+
+    Vec2f_t xzwall;
+    Vec3f_t wall;
+    int i, j;
+    float theta;
+    Edge_t *e, *next;
+    PGeom *geom;
+    dQuaternion quat;
+    Vec3f position;
+
+    for (i = 0; i < track->nSects; i++)
+    {
+        for (j = 0; j < track->sects[i].nEdges; j++)
+        {
+            e = track->sects[i].edges + j;
+            if (j == track->sects[i].nEdges - 1)
+                next = e - 3;
+            else
+                next = e + 1;
+            if (e->kind == WALL_EDGE)
+            {
+                SubV3f(track->verts[e->start], track->verts[next->start], wall);
+                xzwall[0] = wall[0]; xzwall[1] = wall[2];
+                len = LengthV2f(xzwall);
+                BoxInfo box(len, height + wall[1], depth, 0, 200, 0, this->getOdeSpace());
+                theta = atan2(wall[2] , wall[0]);
+                geom = new PGeom(&box);
+                pgeoms.push_back(geom);
+                dQFromAxisAndAngle(quat, 0, 1, 0, -theta);
+                geom->setQuat(quat);
+                LerpV3f(track->verts[e->start], .5, track->verts[next->start],
+                        wall);
+                position = Vec3f(wall[0], wall[1], wall[2]);
+                geom->setPos(position);
+            }
+        }
+    }
 }
 
 void Physics::simulate(float dt)
@@ -182,7 +239,8 @@ void Physics::initPhysics()
 
     dWorldSetAutoDisableFlag(odeWorld, 1);
     dWorldSetGravity(odeWorld, 0, GRAVITY, 0);
-
+    dWorldSetLinearDamping(odeWorld, LINDAMP);
+    dWorldSetAngularDamping(odeWorld, ANGDAMP);
 }
 
 Physics::Physics()

@@ -30,6 +30,22 @@ PAgent::PAgent(const Kinematic *kinematic, const SteerInfo *steering,
 {
 }
 
+
+void PGeom::setPos(Vec3f position)
+{
+    dGeomSetPosition(geom, position[0], position[1], position[2]);
+}
+
+void PGeom::setQuat(const dQuaternion rotation)
+{
+    dGeomSetQuaternion(geom, rotation);
+}
+
+dGeomID PGeom::getGeom()
+{
+    return geom;
+}
+
 /* \brief Copys the kinematic info into ODE's representation
  */
 void PMoveable::kinematicToOde()
@@ -66,6 +82,9 @@ const Kinematic &PMoveable::odeToKinematic(){
     k.orientation_v[0] = q_result[1];
     k.orientation_v[1] = q_result[2];
     k.orientation_v[2] = q_result[3];
+
+    cout << "Someone's orientation: (" << q_result[1] << ", " << q_result[2]
+	 << ", " << q_result[3] << ")" << endl;
     
     //Calculate and write the orientation projected onto the X-Z plane
 
@@ -119,8 +138,14 @@ const Kinematic &PMoveable::odeToKinematic(){
 void PAgent::steeringToOde()
 {
     const dReal* angVel = dBodyGetAngularVel(body);
+    cout << "Steering rotation is: " << steering->rotation << endl;
+
     dBodySetAngularVel(body, angVel[0], angVel[1] + steering->rotation,
-                       angVel[2]);
+      angVel[2]);
+
+
+    cout << "AngVel is: (" << angVel[0] << ", " << angVel[1] << ", "
+	 << angVel[2] << ")" << endl;
 
     Vec3f f = Vec3f(sin(kinematic->orientation),0,cos(kinematic->orientation));
     f *= steering->acceleration * mass.mass;
@@ -134,6 +159,9 @@ void PAgent::steeringToOde()
 void PAgent::resetOdeAngularVelocity()
 {
     const dReal* angVel = dBodyGetAngularVel(body);
-    dBodySetAngularVel(body, angVel[0], angVel[1] - steering->rotation,
-                       angVel[2]);
+    cout << "Modding by rotation: " << steering->rotation << endl;
+    dBodySetAngularVel(body, angVel[0], 
+		       angVel[1] - steering->rotation*(1-ANGDAMP),
+		       angVel[2]);
+    
 }

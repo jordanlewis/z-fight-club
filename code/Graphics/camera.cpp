@@ -14,14 +14,14 @@ Camera::Camera()
 {
     FOVY = 65.0;
 
-    pos = Vec3f(50.0f, 50.0f, 10.0f);
+    pos = Vec3f(100.0f, 20.0f, 50.0f);
     up = Vec3f(0.0f, 1.0f, 0.0f);
     target = Vec3f(0.0f, 0.0f, 0.0f);
 
     wres = 800;
     hres = 600;
     zNear = 0.1f;
-    zFar = 100.0f;
+    zFar = 1000.0f;
 }
 
 Camera::~Camera()

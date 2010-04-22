@@ -1,5 +1,6 @@
 #include "graphics.h"
 #include "Engine/world.h"
+#include "Physics/physics.h"
 #include <SDL/SDL.h>
 
 extern "C" {
@@ -122,6 +123,7 @@ void Graphics::render()
     glEnd();
 
     glEnable(GL_LIGHTING);
+    Graphics::renderBoxPGeoms();
 
     render(world->track);
 
@@ -140,9 +142,10 @@ void Graphics::render(Agent * agent)
 {
     if (!initialized)
 	; /* error */
-    
-    glMatrixMode(GL_MODELVIEW);
 
+    agent->trail.push_back(agent->kinematic.pos);
+
+    glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
 
     glTranslatef(agent->kinematic.pos.x, agent->kinematic.pos.y, agent->kinematic.pos.z);
@@ -152,6 +155,7 @@ void Graphics::render(Agent * agent)
     DrawArrow(Vec3f(0.0, 0.0, 0.0), agent->kinematic.orientation_v);
 
     glPopMatrix();
+    render(agent->trail);
 }
 
 void Graphics::render(TrackData_t *track)
@@ -176,6 +180,26 @@ void Graphics::render(TrackData_t *track)
 
 	glDisableClientState(GL_VERTEX_ARRAY);
     }
+}
+
+void Graphics::render(std::vector<Vec3f> path)
+{
+    unsigned int i;
+
+    float *rawVerts = makeArray(path);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, rawVerts);
+
+    uint16_t *lineIndices = new uint16_t[path.size()];
+    for (i = 0; i < path.size(); i++)
+	lineIndices[i] = i;
+
+    glDrawElements(GL_LINE_STRIP, path.size(), GL_UNSIGNED_SHORT, lineIndices);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+
+    delete []rawVerts;
 }
 
 Graphics &Graphics::getInstance()
@@ -205,5 +229,96 @@ void Graphics::DrawCube(Vec3f center)
         }
     }
     glEnd();
+}
+
+
+void Graphics::renderBoxPGeoms()
+{
+    /* XXX HACK!!!!!! XXX 
+     * I wrote this just so we can temporarily see the sides of the track.
+     * It is violating the physics abstraction by peeking at the pgeoms, and
+     * also if any of the pgeoms we saved aren't boxes then this will probably
+     * blow up.
+     * TODO: find some way of representing all static world geometry, and stick
+     * it in world so this awful abstraction fail doesn't break us.
+     */
+    float sides[3];
+    GLdouble matrix[16];
+    const dReal *pos;
+    const dReal *R;
+    float quat[4];
+    float theta;
+    glMatrixMode(GL_MODELVIEW);
+    for (unsigned int i = 0; i < Physics::getInstance().pgeoms.size();i++)
+    {
+        dGeomID box = Physics::getInstance().pgeoms[i]->getGeom();
+
+        dGeomBoxGetLengths(box, sides);
+        pos = dGeomGetPosition(box);
+        R = dGeomGetRotation(box);
+        dGeomGetQuaternion(box, quat);
+        theta = 2 * acos(quat[0]);
+        matrix[0]=R[0];
+        matrix[1]=R[4];
+        matrix[2]=R[8];
+        matrix[3]=0;
+        matrix[4]=R[1];
+        matrix[5]=R[5];
+        matrix[6]=R[9];
+        matrix[7]=0;
+        matrix[8]=R[2];
+        matrix[9]=R[6];
+        matrix[10]=R[10];
+        matrix[11]=0;
+        matrix[12]=pos[0];
+        matrix[13]=pos[1];
+        matrix[14]=pos[2];
+        matrix[15]=1;
+        glPushMatrix();
+        glMultMatrixd (matrix);
+
+        float lx = sides[0]*0.5f;
+        float ly = sides[1]*0.5f;
+        float lz = sides[2]*0.5f;
+
+        // sides
+        glBegin (GL_TRIANGLE_STRIP);
+        glNormal3f (-1,0,0);
+        glVertex3f (-lx,-ly,-lz);
+        glVertex3f (-lx,-ly,lz);
+        glVertex3f (-lx,ly,-lz);
+        glVertex3f (-lx,ly,lz);
+        glNormal3f (0,1,0);
+        glVertex3f (lx,ly,-lz);
+        glVertex3f (lx,ly,lz);
+        glNormal3f (1,0,0);
+        glVertex3f (lx,-ly,-lz);
+        glVertex3f (lx,-ly,lz);
+        glNormal3f (0,-1,0);
+        glVertex3f (-lx,-ly,-lz);
+        glVertex3f (-lx,-ly,lz);
+        glEnd();
+
+        // top face
+        glBegin (GL_TRIANGLE_FAN);
+        glNormal3f (0,0,1);
+        glVertex3f (-lx,-ly,lz);
+        glVertex3f (lx,-ly,lz);
+        glVertex3f (lx,ly,lz);
+        glVertex3f (-lx,ly,lz);
+        glEnd();
+
+        // bottom face
+        glBegin (GL_TRIANGLE_FAN);
+        glNormal3f (0,0,-1);
+        glVertex3f (-lx,-ly,-lz);
+        glVertex3f (-lx,ly,-lz);
+        glVertex3f (lx,ly,-lz);
+        glVertex3f (lx,-ly,-lz);
+        glEnd();
+        glPopMatrix();
+    }
+
+
 }
 
