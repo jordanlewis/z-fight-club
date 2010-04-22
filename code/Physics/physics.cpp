@@ -204,7 +204,7 @@ void Physics::initAgent(Agent &agent)
     pagents[agent.id] = pobj;
 }
 
-void Physics::initPhysics()
+Physics::Physics()
 {
     dInitODE();
     odeWorld = dWorldCreate();
@@ -215,10 +215,6 @@ void Physics::initPhysics()
     dWorldSetGravity(odeWorld, 0, GRAVITY, 0);
     dWorldSetLinearDamping(odeWorld, LINDAMP);
     dWorldSetAngularDamping(odeWorld, ANGDAMP);
-}
-
-Physics::Physics()
-{
 }
 
 Physics::~Physics()

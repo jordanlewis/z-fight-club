@@ -32,7 +32,6 @@ int main(int argc, char *argv[])
 
     graphics.initGraphics();
     sound.initSound();
-    physics.initPhysics();
 
     if (world.getTrack() != NULL)
         physics.makeTrackGeoms();
