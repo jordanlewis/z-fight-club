@@ -9,9 +9,6 @@
 #include "Utilities/vec3f.h"
 
 #define MAX_CONTACTS 8
-#define GRAVITY -9.8
-#define LINDAMP .2
-#define ANGDAMP .2
 
 using namespace std;
 
@@ -94,9 +91,7 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 	    norm = sqrt(norm);
 	    contact[i].surface.mu *= norm;
 	    contact[i].surface.mu2 *= norm;
-	    cout << "Friction coeff: " << contact[i].surface.mu << endl;
-	    cout << "Bounce: " << bounce << endl;
-
+	    	    
             dJointID c = dJointCreateContact(odeWorld, odeContacts, contact+i);
             dJointAttach(c, b1, b2);
         }

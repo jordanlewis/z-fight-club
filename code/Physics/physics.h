@@ -14,6 +14,11 @@ class PGeom;
 class PMoveable;
 class PAgent;
 
+#define GRAVITY -9.8
+#define LINDAMP .05
+#define ANGDAMP .1
+
+
 class Physics
 {
     __gnu_cxx::hash_map<int, PAgent *> pagents;
