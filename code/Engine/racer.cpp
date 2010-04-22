@@ -30,10 +30,12 @@ int main(int argc, char *argv[])
     Physics   &physics  = Physics::getInstance();
     Scheduler &scheduler = Scheduler::getInstance();
 
-
     graphics.initGraphics();
     sound.initSound();
     physics.initPhysics();
+
+    if (world.getTrack() != NULL)
+        physics.makeTrackGeoms();
 
     testSetup();
 

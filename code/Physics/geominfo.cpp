@@ -20,9 +20,18 @@ SphereInfo::SphereInfo(float radius,
     : GeomInfo(bounce, mu1, mu2), space(space), radius(radius)
 {}
 
+TriMeshInfo::TriMeshInfo(dTriMeshDataID meshID, const void * verts,
+                         const void * tris, float bounce, float mu1,
+                         float mu2, dSpaceID space)
+    : GeomInfo(bounce, mu1, mu2), space(space), meshID(meshID),
+      verts(verts), tris(tris)
+{}
+
 dGeomID SphereInfo::createGeom() { return dCreateSphere (space, radius); }
 dGeomID BoxInfo::createGeom()    { return dCreateBox(space, lx, ly, lz); }
 dGeomID PlaneInfo::createGeom()  { return dCreatePlane(space, a, b, c, d); }
+dGeomID TriMeshInfo::createGeom(){ return dCreateTriMesh(space, meshID,
+                                                         NULL, NULL, NULL); }
 
 void SphereInfo::createMass(dMass * mass, float massVal)
 {

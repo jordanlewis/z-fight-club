@@ -48,7 +48,7 @@ $(TARGET): $(OBJECTBUILDS) $(SETUPOBJ)
 
 .PHONY: test clean
 test: all
-	./$(TARGET)
+	./$(TARGET) tests/tracks/oval.trk
 clean:
 	rm -rf $(BUILDDIR) $(CTAGS)
 

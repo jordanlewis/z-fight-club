@@ -14,6 +14,11 @@ class PGeom;
 class PMoveable;
 class PAgent;
 
+#define GRAVITY -9.8
+#define LINDAMP .05
+#define ANGDAMP .1
+
+
 class Physics
 {
     __gnu_cxx::hash_map<int, PAgent *> pagents;
@@ -32,6 +37,7 @@ class Physics
     const dWorldID & getOdeWorld() { return odeWorld; };
     const dSpaceID & getOdeSpace() { return odeSpace; };
     const dJointGroupID & getOdeContacts() { return odeContacts; };
+    void makeTrackGeoms();
     void initPhysics();
     void initAgent(Agent &agent);
     void simulate(float dt); /* step the world forward by dt. */
