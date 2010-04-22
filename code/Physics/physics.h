@@ -16,8 +16,8 @@ class PMoveable;
 class PAgent;
 
 #define GRAVITY -9.8
-#define LINDAMP .001
-#define ANGDAMP .01
+#define LINDAMP .1
+#define ANGDAMP .5
 
 
 class Physics
