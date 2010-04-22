@@ -16,17 +16,23 @@ Physics Physics::_instance;
 
 static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 {
-    Physics *p = (Physics *) data;
+    dBodyID b1 = dGeomGetBody(o1);
+    dBodyID b2 = dGeomGetBody(o2);
+    // don't collide if the two bodies are connected by a normal joint
+    if (b1 && b2 && dAreConnectedExcluding(b1, b2, dJointTypeContact))
+        return;
+    // don't collide if both objects are just part of the static environment
+    if (!b1 && !b2)
+        return;
 
+    Physics *p = (Physics *) data;
     dWorldID odeWorld = p->getOdeWorld();
     dJointGroupID odeContacts = p->getOdeContacts();
 
-    dBodyID b1 = dGeomGetBody(o1);
-    dBodyID b2 = dGeomGetBody(o2);
 
     PGeom *g1 = (PGeom *)dGeomGetData(o1);
     PGeom *g2 = (PGeom *)dGeomGetData(o2);
-    
+
     float bounce = (g1->bounce + g2->bounce)*.5;
     float mu1, mu2;
 
@@ -48,10 +54,6 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 
     if (bounce > 0) mode = mode | dContactBounce;
     if (mu2 > 0) mode = mode | dContactMu2;
-
-    // don't collide if the two bodies are connected by a normal joint
-    if (b1 && b2 && dAreConnectedExcluding(b1, b2, dJointTypeContact))
-        return;
 
     dContact contact[MAX_CONTACTS];
 
