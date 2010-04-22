@@ -40,7 +40,6 @@ class Physics
     const dSpaceID & getOdeSpace() { return odeSpace; };
     const dJointGroupID & getOdeContacts() { return odeContacts; };
     void makeTrackGeoms();
-    void initPhysics();
     void initAgent(Agent &agent);
     void simulate(float dt); /* step the world forward by dt. */
 
