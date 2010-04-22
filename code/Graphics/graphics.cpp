@@ -246,7 +246,7 @@ void Graphics::renderBoxPGeoms()
     GLdouble matrix[16];
     const dReal *pos;
     const dReal *R;
-    float quat[4];
+    dReal quat[4];
     float theta;
     glMatrixMode(GL_MODELVIEW);
     for (unsigned int i = 0; i < Physics::getInstance().pgeoms.size();i++)
