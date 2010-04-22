@@ -106,6 +106,7 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 
 void Physics::updateAgentKinematic(Agent::Agent *agent, float dt)
 {
+    World &world = World::getInstance();
     Kinematic &oldk = agent->getKinematic();
     SteerInfo &s = agent->getSteering();
 
@@ -114,9 +115,9 @@ void Physics::updateAgentKinematic(Agent::Agent *agent, float dt)
     /* Position' = position + velocity * time */
     newk.pos = oldk.pos + dt * oldk.vel;
 
-    if (newk.pos[0] > world->xMax) newk.pos[0] = world->xMax;
+    if (newk.pos[0] > world.xMax) newk.pos[0] = world.xMax;
     if (newk.pos[0] < 0) newk.pos[0] = 0;
-    if (newk.pos[2] > world->zMax) newk.pos[0] = world->zMax;
+    if (newk.pos[2] > world.zMax) newk.pos[0] = world.zMax;
     if (newk.pos[2] < 0) newk.pos[2] = 0;
 
     /* Orientation' = orientation + rotation * time */
@@ -135,10 +136,11 @@ void Physics::updateAgentKinematic(Agent::Agent *agent, float dt)
 
 void Physics::simulate(float dt)
 {
+    World &world = World::getInstance();
     vector<Agent *>::iterator iter;
     PAgent *p;
     Agent *a;
-    for (iter = world->agents.begin(); iter != world->agents.end(); iter++)
+    for (iter = world.agents.begin(); iter != world.agents.end(); iter++)
     {
         a = (*iter);
         p = pagents[a->id];
@@ -151,7 +153,7 @@ void Physics::simulate(float dt)
     dJointGroupEmpty(odeContacts);
 
 
-    for (iter = world->agents.begin(); iter != world->agents.end(); iter++)
+    for (iter = world.agents.begin(); iter != world.agents.end(); iter++)
     {
         a = (*iter);
         p = pagents[a->id];
@@ -166,9 +168,9 @@ void Physics::simulate(float dt)
 void Physics::simulate(float dt)
 {
     
-    for (unsigned int i = 0; i < world->agents.size(); i++)
+    for (unsigned int i = 0; i < world.agents.size(); i++)
     {
-        updateAgentKinematic(&world->agents[i], dt);
+        updateAgentKinematic(&world.agents[i], dt);
     }
 }
 */
@@ -197,7 +199,7 @@ void Physics::initPhysics()
     dWorldSetAngularDamping(odeWorld, ANGDAMP);
 }
 
-Physics::Physics() : world(&World::getInstance())
+Physics::Physics()
 {
 }
 
