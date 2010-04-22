@@ -138,6 +138,8 @@ const Kinematic &PMoveable::odeToKinematic(){
 void PAgent::steeringToOde()
 {
     const dReal* angVel = dBodyGetAngularVel(body);
+    if (steering->acceleration || steering->rotation)
+        dBodyEnable(body);
     cout << "Steering rotation is: " << steering->rotation << endl;
 
     dBodySetAngularVel(body, angVel[0], angVel[1] + steering->rotation,
