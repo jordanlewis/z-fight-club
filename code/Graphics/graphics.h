@@ -33,6 +33,7 @@ class Graphics
     void render();	
     void render(Agent * agent);
     void render(TrackData_t *track);
+    void renderBoxPGeoms();
     int sphere(Vec3f, float, Color);
 
 

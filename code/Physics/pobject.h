@@ -19,6 +19,7 @@ class PGeom
     const float mu1, mu2;
     void setPos(Vec3f position);
     void setQuat(const dQuaternion rotation);
+    dGeomID getGeom();
     PGeom(GeomInfo *info);
 };
 

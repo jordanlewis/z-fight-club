@@ -91,8 +91,10 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 	    norm = sqrt(norm);
 	    contact[i].surface.mu *= norm;
 	    contact[i].surface.mu2 *= norm;
+            /*
 	    cout << "Friction coeff: " << contact[i].surface.mu << endl;
 	    cout << "Bounce: " << bounce << endl;
+            */
 
             dJointID c = dJointCreateContact(odeWorld, odeContacts, contact+i);
             dJointAttach(c, b1, b2);
