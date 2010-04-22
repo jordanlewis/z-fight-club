@@ -25,6 +25,7 @@ class Agent
     static float width;
     static float depth;
     Kinematic kinematic;   /* !<car's current kinematic */
+    std::vector<Vec3f> trail;   /* !<record of where the agent has been */
 
     Agent (Vec3f);      /* Constructor; Initial position */
     Agent (Vec3f, float); /* Constructor; Initial position and orientation */
