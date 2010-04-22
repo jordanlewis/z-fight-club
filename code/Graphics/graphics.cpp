@@ -242,11 +242,11 @@ void Graphics::renderBoxPGeoms()
      * TODO: find some way of representing all static world geometry, and stick
      * it in world so this awful abstraction fail doesn't break us.
      */
-    float sides[3];
+    dVector3 sides;
     GLdouble matrix[16];
     const dReal *pos;
     const dReal *R;
-    float quat[4];
+    dQuaternion quat;
     float theta;
     glMatrixMode(GL_MODELVIEW);
     for (unsigned int i = 0; i < Physics::getInstance().pgeoms.size();i++)
