@@ -5,9 +5,21 @@
 
 #include <vector>
 #include "Agents/agent.h"
+#include "Physics/pobject.h"
+#include "Graphics/gobject.h"
 #include "Graphics/camera.h"
 #include "Graphics/polygon.h"
 #include "Parser/track-parser.h"
+
+class PGeom;
+
+class WorldObject
+{
+  public:
+    PGeom *pobject;
+    GObject *gobject;
+    WorldObject(PGeom * pobject, GObject * gobject);
+};
 
 class World
 {
@@ -29,6 +41,7 @@ class World
     dWorldID ode_world;
     dSpaceID ode_space;
     std::vector<Agent *> agents; /* the agents in the world */
+    std::vector<WorldObject> objects; /* the objects in the world */
 
     void registerAgent(Agent &agent);
     void loadTrack(const char *file);

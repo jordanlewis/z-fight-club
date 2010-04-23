@@ -1,5 +1,7 @@
 #include "world.h"
 #include "Graphics/polygon.h"
+#include "Graphics/gobject.h"
+#include "Physics/pobject.h"
 extern "C" {
     #include "Parser/track-parser.h"
 }
@@ -8,6 +10,10 @@ float World::xMax = 1000; // XXX this probably will depend on tracks
 float World::zMax = 1000; // XXX this too
 
 World World::_instance;
+
+WorldObject::WorldObject(PGeom *pobject, GObject *gobject)
+                        : pobject(pobject), gobject(gobject)
+{}
 
 World::World()
 {
