@@ -12,8 +12,15 @@ typedef enum {
     GRAPHICS,
     PARSER,
     SOUND,
-    NUM_ERRORS
-} ErrorType_t;
+    NUM_MODULE
+} ErrorModule_t;
+
+typedef enum {
+    TRIVIAL = 0,
+    IMPORTANT,
+    CRITICAL,
+    NUM_VERBOSITY
+} ErrorVerbosity_t;
 
 class Error
 {
@@ -23,10 +30,14 @@ class Error
 	static Error _instance;
 
     public:
-	bool logging[NUM_ERRORS];	/* !< which errors are we reporting */
+	bool 			module[NUM_MODULE];	/* !< which errors are we reporting */
+	ErrorVerbosity_t 	verbosity;		/* !< how trivial of an error do we print */
 	static Error &getInstance();
-	void on(ErrorType_t);
-	void off(ErrorType_t);
-	void log(ErrorType_t, const char *);
+	void on(ErrorModule_t);
+	void off(ErrorModule_t);
+	void setVerbosity(ErrorVerbosity_t);
+	void log(ErrorModule_t, ErrorVerbosity_t, const char *);
+	void log(ErrorModule_t, ErrorVerbosity_t, const int);
+	void log(ErrorModule_t, ErrorVerbosity_t, const float);
 };
 #endif

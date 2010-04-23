@@ -7,8 +7,10 @@ Error Error::_instance;
 Error::Error()
 {
     int i;
-    for (i = 0; i < NUM_ERRORS; i++)
-	logging[i] = false;
+    for (i = 0; i < NUM_MODULE; i++)
+	module[i] = false;
+
+    verbosity = CRITICAL;
 }
 
 Error::~Error()
@@ -20,18 +22,35 @@ Error &Error::getInstance()
     return _instance;
 }
 
-void Error::on(ErrorType_t error)
+void Error::on(ErrorModule_t error)
 {
-    logging[error] = true;
+    module[error] = true;
 }
 
-void Error::off(ErrorType_t error)
+void Error::off(ErrorModule_t error)
 {
-    logging[error] = false;
+    module[error] = false;
 }
 
-void Error::log(ErrorType_t error, const char * msg)
+void Error::setVerbosity(ErrorVerbosity_t verbosity)
 {
-    if (logging[error])
+    this->verbosity = verbosity;
+}
+
+void Error::log(ErrorModule_t error, ErrorVerbosity_t verbosity, const char * msg)
+{
+    if (module[error] || verbosity >= this->verbosity)
+	std::cerr << msg;
+}
+
+void Error::log(ErrorModule_t error, ErrorVerbosity_t verbosity, const int msg)
+{
+    if (module[error] || verbosity >= this->verbosity)
+	std::cerr << msg;
+}
+
+void Error::log(ErrorModule_t error, ErrorVerbosity_t verbosity, const float msg)
+{
+    if (module[error] || verbosity >= this->verbosity)
 	std::cerr << msg;
 }
