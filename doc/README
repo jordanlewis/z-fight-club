@@ -10,3 +10,9 @@ Project Dependencies:
 
     	Open Dynamics Engine (ODE) rigid body dynamics simulation library
          http://www.ode.org/
+
+    	Boost
+         http://www.boost.org/
+      	 program options
+          http://www.boost.org/doc/libs/1_42_0/doc/html/program_options/tutorial.html
+

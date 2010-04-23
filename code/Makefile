@@ -43,7 +43,7 @@ $(BUILDDIR):
 $(CTAGS): $(HEADERS) $(C_SRCS) $(CPP_SRCS)
 	ctags -R --c++-kinds=+p --fields=+iaS --extra=+q
 
-$(TARGET): $(OBJECTBUILDS) $(SETUPOBJ)
+$(TARGET): $(BUILDDIR) $(OBJECTBUILDS) $(SETUPOBJ)
 	g++ $(CXXFLAGS) -o $@ $(OBJECTS) $(LDFLAGS)
 
 .PHONY: test clean

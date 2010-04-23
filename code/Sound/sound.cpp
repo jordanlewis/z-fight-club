@@ -52,7 +52,7 @@ ostream& operator<<(ostream &os, const playing_sound &ps)
        // << "     repeat: " << ps.repeat << endl
        << "          s: " << ps.s << endl
        << "     length: " << ps.s->length << endl
-       << "       data: " << (int) ps.s->data << endl; 
+       << "       data: " << (void*) ps.s->data << endl; 
     return os;
 }
 
