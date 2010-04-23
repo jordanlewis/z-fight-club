@@ -121,7 +121,7 @@ void Vec3f::operator*=(const float &o)
 
 Vec3f Vec3f::operator/(const float &o) const
 {
-     // So apparently, in C++, division by 0 is well defined:
+     // So apparently division by 0 is well defined:
      // 1.0/0.0 = infinity.
      //
      // So, because it's well-defined for the system, I'm not
@@ -208,20 +208,24 @@ float Vec3f::dot(const Vec3f &o) const
     return ((x*o.x) + (y*o.y) + (z*o.z));
 }
 
-Vec3f Vec3f::project(const Vec3f& v) const
+// Project this onto v
+Vec3f Vec3f::project_onto(const Vec3f& v) const
 {
-    return v * v.dot(*this);
+    Vec3f vn = v.unit();
+    return vn * vn.dot(*this);
 }
 
 Vec3f Vec3f::perp() const
 {
     Vec3f u = Vec3f(1.0, 0.0, 0.0);
 
-    /* check to see if the vectors are perpendicular */
+    /* check to see if this vector lies in the X-axis*/
     if (((*this) * u).length() < EPSILON)
-	u = Vec3f(0.0, 1.0, 0.0);
-
-    u -= u.project(*this);
+    {
+	    return Vec3f(0.0, 1.0, 0.0);
+    }
+    
+    u -= u.project_onto(*this);
     u.normalize();
     return u;
 }

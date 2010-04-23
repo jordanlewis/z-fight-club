@@ -94,7 +94,7 @@ class Vec3f {
     float dot(const Vec3f&) const;
 
     //! \brief project the vector along another vector
-    Vec3f project(const Vec3f&) const;
+    Vec3f project_onto(const Vec3f&) const;
 
     //! \brief return a vector perpendicular to this one
     Vec3f perp() const;
