@@ -21,7 +21,7 @@ class PlayerController
 {
     TurnState_t turnState;
     EngineState_t engineState;
-    Agent &agent;
+    Agent *agent;
 
   public:
     void setTurnState(TurnState_t newState);
@@ -30,6 +30,7 @@ class PlayerController
     void updateAgent();
 
     PlayerController(Agent &agent);
+    PlayerController();
 };
 
 #endif

@@ -56,6 +56,7 @@ Input &Input::getInstance()
 
 Input::Input()
 {
+    player = new PlayerController();
 }
 
 Input::~Input()
