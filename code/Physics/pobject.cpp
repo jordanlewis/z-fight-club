@@ -142,9 +142,7 @@ void PAgent::steeringToOde()
         dBodyEnable(body);
     cout << "Steering rotation is: " << steering->rotation << endl;
 
-    dBodySetAngularVel(body, angVel[0], angVel[1] + steering->rotation,
-      angVel[2]);
-
+    dBodyAddTorque(body, 0,steering->rotation, 0);
 
     cout << "AngVel is: (" << angVel[0] << ", " << angVel[1] << ", "
 	 << angVel[2] << ")" << endl;
@@ -152,18 +150,4 @@ void PAgent::steeringToOde()
     Vec3f f = Vec3f(sin(kinematic->orientation),0,cos(kinematic->orientation));
     f *= steering->acceleration * mass.mass;
     dBodyAddForce(body, f[0], f[1], f[2]);
-}
-
-/* \brief subtracts the artificially injected angular velocity from SteerInfo
- * \brief from ODE's conception of the body's angular velocity. this is to be
- * \brief called after stepping ODE.
- */
-void PAgent::resetOdeAngularVelocity()
-{
-    const dReal* angVel = dBodyGetAngularVel(body);
-    cout << "Modding by rotation: " << steering->rotation << endl;
-    dBodySetAngularVel(body, angVel[0], 
-		       angVel[1] - steering->rotation*(1-ANGDAMP),
-		       angVel[2]);
-    
 }

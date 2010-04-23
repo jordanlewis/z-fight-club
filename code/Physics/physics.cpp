@@ -188,7 +188,6 @@ void Physics::simulate(float dt)
         p = pagents[a->id];
         const Kinematic &k = pagents[a->id]->odeToKinematic();
         a->setKinematic(k);
-        p->resetOdeAngularVelocity();
     }
 
 }
