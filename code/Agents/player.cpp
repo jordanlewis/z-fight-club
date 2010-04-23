@@ -23,8 +23,8 @@ void PlayerController::updateAgent()
     }
     switch (turnState) {
         case STRAIGHT: steerInfo.rotation = 0; break;
-        case RIGHT:    steerInfo.rotation = agent.maxRotate; break;
-        case LEFT:     steerInfo.rotation = -agent.maxRotate; break;
+        case RIGHT:    steerInfo.rotation = -agent.maxRotate; break;
+        case LEFT:     steerInfo.rotation = agent.maxRotate; break;
         default: break;
     }
     agent.setSteering(steerInfo);
