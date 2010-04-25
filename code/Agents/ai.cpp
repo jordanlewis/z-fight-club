@@ -1,6 +1,6 @@
 #include <vector>
-#include <math.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdlib>
 #include "ai.h"
 #include "Utilities/vec3f.h"
 #include "agent.h"
