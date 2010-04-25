@@ -50,6 +50,6 @@ class PAgent: public PMoveable
     PAgent(const Kinematic *kinematic, const SteerInfo *steering,
            float mass, GeomInfo *info);
     void steeringToOde(); //Write steering info into the ODE structs
-    void resetOdeAngularVelocity();
+    void resetOdeAngularVelocity(int nsteps);
 };
 #endif

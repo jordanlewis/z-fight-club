@@ -156,14 +156,15 @@ void PAgent::steeringToOde()
 
 /* \brief subtracts the artificially injected angular velocity from SteerInfo
  * \brief from ODE's conception of the body's angular velocity. this is to be
- * \brief called after stepping ODE.
+ * \brief called after stepping ODE for nSteps steps.
  */
-void PAgent::resetOdeAngularVelocity()
+void PAgent::resetOdeAngularVelocity(int nSteps)
 {
+    //return;
     const dReal* angVel = dBodyGetAngularVel(body);
     cout << "Modding by rotation: " << steering->rotation << endl;
     dBodySetAngularVel(body, angVel[0], 
-		       angVel[1] - steering->rotation*(1-ANGDAMP),
+		       angVel[1] - steering->rotation*pow(1-ANGDAMP, nSteps),
 		       angVel[2]);
     
 }

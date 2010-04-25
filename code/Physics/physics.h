@@ -16,8 +16,8 @@ class PMoveable;
 class PAgent;
 
 #define GRAVITY -9.8
-#define LINDAMP .1
-#define ANGDAMP .5
+#define LINDAMP .005
+#define ANGDAMP .1
 
 
 class Physics
@@ -34,6 +34,7 @@ class Physics
     ~Physics();
     Physics(const Physics&);
     Physics &operator=(const Physics&);
+    inline void simulateStep();
   public:
     std::vector<PGeom *> pgeoms;
     const dWorldID & getOdeWorld() { return odeWorld; };
