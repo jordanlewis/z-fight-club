@@ -83,9 +83,6 @@ const Kinematic &PMoveable::odeToKinematic(){
     k.orientation_v[1] = q_result[2];
     k.orientation_v[2] = q_result[3];
 
-    cout << "Someone's orientation: (" << q_result[1] << ", " << q_result[2]
-	 << ", " << q_result[3] << ")" << endl;
-    
     //Calculate and write the orientation projected onto the X-Z plane
 
     /*Project to X-Z plane (Ignore the Y component), renormalize, and 
@@ -145,7 +142,10 @@ void PAgent::steeringToOde()
       angVel[2]);
 
     Vec3f f = Vec3f(sin(kinematic->orientation),0,cos(kinematic->orientation));
-    f *= steering->acceleration * mass.mass;
+    if (steering->acceleration < MAXACC) {
+	f *= steering->acceleration * mass.mass;
+    }
+    else f *= MAXACC * mass.mass;
     dBodyAddForce(body, f[0], f[1], f[2]);
 }
 
@@ -157,7 +157,7 @@ void PAgent::resetOdeAngularVelocity(int nSteps)
 {
     //return;
     const dReal* angVel = dBodyGetAngularVel(body);
-    cout << "Modding by rotation: " << steering->rotation << endl;
+    //cout << "Modding by rotation: " << steering->rotation << endl;
     dBodySetAngularVel(body, angVel[0], 
 		       angVel[1] - steering->rotation*pow(1-ANGDAMP, nSteps),
 		       angVel[2]);

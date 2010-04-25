@@ -27,17 +27,17 @@ Agent::Agent(Vec3f position, float orientation)
 }
 
 /* \brief Calculate this agent's current maximum acceleration as a function
-   \brief of power, mass, and current velocity. */
+   \brief of power, mass, and current velocity. 
+*/
 float Agent::getMaxAccel()
 {
     static float pquotient = power/mass;
     float vel = kinematic.vel.length();
-    if (vel < .1 ){
-	return 1; //value shouldn't matter -- velocity will soon be nonzero
+    //This can be removed easily once we decide on acceleration mechanics.
+    if (vel < 1){  
+	return 50;
     }
     else {
-	cout << "vel is nonzero!" << endl;
-	cout << "pquotient/vel is: " << pquotient/vel << endl;
 	return pquotient/vel;
     }
 

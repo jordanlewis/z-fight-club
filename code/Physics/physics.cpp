@@ -62,7 +62,7 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
                                  sizeof(dContact));
     if (numCollisions > 0)
     {
-        cout << numCollisions << " collisions detected" << endl;
+        //cout << numCollisions << " collisions detected" << endl;
         for (int i = 0; i < numCollisions; i++)
         {
             contact[i].surface.mode = mode;
@@ -199,7 +199,7 @@ void Physics::initAgent(Agent &agent)
     SteerInfo &s = agent.getSteering();
     BoxInfo geom = BoxInfo(agent.width, agent.height, agent.depth,
 			   1, 0, 0, this->getOdeSpace());
-    PAgent *pobj = new PAgent(&k, &s, 100, &geom);
+    PAgent *pobj = new PAgent(&k, &s, agent.mass, &geom);
 
     pagents[agent.id] = pobj;
 }

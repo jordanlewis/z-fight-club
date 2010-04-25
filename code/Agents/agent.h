@@ -14,7 +14,7 @@ class SteerInfo
     float acceleration;
     float rotation;
 };
-
+ 
 class Agent
 {
     static unsigned int maxId; /* !<highest id number we've reached */
