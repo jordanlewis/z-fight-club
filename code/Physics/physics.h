@@ -18,7 +18,7 @@ class PAgent;
 #define GRAVITY -9.8
 #define LINDAMP .005
 #define ANGDAMP .1
-#define MAXACC 1000 //Maximum acceleration which steering can request 
+#define MAXACC 100 //Maximum acceleration which steering can request 
 
 
 class Physics
