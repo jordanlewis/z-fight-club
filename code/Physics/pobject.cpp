@@ -140,14 +140,9 @@ void PAgent::steeringToOde()
     const dReal* angVel = dBodyGetAngularVel(body);
     if (steering->acceleration || steering->rotation)
         dBodyEnable(body);
-    cout << "Steering rotation is: " << steering->rotation << endl;
 
     dBodySetAngularVel(body, angVel[0], angVel[1] + steering->rotation,
       angVel[2]);
-
-
-    cout << "AngVel is: (" << angVel[0] << ", " << angVel[1] << ", "
-	 << angVel[2] << ")" << endl;
 
     Vec3f f = Vec3f(sin(kinematic->orientation),0,cos(kinematic->orientation));
     f *= steering->acceleration * mass.mass;

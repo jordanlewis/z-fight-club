@@ -19,8 +19,8 @@ void PlayerController::updateAgent()
     SteerInfo steerInfo;
     switch (engineState) {
         case NEUTRAL: steerInfo.acceleration = 0; break;
-        case ACCELERATE: steerInfo.acceleration = agent->maxAccel; break;
-        case REVERSE: steerInfo.acceleration = -agent->maxAccel; break;
+        case ACCELERATE: steerInfo.acceleration = agent->getMaxAccel(); break;
+        case REVERSE: steerInfo.acceleration = -agent->getMaxAccel(); break;
         default: break;
     }
     switch (turnState) {

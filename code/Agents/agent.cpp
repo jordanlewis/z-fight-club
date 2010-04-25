@@ -2,8 +2,9 @@
 #include "Utilities/vec3f.h"
 
 unsigned int Agent::maxId = 0;    /* !<highest id number we've reached */
-float        Agent::maxAccel = 10;  /*XXX 10 is a random value; tweak this */
-float        Agent::maxRotate = 2; /*XXX .3 is a random value; tweak this */
+float        Agent::mass = 100;   /*XXX 100 is a random value; tweak this */
+float        Agent::power = 10000;  /*XXX 10^5 is a random value; tweak this */
+float        Agent::maxRotate = 2; /*XXX 2 is a random value; tweak this */
 float        Agent::height = 2;
 float        Agent::width = 2;
 float        Agent::depth = 2;
@@ -23,6 +24,23 @@ Agent::Agent(Vec3f position, float orientation)
             : steerInfo(), id(maxId++), kinematic(position, Vec3f(0,0,0),
                                                   orientation)
 {
+}
+
+/* \brief Calculate this agent's current maximum acceleration as a function
+   \brief of power, mass, and current velocity. */
+float Agent::getMaxAccel()
+{
+    static float pquotient = power/mass;
+    float vel = kinematic.vel.length();
+    if (vel < .1 ){
+	return 1; //value shouldn't matter -- velocity will soon be nonzero
+    }
+    else {
+	cout << "vel is nonzero!" << endl;
+	cout << "pquotient/vel is: " << pquotient/vel << endl;
+	return pquotient/vel;
+    }
+
 }
 
 /* \brief get current kinematic for agent
