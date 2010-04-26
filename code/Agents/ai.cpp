@@ -109,7 +109,10 @@ AIController::AIController(Agent &agent)
 
 void AIController::run()
 {
-
+    /* Test target - we'll change this function to do more interesting things
+     * once we get a better AI test architecture running. */
+    Vec3f tgt = Vec3f(20, 2, 20);
+    seek(tgt);
 }
 
 void AIManager::control(Agent &agent)
