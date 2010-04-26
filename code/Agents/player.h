@@ -30,6 +30,7 @@ class PlayerController
     const TurnState_t &getTurnState();
     const EngineState_t &getEngineState();
 
+    const Agent &getAgent() const;
     void updateAgent();
 
     PlayerController(Agent &agent);

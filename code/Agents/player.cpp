@@ -22,6 +22,11 @@ const EngineState_t &PlayerController::getEngineState()
     return engineState;
 }
 
+const Agent &PlayerController::getAgent() const
+{
+    return *agent;
+}
+
 void PlayerController::updateAgent()
 {
     if (!agent)

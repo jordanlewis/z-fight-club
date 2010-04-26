@@ -63,6 +63,11 @@ int Input::processInput()
     return 0;
 }
 
+const PlayerController &Input::getPlayerController() const
+{
+    return *player;
+}
+
 void Input::controlPlayer(PlayerController &p)
 {
     player = &p;
