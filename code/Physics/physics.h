@@ -28,7 +28,7 @@ class Physics
     dSpaceID odeSpace;
     dJointGroupID odeContacts;
 
-    void updateAgentKinematic(Agent::Agent *agent, float dt);
+    void updateAgentKinematic(Agent *agent, float dt);
 
     static Physics _instance;
     Physics();
