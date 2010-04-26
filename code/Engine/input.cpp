@@ -7,6 +7,7 @@ Input Input::_instance;
 int Input::processInput()
 {
     SDL_Event SDLevt;
+    Uint8 *keystate = SDL_GetKeyState(NULL);
 
     while (SDL_PollEvent(&SDLevt)) {
         switch(SDLevt.type) {
@@ -27,11 +28,29 @@ int Input::processInput()
             case SDL_KEYUP:
                 switch (SDLevt.key.keysym.sym) {
                     case SDLK_LEFT:
+			if (keystate[SDLK_RIGHT]) {
+			    player->setTurnState(RIGHT);
+			    break;
+			}
                     case SDLK_RIGHT:
-                        player->setTurnState(STRAIGHT); break;
-                    case SDLK_UP:
+			if (keystate[SDLK_LEFT]) {
+			    player->setTurnState(LEFT);
+			    break;
+			}
+			player->setTurnState(STRAIGHT);
+			break;
+		    case SDLK_UP:
+			if (keystate[SDLK_DOWN]) {
+			    player->setEngineState(REVERSE);
+			    break;
+			}
                     case SDLK_DOWN:
-                        player->setEngineState(NEUTRAL); break;
+			if (keystate[SDLK_UP]) {
+			    player->setEngineState(ACCELERATE); 
+			    break;
+			}
+			player->setEngineState(NEUTRAL);
+			break;
                     default: break;
                 } break;
             case SDL_QUIT:
