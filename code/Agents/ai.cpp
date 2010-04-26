@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include "ai.h"
 #include "Utilities/vec3f.h"
+#include "Engine/input.h"
 #include "agent.h"
 
 AIManager AIManager::_instance;
@@ -111,7 +112,7 @@ void AIController::run()
 {
     /* Test target - we'll change this function to do more interesting things
      * once we get a better AI test architecture running. */
-    Vec3f tgt = Vec3f(20, 2, 20);
+    Vec3f tgt = Input::getInstance().getPlayerController().getAgent().kinematic.pos;
     seek(tgt);
 }
 
