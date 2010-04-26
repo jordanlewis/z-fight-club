@@ -143,10 +143,14 @@ void PAgent::steeringToOde()
       angVel[2]);
 
     Vec3f f = Vec3f(sin(kinematic->orientation),0,cos(kinematic->orientation));
-    if (steering->acceleration < MAXACC) {
-	f *= steering->acceleration * mass.mass;
+    if (steering->acceleration < MAXACC && steering->acceleration > -MAXACC) {
+        f *= steering->acceleration * mass.mass;
     }
-    else f *= MAXACC * mass.mass;
+    else if (steering->acceleration < -MAXACC)
+        f *= -MAXACC * mass.mass;
+    else if (steering->acceleration > MAXACC)
+        f *= MAXACC * mass.mass;
+
     dBodyAddForce(body, f[0], f[1], f[2]);
 }
 
