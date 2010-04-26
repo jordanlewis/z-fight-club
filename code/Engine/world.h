@@ -43,6 +43,7 @@ class World
     std::vector<Agent *> agents; /* the agents in the world */
     std::vector<WorldObject> objects; /* the objects in the world */
 
+    void addObject(PGeom *pobject, GObject *gobject);
     void registerAgent(Agent &agent);
     void loadTrack(const char *file);
     const TrackData_t * getTrack();
