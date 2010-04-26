@@ -1,17 +1,18 @@
 #include "pobject.h"
+#include <ode/ode.h>
 
 #define DEBUG
 
-PGeom::PGeom(GeomInfo *info)
-    : geom(info->createGeom()),
+PGeom::PGeom(GeomInfo *info, dSpaceID space)
+    : geom(info->createGeom(space)), space(space),
       bounce(info->bounce), mu1(info->mu1), mu2(info->mu2)
 {
     dGeomSetData(geom, this);
 }
 
 PMoveable::PMoveable(const Kinematic *kinematic, float mass,
-                     GeomInfo *info)
-                    : PGeom(info), kinematic(kinematic)
+                     GeomInfo *info, dSpaceID space)
+                    : PGeom(info, space), kinematic(kinematic)
 {
     //Create a body, give it mass, and bind it to the geom
     body = dBodyCreate(Physics::getInstance().getOdeWorld());
@@ -25,8 +26,8 @@ PMoveable::PMoveable(const Kinematic *kinematic, float mass,
 }
 
 PAgent::PAgent(const Kinematic *kinematic, const SteerInfo *steering,
-               float mass, GeomInfo *info)
-              : PMoveable(kinematic, mass, info), steering(steering)
+               float mass, GeomInfo *info, dSpaceID space)
+              : PMoveable(kinematic, mass, info, space), steering(steering)
 {
 }
 

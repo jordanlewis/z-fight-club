@@ -14,7 +14,7 @@ class GeomInfo
     float mu1, mu2; /* How much friction this surface has.  mu1 is in the 
 		       direction of contact motion, mu2 is perpendicular.
 		       takes values in the range [0, dInfinity] */
-    virtual dGeomID createGeom() {return 0;};
+    virtual dGeomID createGeom(dSpaceID space) {return 0;};
     virtual void createMass(dMass *, float) {return;};
 };
 
@@ -22,11 +22,9 @@ class GeomInfo
 class SphereInfo : public GeomInfo
 {
  public:
-    dSpaceID space;
     float radius;
-    SphereInfo(float radius, 
-	       float bounce, float mu1, float mu2, dSpaceID space);
-    dGeomID createGeom();
+    SphereInfo(float radius, float bounce, float mu1, float mu2);
+    dGeomID createGeom(dSpaceID space);
     void createMass(dMass *, float);
 };
 
@@ -34,11 +32,9 @@ class SphereInfo : public GeomInfo
 class BoxInfo : public GeomInfo
 {
  public:
-    dSpaceID space;
     float lx, ly, lz;
-    BoxInfo(float lx, float ly, float lz,
-	    float bounce, float mu1, float mu2, dSpaceID space);
-    dGeomID createGeom();
+    BoxInfo(float lx, float ly, float lz, float bounce, float mu1, float mu2);
+    dGeomID createGeom(dSpaceID space);
     void createMass(dMass *, float);
 };
 
@@ -47,23 +43,21 @@ class BoxInfo : public GeomInfo
 class PlaneInfo : public GeomInfo
 {
  public:
-    dSpaceID space;
     float a, b, c, d;
     PlaneInfo(float a, float b, float c, float d,
-	      float bounce, float mu1, float mu2, dSpaceID space);
-    dGeomID createGeom();
+	      float bounce, float mu1, float mu2);
+    dGeomID createGeom(dSpaceID space);
 };
 
 class TriMeshInfo : public GeomInfo
 {
  public:
-    dSpaceID space;
     dTriMeshDataID meshID;
     const void * verts;
     const void * tris;
     TriMeshInfo(dTriMeshDataID meshID, const void * verts, const void * tris,
-                float bounce, float mu1, float mu2, dSpaceID space);
-    dGeomID createGeom();
+                float bounce, float mu1, float mu2);
+    dGeomID createGeom(dSpaceID space);
 };
 
 #endif

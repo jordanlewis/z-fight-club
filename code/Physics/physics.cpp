@@ -135,9 +135,9 @@ void Physics::makeTrackGeoms()
                 SubV3f(track->verts[e->start], track->verts[next->start], wall);
                 xzwall[0] = wall[0]; xzwall[1] = wall[2];
                 len = LengthV2f(xzwall);
-                BoxInfo box(len, height + wall[1], depth, 0, 200, 0, this->getOdeSpace());
+                BoxInfo box(len, height + wall[1], depth, 0, 200, 0);
                 theta = atan2(wall[2] , wall[0]);
-                geom = new PGeom(&box);
+                geom = new PGeom(&box, this->getOdeSpace());
                 pgeoms.push_back(geom);
                 dQFromAxisAndAngle(quat, 0, 1, 0, -theta);
                 geom->setQuat(quat);
@@ -197,9 +197,8 @@ void Physics::initAgent(Agent &agent)
 {
     Kinematic &k = agent.getKinematic();
     SteerInfo &s = agent.getSteering();
-    BoxInfo geom = BoxInfo(agent.width, agent.height, agent.depth,
-			   1, 0, 0, this->getOdeSpace());
-    PAgent *pobj = new PAgent(&k, &s, agent.mass, &geom);
+    BoxInfo geom = BoxInfo(agent.width, agent.height, agent.depth, 1, 0, 0);
+    PAgent *pobj = new PAgent(&k, &s, agent.mass, &geom, this->getOdeSpace());
 
     pagents[agent.id] = pobj;
 }
