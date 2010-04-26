@@ -30,6 +30,9 @@ class AIController
     /* cached AI data? paths? etc */
   public:
     Agent *agent;
+    void seek(const Vec3f target);
+    void align(float target);
+    void cruise(Path *path);
     void run(); /* !< Give new steering information to the agent we control */
     AIController(Agent &);
 };
