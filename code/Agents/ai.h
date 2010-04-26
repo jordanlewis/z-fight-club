@@ -36,9 +36,16 @@ class AIController
 
 class AIManager
 {
+    static AIManager _instance;
+    AIManager();
+    ~AIManager();
+    AIManager(const AIManager&);
+    AIManager &operator=(const AIManager&);
+
     std::vector<AIController *> controllers; /* !< active AI controllers */
 
   public:
+    static AIManager &getInstance();
     void control(Agent &); /* !< assume AI control of given agent */
     void release(Agent &); /* !< release AI control of given agent */
     void run(); /* !< Give new steering information to each agent under our control*/

@@ -5,6 +5,8 @@
 #include "Utilities/vec3f.h"
 #include "agent.h"
 
+AIManager AIManager::_instance;
+
 const std::vector<Vec3f>* Path::get_knots() const
 {
     return &(this->knots);
@@ -122,4 +124,17 @@ void AIManager::run()
     {
         controllers[i]->run();
     }
+}
+
+AIManager &AIManager::getInstance()
+{
+    return _instance;
+}
+
+AIManager::AIManager()
+{
+}
+
+AIManager::~AIManager()
+{
 }
