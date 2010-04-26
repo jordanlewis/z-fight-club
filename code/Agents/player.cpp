@@ -12,6 +12,16 @@ void PlayerController::setEngineState(EngineState_t newState)
     engineState = newState;
 }
 
+const TurnState_t &PlayerController::getTurnState()
+{
+    return turnState;
+}
+
+const EngineState_t &PlayerController::getEngineState()
+{
+    return engineState;
+}
+
 void PlayerController::updateAgent()
 {
     if (!agent)

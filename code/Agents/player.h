@@ -27,6 +27,9 @@ class PlayerController
     void setTurnState(TurnState_t newState);
     void setEngineState(EngineState_t newState);
 
+    const TurnState_t &getTurnState();
+    const EngineState_t &getEngineState();
+
     void updateAgent();
 
     PlayerController(Agent &agent);
