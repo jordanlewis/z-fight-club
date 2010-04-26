@@ -19,16 +19,11 @@ void testSetup()
     Vec3f pos = Vec3f(62, 2, 10);
     Agent *aiagent = new Agent(pos, M_PI_2);
 
-    Vec3f tgt = Vec3f(20, 2, 20);
-    Agent *tgtagent = new Agent(tgt, M_PI_2);
-
-    Vec3f pos3 = Vec3f(55, 2, 10);
-    Agent *humanagent = new Agent(pos3, -1.337);
+    Vec3f pos2 = Vec3f(55, 2, 10);
+    Agent *humanagent = new Agent(pos2, -1.337);
 
     world.registerAgent(*aiagent);
     physics.initAgent(*aiagent);
-    world.registerAgent(*tgtagent);
-    physics.initAgent(*tgtagent);
     world.registerAgent(*humanagent);
     physics.initAgent(*humanagent);
 
