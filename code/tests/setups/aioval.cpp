@@ -16,10 +16,10 @@ void testSetup()
     PlaneInfo info = PlaneInfo(0, 1, 0, 0, 0, 0, 0);
     new PGeom(&info, physics.getOdeSpace());
 
-    Vec3f pos = Vec3f(62, 2, 10);
+    Vec3f pos = Vec3f(44, 2, 6);
     Agent *aiagent = new Agent(pos, M_PI_2);
 
-    Vec3f pos2 = Vec3f(55, 2, 10);
+    Vec3f pos2 = Vec3f(85, 2, 25);
     Agent *humanagent = new Agent(pos2, -1.337);
 
     world.registerAgent(*aiagent);
