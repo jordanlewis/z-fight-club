@@ -28,8 +28,6 @@ class Physics
     dSpaceID odeSpace;
     dJointGroupID odeContacts;
 
-    void updateAgentKinematic(Agent *agent, float dt);
-
     static Physics _instance;
     Physics();
     ~Physics();
