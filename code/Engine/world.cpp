@@ -16,14 +16,17 @@ WorldObject::WorldObject(PGeom *pobject, GObject *gobject)
 {}
 
 World::World()
-{
-    environment = std::vector<Polygon>();
-    agents      = std::vector<Agent *>();
-}
+            : environment(std::vector<Polygon>()), agents(std::vector<Agent*>())
+{}
 
 World::~World()
 {
     FreeTrackData(track);
+}
+
+void World::addObject(PGeom *pobject, GObject *gobject)
+{
+    objects.push_back(WorldObject(pobject, gobject));
 }
 
 void World::registerAgent(Agent &agent)
