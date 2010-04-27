@@ -13,7 +13,7 @@ void testSetup()
     Input &input = Input::getInstance();
     AIManager &ai = AIManager::getInstance();
 
-    PlaneInfo info = PlaneInfo(0, 1, 0, 0, 0, 0, 0);
+    PlaneInfo info = PlaneInfo(0, 1, 0, 0);
     new PGeom(&info, physics.getOdeSpace());
 
     Vec3f pos = Vec3f(44, 2, 6);
