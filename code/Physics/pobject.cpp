@@ -5,7 +5,8 @@
 
 PGeom::PGeom(GeomInfo *info, dSpaceID space)
     : geom(info->createGeom(space)), space(space),
-      bounce(info->bounce), mu1(info->mu1), mu2(info->mu2)
+      bounce(info->bounce), mu1(info->mu1), mu2(info->mu2),
+      collType(info->collType)
 {
     dGeomSetData(geom, this);
 }
