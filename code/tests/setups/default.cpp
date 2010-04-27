@@ -11,8 +11,11 @@ void testSetup()
     Physics &physics  = Physics::getInstance();
     Input &input = Input::getInstance();
 
-    PlaneInfo info = PlaneInfo(0, 1, 0, 0, 0, 0, 0);
-    new PGeom(&info, physics.getOdeSpace());
+    //PlaneInfo info = PlaneInfo(0, 1, 0, 0, 0, 0, 0);
+    //new PGeom(&info, physics.getOdeSpace());
+
+    PlaneInfo info = PlaneInfo(0, 1, 0, 0);
+    new PGeom(&info);
 
     Vec3f pos = Vec3f(-8, 20, .3);
     Vec3f pos2 = Vec3f(30, 25, 0);

@@ -10,7 +10,9 @@ using namespace std;
 
 class Physics;
 
-//Stores geometry info for use in ODE collision calculations
+/* Stores geometry info for use in ODE collision calculations
+ * See geominfo.h for info on member variables.
+ */
 class PGeom
 {
  protected:
@@ -18,7 +20,8 @@ class PGeom
  public:
     dSpaceID space;
     const float bounce;
-    const float mu1, mu2;
+    const float mu1, mu2; 
+    const int collType; 
     void setPos(Vec3f position);
     void setQuat(const dQuaternion rotation);
     dGeomID getGeom();

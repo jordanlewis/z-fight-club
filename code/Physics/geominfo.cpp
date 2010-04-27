@@ -1,28 +1,28 @@
 #include <ode/ode.h>
 #include "geominfo.h"
 
-#define PI 3.1415
+GeomInfo::GeomInfo()
+    : bounce(D_BOUNCE), mu1(D_MU1), mu2(D_MU2), collType(D_COLL)
+{} 
 
-GeomInfo::GeomInfo(float bounce, float mu1, float mu2)
-    : bounce(bounce), mu1(mu1), mu2(mu2)
+//Not curently used by anyone.  May want to remove.
+GeomInfo::GeomInfo(float bounce, float mu1, float mu2, CollType_t collType)
+    : bounce(bounce), mu1(mu1), mu2(mu2), collType(collType)
 {}
 
-PlaneInfo::PlaneInfo(float a, float b, float c, float d, 
-		     float bounce, float mu1, float mu2)
-    : GeomInfo(bounce, mu1, mu2), a(a), b(b), c(c), d(d)
+PlaneInfo::PlaneInfo(float a, float b, float c, float d)
+    : GeomInfo(), a(a), b(b), c(c), d(d)
 {}
-BoxInfo::BoxInfo(float lx, float ly, float lz, 
-		 float bounce, float mu1, float mu2)
-    : GeomInfo(bounce, mu1, mu2), lx(lx), ly(ly), lz(lz)
+BoxInfo::BoxInfo(float lx, float ly, float lz)
+    : GeomInfo(), lx(lx), ly(ly), lz(lz)
 {}
-SphereInfo::SphereInfo(float radius, float bounce, float mu1, float mu2)
-    : GeomInfo(bounce, mu1, mu2), radius(radius)
+SphereInfo::SphereInfo(float radius)
+    : GeomInfo(), radius(radius)
 {}
 
 TriMeshInfo::TriMeshInfo(dTriMeshDataID meshID, const void * verts,
-                         const void * tris, float bounce, float mu1,
-                         float mu2)
-    : GeomInfo(bounce, mu1, mu2), meshID(meshID), verts(verts), tris(tris)
+                         const void * tris)
+    : GeomInfo(), meshID(meshID), verts(verts), tris(tris)
 {}
 
 dGeomID SphereInfo::createGeom(dSpaceID space)
@@ -36,12 +36,10 @@ dGeomID TriMeshInfo::createGeom(dSpaceID space)
 
 void SphereInfo::createMass(dMass * mass, float massVal)
 {
-    //dMassSetSphere(mass, massVal/((4/3)*PI*radius*radius*radius), radius);
     dMassSetSphereTotal(mass, massVal, radius);
 }
 
 void BoxInfo::createMass(dMass * mass, float massVal)
 {
-    //dMassSetBox(mass, massVal/(lx*ly*lz), lx, ly, lz);
     dMassSetBoxTotal(mass, massVal, lx, ly, lz);
 }
