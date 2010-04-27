@@ -15,24 +15,13 @@ void testSetup()
     //new PGeom(&info, physics.getOdeSpace());
 
     PlaneInfo info = PlaneInfo(0, 1, 0, 0);
-    new PGeom(&info);
+    new PGeom(&info, physics.getOdeSpace());
 
-    Vec3f pos = Vec3f(-8, 20, .3);
-    Vec3f pos2 = Vec3f(30, 25, 0);
-    Agent *agent = new Agent(pos, M_PI / 2);
-    Agent *agent2 = new Agent(pos2, -M_PI / 2);
-
-    SteerInfo steer;
-    steer.acceleration = .3;
-    steer.rotation = 0;
-    agent->setSteering(steer);
-    steer.acceleration = 1;
-    agent2->setSteering(steer);
+    Vec3f pos = Vec3f(85, 5, 20);
+    Agent *agent = new Agent(pos, M_PI);
 
     world.registerAgent(*agent);
     physics.initAgent(*agent);
-    world.registerAgent(*agent2);
-    physics.initAgent(*agent2);
 
     /* Instantiate a playercontroller to handle input -> steering conversion for
      * this agent */
