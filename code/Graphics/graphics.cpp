@@ -40,10 +40,10 @@ void Graphics::initGraphics()
     screen = SDL_SetVideoMode(wres, hres, colorDepth, SDL_OPENGL|SDL_RESIZABLE);
 
     if (!screen) {
-	fprintf(stderr, "Failed to set video mode resolution to %i by %i: %s\n", wres, hres, SDL_GetError());
-	SDL_Quit();
-	exit(2);
-    }
+        fprintf(stderr, "Failed to set video mode resolution to %i by %i: %s\n", wres, hres, SDL_GetError());
+        SDL_Quit();
+        exit(1);
+	}
 
     SDL_WM_SetCaption("Racer", "racer");
     initialized = true;
@@ -127,10 +127,9 @@ void Graphics::render()
 
     render(world->track);
 
-    // We should figure out how to use iterators and use one here
-    unsigned int i;
-    for (i = 0; i < world->agents.size(); i++) {
-	    render(world->agents[i]);
+    vector<Agent*>::iterator i;
+    for(i = world->agents.begin();i != world->agents.end();i++) {
+	    render(*i);
     }
     DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(2.0f, 0.0f, 0.0f));
     DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(0.0f, 2.0f, 0.0f));
@@ -150,6 +149,7 @@ void Graphics::render(Agent * agent)
 
     glTranslatef(agent->kinematic.pos.x, agent->kinematic.pos.y, agent->kinematic.pos.z);
     GLUquadric *quad = gluNewQuadric();
+
     gluSphere(quad, 0.1, 18, 12);
     DrawArrow(Vec3f(0.0, 0.0, 0.0), agent->kinematic.vel);
     DrawArrow(Vec3f(0.0, 0.0, 0.0), agent->kinematic.orientation_v);
