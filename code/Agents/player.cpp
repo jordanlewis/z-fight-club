@@ -22,12 +22,18 @@ const EngineState_t &PlayerController::getEngineState()
     return engineState;
 }
 
+const Agent &PlayerController::getAgent() const
+{
+    return *agent;
+}
+
 void PlayerController::updateAgent()
 {
     if (!agent)
         return;
     SteerInfo steerInfo;
     switch (engineState) {
+        case BRAKE:
         case NEUTRAL: steerInfo.acceleration = 0; break;
         case ACCELERATE: steerInfo.acceleration = agent->getMaxAccel(); break;
         case REVERSE: steerInfo.acceleration = -agent->getMaxAccel(); break;

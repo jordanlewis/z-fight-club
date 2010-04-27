@@ -13,6 +13,7 @@ class Input
     PlayerController *player;
   public:
     static Input &getInstance();
+    const PlayerController &getPlayerController() const;
     int processInput();
     void controlPlayer(PlayerController &p);
 };
