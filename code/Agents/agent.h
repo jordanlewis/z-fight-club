@@ -8,11 +8,20 @@
 
 using namespace std;
 
+typedef enum {
+    NONE = 0,
+    SMACK,
+    NWEAPONS
+} Weapon_t;
+
 class SteerInfo
 {
   public:
     float acceleration;
     float rotation;
+    Weapon_t weapon;
+    int fire;
+    SteerInfo();
 };
  
 class Agent

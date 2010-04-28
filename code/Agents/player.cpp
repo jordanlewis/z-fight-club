@@ -12,6 +12,11 @@ void PlayerController::setEngineState(EngineState_t newState)
     engineState = newState;
 }
 
+void PlayerController::setWeaponState(WeaponState_t newstate)
+{
+    weaponState = newstate;
+}
+
 const TurnState_t &PlayerController::getTurnState()
 {
     return turnState;
@@ -20,6 +25,11 @@ const TurnState_t &PlayerController::getTurnState()
 const EngineState_t &PlayerController::getEngineState()
 {
     return engineState;
+}
+
+const WeaponState_t &PlayerController::getWeaponState()
+{
+    return weaponState;
 }
 
 const Agent &PlayerController::getAgent() const
@@ -45,6 +55,14 @@ void PlayerController::updateAgent()
         case LEFT:     steerInfo.rotation = agent->maxRotate; break;
         default: break;
     }
+    switch (weaponState) {
+        case FIRE: steerInfo.fire = 1; weaponState = HOLD; break;
+        case HOLD: steerInfo.fire = 0; break;
+        case CHANGE: break; //NYI
+        default: break;
+    }
+    steerInfo.weapon = SMACK; //No others implemented yet
+
     agent->setSteering(steerInfo);
 }
 

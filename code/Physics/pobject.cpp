@@ -43,9 +43,14 @@ void PGeom::setQuat(const dQuaternion rotation)
     dGeomSetQuaternion(geom, rotation);
 }
 
-dGeomID PGeom::getGeom()
+const dGeomID &PGeom::getGeom()
 {
     return geom;
+}
+
+const dBodyID &PMoveable::getBody()
+{
+    return body;
 }
 
 /* \brief Copys the kinematic info into ODE's representation

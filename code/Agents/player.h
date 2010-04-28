@@ -17,18 +17,27 @@ typedef enum {
     RIGHT = 2
 } TurnState_t;
 
+typedef enum {
+    FIRE = 0,
+    HOLD,
+    CHANGE
+} WeaponState_t;
+
 class PlayerController
 {
     TurnState_t turnState;
     EngineState_t engineState;
+    WeaponState_t weaponState;
     Agent *agent;
 
   public:
     void setTurnState(TurnState_t newState);
     void setEngineState(EngineState_t newState);
+    void setWeaponState(WeaponState_t newState);
 
     const TurnState_t &getTurnState();
     const EngineState_t &getEngineState();
+    const WeaponState_t &getWeaponState();
 
     const Agent &getAgent() const;
     void updateAgent();

@@ -9,6 +9,12 @@ float        Agent::height = 2;
 float        Agent::width = 2;
 float        Agent::depth = 2;
 
+/* \brief initialize a SteerInfo class
+ */
+SteerInfo::SteerInfo() : acceleration(0), rotation(0), weapon(NONE), fire(0)
+{
+}
+
 /* \brief initialize an agent class
  * \param position the agent's initial position
  */
