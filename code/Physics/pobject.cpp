@@ -3,10 +3,14 @@
 
 #define DEBUG
 
+#define D_BOUNCE 0  //Default bounce value
+#define D_MU1 0     //Default mu1
+#define D_MU2 0     //Default mu2
+#define D_COLL REAL //Default collision type
+
 PGeom::PGeom(GeomInfo *info, dSpaceID space)
-    : geom(info->createGeom(space)), space(space),
-      bounce(info->bounce), mu1(info->mu1), mu2(info->mu2),
-      collType(info->collType)
+    : geom(info->createGeom(space)), space(space), bounce(D_BOUNCE),
+      mu1(D_MU1), mu2(D_MU2), collType(D_COLL)
 {
     dGeomSetData(geom, this);
 }
