@@ -2,13 +2,20 @@
 #include "Utilities/vec3f.h"
 
 unsigned int Agent::maxId = 0;    /* !<highest id number we've reached */
-float        Agent::maxAccel = 10;  /*XXX 10 is a random value; tweak this */
-float        Agent::maxRotate = 2; /*XXX .3 is a random value; tweak this */
+float        Agent::mass = 100;   /*XXX 100 is a random value; tweak this */
+float        Agent::power = 10000;  /*XXX 10^5 is a random value; tweak this */
+float        Agent::maxRotate = 2; /*XXX 2 is a random value; tweak this */
 float        Agent::height = 2;
 float        Agent::width = 2;
 float        Agent::depth = 2;
 
-Agent::Agent()
+Agent::Agent() 
+{
+}
+
+/* \brief initialize a SteerInfo class
+ */
+SteerInfo::SteerInfo() : acceleration(0), rotation(0), weapon(NONE), fire(0)
 {
 }
 
@@ -27,6 +34,15 @@ Agent::Agent(Vec3f position, float orientation)
             : steerInfo(), id(maxId++), kinematic(position, Vec3f(0,0,0),
                                                   orientation)
 {
+}
+
+/* \brief Calculate this agent's current maximum acceleration as a function
+   \brief of power, mass, and current velocity.  Can return NaN.
+*/
+float Agent::getMaxAccel()
+{
+    static float pquotient = power/mass;
+    return pquotient/kinematic.vel.length();
 }
 
 /* \brief get current kinematic for agent

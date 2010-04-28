@@ -65,9 +65,8 @@ Sound::Sound()
 
 Sound::~Sound()
 {
-    // empty out hash and priority_queue?
-    SDL_PauseAudio(1);
-    SDL_CloseAudio();
+    // SDL_PauseAudio(1);
+    // SDL_CloseAudio();
 }
 
 
@@ -269,7 +268,7 @@ void Sound::load_sound(const string sound_name)
     if(failed)
     {
         SDL_FreeWAV(sr->data);
-        sr->length = NULL;
+        sr->length = 0;
         delete sr;
         return;
     }

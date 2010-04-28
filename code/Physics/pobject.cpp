@@ -1,17 +1,19 @@
 #include "pobject.h"
+#include <ode/ode.h>
 
 #define DEBUG
 
-PGeom::PGeom(GeomInfo *info)
-    : geom(info->createGeom()),
-      bounce(info->bounce), mu1(info->mu1), mu2(info->mu2)
+PGeom::PGeom(GeomInfo *info, dSpaceID space)
+    : geom(info->createGeom(space)), space(space),
+      bounce(info->bounce), mu1(info->mu1), mu2(info->mu2),
+      collType(info->collType)
 {
     dGeomSetData(geom, this);
 }
 
 PMoveable::PMoveable(const Kinematic *kinematic, float mass,
-                     GeomInfo *info)
-                    : PGeom(info), kinematic(kinematic)
+                     GeomInfo *info, dSpaceID space)
+                    : PGeom(info, space), kinematic(kinematic)
 {
     //Create a body, give it mass, and bind it to the geom
     body = dBodyCreate(Physics::getInstance().getOdeWorld());
@@ -25,8 +27,8 @@ PMoveable::PMoveable(const Kinematic *kinematic, float mass,
 }
 
 PAgent::PAgent(const Kinematic *kinematic, const SteerInfo *steering,
-               float mass, GeomInfo *info)
-              : PMoveable(kinematic, mass, info), steering(steering)
+               float mass, GeomInfo *info, dSpaceID space)
+              : PMoveable(kinematic, mass, info, space), steering(steering)
 {
 }
 
@@ -41,9 +43,14 @@ void PGeom::setQuat(const dQuaternion rotation)
     dGeomSetQuaternion(geom, rotation);
 }
 
-dGeomID PGeom::getGeom()
+const dGeomID &PGeom::getGeom()
 {
     return geom;
+}
+
+const dBodyID &PMoveable::getBody()
+{
+    return body;
 }
 
 /* \brief Copys the kinematic info into ODE's representation
@@ -83,9 +90,6 @@ const Kinematic &PMoveable::odeToKinematic(){
     k.orientation_v[1] = q_result[2];
     k.orientation_v[2] = q_result[3];
 
-    cout << "Someone's orientation: (" << q_result[1] << ", " << q_result[2]
-	 << ", " << q_result[3] << ")" << endl;
-    
     //Calculate and write the orientation projected onto the X-Z plane
 
     /*Project to X-Z plane (Ignore the Y component), renormalize, and 
@@ -140,30 +144,33 @@ void PAgent::steeringToOde()
     const dReal* angVel = dBodyGetAngularVel(body);
     if (steering->acceleration || steering->rotation)
         dBodyEnable(body);
-    cout << "Steering rotation is: " << steering->rotation << endl;
 
     dBodySetAngularVel(body, angVel[0], angVel[1] + steering->rotation,
       angVel[2]);
 
-
-    cout << "AngVel is: (" << angVel[0] << ", " << angVel[1] << ", "
-	 << angVel[2] << ")" << endl;
-
     Vec3f f = Vec3f(sin(kinematic->orientation),0,cos(kinematic->orientation));
-    f *= steering->acceleration * mass.mass;
+    if (steering->acceleration < MAXACC && steering->acceleration > -MAXACC) {
+        f *= steering->acceleration * mass.mass;
+    }
+    else if (steering->acceleration < -MAXACC)
+        f *= -MAXACC * mass.mass;
+    else if (steering->acceleration > MAXACC)
+        f *= MAXACC * mass.mass;
+
     dBodyAddForce(body, f[0], f[1], f[2]);
 }
 
 /* \brief subtracts the artificially injected angular velocity from SteerInfo
  * \brief from ODE's conception of the body's angular velocity. this is to be
- * \brief called after stepping ODE.
+ * \brief called after stepping ODE for nSteps steps.
  */
-void PAgent::resetOdeAngularVelocity()
+void PAgent::resetOdeAngularVelocity(int nSteps)
 {
+    //return;
     const dReal* angVel = dBodyGetAngularVel(body);
-    cout << "Modding by rotation: " << steering->rotation << endl;
+    //cout << "Modding by rotation: " << steering->rotation << endl;
     dBodySetAngularVel(body, angVel[0], 
-		       angVel[1] - steering->rotation*(1-ANGDAMP),
+		       angVel[1] - steering->rotation*pow(1-ANGDAMP, nSteps),
 		       angVel[2]);
     
 }

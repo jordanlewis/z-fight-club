@@ -4,63 +4,81 @@
 #include <stdlib.h>
 #include "ai.h"
 #include "Utilities/vec3f.h"
+#include "Engine/input.h"
 #include "agent.h"
 #include "Engine/world.h"
 #include "Utilities/error.h"
 
 Path::Path() {}
 
+AIManager AIManager::_instance;
+
 Path::~Path() {}
 
-void seek (Kinematic *car, float maxAccel, const Vec3f target, SteerInfo *steer)
+void AIController::seek(const Vec3f target)
 {
     Vec3f diff;
-    diff = target - car->pos;
-    diff.normalize();
-    diff *= maxAccel;
+    SteerInfo s;
+    Kinematic k = agent->getKinematic();
+    diff = target - agent->kinematic.pos;
 
-    steer->acceleration = diff.length();
-    steer->rotation = 0;
+    align(atan2(diff[0], diff[2]));
+    diff.normalize();
+
+    diff *= agent->getMaxAccel();
+
+    s = agent->getSteering();
+    s.acceleration = diff.length();
+
+    agent->setSteering(s);
 }
 
-void align (Kinematic *car, float maxRotation, float target, SteerInfo *steer)
+void AIController::align(float target)
 {
     float targetRadius = .01;
-    float slowRadius = 1;
-    float diff = target - car->orientation;
+    float slowRadius = .01;
+    float diff;
+    SteerInfo s;
+    Kinematic k = agent->getKinematic();
+    diff = target - k.orientation;
 
-    steer->acceleration = 0;
+    s.acceleration = 0;
 
-    diff = fmodf(diff, M_PI_2);
+    diff = fmodf(diff, 2 * M_PI);
     if (diff > M_PI)
-        diff -= M_PI_2;
-    else if (diff < M_PI)
-        diff += M_PI_2;
+        diff -= 2 * M_PI;
+    else if (diff < -M_PI)
+        diff += 2 * M_PI;
 
     float diffSize = abs(diff);
 
     /* we're already aligned. */
     if (diffSize < targetRadius)
     {
-        steer->rotation = 0;
+        s.rotation = 0;
     }
     /* Turn at max speed */
-    else if (diffSize > slowRadius)
+    else //if (diffSize > slowRadius)
     {
-        steer->rotation = maxRotation;
+        s.rotation = agent->maxRotate;
+        if (diff < 0)
+            s.rotation *= -1;
     }
     /* slow down toward the end */
+    /*
     else
     {
-        steer->rotation = maxRotation * diffSize / slowRadius;
-        steer->rotation *= diff / diffSize;
+        s.rotation = agent->maxRotate * diffSize / slowRadius;
+        s.rotation *= diff / diffSize;
     }
+    */
+    agent->setSteering(s);
 }
 
 AIController::AIController(Agent& agent)
 {
     path = Path();
-    this->agent = agent;
+    this->agent = &agent;
 }
 
 void AIController::lane(int lane)
@@ -76,21 +94,23 @@ void AIController::lane(int lane)
 void AIController::cruise()
 {
     SteerInfo steerInfo;
-    if ((path.knots.back() - agent.kinematic.pos).length() < path.precision.back()) {
+    if ((path.knots.back() - agent->kinematic.pos).length() < path.precision.back()) {
 	path.knots.pop();
 	path.precision.pop();
     }
 
-    seek(&agent.kinematic, agent.maxAccel, path.knots.front(), &steerInfo);
-    agent.setSteering(steerInfo);
+    /* seek(&agent->kinematic, agent->maxAccel, path.knots.front(), &steerInfo); */
+    agent->setSteering(steerInfo);
 }
 
 void AIController::run()
 {
     cruise();
+    /* Test target - we'll change this function to do more interesting things
+     * once we get a better AI test architecture running. */
+    Vec3f tgt = Input::getInstance().getPlayerController().getAgent().kinematic.pos;
+    seek(tgt);
 }
-
-AIManager AIManager::_instance;
 
 AIManager::AIManager() {}
 
@@ -110,7 +130,7 @@ void AIManager::release(Agent &agent)
     {
         /* Look through our controller array, and remove the controller that
          * has the agent with the ID of the input agent */
-        if ((*it)->agent.id == agent.id)
+        if ((*it)->agent->id == agent.id)
         {
             controllers.erase(it);
             return;
@@ -126,7 +146,7 @@ void AIManager::run()
     }
 }
 
-AIManager& AIManager::getInstance()
+AIManager &AIManager::getInstance()
 {
     return _instance;
 }

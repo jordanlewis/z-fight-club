@@ -15,6 +15,10 @@ using namespace std;
 
 Physics Physics::_instance;
 
+__gnu_cxx::hash_map<int, PAgent *> &Physics::getAgentMap(){
+    return pagents;
+}
+
 static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 {
     dBodyID b1 = dGeomGetBody(o1);
@@ -62,7 +66,7 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
                                  sizeof(dContact));
     if (numCollisions > 0)
     {
-        cout << numCollisions << " collisions detected" << endl;
+        //cout << numCollisions << " collisions detected" << endl;
         for (int i = 0; i < numCollisions; i++)
         {
             contact[i].surface.mode = mode;
@@ -132,12 +136,13 @@ void Physics::makeTrackGeoms()
                 next = e + 1;
             if (e->kind == WALL_EDGE)
             {
-                SubV3f(track->verts[e->start], track->verts[next->start], wall);
+                SubV3f(track->verts[e->start],track->verts[next->start], wall);
                 xzwall[0] = wall[0]; xzwall[1] = wall[2];
                 len = LengthV2f(xzwall);
-                BoxInfo box(len, height + wall[1], depth, 0, 200, 0, this->getOdeSpace());
+                BoxInfo box(len, height + wall[1], depth);
+		box.bounce = 1;
                 theta = atan2(wall[2] , wall[0]);
-                geom = new PGeom(&box);
+                geom = new PGeom(&box, this->getOdeSpace());
                 pgeoms.push_back(geom);
                 dQFromAxisAndAngle(quat, 0, 1, 0, -theta);
                 geom->setQuat(quat);
@@ -169,6 +174,7 @@ void Physics::simulate(float dt)
         p = pagents[a->id];
         p->kinematicToOde();
         p->steeringToOde();
+	useWeapons(a);
     }
     nTimeSteps = dt / TIMESTEP;
     nSteps = floorf(nTimeSteps);
@@ -188,7 +194,7 @@ void Physics::simulate(float dt)
         p = pagents[a->id];
         const Kinematic &k = pagents[a->id]->odeToKinematic();
         a->setKinematic(k);
-        p->resetOdeAngularVelocity();
+        p->resetOdeAngularVelocity(nSteps);
     }
 
 }
@@ -197,9 +203,9 @@ void Physics::initAgent(Agent &agent)
 {
     Kinematic &k = agent.getKinematic();
     SteerInfo &s = agent.getSteering();
-    BoxInfo geom = BoxInfo(agent.width, agent.height, agent.depth,
-			   1, 0, 0, this->getOdeSpace());
-    PAgent *pobj = new PAgent(&k, &s, 100, &geom);
+    BoxInfo box = BoxInfo(agent.width, agent.height, agent.depth);
+    box.bounce = 1;
+    PAgent *pobj = new PAgent(&k, &s, agent.mass, &box, this->getOdeSpace());
 
     pagents[agent.id] = pobj;
 }

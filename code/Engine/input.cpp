@@ -7,6 +7,7 @@ Input Input::_instance;
 int Input::processInput()
 {
     SDL_Event SDLevt;
+    Uint8 *keystate = SDL_GetKeyState(NULL);
 
     /* XXX little hack so that we can run without a player - jdoliner Apr 26 */
     while (SDL_PollEvent(&SDLevt) && player) {
@@ -23,16 +24,36 @@ int Input::processInput()
                         player->setEngineState(ACCELERATE); break;
                     case SDLK_DOWN:
                         player->setEngineState(REVERSE); break;
+		    case SDLK_f:
+			player->setWeaponState(FIRE); break;
                     default: break;
                 } break;
             case SDL_KEYUP:
                 switch (SDLevt.key.keysym.sym) {
                     case SDLK_LEFT:
+			if (keystate[SDLK_RIGHT]) {
+			    player->setTurnState(RIGHT);
+			    break;
+			}
                     case SDLK_RIGHT:
-                        player->setTurnState(STRAIGHT); break;
-                    case SDLK_UP:
+			if (keystate[SDLK_LEFT]) {
+			    player->setTurnState(LEFT);
+			    break;
+			}
+			player->setTurnState(STRAIGHT);
+			break;
+		    case SDLK_UP:
+			if (keystate[SDLK_DOWN]) {
+			    player->setEngineState(REVERSE);
+			    break;
+			}
                     case SDLK_DOWN:
-                        player->setEngineState(NEUTRAL); break;
+			if (keystate[SDLK_UP]) {
+			    player->setEngineState(ACCELERATE); 
+			    break;
+			}
+			player->setEngineState(NEUTRAL);
+			break;
                     default: break;
                 } break;
             case SDL_QUIT:
@@ -44,6 +65,11 @@ int Input::processInput()
     if (player)
 	player->updateAgent();
     return 0;
+}
+
+const PlayerController &Input::getPlayerController() const
+{
+    return *player;
 }
 
 void Input::controlPlayer(PlayerController &p)
@@ -58,6 +84,7 @@ Input &Input::getInstance()
 
 Input::Input()
 {
+    player = new PlayerController();
 }
 
 Input::~Input()

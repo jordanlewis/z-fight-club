@@ -10,14 +10,16 @@
 #include "Engine/world.h"
 #include "Agents/agent.h"
 #include "pobject.h"
+#include "pweapon.h"
 
 class PGeom;
 class PMoveable;
 class PAgent;
 
 #define GRAVITY -9.8
-#define LINDAMP .1
-#define ANGDAMP .5
+#define LINDAMP .005
+#define ANGDAMP .1
+#define MAXACC 100 //Maximum acceleration which steering can request 
 
 
 class Physics
@@ -27,13 +29,12 @@ class Physics
     dSpaceID odeSpace;
     dJointGroupID odeContacts;
 
-    void updateAgentKinematic(Agent::Agent *agent, float dt);
-
     static Physics _instance;
     Physics();
     ~Physics();
     Physics(const Physics&);
     Physics &operator=(const Physics&);
+    inline void simulateStep();
   public:
     std::vector<PGeom *> pgeoms;
     const dWorldID & getOdeWorld() { return odeWorld; };
@@ -42,6 +43,7 @@ class Physics
     void makeTrackGeoms();
     void initAgent(Agent &agent);
     void simulate(float dt); /* step the world forward by dt. */
+    __gnu_cxx::hash_map<int, PAgent *> &getAgentMap();
 
     static Physics &getInstance();
 };

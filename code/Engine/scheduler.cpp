@@ -5,6 +5,7 @@
 #include "world.h"
 #include "Engine/input.h"
 #include "Utilities/defs.h"
+#include "Agents/ai.h"
 
 using namespace std;
 
@@ -42,6 +43,7 @@ void Scheduler::loopForever()
     double last = GetTime();
 
     Input &input = Input::getInstance();
+    AIManager &ai = AIManager::getInstance();
 
     cout << "Looping forever..." << endl;
     while (!done)
@@ -56,9 +58,10 @@ void Scheduler::loopForever()
         }
         last = now;
 
+        ai.run();
         graphics->render();
         sound->process_queue();
-	ai->run();
+	ai.run();
 
         usleep(10000);
 

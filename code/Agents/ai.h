@@ -27,7 +27,10 @@ class AIController
     /* cached AI data? paths? etc */
   public:
     Path path;	/* !< the path we're on */
-    Agent agent;
+    Agent *agent;
+    void seek(const Vec3f target);
+    void align(float target);
+    void cruise(Path *path);
     AIController(Agent &);
     void lane(int);	/* !< load a lane as the path */
     void cruise(); 	/* !< follow path at maximum possible speed */
@@ -40,9 +43,11 @@ class AIManager
     std::vector<AIController *> controllers; /* !< active AI controllers */
 
     static AIManager _instance;
-
     AIManager();
     ~AIManager();
+    AIManager(const AIManager&);
+    AIManager &operator=(const AIManager&);
+
     void control(Agent &); /* !< assume AI control of given agent */
     void release(Agent &); /* !< release AI control of given agent */
     void run(); /* !< Give new steering information to each agent under our control*/
