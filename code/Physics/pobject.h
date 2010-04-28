@@ -24,7 +24,7 @@ class PGeom
     const int collType; 
     void setPos(Vec3f position);
     void setQuat(const dQuaternion rotation);
-    dGeomID getGeom();
+    const dGeomID &getGeom();
     PGeom(GeomInfo *info, dSpaceID space);
 };
 
@@ -42,7 +42,9 @@ class PMoveable: public PGeom
  public:
     PMoveable(const Kinematic *kinematic, float mass,
               GeomInfo *info, dSpaceID space);
-    const Kinematic &odeToKinematic(); //writes (syncs) the body coords into the kinematic
+    const Kinematic &odeToKinematic(); /* writes (syncs) the body coords into
+					* the kinematic */
+    const dBodyID &getBody();
     void kinematicToOde(); //writes (syncs) the kinematic coords into the body
 };
 

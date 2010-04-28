@@ -10,6 +10,7 @@
 #include "Engine/world.h"
 #include "Agents/agent.h"
 #include "pobject.h"
+#include "pweapon.h"
 
 class PGeom;
 class PMoveable;
@@ -42,6 +43,7 @@ class Physics
     void makeTrackGeoms();
     void initAgent(Agent &agent);
     void simulate(float dt); /* step the world forward by dt. */
+    __gnu_cxx::hash_map<int, PAgent *> &getAgentMap();
 
     static Physics &getInstance();
 };
