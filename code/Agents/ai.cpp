@@ -1,34 +1,18 @@
 #include <vector>
+#include <queue>
 #include <math.h>
 #include <stdlib.h>
 #include "ai.h"
 #include "Utilities/vec3f.h"
 #include "agent.h"
+#include "Engine/world.h"
+#include "Utilities/error.h"
 
-const std::vector<Vec3f>* Path::get_knots() const
-{
-    return &(this->knots);
-}
+Path::Path() {}
 
-const std::vector<float>* Path::get_precision() const
-{
-    return &(this->precision);
-}
+Path::~Path() {}
 
-void Path::increase_index(int n)
-{
-    this->index += n;
-    return;
-}
-
-int Path::get_index() const
-{
-    return this->index;
-}
-
-
-
-void Seek (Kinematic *car, float maxAccel, const Vec3f target, SteerInfo *steer)
+void seek (Kinematic *car, float maxAccel, const Vec3f target, SteerInfo *steer)
 {
     Vec3f diff;
     diff = target - car->pos;
@@ -39,7 +23,7 @@ void Seek (Kinematic *car, float maxAccel, const Vec3f target, SteerInfo *steer)
     steer->rotation = 0;
 }
 
-void Align (Kinematic *car, float maxRotation, float target, SteerInfo *steer)
+void align (Kinematic *car, float maxRotation, float target, SteerInfo *steer)
 {
     float targetRadius = .01;
     float slowRadius = 1;
@@ -73,26 +57,44 @@ void Align (Kinematic *car, float maxRotation, float target, SteerInfo *steer)
     }
 }
 
-void Cruise (Kinematic *car, float maxAccel, Path *path, SteerInfo *steer)
+AIController::AIController(Agent& agent)
 {
-    Vec3f dist;
-    Vec3f a = path->get_knots()->front();
-    dist = a - car->pos;
-    if (dist.length() < path->get_precision()->front())
-	path->increase_index(1);
-    
-    Seek(car, maxAccel, (*path->get_knots())[path->get_index()], steer);
+    path = Path();
+    this->agent = agent;
 }
 
-AIController::AIController(Agent &agent)
+void AIController::lane(int lane)
 {
-    this->agent = &agent;
+    Error error = Error::getInstance();
+    World &world = World::getInstance();
+    if (lane >= world.track->nLanes) {
+	error.log(AI, IMPORTANT, "AI: asked to join a lane index out of range\n");
+	return;
+    }
+}
+
+void AIController::cruise()
+{
+    SteerInfo steerInfo;
+    if ((path.knots.back() - agent.kinematic.pos).length() < path.precision.back()) {
+	path.knots.pop();
+	path.precision.pop();
+    }
+
+    seek(&agent.kinematic, agent.maxAccel, path.knots.front(), &steerInfo);
+    agent.setSteering(steerInfo);
 }
 
 void AIController::run()
 {
-
+    cruise();
 }
+
+AIManager AIManager::_instance;
+
+AIManager::AIManager() {}
+
+AIManager::~AIManager() {}
 
 void AIManager::control(Agent &agent)
 {
@@ -108,7 +110,7 @@ void AIManager::release(Agent &agent)
     {
         /* Look through our controller array, and remove the controller that
          * has the agent with the ID of the input agent */
-        if ((*it)->agent->id == agent.id)
+        if ((*it)->agent.id == agent.id)
         {
             controllers.erase(it);
             return;
@@ -122,4 +124,9 @@ void AIManager::run()
     {
         controllers[i]->run();
     }
+}
+
+AIManager& AIManager::getInstance()
+{
+    return _instance;
 }

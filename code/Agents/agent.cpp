@@ -8,6 +8,10 @@ float        Agent::height = 2;
 float        Agent::width = 2;
 float        Agent::depth = 2;
 
+Agent::Agent()
+{
+}
+
 /* \brief initialize an agent class
  * \param position the agent's initial position
  */

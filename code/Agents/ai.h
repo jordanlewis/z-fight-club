@@ -2,6 +2,7 @@
 #define AI_H
 
 #include <vector>
+#include <queue>
 #include "Utilities/vec3f.h"
 #include "agent.h"
 
@@ -11,37 +12,42 @@
 class Path
 {
   public:
-    int			    index;	/* !< the first knot we haven't passed */
-    std::vector<Vec3f>    knots;	/* !< knots defining the path */
-    std::vector<float>	    precision;	/* !< how closely we want to follow the knots */
+    int			    	index;		/* !< the first knot we haven't passed */
+    std::queue<Vec3f> 		knots;		/* !< knots defining the path */
+    std::queue<float>	    	precision;	/* !< how closely we want to follow the knots */
     Path ();
     Path (std::vector<Vec3f>);
     ~Path();
 
     Path *PathToPath(Vec3f position, float urgency);
-    const std::vector<Vec3f> *get_knots() const;
-    const std::vector<float> *get_precision() const;
-    void increase_index(int);
-    int get_index() const;
 };
 
 class AIController
 {
     /* cached AI data? paths? etc */
   public:
-    Agent *agent;
-    void run(); /* !< Give new steering information to the agent we control */
+    Path path;	/* !< the path we're on */
+    Agent agent;
     AIController(Agent &);
+    void lane(int);	/* !< load a lane as the path */
+    void cruise(); 	/* !< follow path at maximum possible speed */
+    void run(); 	/* !< Give new steering information to the agent we control */
 };
 
 class AIManager
 {
+  public:
     std::vector<AIController *> controllers; /* !< active AI controllers */
 
-  public:
+    static AIManager _instance;
+
+    AIManager();
+    ~AIManager();
     void control(Agent &); /* !< assume AI control of given agent */
     void release(Agent &); /* !< release AI control of given agent */
     void run(); /* !< Give new steering information to each agent under our control*/
+
+    static AIManager &getInstance();
 };
 
 

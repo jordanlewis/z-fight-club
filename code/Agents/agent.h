@@ -15,9 +15,9 @@ class SteerInfo
 class Agent
 {
     static unsigned int maxId; /* !<highest id number we've reached */
-    SteerInfo steerInfo;   /* !<car's steering info, set by AI/human */
 
   public:
+    SteerInfo steerInfo;   /* !<car's steering info, set by AI/human */
     unsigned int id;       /* !<internal id number */
     static float maxAccel;     /* !<how fast we're allowed to accelerate */
     static float maxRotate;    /* !<how fast we're allowed to rotate */
@@ -27,8 +27,9 @@ class Agent
     Kinematic kinematic;   /* !<car's current kinematic */
     std::vector<Vec3f> trail;   /* !<record of where the agent has been */
 
-    Agent (Vec3f);      /* Constructor; Initial position */
-    Agent (Vec3f, float); /* Constructor; Initial position and orientation */
+    Agent();
+    Agent(Vec3f);      /* Constructor; Initial position */
+    Agent(Vec3f, float); /* Constructor; Initial position and orientation */
 
     /* The below method is the interface between the generic agent
      * implemented in agent.c and the two types of agent controllers - AI

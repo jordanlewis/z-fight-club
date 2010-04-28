@@ -5,6 +5,7 @@
 
 typedef enum {
     AGENT = 0,
+    AI,
     ENGINE,
     NETWORK,
     PHYSICS,
@@ -25,13 +26,13 @@ typedef enum {
 class Error
 {
     private:
-	Error();
-	~Error();
 	static Error _instance;
 
     public:
 	bool 			module[NUM_MODULE];	/* !< which errors are we reporting */
 	ErrorVerbosity_t 	verbosity;		/* !< how trivial of an error do we print */
+	Error();
+	~Error();
 	static Error &getInstance();
 	void on(ErrorModule_t);
 	void off(ErrorModule_t);
