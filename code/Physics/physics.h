@@ -11,16 +11,11 @@
 #include "Agents/agent.h"
 #include "pobject.h"
 #include "pweapon.h"
+#include "constants.h"
 
 class PGeom;
 class PMoveable;
 class PAgent;
-
-#define GRAVITY -9.8
-#define LINDAMP .005
-#define ANGDAMP .1
-#define MAXACC 100 //Maximum acceleration which steering can request 
-
 
 class Physics
 {

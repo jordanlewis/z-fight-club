@@ -8,8 +8,6 @@
 #include "Agents/agent.h"
 #include "Utilities/vec3f.h"
 
-#define MAX_CONTACTS 8
-#define TIMESTEP 0.01
 
 using namespace std;
 
@@ -60,9 +58,9 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
     if (bounce > 0) mode = mode | dContactBounce;
     if (mu2 > 0) mode = mode | dContactMu2;
 
-    dContact contact[MAX_CONTACTS];
+    dContact contact[PH_MAX_CONTACTS];
 
-    int numCollisions = dCollide(o1, o2, MAX_CONTACTS, &contact[0].geom,
+    int numCollisions = dCollide(o1, o2, PH_MAX_CONTACTS, &contact[0].geom,
                                  sizeof(dContact));
     if (numCollisions > 0)
     {
@@ -166,7 +164,7 @@ void Physics::simulate(float dt)
     int nSteps, i;
     float nTimeSteps;
 
-    dt += dtRemainder * TIMESTEP;
+    dt += dtRemainder * PH_TIMESTEP;
 
     for (iter = world.agents.begin(); iter != world.agents.end(); iter++)
     {
@@ -176,14 +174,14 @@ void Physics::simulate(float dt)
         p->steeringToOde();
 	useWeapons(a);
     }
-    nTimeSteps = dt / TIMESTEP;
+    nTimeSteps = dt / PH_TIMESTEP;
     nSteps = floorf(nTimeSteps);
     dtRemainder = nTimeSteps - nSteps;
 
     for (i = 0; i < nSteps; i++)
     {
         dSpaceCollide(odeSpace, this, &nearCallback);
-        dWorldStep(odeWorld, TIMESTEP);
+        dWorldStep(odeWorld, PH_TIMESTEP);
         dJointGroupEmpty(odeContacts);
     }
 
@@ -218,9 +216,9 @@ Physics::Physics()
     odeContacts = dJointGroupCreate(0);
 
     dWorldSetAutoDisableFlag(odeWorld, 1);
-    dWorldSetGravity(odeWorld, 0, GRAVITY, 0);
-    dWorldSetLinearDamping(odeWorld, LINDAMP);
-    dWorldSetAngularDamping(odeWorld, ANGDAMP);
+    dWorldSetGravity(odeWorld, 0, PH_GRAVITY, 0);
+    dWorldSetLinearDamping(odeWorld, PH_LINDAMP);
+    dWorldSetAngularDamping(odeWorld, PH_ANGDAMP);
 }
 
 Physics::~Physics()

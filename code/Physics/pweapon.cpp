@@ -9,7 +9,7 @@ void useWeapons(Agent *agent){
 	//cout << "Fire, FIRE!" << endl; // Firing once too often. Fix later.
 	switch(info.weapon){
 	    case NONE: break;
-	    case SMACK: smackAll(agent->id, 100000); break;
+	    case SMACK: smackAll(agent->id, PH_SMACKFORCE); break;
 	    default: break;
 	}
     }
