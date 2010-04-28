@@ -1,15 +1,6 @@
 #include <ode/ode.h>
 #include "geominfo.h"
 
-GeomInfo::GeomInfo()
-    : bounce(D_BOUNCE), mu1(D_MU1), mu2(D_MU2), collType(D_COLL)
-{} 
-
-//Not curently used by anyone.  May want to remove.
-GeomInfo::GeomInfo(float bounce, float mu1, float mu2, CollType_t collType)
-    : bounce(bounce), mu1(mu1), mu2(mu2), collType(collType)
-{}
-
 PlaneInfo::PlaneInfo(float a, float b, float c, float d)
     : GeomInfo(), a(a), b(b), c(c), d(d)
 {}

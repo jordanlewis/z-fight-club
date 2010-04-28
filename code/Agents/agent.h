@@ -3,6 +3,7 @@
 
 #include "Utilities/vec3f.h"
 #include "kinematic.h"
+#include "constants.h"
 #include <vector>
 #include <iostream>
 
@@ -27,9 +28,9 @@ class SteerInfo
 class Agent
 {
     static unsigned int maxId; /* !<highest id number we've reached */
-    SteerInfo steerInfo;   /* !<car's steering info, set by AI/human */
 
   public:
+    SteerInfo steerInfo;   /* !<car's steering info, set by AI/human */
     unsigned int id;       /* !<internal id number */
     static float mass;     /* must be nonzero! */
     static float power;     /* p = m*v*a.  This and mass control accel rate  */
@@ -40,8 +41,9 @@ class Agent
     Kinematic kinematic;   /* !<car's current kinematic */
     std::vector<Vec3f> trail;   /* !<record of where the agent has been */
 
-    Agent (Vec3f);      /* Constructor; Initial position */
-    Agent (Vec3f, float); /* Constructor; Initial position and orientation */
+    Agent();
+    Agent(Vec3f);      /* Constructor; Initial position */
+    Agent(Vec3f, float); /* Constructor; Initial position and orientation */
 
     float getMaxAccel(); /* Calculate the current max acceleration */
 

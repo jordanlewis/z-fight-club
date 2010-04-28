@@ -1,35 +1,19 @@
 #include <vector>
-#include <cmath>
-#include <cstdlib>
+#include <queue>
+#include <math.h>
+#include <stdlib.h>
 #include "ai.h"
 #include "Utilities/vec3f.h"
 #include "Engine/input.h"
 #include "agent.h"
+#include "Engine/world.h"
+#include "Utilities/error.h"
+
+Path::Path() {}
 
 AIManager AIManager::_instance;
 
-const std::vector<Vec3f>* Path::get_knots() const
-{
-    return &(this->knots);
-}
-
-const std::vector<float>* Path::get_precision() const
-{
-    return &(this->precision);
-}
-
-void Path::increase_index(int n)
-{
-    this->index += n;
-    return;
-}
-
-int Path::get_index() const
-{
-    return this->index;
-}
-
-
+Path::~Path() {}
 
 void AIController::seek(const Vec3f target)
 {
@@ -91,30 +75,46 @@ void AIController::align(float target)
     agent->setSteering(s);
 }
 
-void AIController::cruise (Path *path)
+AIController::AIController(Agent& agent)
 {
-    Vec3f dist;
-    Kinematic k = agent->getKinematic();
-    Vec3f a = path->get_knots()->front();
-    dist = a - k.pos;
-    if (dist.length() < path->get_precision()->front())
-	path->increase_index(1);
-    
-    seek((*path->get_knots())[path->get_index()]);
+    path = Path();
+    this->agent = &agent;
 }
 
-AIController::AIController(Agent &agent)
+void AIController::lane(int lane)
 {
-    this->agent = &agent;
+    Error error = Error::getInstance();
+    World &world = World::getInstance();
+    if (lane >= world.track->nLanes) {
+	error.log(AI, IMPORTANT, "AI: asked to join a lane index out of range\n");
+	return;
+    }
+}
+
+void AIController::cruise()
+{
+    SteerInfo steerInfo;
+    if ((path.knots.back() - agent->kinematic.pos).length() < path.precision.back()) {
+	path.knots.pop();
+	path.precision.pop();
+    }
+
+    /* seek(&agent->kinematic, agent->maxAccel, path.knots.front(), &steerInfo); */
+    agent->setSteering(steerInfo);
 }
 
 void AIController::run()
 {
+    cruise();
     /* Test target - we'll change this function to do more interesting things
      * once we get a better AI test architecture running. */
     Vec3f tgt = Input::getInstance().getPlayerController().getAgent().kinematic.pos;
     seek(tgt);
 }
+
+AIManager::AIManager() {}
+
+AIManager::~AIManager() {}
 
 void AIManager::control(Agent &agent)
 {
@@ -149,12 +149,4 @@ void AIManager::run()
 AIManager &AIManager::getInstance()
 {
     return _instance;
-}
-
-AIManager::AIManager()
-{
-}
-
-AIManager::~AIManager()
-{
 }

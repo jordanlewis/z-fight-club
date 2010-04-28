@@ -8,8 +8,6 @@
 #include "Agents/agent.h"
 #include "Utilities/vec3f.h"
 
-#define MAX_CONTACTS 8
-#define TIMESTEP 0.01
 
 using namespace std;
 
@@ -60,9 +58,9 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
     if (bounce > 0) mode = mode | dContactBounce;
     if (mu2 > 0) mode = mode | dContactMu2;
 
-    dContact contact[MAX_CONTACTS];
+    dContact contact[PH_MAX_CONTACTS];
 
-    int numCollisions = dCollide(o1, o2, MAX_CONTACTS, &contact[0].geom,
+    int numCollisions = dCollide(o1, o2, PH_MAX_CONTACTS, &contact[0].geom,
                                  sizeof(dContact));
     if (numCollisions > 0)
     {
@@ -140,9 +138,9 @@ void Physics::makeTrackGeoms()
                 xzwall[0] = wall[0]; xzwall[1] = wall[2];
                 len = LengthV2f(xzwall);
                 BoxInfo box(len, height + wall[1], depth);
-		box.bounce = 1;
                 theta = atan2(wall[2] , wall[0]);
                 geom = new PGeom(&box, this->getOdeSpace());
+                geom->bounce = 1;
                 pgeoms.push_back(geom);
                 dQFromAxisAndAngle(quat, 0, 1, 0, -theta);
                 geom->setQuat(quat);
@@ -166,7 +164,7 @@ void Physics::simulate(float dt)
     int nSteps, i;
     float nTimeSteps;
 
-    dt += dtRemainder * TIMESTEP;
+    dt += dtRemainder * PH_TIMESTEP;
 
     for (iter = world.agents.begin(); iter != world.agents.end(); iter++)
     {
@@ -176,14 +174,14 @@ void Physics::simulate(float dt)
         p->steeringToOde();
 	useWeapons(a);
     }
-    nTimeSteps = dt / TIMESTEP;
+    nTimeSteps = dt / PH_TIMESTEP;
     nSteps = floorf(nTimeSteps);
     dtRemainder = nTimeSteps - nSteps;
 
     for (i = 0; i < nSteps; i++)
     {
         dSpaceCollide(odeSpace, this, &nearCallback);
-        dWorldStep(odeWorld, TIMESTEP);
+        dWorldStep(odeWorld, PH_TIMESTEP);
         dJointGroupEmpty(odeContacts);
     }
 
@@ -204,8 +202,8 @@ void Physics::initAgent(Agent &agent)
     Kinematic &k = agent.getKinematic();
     SteerInfo &s = agent.getSteering();
     BoxInfo box = BoxInfo(agent.width, agent.height, agent.depth);
-    box.bounce = 1;
     PAgent *pobj = new PAgent(&k, &s, agent.mass, &box, this->getOdeSpace());
+    pobj->bounce = 1;
 
     pagents[agent.id] = pobj;
 }
@@ -218,9 +216,9 @@ Physics::Physics()
     odeContacts = dJointGroupCreate(0);
 
     dWorldSetAutoDisableFlag(odeWorld, 1);
-    dWorldSetGravity(odeWorld, 0, GRAVITY, 0);
-    dWorldSetLinearDamping(odeWorld, LINDAMP);
-    dWorldSetAngularDamping(odeWorld, ANGDAMP);
+    dWorldSetGravity(odeWorld, 0, PH_GRAVITY, 0);
+    dWorldSetLinearDamping(odeWorld, PH_LINDAMP);
+    dWorldSetAngularDamping(odeWorld, PH_ANGDAMP);
 }
 
 Physics::~Physics()

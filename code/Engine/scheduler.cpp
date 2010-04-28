@@ -26,7 +26,8 @@ Scheduler::Scheduler() :
     world(&World::getInstance()),
     graphics(&Graphics::getInstance()),
     sound(&Sound::getInstance()),
-    physics(&Physics::getInstance())
+    physics(&Physics::getInstance()),
+    ai(&AIManager::getInstance())
 {
 }
 
@@ -60,6 +61,7 @@ void Scheduler::loopForever()
         ai.run();
         graphics->render();
         sound->process_queue();
+	ai.run();
 
         usleep(10000);
 
@@ -85,6 +87,9 @@ void Scheduler::loopForever()
 #endif
 
     }
+
+    /* clean everything up */
+    SDL_CloseAudio();
 }
 
 Scheduler::~Scheduler()

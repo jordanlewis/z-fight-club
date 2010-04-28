@@ -3,10 +3,14 @@
 
 #define DEBUG
 
+#define D_BOUNCE 0  //Default bounce value
+#define D_MU1 0     //Default mu1
+#define D_MU2 0     //Default mu2
+#define D_COLL REAL //Default collision type
+
 PGeom::PGeom(GeomInfo *info, dSpaceID space)
-    : geom(info->createGeom(space)), space(space),
-      bounce(info->bounce), mu1(info->mu1), mu2(info->mu2),
-      collType(info->collType)
+    : geom(info->createGeom(space)), space(space), bounce(D_BOUNCE),
+      mu1(D_MU1), mu2(D_MU2), collType(D_COLL)
 {
     dGeomSetData(geom, this);
 }
@@ -149,13 +153,13 @@ void PAgent::steeringToOde()
       angVel[2]);
 
     Vec3f f = Vec3f(sin(kinematic->orientation),0,cos(kinematic->orientation));
-    if (steering->acceleration < MAXACC && steering->acceleration > -MAXACC) {
+    if (steering->acceleration < PH_MAXACC && steering->acceleration > -PH_MAXACC) {
         f *= steering->acceleration * mass.mass;
     }
-    else if (steering->acceleration < -MAXACC)
-        f *= -MAXACC * mass.mass;
-    else if (steering->acceleration > MAXACC)
-        f *= MAXACC * mass.mass;
+    else if (steering->acceleration < -PH_MAXACC)
+        f *= -PH_MAXACC * mass.mass;
+    else if (steering->acceleration > PH_MAXACC)
+        f *= PH_MAXACC * mass.mass;
 
     dBodyAddForce(body, f[0], f[1], f[2]);
 }
@@ -170,7 +174,7 @@ void PAgent::resetOdeAngularVelocity(int nSteps)
     const dReal* angVel = dBodyGetAngularVel(body);
     //cout << "Modding by rotation: " << steering->rotation << endl;
     dBodySetAngularVel(body, angVel[0], 
-		       angVel[1] - steering->rotation*pow(1-ANGDAMP, nSteps),
+		       angVel[1]-steering->rotation*pow(1-PH_ANGDAMP, nSteps),
 		       angVel[2]);
     
 }

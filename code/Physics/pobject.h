@@ -2,13 +2,22 @@
 #define POBJECT_H
 
 #include "physics.h"
-#include "geominfo.h"
+#include "Engine/geominfo.h"
 #include <ode/ode.h>
 #include <iostream>
 
 using namespace std;
 
 class Physics;
+
+//How our objects will interact with the collision simulation
+
+typedef enum {
+    REAL = 0, //Acts and collides as you would expect an object to act
+    CAMERA /* Collision with camera obj only changes another object's alpha.
+            * In particular, no change in position occurs.  This is the
+            * behavior corresponding to the "cameraman" behind a player. */
+} CollType_t;
 
 /* Stores geometry info for use in ODE collision calculations
  * See geominfo.h for info on member variables.
@@ -19,9 +28,9 @@ class PGeom
     dGeomID geom;
  public:
     dSpaceID space;
-    const float bounce;
-    const float mu1, mu2; 
-    const int collType; 
+    float bounce;
+    float mu1, mu2;
+    CollType_t collType;
     void setPos(Vec3f position);
     void setQuat(const dQuaternion rotation);
     const dGeomID &getGeom();

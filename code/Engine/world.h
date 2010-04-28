@@ -34,8 +34,8 @@ class World
 
     static World _instance;
     Camera camera;
-    TrackData_t *track;
   public:
+    TrackData_t *track;
     static float xMax;   /* XXX what are these? */
     static float zMax;
     dWorldID ode_world;

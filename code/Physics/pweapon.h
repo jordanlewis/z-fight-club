@@ -2,7 +2,9 @@
 #define PWEAPON_H
 
 #include "physics.h"
+#include "constants.h"
 #include "Agents/agent.h"
+
 
 void useWeapons(Agent *agent);
 void smackAll(unsigned int srcAgentID, int force);

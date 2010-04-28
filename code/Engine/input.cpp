@@ -9,7 +9,8 @@ int Input::processInput()
     SDL_Event SDLevt;
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
-    while (SDL_PollEvent(&SDLevt)) {
+    /* XXX little hack so that we can run without a player - jdoliner Apr 26 */
+    while (SDL_PollEvent(&SDLevt) && player) {
         switch(SDLevt.type) {
             case SDL_KEYDOWN:
                 switch (SDLevt.key.keysym.sym) {
@@ -61,7 +62,8 @@ int Input::processInput()
                 break;
         }
     }
-    player->updateAgent();
+    if (player)
+	player->updateAgent();
     return 0;
 }
 
