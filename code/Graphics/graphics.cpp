@@ -152,8 +152,6 @@ void Graphics::render(Agent * agent)
     glPushMatrix();
 
     glTranslatef(agent->kinematic.pos.x, agent->kinematic.pos.y, agent->kinematic.pos.z);
-    GLUquadric *quad = gluNewQuadric();
-    gluSphere(quad, 0.1, 18, 12);
     DrawArrow(Vec3f(0.0, 0.0, 0.0), agent->kinematic.vel);
     DrawArrow(Vec3f(0.0, 0.0, 0.0), agent->kinematic.orientation_v);
 

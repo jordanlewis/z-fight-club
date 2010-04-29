@@ -150,17 +150,6 @@ void Physics::simulate(float dt)
 
 }
 
-void Physics::initAgent(Agent &agent)
-{
-    Kinematic &k = agent.getKinematic();
-    SteerInfo &s = agent.getSteering();
-    BoxInfo box = BoxInfo(agent.width, agent.height, agent.depth);
-    PAgent *pobj = new PAgent(&k, &s, agent.mass, &box, this->getOdeSpace());
-    pobj->bounce = 1;
-
-    pagents[agent.id] = pobj;
-}
-
 Physics::Physics()
 {
     dInitODE();

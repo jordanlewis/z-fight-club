@@ -34,7 +34,6 @@ class Physics
     const dWorldID & getOdeWorld() { return odeWorld; };
     const dSpaceID & getOdeSpace() { return odeSpace; };
     const dJointGroupID & getOdeContacts() { return odeContacts; };
-    void initAgent(Agent &agent);
     void simulate(float dt); /* step the world forward by dt. */
     __gnu_cxx::hash_map<int, PAgent *> &getAgentMap();
 

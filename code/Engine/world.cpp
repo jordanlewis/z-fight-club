@@ -48,8 +48,18 @@ void World::addObject(WorldObject obj)
     wobjects.push_back(WorldObject(obj.pobject, obj.gobject, obj.agent));
 }
 
-void World::registerAgent(Agent &agent)
+void World::addAgent(Agent &agent)
 {
+    BoxInfo *box = new BoxInfo(agent.width, agent.height, agent.depth);
+    PAgent *pobj = new PAgent(&(agent.getKinematic()), &(agent.getSteering()),
+                              agent.mass, box);
+    pobj->bounce = 1;
+    GObject *gobj = new GObject(box);
+
+    addObject(WorldObject(pobj, gobj, &agent));
+
+    Physics::getInstance().getAgentMap()[agent.id] = pobj;
+
     agents.push_back(&agent);
 }
 

@@ -59,7 +59,7 @@ class World
     std::vector<WorldObject> wobjects; /* the objects in the world */
 
     void addObject(WorldObject obj);
-    void registerAgent(Agent &agent);
+    void addAgent(Agent &agent);
     void loadTrack(const char *file);
     const TrackData_t * getTrack();
     static World &getInstance();
