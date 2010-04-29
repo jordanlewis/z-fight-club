@@ -3,6 +3,7 @@
 
 #include "Utilities/vec3f.h"
 #include "kinematic.h"
+#include "constants.h"
 #include <vector>
 #include <iostream>
 

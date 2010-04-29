@@ -2,12 +2,12 @@
 #include "Utilities/vec3f.h"
 
 unsigned int Agent::maxId = 0;    /* !<highest id number we've reached */
-float        Agent::mass = 100;   /*XXX 100 is a random value; tweak this */
-float        Agent::power = 10000;  /*XXX 10^5 is a random value; tweak this */
-float        Agent::maxRotate = 2; /*XXX 2 is a random value; tweak this */
-float        Agent::height = 2;
-float        Agent::width = 2;
-float        Agent::depth = 2;
+float        Agent::mass = AG_DEFAULT_MASS;   
+float        Agent::power = AG_DEFAULT_POWER;  
+float        Agent::maxRotate = AG_DEFAULT_MAX_ROTATE; 
+float        Agent::height = AG_DEFAULT_HEIGHT;
+float        Agent::width = AG_DEFAULT_WIDTH;
+float        Agent::depth = AG_DEFAULT_DEPTH;
 
 Agent::Agent() 
 {
