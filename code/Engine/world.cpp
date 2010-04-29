@@ -11,9 +11,28 @@ float World::zMax = 1000; // XXX this too
 
 World World::_instance;
 
-WorldObject::WorldObject(PGeom *pobject, GObject *gobject)
-                        : pobject(pobject), gobject(gobject)
+WorldObject::WorldObject(PGeom *pobject, GObject *gobject, Agent *agent)
+                        : pobject(pobject), gobject(gobject), agent(agent)
 {}
+
+Vec3f WorldObject::getPos()
+{
+    return pobject->getPos();
+}
+
+void WorldObject::getQuat(Quatf_t quat)
+{
+    pobject->getQuat(quat);
+}
+
+void WorldObject::draw()
+{
+    if (gobject == NULL)
+        return;
+    Quatf_t quat;
+    getQuat(quat);
+    gobject->draw(getPos(), quat);
+}
 
 World::World()
             : environment(std::vector<Polygon>()), agents(std::vector<Agent*>())
@@ -24,9 +43,9 @@ World::~World()
     FreeTrackData(track);
 }
 
-void World::addObject(PGeom *pobject, GObject *gobject)
+void World::addObject(WorldObject obj)
 {
-    objects.push_back(WorldObject(pobject, gobject));
+    wobjects.push_back(WorldObject(obj.pobject, obj.gobject, obj.agent));
 }
 
 void World::registerAgent(Agent &agent)
