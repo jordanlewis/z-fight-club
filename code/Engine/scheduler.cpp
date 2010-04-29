@@ -89,7 +89,7 @@ void Scheduler::loopForever()
     }
 
     /* clean everything up */
-    SDL_CloseAudio();
+    /* SDL_CloseAudio(); */
 }
 
 Scheduler::~Scheduler()

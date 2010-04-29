@@ -107,53 +107,6 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
     }
 }
 
-void Physics::makeTrackGeoms()
-{
-    const TrackData_t *track = World::getInstance().getTrack();
-    float depth = .1;
-    float height = 2;
-    float len;
-
-    Vec2f_t xzwall;
-    Vec3f_t wall;
-    int i, j;
-    float theta;
-    Edge_t *e, *next;
-    PGeom *geom;
-    dQuaternion quat;
-    Vec3f position;
-
-    for (i = 0; i < track->nSects; i++)
-    {
-        for (j = 0; j < track->sects[i].nEdges; j++)
-        {
-            e = track->sects[i].edges + j;
-            if (j == track->sects[i].nEdges - 1)
-                next = e - 3;
-            else
-                next = e + 1;
-            if (e->kind == WALL_EDGE)
-            {
-                SubV3f(track->verts[e->start],track->verts[next->start], wall);
-                xzwall[0] = wall[0]; xzwall[1] = wall[2];
-                len = LengthV2f(xzwall);
-                BoxInfo box(len, height + wall[1], depth);
-                theta = atan2(wall[2] , wall[0]);
-                geom = new PGeom(&box, this->getOdeSpace());
-                geom->bounce = 1;
-                pgeoms.push_back(geom);
-                dQFromAxisAndAngle(quat, 0, 1, 0, -theta);
-                geom->setQuat(quat);
-                LerpV3f(track->verts[e->start], .5, track->verts[next->start],
-                        wall);
-                position = Vec3f(wall[0], wall[1], wall[2]);
-                geom->setPos(position);
-            }
-        }
-    }
-}
-
-
 void Physics::simulate(float dt)
 {
     static float dtRemainder;
@@ -195,17 +148,6 @@ void Physics::simulate(float dt)
         p->resetOdeAngularVelocity(nSteps);
     }
 
-}
-
-void Physics::initAgent(Agent &agent)
-{
-    Kinematic &k = agent.getKinematic();
-    SteerInfo &s = agent.getSteering();
-    BoxInfo box = BoxInfo(agent.width, agent.height, agent.depth);
-    PAgent *pobj = new PAgent(&k, &s, agent.mass, &box, this->getOdeSpace());
-    pobj->bounce = 1;
-
-    pagents[agent.id] = pobj;
 }
 
 Physics::Physics()

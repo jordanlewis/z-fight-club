@@ -105,7 +105,7 @@ void AIController::cruise()
 
 void AIController::run()
 {
-    cruise();
+    //cruise();
     /* Test target - we'll change this function to do more interesting things
      * once we get a better AI test architecture running. */
     Vec3f tgt = Input::getInstance().getPlayerController().getAgent().kinematic.pos;

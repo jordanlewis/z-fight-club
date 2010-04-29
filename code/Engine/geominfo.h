@@ -10,6 +10,9 @@ class GeomInfo
  public:
     virtual dGeomID createGeom(dSpaceID space) = 0;
     virtual void createMass(dMass *, float) {return;};
+    /*! \brief draw() simply render the appropriate shape for this geom type.
+     * the caller will deal with position and orientation setup. */
+    virtual void draw() {return;};
 };
 
 //Packages info for a Sphere of radius r
@@ -30,6 +33,7 @@ class BoxInfo : public GeomInfo
     BoxInfo(float lx, float ly, float lz);
     dGeomID createGeom(dSpaceID space);
     void createMass(dMass *, float);
+    void draw();
 };
 
 

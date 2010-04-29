@@ -16,8 +16,7 @@ void testSetup()
     Vec3f pos = Vec3f(0, 0, 0);
     Agent *agent = new Agent(pos, M_PI / 2);
 
-    world.registerAgent(*agent);
-    physics.initAgent(*agent);
+    world.addAgent(*agent);
 
     AIManager &ai = AIManager::getInstance();
     ai.control(*agent);

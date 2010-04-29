@@ -2,8 +2,18 @@
 #define CAMERA_H
 
 #include "Utilities/vec3f.h"
+#include "Agents/agent.h"
+
+typedef enum {
+    OVERHEAD = 0,	/* !< overhead view on the world */
+    FIRSTPERSON,	/* !< view from an agent first person */
+    THIRDPERSON,	/* !< view from behind the agent */
+    BIRDSEYE		/* !< above the agent, but follow */
+} CameraMode_t;
 
 class Camera {
+    CameraMode_t	mode;	/* !< what mode the camera is in */
+    Agent		*agent;	/* !< the agent this camera is follow (can be null) */
     /* The position, orientation, and up vector for the Camera.
        NOTE: we may again use quaternions for this, or represent it in spherical
              coordinates
@@ -21,6 +31,7 @@ class Camera {
           zFar;
   public:
     Camera();
+    Camera(CameraMode_t, Agent *);
     ~Camera();
     
     void setTarget(Vec3f target);
