@@ -44,7 +44,7 @@ void Graphics::initGraphics()
         fprintf(stderr, "Failed to set video mode resolution to %i by %i: %s\n", wres, hres, SDL_GetError());
         SDL_Quit();
         exit(1);
-	}
+    }
 
     SDL_WM_SetCaption("Racer", "racer");
     initialized = true;
@@ -124,16 +124,14 @@ void Graphics::render()
     glEnd();
 
     glEnable(GL_LIGHTING);
-    unsigned int i;
-    for (i = 0; i < world->wobjects.size(); i++)
+    for (vector<WorldObject>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
     {
-        world->wobjects[i].draw();
+        i->draw();
     }
 
     render(world->track);
 
-    vector<Agent*>::iterator i;
-    for(i = world->agents.begin();i != world->agents.end();i++) {
+    for(vector<Agent*>::iterator i = world->agents.begin();i != world->agents.end();i++) {
 	    render(*i);
     }
     DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(2.0f, 0.0f, 0.0f));
