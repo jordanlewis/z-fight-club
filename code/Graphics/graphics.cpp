@@ -1,6 +1,7 @@
 #include "graphics.h"
 #include "Engine/world.h"
 #include "Physics/physics.h"
+#include "Utilities/vector.h"
 #include <SDL/SDL.h>
 
 extern "C" {
@@ -91,7 +92,7 @@ void Graphics::render()
     GLfloat light_position[]={ 10.0, 10.0, -10.0, 1.0 };
     GLfloat light_color[]={ 1.0, 1.0, 1.0, 1.0 };
     GLfloat ambient_color[]={ 0.2, 0.2, 0.2, 1.0 };
-    GLfloat mat_specular[]={ 1.0, 1.0, 1.0, 1.0 };
+    GLfloat mat_specular[]={ .2, .2, .2, 1.0 };
 
     world->camera.setProjectionMatrix();
 
@@ -152,10 +153,12 @@ void Graphics::render(Agent * agent)
     glPushMatrix();
 
     glTranslatef(agent->kinematic.pos.x, agent->kinematic.pos.y, agent->kinematic.pos.z);
+    glColor3f(1,1,1);
     DrawArrow(Vec3f(0.0, 0.0, 0.0), agent->kinematic.vel);
     DrawArrow(Vec3f(0.0, 0.0, 0.0), agent->kinematic.orientation_v);
 
     glPopMatrix();
+    glColor3f(1,0,0);
     render(agent->trail);
 }
 
@@ -178,8 +181,44 @@ void Graphics::render(TrackData_t *track)
 	    glDrawElements(GL_LINE_LOOP, track->sects[i].nEdges, GL_UNSIGNED_SHORT, lineIndices);
 	    delete [] lineIndices;
 	}
-
 	glDisableClientState(GL_VERTEX_ARRAY);
+
+        glColor3f(1,1,0);
+        GLUquadricObj *quadobj = gluNewQuadric();
+        Vec3f_t v;
+        Segment_t *seg;
+        int len;
+
+        glBegin(GL_LINES);
+        for (i = 0; i < track->nLanes; i++)
+        {
+            for (j = 0; j < track->lanes[i].nSegs; j++)
+            {
+                seg = &track->lanes[i].segs[j];
+                switch (track->lanes[i].segs[j].kind) {
+                    case LINE_SEGMENT:
+                        glVertex3fv(track->verts[seg->start]);
+                        glVertex3fv(track->verts[seg->end]);
+                        break;
+                    case ARC_SEGMENT:
+                        glEnd();
+                        CopyV3f(track->verts[seg->center],v);
+                        glPushMatrix();
+                        glTranslatef(v[0], v[1], v[2]);
+                        glRotatef(-90,1,0,0);
+                        SubV3f(v, track->verts[seg->start], v);
+                        len = LengthV3f(v);
+                        gluPartialDisk(quadobj, len-.05, len, 40, 5,
+                                       0, seg->angle);
+                        glPopMatrix();
+                        glBegin(GL_LINES);
+                        break;
+                }
+            }
+        }
+        glEnd();
+        gluDeleteQuadric(quadobj);
+
     }
 }
 
