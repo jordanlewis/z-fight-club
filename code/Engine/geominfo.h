@@ -9,7 +9,7 @@ class GeomInfo
 {
  public:
     virtual dGeomID createGeom(dSpaceID space) = 0;
-    virtual void createMass(dMass *, float) = 0;
+    virtual void createMass(dMass *, float) {return;};
 };
 
 //Packages info for a Sphere of radius r
