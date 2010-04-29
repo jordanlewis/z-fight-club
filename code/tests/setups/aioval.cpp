@@ -22,10 +22,10 @@ void testSetup()
     Vec3f pos2 = Vec3f(85, 2, 25);
     Agent *humanagent = new Agent(pos2, -1.337);
 
-    world.registerAgent(*aiagent);
-    physics.initAgent(*aiagent);
-    world.registerAgent(*humanagent);
-    physics.initAgent(*humanagent);
+    world.addAgent(*aiagent);
+    world.addAgent(*humanagent);
+
+    world.camera = Camera(THIRDPERSON, humanagent);
 
     ai.control(*aiagent);
 
