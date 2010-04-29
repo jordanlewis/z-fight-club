@@ -33,8 +33,8 @@ class World
     World& operator=(const World&);
 
     static World _instance;
-    Camera camera;
   public:
+    Camera camera;
     TrackData_t *track;
     static float xMax;   /* XXX what are these? */
     static float zMax;

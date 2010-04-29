@@ -1,5 +1,6 @@
 #include "camera.h"
-#include "../Utilities/vec3f.h"
+#include "Utilities/vec3f.h"
+#include "Utilities/error.h"
 #include <SDL/SDL.h>
 
 #if defined (__APPLE__) && defined (__MACH__)
@@ -12,6 +13,26 @@
 
 Camera::Camera()
 {
+    agent = NULL;
+    mode = OVERHEAD;
+
+    FOVY = 65.0;
+
+    pos = Vec3f(100.0f, 20.0f, 50.0f);
+    up = Vec3f(0.0f, 1.0f, 0.0f);
+    target = Vec3f(0.0f, 0.0f, 0.0f);
+
+    wres = 800;
+    hres = 600;
+    zNear = 0.1f;
+    zFar = 1000.0f;
+}
+
+Camera::Camera(CameraMode_t mode, Agent *agent)
+{
+    this->agent = agent;
+    this->mode = mode;
+
     FOVY = 65.0;
 
     pos = Vec3f(100.0f, 20.0f, 50.0f);
@@ -35,8 +56,45 @@ void Camera::setTarget(Vec3f target)
 }
 void Camera::setProjectionMatrix()
 {
+    Error error = Error::getInstance();
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    switch (mode) {
+	case OVERHEAD:
+	    pos = Vec3f(100.0f, 20.0f, 50.0f);
+	    up = Vec3f(0.0f, 1.0f, 0.0f);
+	    target = Vec3f(0.0f, 0.0f, 0.0f);
+	    break;
+	case FIRSTPERSON:
+	    if (agent == NULL) {
+		error.log(GRAPHICS, CRITICAL, "Agent in camera not set, but agent specific mode selected\n");
+		exit(0);
+	    }
+	    pos = agent->kinematic.pos;
+	    up = Vec3f(0.0f, 1.0f, 0.0f);
+	    target = (agent->kinematic.pos + agent->kinematic.orientation_v);
+	    break;
+	case THIRDPERSON:
+	    if (agent == NULL) {
+		error.log(GRAPHICS, CRITICAL, "Agent in camera not set, but agent specific mode selected\n");
+		exit(0);
+	    }
+	    pos = (agent->kinematic.pos - (5 * agent->kinematic.orientation_v) + Vec3f(0.0f, 3.0f, 0.0f));
+	    up = Vec3f(0.0f, 1.0f, 0.0f);
+	    target = (agent->kinematic.pos + (5 * agent->kinematic.orientation_v));
+	    break;
+	case BIRDSEYE:
+	    if (agent == NULL) {
+		error.log(GRAPHICS, CRITICAL, "Agent in camera not set, but agent specific mode selected\n");
+		exit(0);
+	    }
+	    pos = agent->kinematic.pos + Vec3f(0.0f, 10.0f, 0.0f);
+	    up = agent->kinematic.orientation_v;
+	    up.y = 0.0f;
+	    up.normalize();
+	    target = agent->kinematic.pos;
+	    break;
+    }
     gluLookAt(pos[0], pos[1], pos[2], target[0], target[1], target[2], up[0], up[1], up[2]);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();

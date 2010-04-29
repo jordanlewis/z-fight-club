@@ -4,6 +4,7 @@
 #include "Engine/input.h"
 #include "Engine/world.h"
 #include "Utilities/vec3f.h"
+#include "Graphics/camera.h"
 
 void testSetup()
 {
@@ -19,6 +20,8 @@ void testSetup()
 
     world.registerAgent(*agent);
     physics.initAgent(*agent);
+
+    world.camera = Camera(THIRDPERSON, agent);
 
     /* Instantiate a playercontroller to handle input -> steering conversion for
      * this agent */
