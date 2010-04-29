@@ -57,7 +57,63 @@ void World::loadTrack(const char *file)
 {
     track = LoadTrackData(file);
     if (!track)
-	; /* error */
+        return; /* error */
+
+    /* Now create WorldObjects to represent the track */
+
+    float depth = .1;
+    float height = 2;
+    float len;
+
+    Vec2f_t xzwall;
+    Vec3f_t wall;
+    int i, j;
+    float theta;
+    Edge_t *e, *next;
+    PGeom *geom;
+    GObject *gobj;
+    dQuaternion quat;
+    Vec3f position;
+
+    for (i = 0; i < track->nSects; i++)
+    {
+        /* for each edge in every sector, if its a wall edge, create a box
+         * that represents the wall
+         */
+        for (j = 0; j < track->sects[i].nEdges; j++)
+        {
+            e = track->sects[i].edges + j;
+            if (j == track->sects[i].nEdges - 1)
+                next = e - 3;
+            else
+                next = e + 1;
+            if (e->kind == WALL_EDGE)
+            {
+                SubV3f(track->verts[e->start],track->verts[next->start], wall);
+                xzwall[0] = wall[0];
+                xzwall[1] = wall[2];
+                len = LengthV2f(xzwall);
+
+                /* this bit makes a pgeom and sets its position and rotation */
+                BoxInfo *box = new BoxInfo(len, height + wall[1], depth);
+                theta = atan2(wall[2], wall[0]);
+                geom = new PGeom(box);
+                geom->bounce = 1;
+                dQFromAxisAndAngle(quat, 0, 1, 0, -theta);
+                geom->setQuat(quat);
+                LerpV3f(track->verts[e->start], .5, track->verts[next->start],
+                        wall);
+                position = Vec3f(wall[0], wall[1], wall[2]);
+                geom->setPos(position);
+
+                /* now we make a corresponding gobject */
+                gobj = new GObject(box);
+
+                addObject(WorldObject(geom, gobj, NULL));
+            }
+        }
+    }
+
 }
 
 const TrackData_t *World::getTrack()

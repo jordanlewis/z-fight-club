@@ -27,7 +27,6 @@ int main(int argc, char *argv[])
     World &world = World::getInstance();
     Sound     &sound    = Sound::getInstance();
     Graphics  &graphics = Graphics::getInstance();
-    Physics   &physics  = Physics::getInstance();
     Scheduler &scheduler = Scheduler::getInstance();
 
     try {
@@ -72,8 +71,7 @@ int main(int argc, char *argv[])
     graphics.initGraphics();
     sound.initSound();
 
-    if (world.getTrack() != NULL)
-        physics.makeTrackGeoms();
+    world.getTrack();
 
     testSetup();
 
