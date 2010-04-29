@@ -31,7 +31,10 @@ void smackAll(unsigned int srcAgentID, int force){
 void smack(unsigned int tarAgentID, int force){
     PAgent *target = Physics::getInstance().getAgentMap()[tarAgentID];
     int rng = rand();
-    Vec3f f = Vec3f(sin(rng), 0, cos(rng));
+    int rng2 = rand();
+    int rng3 = rand();
+    Vec3f f = Vec3f(sin(rng), sin(abs(rng2)), sin(rng3));
     f *= force;
     dBodyAddForce(target->getBody(), f[0], f[1], f[2]);
+    dBodyAddTorque(target->getBody(), f[0], f[1], f[2]);
 }
