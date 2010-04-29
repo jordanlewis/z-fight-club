@@ -9,9 +9,14 @@
 #define D_COLL REAL //Default collision type
 
 PGeom::PGeom(GeomInfo *info, dSpaceID space)
-    : geom(info->createGeom(space)), space(space), bounce(D_BOUNCE),
-      mu1(D_MU1), mu2(D_MU2), collType(D_COLL)
+    : bounce(D_BOUNCE), mu1(D_MU1), mu2(D_MU2), collType(D_COLL)
 {
+    if (space == NULL)
+        space = Physics::getInstance().getOdeSpace();
+
+    this->space = space;
+    geom = info->createGeom(space);
+
     dGeomSetData(geom, this);
 }
 
@@ -37,9 +42,26 @@ PAgent::PAgent(const Kinematic *kinematic, const SteerInfo *steering,
 }
 
 
+Vec3f PGeom::getPos()
+{
+    const dReal *pos = dGeomGetPosition(geom);
+    return Vec3f(pos[0], pos[1], pos[2]);
+}
+
 void PGeom::setPos(Vec3f position)
 {
     dGeomSetPosition(geom, position[0], position[1], position[2]);
+}
+
+void PGeom::getQuat(Quatf_t quat)
+{
+    dReal dquat[4];
+    dGeomGetQuaternion(geom, dquat);
+    /* Reppy's quats are x,y,z,w; ODE's are w,x,y,z */
+    quat[0] = dquat[1];
+    quat[1] = dquat[2];
+    quat[2] = dquat[3];
+    quat[3] = dquat[0];
 }
 
 void PGeom::setQuat(const dQuaternion rotation)

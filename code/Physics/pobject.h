@@ -3,6 +3,7 @@
 
 #include "physics.h"
 #include "Engine/geominfo.h"
+#include "Utilities/quat.h"
 #include <ode/ode.h>
 #include <iostream>
 
@@ -31,10 +32,14 @@ class PGeom
     float bounce;
     float mu1, mu2;
     CollType_t collType;
+
+    Vec3f getPos();
     void setPos(Vec3f position);
+    void getQuat(Quatf_t quat);
     void setQuat(const dQuaternion rotation);
+
     const dGeomID &getGeom();
-    PGeom(GeomInfo *info, dSpaceID space);
+    PGeom(GeomInfo *info, dSpaceID space=NULL);
 };
 
 /*
@@ -50,7 +55,7 @@ class PMoveable: public PGeom
     dMass mass;
  public:
     PMoveable(const Kinematic *kinematic, float mass,
-              GeomInfo *info, dSpaceID space);
+              GeomInfo *info, dSpaceID space=NULL);
     const Kinematic &odeToKinematic(); /* writes (syncs) the body coords into
 					* the kinematic */
     const dBodyID &getBody();
@@ -64,7 +69,7 @@ class PAgent: public PMoveable
     const SteerInfo *steering;
  public:
     PAgent(const Kinematic *kinematic, const SteerInfo *steering,
-           float mass, GeomInfo *info, dSpaceID space);
+           float mass, GeomInfo *info, dSpaceID space=NULL);
     void steeringToOde(); //Write steering info into the ODE structs
     void resetOdeAngularVelocity(int nsteps);
 };
