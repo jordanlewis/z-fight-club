@@ -32,6 +32,7 @@ typedef struct {
     Vec3f_t    orig;            //!< the origin of the ray
     Vec3f_t    dir;            //!< the direction of the ray, which should be
                     //!< a unit vector
+    float len; //The length of the ray.
 } Rayf_t;
 
 /*! \brief a plane */
