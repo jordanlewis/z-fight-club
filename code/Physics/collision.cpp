@@ -33,9 +33,11 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
 	}
     //get collision data, but create no joints
     if (g1->collType == PHANTOM){
-	cout << "Phantom detected" << endl;
 	dContactGeom contact;
-	dCollide(o1, o2, 1, &contact, sizeof(dContactGeom));
+	//Do nothing if no contact occurs
+        if (!dCollide(o1, o2, 1, &contact, sizeof(dContactGeom))){
+	    return;
+	};
 	assert(data != NULL);
 	CollContact response;
 	response.position[0] = contact.pos[0];
