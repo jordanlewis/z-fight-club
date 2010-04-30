@@ -99,17 +99,16 @@ void AIController::cruise()
 	path.precision.pop();
     }
 
-    /* seek(&agent->kinematic, agent->maxAccel, path.knots.front(), &steerInfo); */
-    agent->setSteering(steerInfo);
+    seek(path.knots.front());
 }
 
 void AIController::run()
 {
-    //cruise();
+    cruise();
     /* Test target - we'll change this function to do more interesting things
      * once we get a better AI test architecture running. */
-    Vec3f tgt = Input::getInstance().getPlayerController().getAgent().kinematic.pos;
-    seek(tgt);
+    /* Vec3f tgt = Input::getInstance().getPlayerController().getAgent().kinematic.pos;
+    seek(tgt); */
 }
 
 AIManager::AIManager() {}
