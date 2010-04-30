@@ -16,4 +16,12 @@
 //Weapon parameters
 #define PH_SMACKFORCE 100000
 
+//pobject defaults
+#define D_BOUNCE 0  //Default bounce value
+#define D_MU1 0     //Default mu1
+#define D_MU2 0     //Default mu2
+#define D_COLL REAL //Default collision type
+
+
+
 #endif

@@ -3,13 +3,9 @@
 
 #define DEBUG
 
-#define D_BOUNCE 0  //Default bounce value
-#define D_MU1 0     //Default mu1
-#define D_MU2 0     //Default mu2
-#define D_COLL REAL //Default collision type
-
 PGeom::PGeom(GeomInfo *info, dSpaceID space)
-    : bounce(D_BOUNCE), mu1(D_MU1), mu2(D_MU2), collType(D_COLL)
+    : bounce(D_BOUNCE), mu1(D_MU1), mu2(D_MU2), collType(D_COLL),
+      worldObject(NULL)
 {
     if (space == NULL)
         space = Physics::getInstance().getOdeSpace();
@@ -20,9 +16,14 @@ PGeom::PGeom(GeomInfo *info, dSpaceID space)
     dGeomSetData(geom, this);
 }
 
+PGeom::~PGeom()
+{
+    dGeomDestroy(geom);
+}
+
 PMoveable::PMoveable(const Kinematic *kinematic, float mass,
                      GeomInfo *info, dSpaceID space)
-                    : PGeom(info, space), kinematic(kinematic)
+    : PGeom(info, space), kinematic(kinematic)
 {
     //Create a body, give it mass, and bind it to the geom
     body = dBodyCreate(Physics::getInstance().getOdeWorld());
@@ -37,7 +38,7 @@ PMoveable::PMoveable(const Kinematic *kinematic, float mass,
 
 PAgent::PAgent(const Kinematic *kinematic, const SteerInfo *steering,
                float mass, GeomInfo *info, dSpaceID space)
-              : PMoveable(kinematic, mass, info, space), steering(steering)
+    : PMoveable(kinematic, mass, info, space), steering(steering)
 {
 }
 

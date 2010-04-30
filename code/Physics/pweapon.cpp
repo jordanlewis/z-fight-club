@@ -10,6 +10,7 @@ void useWeapons(Agent *agent){
 	switch(info.weapon){
 	    case NONE: break;
 	    case SMACK: smackAll(agent->id, PH_SMACKFORCE); break;
+	    case RAYGUN:  raygun(agent->id, PH_SMACKFORCE); break;
 	    default: break;
 	}
     }
@@ -37,4 +38,33 @@ void smack(unsigned int tarAgentID, int force){
     f *= force;
     dBodyAddForce(target->getBody(), f[0], f[1], f[2]);
     dBodyAddTorque(target->getBody(), f[0], f[1], f[2]);
+}
+
+void raygun(unsigned int srcAgentID, int force){
+    
+    for (vector<Agent *>::iterator iter = World::getInstance().agents.begin();
+	 iter != World::getInstance().agents.end();
+	 iter++){
+	if ((*iter)->id == srcAgentID){
+	    Agent *a = (*iter);
+	    Rayf_t ray;
+	    ray.len = 10000;
+	    ray.dir[0] = a->getKinematic().orientation_v[0];
+	    ray.dir[1] = a->getKinematic().orientation_v[1];
+	    ray.dir[2] = a->getKinematic().orientation_v[2];
+	    NormalizeV3f(ray.dir);
+	    ray.orig[0] = a->getKinematic().pos[0]+2*ray.dir[0];
+	    ray.orig[1] = a->getKinematic().pos[1];
+	    ray.orig[2] = a->getKinematic().pos[2]+2*ray.dir[2];
+	    
+	    CollQuery query;
+	    rayCast(ray, query);
+	    for (list<CollContact>::iterator iter = query.contacts.begin();
+		 iter != query.contacts.end();
+		 iter++){
+		cout << "Pointing at worldObject number "
+		     << (*iter).obj << endl;
+	    }
+	}
+    }
 }

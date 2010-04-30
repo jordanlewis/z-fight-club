@@ -2,6 +2,7 @@
 
 void nearCallback (void *data, dGeomID o1, dGeomID o2)
 {
+    //cout << "nearCallback called!" << endl;
     dBodyID b1 = dGeomGetBody(o1);
     dBodyID b2 = dGeomGetBody(o2);
     // don't collide if the two bodies are connected by a normal joint
@@ -18,13 +19,22 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
     PGeom *g1 = (PGeom *)dGeomGetData(o1);
     PGeom *g2 = (PGeom *)dGeomGetData(o2);
 
+    if (g1 == NULL || g2 == NULL){ 
+	cout << "Null geom data pointer!" << endl;
+    }
+
+    /*cout << "colltypes: (" << g1->collType << ", " << g2->collType << ")" 
+	 << endl;
+    */
     //Don't collide with phantoms.
     if (g2->collType == PHANTOM)
 	{
+	    cout << "bad phantom detectd" << endl;
 	    return;
 	}
     //get collision data, but create no joints
     if (g1->collType == PHANTOM){
+	cout << "Phantom detected" << endl;
 	dContactGeom contact;
 	dCollide(o1, o2, 1, &contact, sizeof(dContactGeom));
 	assert(data != NULL);
@@ -32,6 +42,7 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
 	response.position[0] = contact.pos[0];
 	response.position[1] = contact.pos[1];
 	response.position[2] = contact.pos[2];
+	response.obj = g2->worldObject;
 	((CollQuery *)data)->contacts.push_back(response);
 	return;
     }
@@ -114,13 +125,15 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
 
 /* \Brief  Given a ray, fills the collQuery structure with collision info.
  */ 
-void RayCast(Rayf_t ray, CollQuery &collQuery) {
+void rayCast(Rayf_t ray, CollQuery &collQuery) {
     Physics &physics = Physics::getInstance();
     RayInfo info = RayInfo(ray.len);
-    PGeom geom(&info, physics.getOdeSpace());
-
-    geom.collType = PHANTOM;
-    dGeomRaySet(geom.getGeom(), ray.orig[0], ray.orig[1], ray.orig[2],
+    PGeom rayGeom(&info, physics.getOdeSpace());
+    //dGeomID rayGeom = dCreateRay(physics.getOdeSpace(), ray.len);
+    rayGeom.collType = PHANTOM;
+    dGeomRaySetLength(rayGeom.getGeom(), info.len);
+    dGeomRaySet(rayGeom.getGeom(), ray.orig[0], ray.orig[1], ray.orig[2], 
 		ray.dir[0], ray.dir[1], ray.dir[2]);
-    dSpaceCollide2(geom.getGeom(), (dGeomID)physics.getOdeSpace(), &collQuery, &nearCallback);
+    dSpaceCollide2(rayGeom.getGeom(), 
+		   (dGeomID)physics.getOdeSpace(), &collQuery, &nearCallback);
 }

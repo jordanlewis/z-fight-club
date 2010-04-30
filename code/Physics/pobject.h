@@ -5,6 +5,7 @@
 #include "Engine/geominfo.h"
 #include "Engine/world.h"
 #include "Utilities/quat.h"
+#include "constants.h"
 #include <ode/ode.h>
 #include <iostream>
 
@@ -25,7 +26,7 @@ typedef enum {
 class PGeom
 {
  protected:
-    dGeomID geom;
+    dGeomID geom;    
  public:
     dSpaceID space;
     float bounce;
@@ -40,6 +41,7 @@ class PGeom
 
     const dGeomID &getGeom();
     PGeom(GeomInfo *info, dSpaceID space=NULL);
+    ~PGeom();
 };
 
 /*

@@ -9,10 +9,12 @@
 #include "Utilities/vector.h"
 #include "Engine/world.h"
 
+class WorldObject;
+
 struct CollContact{
  public:
     //float depth; //contact distance from origin of cast -- only used in casts
-    //WorldObject *obj; //The object that collided
+    WorldObject *obj; //The object that collided
     Vec3f_t position; //The point of contact
 };
 
@@ -24,8 +26,8 @@ struct CollQuery{
 
 void nearCallback(void *data, dGeomID o1, dGeomID o2);
 
-void RayCast(Rayf_t ray);
+void rayCast(Rayf_t ray, CollQuery &collQuery);
 
-float ray_sphere(Rayf_t ray, Vec3f_t center, float radius); /* When does ray intersect sphere? */
+//void sphereCollide(sphere
 
 #endif

@@ -34,7 +34,7 @@ void Physics::simulate(float dt)
         p = pagents[a->id];
         p->kinematicToOde();
         p->steeringToOde();
-	useWeapons(a);
+	useWeapons(a);	
     }
     nTimeSteps = dt / PH_TIMESTEP;
     nSteps = floorf(nTimeSteps);
