@@ -319,22 +319,22 @@ Graphics &Graphics::getInstance()
 void Graphics::DrawCube(Vec3f center)
 {
     glBegin(GL_QUADS);
-    Vec3f toDraw = center;
-    float inc[2][4] = {{-0.5,0.5,0.5,-0.5},
-                       {-0.5,-0.5,0.5,0.5}};
+    Vec3f toDraw;
+    float inc[2][4] = {{1.0,0.0,-1.0,0.0},
+                       {0.0,1.0,0.0,-1.0}};
     for(int i=0;i<3;i++) {
         int a = (i+1)%3,
             b = (i+2)%3;
-        for(int k=1; k>=-1; k-=2) {
+        for(int k=1; k >= -1; k -= 2) {
+            toDraw = center;
             toDraw[i] += (0.5*k);
+            toDraw[a] -= (0.5*k);
+            toDraw[b] -= 0.5;
             for(int j=0; j<4; j++) {
-                toDraw[a] += inc[0][j];
+                toDraw[a] += k*inc[0][j];
                 toDraw[b] += inc[1][j];
                 glVertex3f(toDraw.x,toDraw.y,toDraw.z);
-                toDraw[a] = center[a];
-                toDraw[b] = center[b];
             }
-            toDraw[i] = center[i];
         }
     }
     glEnd();
