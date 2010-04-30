@@ -25,20 +25,38 @@ void Path::clear()
     precision.clear();
 }
 
-void AIController::seek(const Vec3f target)
+void AIController::seek(const Vec3f target, float slowRadius, float targetRadius)
 {
-    Vec3f diff;
+    Vec3f dir;
     SteerInfo s;
+    float distance;
+    float targetSpeed;
+    float maxAccel = agent->getMaxAccel();
+    float maxSpeed = maxAccel * 3;
     Kinematic k = agent->getKinematic();
-    diff = target - agent->kinematic.pos;
+    dir = target - agent->kinematic.pos;
+    distance = dir.length();
+    dir.normalize();
 
-    align(atan2(diff[0], diff[2]));
-    diff.normalize();
-
-    diff *= (agent->getMaxAccel() / 20);
+    align(atan2(dir[0], dir[2]));
 
     s = agent->getSteering();
-    s.acceleration = diff.length();
+    if (distance < targetRadius)
+    {
+        s.acceleration = 0;
+    }
+    else if (distance > slowRadius)
+    {
+        s.acceleration = maxAccel;
+    }
+    else
+    {
+        targetSpeed = maxSpeed * distance / slowRadius;
+        s.acceleration = (targetSpeed - k.vel.length()) / .1;
+        if (s.acceleration > maxAccel)
+            s.acceleration = maxAccel;
+    }
+
 
     agent->setSteering(s);
 }
@@ -46,7 +64,7 @@ void AIController::seek(const Vec3f target)
 void AIController::align(float target)
 {
     float targetRadius = .01;
-    float slowRadius = .01;
+    float slowRadius = 0;
     float diff;
     SteerInfo s;
     Kinematic k = agent->getKinematic();
@@ -68,20 +86,18 @@ void AIController::align(float target)
         s.rotation = 0;
     }
     /* Turn at max speed */
-    else //if (diffSize > slowRadius)
+    else if (diffSize > slowRadius)
     {
         s.rotation = agent->maxRotate;
         if (diff < 0)
             s.rotation *= -1;
     }
     /* slow down toward the end */
-    /*
     else
     {
         s.rotation = agent->maxRotate * diffSize / slowRadius;
         s.rotation *= diff / diffSize;
     }
-    */
     agent->setSteering(s);
 }
 
@@ -141,7 +157,7 @@ void AIController::run()
     /* Test target - we'll change this function to do more interesting things
      * once we get a better AI test architecture running. */
     /* Vec3f tgt = Input::getInstance().getPlayerController().getAgent().kinematic.pos;
-    seek(tgt); */
+    seek(tgt, 20, 2); */
 }
 
 AIManager::AIManager() {}

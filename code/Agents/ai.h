@@ -29,7 +29,7 @@ class AIController
   public:
     Path path;	/* !< the path we're on */
     Agent *agent;
-    void seek(const Vec3f target);
+    void seek(const Vec3f target, float slowRadius = 0, float targetRadius = 1);
     void align(float target);
     void cruise(Path *path);
     AIController(Agent &);
