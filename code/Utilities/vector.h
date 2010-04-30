@@ -473,5 +473,4 @@ static inline void RandVec (Vec3f_t v)
     v[2] = 2.0 * ranf() - 1.0;
     } while (LengthSqV3f(v) < EPSILON);
 }
-
 #endif /* !_VECTOR_H_ */

@@ -37,8 +37,9 @@ class Camera {
     
     void setTarget(Vec3f target);
     void setProjectionMatrix(); //Maybe this should be protected, and we call
-                                //graphics a friend class, then it won't be
-                                //visible to people that don't need it.
+    const Vec3f &getTarget();   //graphics a friend class, then it won't be
+    const Vec3f &getPos();      //visible to people that don't need it.
+                                
 };
 
 #endif
