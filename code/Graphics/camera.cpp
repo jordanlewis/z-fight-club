@@ -2,6 +2,7 @@
 #include "Utilities/vec3f.h"
 #include "Utilities/error.h"
 #include <SDL/SDL.h>
+#include <cmath>
 
 #if defined (__APPLE__) && defined (__MACH__)
 #  include <OpenGL/gl.h>
@@ -61,6 +62,9 @@ void Camera::setProjectionMatrix()
     SteerInfo s;
     float minfovy = 55.0;
     float maxfovy = 90;
+    float oldfovy;
+    bool setNew = false;
+    Vec3f newpos;
 
     if (agent != NULL)
         smooth_orientation = .9 * smooth_orientation + .1 * agent->kinematic.orientation_v;
@@ -95,10 +99,13 @@ void Camera::setProjectionMatrix()
 	    up = Vec3f(0.0f, 1.0f, 0.0f);
 	    target = (agent->kinematic.pos + (5 * smooth_orientation));
             s = agent->getSteering();
+            oldfovy = FOVY;
             if (s.acceleration > 0)
                 FOVY += FOVY <= maxfovy ? .25 : 0;
             else
                 FOVY -= FOVY >= minfovy ? .25 : 0;
+            setNew = true;
+            newpos = agent->kinematic.pos - (((5 * smooth_orientation) * tan(M_PI * oldfovy/360) / tan(M_PI * FOVY/360) ) )  + Vec3f(0,3,0);
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
             gluPerspective((GLdouble) FOVY, (GLdouble) wres / (GLdouble) hres, zNear, zFar);
@@ -118,6 +125,8 @@ void Camera::setProjectionMatrix()
 	    target = agent->kinematic.pos;
 	    break;
     }
-    gluLookAt(pos[0], pos[1], pos[2], target[0], target[1], target[2], up[0], up[1], up[2]);
+    if (!setNew)
+        newpos = pos;
+    gluLookAt(newpos[0], newpos[1], newpos[2], target[0], target[1], target[2], up[0], up[1], up[2]);
     return;
 }
