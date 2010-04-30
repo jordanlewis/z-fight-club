@@ -16,7 +16,7 @@ void testSetup()
     PlaneInfo info = PlaneInfo(0, 1, 0, 0);
     new PGeom(&info, physics.getOdeSpace());
 
-    Vec3f pos = Vec3f(44, 2, 6);
+    Vec3f pos = Vec3f(25, 2, 5);
     Agent *agent = new Agent(pos, M_PI / 2);
 
     world.addAgent(*agent);

@@ -11,6 +11,7 @@
 #include "Parser/track-parser.h"
 
 #define ARC_RESOLUTION 20
+#define DEFAULT_PRECISION 2.0f
 
 Path::Path() {}
 
@@ -34,7 +35,7 @@ void AIController::seek(const Vec3f target)
     align(atan2(diff[0], diff[2]));
     diff.normalize();
 
-    diff *= agent->getMaxAccel();
+    diff *= (agent->getMaxAccel() / 20);
 
     s = agent->getSteering();
     s.acceleration = diff.length();
@@ -108,17 +109,17 @@ void AIController::lane(int laneIndex)
     Lane_t lane = world.track->lanes[laneIndex];
     for (i = 0; i < lane.nSegs; i++) {
 	path.knots.push_back(Vec3f(world.track->verts[lane.segs[i].start]));
-	path.precision.push_back(0.5f); /* XXX doing a default value for now */
+	path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
 	if (lane.segs[i].kind == ARC_SEGMENT) {
 	    for (j = 0; j < ARC_RESOLUTION; j++) {
 		path.knots.push_back(slerp(Vec3f(world.track->verts[lane.segs[i].start]), Vec3f(world.track->verts[lane.segs[i].end]), (float) j / (float) ARC_RESOLUTION));
-		path.precision.push_back(0.5f); /* XXX */
+		path.precision.push_back(DEFAULT_PRECISION); /* XXX */
 	    }
 	}
 	/* if we're on the last segment we need to put the end vertex on too */
 	if (i == (lane.nSegs - 1)) {
 	    path.knots.push_back(Vec3f(world.track->verts[lane.segs[i].end]));
-	    path.precision.push_back(0.5f); /* XXX doing a default value for now */
+	    path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
 	}
     }
 }
@@ -126,7 +127,7 @@ void AIController::lane(int laneIndex)
 void AIController::cruise()
 {
     SteerInfo steerInfo;
-    if ((path.knots.back() - agent->kinematic.pos).length() < path.precision.back()) {
+    if ((path.knots.front() - agent->kinematic.pos).length() < path.precision.front()) {
 	path.knots.pop_front();
 	path.precision.pop_front();
     }
