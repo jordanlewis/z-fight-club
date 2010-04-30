@@ -61,7 +61,7 @@ void PlayerController::updateAgent()
         case CHANGE: break; //NYI
         default: break;
     }
-    steerInfo.weapon = RAYGUN; //No others implemented yet
+    steerInfo.weapon = RAYGUN; //Need to implement weapon selection
 
     agent->setSteering(steerInfo);
 }

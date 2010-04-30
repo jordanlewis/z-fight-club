@@ -29,7 +29,6 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
     //Don't collide with phantoms.
     if (g2->collType == PHANTOM)
 	{
-	    cout << "bad phantom detectd" << endl;
 	    return;
 	}
     //get collision data, but create no joints
@@ -43,6 +42,7 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
 	response.position[1] = contact.pos[1];
 	response.position[2] = contact.pos[2];
 	response.obj = g2->worldObject;
+	assert(g2->worldObject != NULL);
 	((CollQuery *)data)->contacts.push_back(response);
 	return;
     }

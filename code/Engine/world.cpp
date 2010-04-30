@@ -18,6 +18,7 @@ WorldObject::WorldObject(PGeom *pobject, GObject *gobject, Agent *agent)
 	{
 	    pobject->worldObject = this;
 	}
+    //cout << "Constructed wobject " << this << " on pobject " << pobject << endl; 
 }
 
 Vec3f WorldObject::getPos()
@@ -61,8 +62,11 @@ void World::addAgent(Agent &agent)
     pobj->bounce = 1;
     GObject *gobj = new GObject(box);
 
-    addObject(WorldObject(pobj, gobj, &agent));
-
+    addObject(WorldObject(pobj, gobj, &agent));/*
+    cout << "Created agent with id " << wobjects.back().agent->id << endl;
+    cout << "stored in worldobject " << &wobjects.back() << endl;
+    cout << "ugly ugly hacking... " << endl;*/
+    wobjects.back().pobject->worldObject = &wobjects.back();
     Physics::getInstance().getAgentMap()[agent.id] = pobj;
 
     agents.push_back(&agent);
