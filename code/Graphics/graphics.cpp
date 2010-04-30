@@ -219,6 +219,7 @@ void Graphics::render(TrackData_t *track)
         Vec3f_t v;
         Segment_t *seg;
         int len;
+        float ang;
 
         glBegin(GL_LINES);
         for (i = 0; i < track->nLanes; i++)
@@ -239,8 +240,12 @@ void Graphics::render(TrackData_t *track)
                         glRotatef(-90,1,0,0);
                         SubV3f(v, track->verts[seg->start], v);
                         len = LengthV3f(v);
+                        ang = seg->end > seg->start ? seg->angle : -seg->angle;
                         gluPartialDisk(quadobj, len-.05, len, 40, 5,
-                                       0, seg->angle);
+                                        0, ang);
+                        gluPartialDisk(quadobj, len-.05, len, 40, 5,
+                                    0, ang);
+
                         glPopMatrix();
                         glBegin(GL_LINES);
                         break;
