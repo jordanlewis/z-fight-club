@@ -53,11 +53,9 @@ void raygun(unsigned int srcAgentID, int force){
 	    ray.dir[1] = a->getKinematic().orientation_v[1];
 	    ray.dir[2] = a->getKinematic().orientation_v[2];
 	    NormalizeV3f(ray.dir);
-	    //Not a perfectly accurate origin, but good enough for 
-	    //debugging:
-	    ray.orig[0] = a->getKinematic().pos[0]+2*ray.dir[0];
+	    ray.orig[0] = a->getKinematic().pos[0];
 	    ray.orig[1] = a->getKinematic().pos[1];
-	    ray.orig[2] = a->getKinematic().pos[2]+2*ray.dir[2];
+	    ray.orig[2] = a->getKinematic().pos[2];
 	    
 	    CollQuery query;
 	    rayCast(ray, query);
@@ -67,7 +65,9 @@ void raygun(unsigned int srcAgentID, int force){
 		//Force Push!
 		if ((*iter).obj != NULL){
 		    if ((*iter).obj->agent != NULL){
-			smack((*iter).obj->agent->id, force);
+			if ((*iter).obj->agent->id != srcAgentID){
+			    smack((*iter).obj->agent->id, force);
+			}
 		    }
 		}
 	    }
