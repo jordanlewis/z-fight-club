@@ -112,7 +112,10 @@ void AIController::lane(int laneIndex)
 	path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
 	if (lane.segs[i].kind == ARC_SEGMENT) {
 	    for (j = 0; j < ARC_RESOLUTION; j++) {
-		path.knots.push_back(slerp(Vec3f(world.track->verts[lane.segs[i].start]), Vec3f(world.track->verts[lane.segs[i].end]), (float) j / (float) ARC_RESOLUTION));
+		path.knots.push_back(slerp(	Vec3f(world.track->verts[lane.segs[i].start]) - Vec3f(world.track->verts[lane.segs[i].center]), 
+			    			Vec3f(world.track->verts[lane.segs[i].end]) - Vec3f(world.track->verts[lane.segs[i].center]), 
+						(float) j / (float) ARC_RESOLUTION) 
+					+ Vec3f(world.track->verts[lane.segs[i].center]));
 		path.precision.push_back(DEFAULT_PRECISION); /* XXX */
 	    }
 	}
