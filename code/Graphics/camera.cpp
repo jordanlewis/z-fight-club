@@ -35,6 +35,7 @@ Camera::Camera(CameraMode_t mode, Agent *agent)
 
     FOVY = 65.0;
 
+    smooth_orientation = agent->kinematic.orientation_v;
     pos = Vec3f(100.0f, 20.0f, 50.0f);
     up = Vec3f(0.0f, 1.0f, 0.0f);
     target = Vec3f(0.0f, 0.0f, 0.0f);
@@ -61,6 +62,9 @@ void Camera::setProjectionMatrix()
     float minfovy = 55.0;
     float maxfovy = 90;
 
+    if (agent != NULL)
+        smooth_orientation = .9 * smooth_orientation + .1 * agent->kinematic.orientation_v;
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective((GLdouble) FOVY, (GLdouble) wres / (GLdouble) hres, zNear, zFar);
@@ -80,16 +84,16 @@ void Camera::setProjectionMatrix()
 	    }
 	    pos = agent->kinematic.pos;
 	    up = Vec3f(0.0f, 1.0f, 0.0f);
-	    target = (agent->kinematic.pos + agent->kinematic.orientation_v);
+	    target = (agent->kinematic.pos + smooth_orientation);
 	    break;
 	case THIRDPERSON:
 	    if (agent == NULL) {
 		error.log(GRAPHICS, CRITICAL, "Agent in camera not set, but agent specific mode selected\n");
 		exit(0);
 	    }
-	    pos = (agent->kinematic.pos - (5 * agent->kinematic.orientation_v) + Vec3f(0.0f, 3.0f, 0.0f));
+	    pos = (agent->kinematic.pos - (5 * smooth_orientation) + Vec3f(0.0f, 3.0f, 0.0f));
 	    up = Vec3f(0.0f, 1.0f, 0.0f);
-	    target = (agent->kinematic.pos + (5 * agent->kinematic.orientation_v));
+	    target = (agent->kinematic.pos + (5 * smooth_orientation));
             s = agent->getSteering();
             if (s.acceleration > 0)
                 FOVY += FOVY <= maxfovy ? .25 : 0;
@@ -108,7 +112,7 @@ void Camera::setProjectionMatrix()
 		exit(0);
 	    }
 	    pos = agent->kinematic.pos + Vec3f(0.0f, 10.0f, 0.0f);
-	    up = agent->kinematic.orientation_v;
+	    up = smooth_orientation;
 	    up.y = 0.0f;
 	    up.normalize();
 	    target = agent->kinematic.pos;

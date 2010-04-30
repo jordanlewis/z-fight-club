@@ -19,6 +19,7 @@ class Camera {
              coordinates
     */
     float FOVY;
+    Vec3f smooth_orientation;
 
     Vec3f pos,
           up,
