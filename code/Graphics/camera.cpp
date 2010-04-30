@@ -57,6 +57,14 @@ void Camera::setTarget(Vec3f target)
 void Camera::setProjectionMatrix()
 {
     Error error = Error::getInstance();
+    SteerInfo s;
+    float minfovy = 55.0;
+    float maxfovy = 90;
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective((GLdouble) FOVY, (GLdouble) wres / (GLdouble) hres, zNear, zFar);
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     switch (mode) {
@@ -82,6 +90,17 @@ void Camera::setProjectionMatrix()
 	    pos = (agent->kinematic.pos - (5 * agent->kinematic.orientation_v) + Vec3f(0.0f, 3.0f, 0.0f));
 	    up = Vec3f(0.0f, 1.0f, 0.0f);
 	    target = (agent->kinematic.pos + (5 * agent->kinematic.orientation_v));
+            s = agent->getSteering();
+            if (s.acceleration > 0)
+                FOVY += FOVY <= maxfovy ? .25 : 0;
+            else
+                FOVY -= FOVY >= minfovy ? .25 : 0;
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            gluPerspective((GLdouble) FOVY, (GLdouble) wres / (GLdouble) hres, zNear, zFar);
+
+            glMatrixMode(GL_MODELVIEW);
+
 	    break;
 	case BIRDSEYE:
 	    if (agent == NULL) {
@@ -96,8 +115,5 @@ void Camera::setProjectionMatrix()
 	    break;
     }
     gluLookAt(pos[0], pos[1], pos[2], target[0], target[1], target[2], up[0], up[1], up[2]);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective((GLdouble) FOVY, (GLdouble) wres / (GLdouble) hres, zNear, zFar);
     return;
 }
