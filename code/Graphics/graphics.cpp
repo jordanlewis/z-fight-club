@@ -186,6 +186,7 @@ void Graphics::render(AIController *aiController)
 	exit(0);
     }
 
+    glColor3f(0,1,0);
     render(aiController->path.knots);
 }
 
