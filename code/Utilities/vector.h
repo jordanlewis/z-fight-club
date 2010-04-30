@@ -32,6 +32,7 @@ typedef struct {
     Vec3f_t    orig;            //!< the origin of the ray
     Vec3f_t    dir;            //!< the direction of the ray, which should be
                     //!< a unit vector
+    float len; //The length of the ray.
 } Rayf_t;
 
 /*! \brief a plane */
@@ -472,5 +473,4 @@ static inline void RandVec (Vec3f_t v)
     v[2] = 2.0 * ranf() - 1.0;
     } while (LengthSqV3f(v) < EPSILON);
 }
-
 #endif /* !_VECTOR_H_ */

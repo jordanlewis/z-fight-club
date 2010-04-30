@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <vector>
+#include <deque>
+#include "Utilities/vector.h"
 
 class Vec3f {
     /*! \brief Checks if the vector is very small, and, if so, sets it to 0
@@ -17,6 +19,7 @@ class Vec3f {
     // --------- Constructors --------- 
     Vec3f();
     Vec3f(float, float, float);
+    Vec3f(const Vec3f_t&);
     ~Vec3f();
 
     // --------- Addition --------- 
@@ -108,14 +111,23 @@ class Vec3f {
 //         This allows for the more traditional notation s * v
 Vec3f operator*(const float&, const Vec3f&);
 
+// --------- Interpolation ---------
+//! \brief interpolate linearly between 2 vectors
+Vec3f lerp(const Vec3f&, const Vec3f&, const float&);
+//! \brief interpolate spherical between 2 vectors
+Vec3f slerp(const Vec3f&, const Vec3f&, const float&);
+
 // --------- Stream Output --------- 
 //! \brief Writes this vector to the given output stream.
 //         This will allow us to debug with cout << Vec3f
 std::ostream &operator<<(std::ostream&, const Vec3f&);
 
 // ---------- Vertex Array ---------
-// ! \brief Create an array of floats usable by opengl
-// 	out of an array of floats
+//! \brief Create an array of floats usable by opengl
+// 	out of an array of Vec3fs
 float *makeArray(const std::vector<Vec3f>);
 
+//! \brief create an array of floats usable by opengle
+//	out of a deque of Vec3fs
+float *makeArray(std::deque<Vec3f>);
 #endif

@@ -21,6 +21,7 @@ void testSetup()
     Agent *agent = new Agent(pos, M_PI);
 
     world.addAgent(*agent);
+    world.camera = Camera(THIRDPERSON,agent);
 
     /* Instantiate a playercontroller to handle input -> steering conversion for
      * this agent */

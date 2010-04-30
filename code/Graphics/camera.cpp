@@ -130,3 +130,14 @@ void Camera::setProjectionMatrix()
     gluLookAt(newpos[0], newpos[1], newpos[2], target[0], target[1], target[2], up[0], up[1], up[2]);
     return;
 }
+
+
+const Vec3f &Camera::getTarget()
+{
+    return target;
+}
+
+const Vec3f &Camera::getPos()
+{
+    return pos;
+}
