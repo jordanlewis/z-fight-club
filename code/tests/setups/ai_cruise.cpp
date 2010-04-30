@@ -20,6 +20,7 @@ void testSetup()
     Agent *agent = new Agent(pos, M_PI / 2);
 
     world.addAgent(*agent);
+    world.camera = Camera(BIRDSEYE, agent);
 
     AIManager &ai = AIManager::getInstance();
     ai.control(*agent);

@@ -116,7 +116,7 @@ void Camera::setProjectionMatrix()
 		error.log(GRAPHICS, CRITICAL, "Agent in camera not set, but agent specific mode selected\n");
 		exit(0);
 	    }
-	    pos = agent->kinematic.pos + Vec3f(0.0f, 10.0f, 0.0f);
+	    pos = agent->kinematic.pos + Vec3f(0.0f, 60.0f, 0.0f);
 	    up = smooth_orientation;
 	    up.y = 0.0f;
 	    up.normalize();

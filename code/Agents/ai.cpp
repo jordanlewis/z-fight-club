@@ -124,22 +124,28 @@ void AIController::lane(int laneIndex)
 
     Lane_t lane = world.track->lanes[laneIndex];
     for (i = 0; i < lane.nSegs; i++) {
-	path.knots.push_back(Vec3f(world.track->verts[lane.segs[i].start]));
-	path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
-	if (lane.segs[i].kind == ARC_SEGMENT) {
-	    for (j = 0; j < ARC_RESOLUTION; j++) {
-		path.knots.push_back(slerp(	Vec3f(world.track->verts[lane.segs[i].start]) - Vec3f(world.track->verts[lane.segs[i].center]), 
-			    			Vec3f(world.track->verts[lane.segs[i].end]) - Vec3f(world.track->verts[lane.segs[i].center]), 
-						(float) j / (float) ARC_RESOLUTION) 
-					+ Vec3f(world.track->verts[lane.segs[i].center]));
-		path.precision.push_back(DEFAULT_PRECISION); /* XXX */
-	    }
-	}
-	/* if we're on the last segment we need to put the end vertex on too */
-	if (i == (lane.nSegs - 1)) {
-	    path.knots.push_back(Vec3f(world.track->verts[lane.segs[i].end]));
-	    path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
-	}
+        path.knots.push_back(Vec3f(world.track->verts[lane.segs[i].start]));
+        path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
+        if (lane.segs[i].kind == ARC_SEGMENT) {
+            for (j = 0; j < ARC_RESOLUTION; j++) {
+                Vec3f center = Vec3f(world.track->verts[lane.segs[i].center]);
+                Vec3f start =  Vec3f(world.track->verts[lane.segs[i].start]);
+                Vec3f end =  Vec3f(world.track->verts[lane.segs[i].end]);
+                // this way the theta should be != 180
+                center.z -= 5;
+                path.knots.push_back(
+                  slerp(start - center,
+                        end - center,
+                        (float) j / (float) ARC_RESOLUTION) +
+                  center);
+                path.precision.push_back(DEFAULT_PRECISION); /* XXX */
+            }
+        }
+        /* if we're on the last segment we need to put the end vertex on too */
+        if (i == (lane.nSegs - 1)) {
+            path.knots.push_back(Vec3f(world.track->verts[lane.segs[i].end]));
+            path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
+        }
     }
 }
 
