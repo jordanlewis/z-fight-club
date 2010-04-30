@@ -1,8 +1,9 @@
 #include "vec3f.h"
 #include <cmath>
 #include <vector>
+#include <deque>
 
-#define EPSILON 2e-6
+//#define EPSILON 2e-6 this gets defined in vector.h now
 
 // --------- Constructors --------- 
 
@@ -29,6 +30,20 @@ Vec3f::Vec3f(float x, float y, float z)
     else this->z = z;
 
     //cout << " -:: " << this->x << " " << this->y << " " << this->z << endl;
+}
+
+Vec3f::Vec3f(const Vec3f_t &v)
+{
+     //cout << " -:  " << x << " " << y << " " << z << endl;
+
+    if(abs(v[0]) < EPSILON) this->x = 0;
+    else this->x = v[0];
+
+    if(abs(v[1]) < EPSILON) this->y = 0;
+    else this->y = v[1];
+    
+    if(abs(v[2]) < EPSILON) this->z = 0;
+    else this->z = v[2];
 }
 
 // flattens small vectors to avoid floating point errors
@@ -237,6 +252,18 @@ Vec3f Vec3f::perp(const Vec3f &v) const
     return p;
 }
 
+// --------- Interpolation ---------
+
+Vec3f lerp(const Vec3f &v0, const Vec3f &v1, const float &t) {
+    return t * v1 + (1 - t) * v0;
+}
+
+Vec3f slerp(const Vec3f &v0, const Vec3f &v1, const float &t) {
+    Vec3f temp1 = v0.unit(), temp2 = v1.unit();
+    float theta = acos(temp1.dot(temp2));
+    return (sin((1.0f - t) * theta) / sin(theta)) * v0 + (sin(t * theta) / sin(theta)) * v1;
+}
+
 // --------- Stream Output --------- 
 
 std::ostream &operator<<(std::ostream &os, const Vec3f &o)
@@ -261,6 +288,19 @@ float *makeArray(const std::vector<Vec3f> array)
     for (i = 0; i < array.size(); i++)
 	for (j = 0; j < 3; j++)
 	    verts[i*3 + j] = array[i][j];
+
+    return verts;
+}
+
+float *makeArray(std::deque<Vec3f> array)
+{
+    int j;
+
+    float *verts = new float[3 * array.size()];
+
+    for(deque<Vec3f>::iterator i = array.begin(); i != array.end(); i++)
+	for (j = 0; j < 3; j++)
+	    verts[distance(array.begin(), i) * 3 + j] = (*i)[j];
 
     return verts;
 }

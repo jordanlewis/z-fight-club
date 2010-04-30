@@ -2,6 +2,8 @@
 #include "Engine/world.h"
 #include "Physics/physics.h"
 #include "Utilities/vector.h"
+#include "Utilities/error.h"
+#include "Agents/ai.h"
 #include <SDL/SDL.h>
 
 extern "C" {
@@ -87,6 +89,12 @@ void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
 
 void Graphics::render()
 {
+    if (!initialized) {
+	Error error = Error::getInstance();
+	error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+	exit(0);
+    }
+
     World *world = &World::getInstance();
 
     GLfloat light_position[]={ 10.0, 10.0, -10.0, 1.0 };
@@ -131,9 +139,16 @@ void Graphics::render()
 
     render(world->track);
 
-    for(vector<Agent*>::iterator i = world->agents.begin();i != world->agents.end();i++) {
+    for(vector<Agent*>::iterator i = world->agents.begin(); i != world->agents.end(); i++) {
 	    render(*i);
     }
+
+    AIManager &aiManager = AIManager::getInstance();
+
+    for (vector<AIController *>::iterator i = aiManager.controllers.begin(); i != aiManager.controllers.end(); i++) {
+	render(*i);
+    }
+    
     DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(2.0f, 0.0f, 0.0f));
     DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(0.0f, 2.0f, 0.0f));
     DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(0.0f, 0.0f, 2.0f));
@@ -142,8 +157,11 @@ void Graphics::render()
 
 void Graphics::render(Agent * agent)
 {
-    if (!initialized)
-	; /* error */
+    if (!initialized) {
+	Error error = Error::getInstance();
+	error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+	exit(0);
+    }
 
     agent->trail.push_back(agent->kinematic.pos);
 
@@ -160,10 +178,25 @@ void Graphics::render(Agent * agent)
     render(agent->trail);
 }
 
+void Graphics::render(AIController *aiController)
+{
+    if (!initialized) {
+	Error error = Error::getInstance();
+	error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+	exit(0);
+    }
+
+    render(aiController->path.knots);
+}
+
 void Graphics::render(TrackData_t *track)
 {
-    if (!initialized)
-	; /* error */
+    if (!initialized) {
+	Error error = Error::getInstance();
+	error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+	exit(0);
+    }
+
     if (track) {
 	int i, j;
 	/* load in the vertices */
@@ -222,8 +255,40 @@ void Graphics::render(TrackData_t *track)
 
 void Graphics::render(std::vector<Vec3f> path)
 {
+    if (!initialized) {
+	Error error = Error::getInstance();
+	error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+	exit(0);
+    }
+
     unsigned int i;
 
+    float *rawVerts = makeArray(path);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, rawVerts);
+
+    uint16_t *lineIndices = new uint16_t[path.size()];
+    for (i = 0; i < path.size(); i++)
+	lineIndices[i] = i;
+
+    glDrawElements(GL_LINE_STRIP, path.size(), GL_UNSIGNED_SHORT, lineIndices);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+
+    delete []rawVerts;
+}
+
+void Graphics::render(std::deque<Vec3f> path)
+{
+    if (!initialized) {
+	Error error = Error::getInstance();
+	error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+	exit(0);
+    }
+
+    unsigned int i;
+    
     float *rawVerts = makeArray(path);
 
     glEnableClientState(GL_VERTEX_ARRAY);

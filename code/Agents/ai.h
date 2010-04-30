@@ -2,7 +2,7 @@
 #define AI_H
 
 #include <vector>
-#include <queue>
+#include <deque>
 #include "Utilities/vec3f.h"
 #include "agent.h"
 
@@ -13,13 +13,14 @@ class Path
 {
   public:
     int			    	index;		/* !< the first knot we haven't passed */
-    std::queue<Vec3f> 		knots;		/* !< knots defining the path */
-    std::queue<float>	    	precision;	/* !< how closely we want to follow the knots */
+    std::deque<Vec3f> 		knots;		/* !< knots defining the path */
+    std::deque<float>	    	precision;	/* !< how closely we want to follow the knots */
     Path ();
     Path (std::vector<Vec3f>);
     ~Path();
 
     Path *PathToPath(Vec3f position, float urgency);
+    void clear();
 };
 
 class AIController

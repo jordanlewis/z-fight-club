@@ -2,9 +2,11 @@
 #define GRAPHICS_H
 #include "../Engine/world.h"
 #include "../Agents/agent.h"
+#include "../Agents/ai.h"
 #include "../Utilities/vec3f.h"
 #include "color.h"
 #include <vector>
+#include <deque>
 extern "C" {
 #include "Parser/track-parser.h"
 }
@@ -34,7 +36,9 @@ class Graphics
     void render();	
     void render(Agent * agent);
     void render(TrackData_t *track);
+    void render(AIController *);
     void renderBoxPGeoms();
+    void render(std::deque<Vec3f>);
     void render(std::vector<Vec3f>);
     int sphere(Vec3f, float, Color);
 

@@ -8,12 +8,21 @@
 #include "agent.h"
 #include "Engine/world.h"
 #include "Utilities/error.h"
+#include "Parser/track-parser.h"
+
+#define ARC_RESOLUTION 20
 
 Path::Path() {}
 
 AIManager AIManager::_instance;
 
 Path::~Path() {}
+
+void Path::clear()
+{
+    knots.clear();
+    precision.clear();
+}
 
 void AIController::seek(const Vec3f target)
 {
@@ -81,13 +90,36 @@ AIController::AIController(Agent& agent)
     this->agent = &agent;
 }
 
-void AIController::lane(int lane)
+void AIController::lane(int laneIndex)
 {
+    int i, j;
     Error error = Error::getInstance();
     World &world = World::getInstance();
-    if (lane >= world.track->nLanes) {
+
+    /* check if this is a valid lane */
+    if (laneIndex >= world.track->nLanes) {
 	error.log(AI, IMPORTANT, "AI: asked to join a lane index out of range\n");
 	return;
+    }
+
+    /* we're going to specify an entirely new path */
+    path.clear();
+
+    Lane_t lane = world.track->lanes[laneIndex];
+    for (i = 0; i < lane.nSegs; i++) {
+	path.knots.push_back(Vec3f(world.track->verts[lane.segs[i].start]));
+	path.precision.push_back(0.5f); /* XXX doing a default value for now */
+	if (lane.segs[i].kind == ARC_SEGMENT) {
+	    for (j = 0; j < ARC_RESOLUTION; j++) {
+		path.knots.push_back(slerp(Vec3f(world.track->verts[lane.segs[i].start]), Vec3f(world.track->verts[lane.segs[i].end]), (float) j / (float) ARC_RESOLUTION));
+		path.precision.push_back(0.5f); /* XXX */
+	    }
+	}
+	/* if we're on the last segment we need to put the end vertex on too */
+	if (i == (lane.nSegs - 1)) {
+	    path.knots.push_back(Vec3f(world.track->verts[lane.segs[i].end]));
+	    path.precision.push_back(0.5f); /* XXX doing a default value for now */
+	}
     }
 }
 
@@ -95,8 +127,8 @@ void AIController::cruise()
 {
     SteerInfo steerInfo;
     if ((path.knots.back() - agent->kinematic.pos).length() < path.precision.back()) {
-	path.knots.pop();
-	path.precision.pop();
+	path.knots.pop_front();
+	path.precision.pop_front();
     }
 
     seek(path.knots.front());

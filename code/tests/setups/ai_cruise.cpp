@@ -13,7 +13,10 @@ void testSetup()
     Physics &physics  = Physics::getInstance();
     Input &input = Input::getInstance();
 
-    Vec3f pos = Vec3f(0, 0, 0);
+    PlaneInfo info = PlaneInfo(0, 1, 0, 0);
+    new PGeom(&info, physics.getOdeSpace());
+
+    Vec3f pos = Vec3f(44, 2, 6);
     Agent *agent = new Agent(pos, M_PI / 2);
 
     world.addAgent(*agent);
@@ -21,6 +24,5 @@ void testSetup()
     AIManager &ai = AIManager::getInstance();
     ai.control(*agent);
 
-    ai.controllers[0]->path.knots.push(Vec3f(100, 100, 100));
-    ai.controllers[0]->path.precision.push(0.5f);
+    ai.controllers[0]->lane(0);
 }
