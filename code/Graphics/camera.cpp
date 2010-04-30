@@ -61,6 +61,7 @@ void Camera::setProjectionMatrix()
     SteerInfo s;
     float minfovy = 55.0;
     float maxfovy = 90;
+    Vec3f dolly;
 
     if (agent != NULL)
         smooth_orientation = .9 * smooth_orientation + .1 * agent->kinematic.orientation_v;
@@ -104,6 +105,10 @@ void Camera::setProjectionMatrix()
             gluPerspective((GLdouble) FOVY, (GLdouble) wres / (GLdouble) hres, zNear, zFar);
 
             glMatrixMode(GL_MODELVIEW);
+
+        dolly = (pos - agent->kinematic.pos);
+        dolly = ( (dolly.length() * tan(toRads(minfovy/2)))/tan(toRads(FOVY/2)) ) * dolly.unit();
+        pos = agent->kinematic.pos + dolly;
 
 	    break;
 	case BIRDSEYE:

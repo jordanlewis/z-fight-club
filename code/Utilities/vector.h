@@ -44,6 +44,12 @@ typedef struct {
 
 /***** Scalar functions *****/
 
+//! \brief convert degrees to radians
+static inline float toRads(const float x) { return ((x*M_PI)/180); }
+
+//! \brief convert radians to degrees
+static inline float toDegs(const float x) { return ((x*180)/M_PI); }
+
 //! \brief Square a number
 static inline float Sqrf (const float x) { return (x*x); }
 
