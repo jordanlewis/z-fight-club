@@ -65,6 +65,7 @@ void Camera::setProjectionMatrix()
     float oldfovy;
     bool setNew = false;
     Vec3f newpos;
+    Vec3f d;
 
     if (agent != NULL)
         smooth_orientation = .9 * smooth_orientation + .1 * agent->kinematic.orientation_v;
@@ -101,11 +102,17 @@ void Camera::setProjectionMatrix()
             s = agent->getSteering();
             oldfovy = FOVY;
             if (s.acceleration > 0)
-                FOVY += FOVY <= maxfovy ? .25 : 0;
+                FOVY += (FOVY <= maxfovy ? .25 : 0);
             else
-                FOVY -= FOVY >= minfovy ? .25 : 0;
+                FOVY -= (FOVY >= minfovy ? .25 : 0);
+                
             setNew = true;
-            newpos = agent->kinematic.pos - (((5 * smooth_orientation) * tan(M_PI * oldfovy/360) / tan(M_PI * FOVY/360) ) )  + Vec3f(0,3,0);
+            //newpos = agent->kinematic.pos - (((5 * smooth_orientation) * tan(M_PI * oldfovy/360) / tan(M_PI * FOVY/360) ) )  + Vec3f(0,3,0);
+
+            d = (pos - agent->kinematic.pos);
+            d = ( (d.length() * tan(toRads(minfovy)/2))/tan(toRads(FOVY)/2) ) * d.unit();
+            newpos = (agent->kinematic.pos + d);
+
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
             gluPerspective((GLdouble) FOVY, (GLdouble) wres / (GLdouble) hres, zNear, zFar);

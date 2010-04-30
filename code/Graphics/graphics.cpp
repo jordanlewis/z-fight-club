@@ -119,6 +119,8 @@ void Graphics::render()
     glClearColor(.2f, .2, .8f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    //DrawCube(world->camera.getTarget());
+
     glDisable(GL_LIGHTING);
 
     // A floor is useful, but this should be cleaned up soon

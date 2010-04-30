@@ -5,7 +5,7 @@ include Makefile.inc
 # testSetup() that's defined in Engine/setup.h. To use your own setup file
 # instead of the default, simply edit the .gitignore'd file Makefile.testsetup
 # and define a new SETUPNAME.
-SETUPNAME = default.cpp
+SETUPNAME = aioval.cpp
 SETUPMAKEF = Makefile.testsetup
 
 -include $(SETUPMAKEF)
