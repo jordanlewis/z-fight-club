@@ -16,7 +16,7 @@ void testSetup()
     PlaneInfo info = PlaneInfo(0, 1, 0, 0);
     new PGeom(&info, physics.getOdeSpace());
 
-    Vec3f pos = Vec3f(25, 2, 5);
+    Vec3f pos = Vec3f(25, 2, 7.5);
     Agent *agent = new Agent(pos, M_PI / 2);
 
     world.addAgent(*agent);
@@ -25,5 +25,5 @@ void testSetup()
     AIManager &ai = AIManager::getInstance();
     ai.control(*agent);
 
-    ai.controllers[0]->lane(0);
+    ai.controllers[0]->lane(1);
 }
