@@ -12,6 +12,7 @@ using namespace std;
 typedef enum {
     NONE = 0,
     SMACK,
+    RAYGUN,
     NWEAPONS
 } Weapon_t;
 

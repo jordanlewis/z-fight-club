@@ -13,7 +13,12 @@ World World::_instance;
 
 WorldObject::WorldObject(PGeom *pobject, GObject *gobject, Agent *agent)
                         : pobject(pobject), gobject(gobject), agent(agent)
-{}
+{
+    if (pobject != NULL)
+	{
+	    pobject->worldObject = this;
+	}
+}
 
 Vec3f WorldObject::getPos()
 {
