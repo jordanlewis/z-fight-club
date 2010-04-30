@@ -12,6 +12,7 @@
 #include "pobject.h"
 #include "pweapon.h"
 #include "constants.h"
+#include "collision.h"
 
 class PGeom;
 class PMoveable;

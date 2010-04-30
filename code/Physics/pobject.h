@@ -3,6 +3,7 @@
 
 #include "physics.h"
 #include "Engine/geominfo.h"
+#include "Engine/world.h"
 #include "Utilities/quat.h"
 #include <ode/ode.h>
 #include <iostream>
@@ -10,14 +11,12 @@
 using namespace std;
 
 class Physics;
-
+class WorldObject;
 //How our objects will interact with the collision simulation
 
 typedef enum {
     REAL = 0, //Acts and collides as you would expect an object to act
-    CAMERA /* Collision with camera obj only changes another object's alpha.
-            * In particular, no change in position occurs.  This is the
-            * behavior corresponding to the "cameraman" behind a player. */
+    PHANTOM // Phantom objects do not affect the physics simulation
 } CollType_t;
 
 /* Stores geometry info for use in ODE collision calculations
@@ -32,6 +31,7 @@ class PGeom
     float bounce;
     float mu1, mu2;
     CollType_t collType;
+    WorldObject *worldObject;
 
     Vec3f getPos();
     void setPos(Vec3f position);
