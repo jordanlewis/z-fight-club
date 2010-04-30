@@ -132,7 +132,7 @@ void AIController::lane(int laneIndex)
                 Vec3f start =  Vec3f(world.track->verts[lane.segs[i].start]);
                 Vec3f end =  Vec3f(world.track->verts[lane.segs[i].end]);
                 // this way the theta should be != 180
-                center.z -= 5;
+                center.x += lane.segs[i].end > lane.segs[i].start ? -.01 : .01;
                 path.knots.push_back(
                   slerp(start - center,
                         end - center,
