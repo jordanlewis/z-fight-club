@@ -127,12 +127,13 @@ void AIController::lane(int laneIndex)
         path.knots.push_back(Vec3f(world.track->verts[lane.segs[i].start]));
         path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
         if (lane.segs[i].kind == ARC_SEGMENT) {
-            for (j = 0; j < ARC_RESOLUTION; j++) {
-                Vec3f center = Vec3f(world.track->verts[lane.segs[i].center]);
-                Vec3f start =  Vec3f(world.track->verts[lane.segs[i].start]);
-                Vec3f end =  Vec3f(world.track->verts[lane.segs[i].end]);
-                // this way the theta should be != 180
-                center.x += lane.segs[i].end > lane.segs[i].start ? -.01 : .01;
+	    Vec3f center = Vec3f(world.track->verts[lane.segs[i].center]);
+	    Vec3f start =  Vec3f(world.track->verts[lane.segs[i].start]);
+	    Vec3f end =  Vec3f(world.track->verts[lane.segs[i].end]);
+	    // this way the theta should be != 180
+	    center.x += lane.segs[i].end > lane.segs[i].start ? -.01 : .01;
+
+            for (j = 1; j < ARC_RESOLUTION; j++) {
                 path.knots.push_back(
                   slerp(start - center,
                         end - center,
