@@ -55,6 +55,15 @@ void Camera::setTarget(Vec3f target)
 {
     return;
 }
+
+void Camera::cycleView()
+{
+    if (mode < nModes - 1)
+        mode = static_cast<CameraMode_t>(static_cast<int>(mode) + 1);
+    else
+        mode = static_cast<CameraMode_t>(0);
+}
+
 void Camera::setProjectionMatrix()
 {
     Error error = Error::getInstance();
@@ -142,6 +151,7 @@ void Camera::setProjectionMatrix()
 	    up.normalize();
 	    target = agent->kinematic.pos;
 	    break;
+        default: break;
     }
     gluLookAt(pos[0], pos[1], pos[2], target[0], target[1], target[2], up[0], up[1], up[2]);
     return;

@@ -1,6 +1,7 @@
 #include <SDL/SDL.h>
 #include "input.h"
 #include "Agents/player.h"
+#include "Engine/world.h"
 
 Input Input::_instance;
 
@@ -28,6 +29,8 @@ int Input::processInput()
 			player->setWeaponState(CHANGE); break;
 		    case SDLK_f:
 			player->setWeaponState(FIRE); break;
+                    case SDLK_c:
+                        World::getInstance().camera.cycleView(); break;
                     default: break;
                 } break;
             case SDL_KEYUP:
