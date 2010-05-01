@@ -6,7 +6,7 @@
 //Agent default values
 #define AG_DEFAULT_MASS 100
 #define AG_DEFAULT_POWER 10000
-#define AG_DEFAULT_MAX_ROTATE 2
+#define AG_DEFAULT_MAX_ROTATE 1
 #define AG_DEFAULT_HEIGHT 1
 #define AG_DEFAULT_WIDTH 1
 #define AG_DEFAULT_DEPTH 1
