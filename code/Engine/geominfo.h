@@ -2,6 +2,7 @@
 #define GEOMINFO_H
 
 #include <ode/ode.h>
+#include "Parser/objLoader.h"
 
 /* Stores info common to all geoms.  Cannot be constructed directly -- must be
    constructed by a child class */
@@ -65,5 +66,15 @@ class TriMeshInfo : public GeomInfo
 );
     dGeomID createGeom(dSpaceID space);
 };
+
+class ObjMeshInfo : public GeomInfo
+{
+    public:
+	objLoader obj; /* contains the data as well as loading it */
+	void load(char *filename);
+	dGeomID createGeom(dSpaceID space);
+	void createMass(dMass *, float);
+	void draw();
+}
 
 #endif

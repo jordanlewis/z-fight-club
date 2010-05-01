@@ -38,3 +38,8 @@ void BoxInfo::createMass(dMass * mass, float massVal)
 {
     dMassSetBoxTotal(mass, massVal, lx, ly, lz);
 }
+
+void ObjMeshInfo::load(char *filename)
+{
+    obj.load(filename);
+}

@@ -8,6 +8,8 @@
 #define OBJ_LINE_SIZE 500
 #define MAX_VERTEX_COUNT 4 //can only handle quads or triangles
 
+using namespace Obj;
+
 typedef struct obj_face
 {
 	int vertex_index[MAX_VERTEX_COUNT];
@@ -87,19 +89,19 @@ typedef struct obj_growable_scene_data
 	char scene_filename[OBJ_FILENAME_LENGTH];
 	char material_filename[OBJ_FILENAME_LENGTH];
 	
-	list vertex_list;
-	list vertex_normal_list;
-	list vertex_texture_list;
+	Obj::list vertex_list;
+	Obj::list vertex_normal_list;
+	Obj::list vertex_texture_list;
 	
-	list face_list;
-	list sphere_list;
-	list plane_list;
+	Obj::list face_list;
+	Obj::list sphere_list;
+	Obj::list plane_list;
 	
-	list light_point_list;
-	list light_quad_list;
-	list light_disc_list;
+	Obj::list light_point_list;
+	Obj::list light_quad_list;
+	Obj::list light_disc_list;
 	
-	list material_list;
+	Obj::list material_list;
 	
 	obj_camera *camera;
 } obj_growable_scene_data;
