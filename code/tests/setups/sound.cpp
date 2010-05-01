@@ -30,7 +30,7 @@ void testSetup()
     // Sound::register_source(...);
     world.camera = Camera(THIRDPERSON,agent);
     /* The microphones will get their location, orientation, and velocity from the camera */
-    sound.update_listener(world.camera);
+    sound.update_listener((const Camera &) world.camera);
 
     /* Instantiate a playercontroller to handle input -> steering conversion for
      * this agent */

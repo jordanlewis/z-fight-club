@@ -158,12 +158,22 @@ void Camera::setProjectionMatrix()
 }
 
 
-const Vec3f &Camera::getTarget()
+const Vec3f &Camera::getTarget() const
 {
     return target;
 }
 
-const Vec3f &Camera::getPos()
+const Vec3f &Camera::getPos() const
 {
     return pos;
+}
+
+const Vec3f &Camera::getUp() const
+{
+    return up;
+}
+
+const Agent *Camera::getAgent() const
+{
+    return agent;
 }

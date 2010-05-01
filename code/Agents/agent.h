@@ -54,6 +54,7 @@ class Agent
 
     void setKinematic (const Kinematic &kinematic); /* !< set agent's kinematic */
     Kinematic &getKinematic ();     /* !< get agent's kinematic */
+    const Kinematic &getKinematic () const;     /* !< get const agent's kinematic */
     void setSteering (const SteerInfo &); /* !< Change desired steering */
     SteerInfo &getSteering ();      /* !< Change desired steering */
 };

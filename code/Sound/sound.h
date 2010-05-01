@@ -15,6 +15,7 @@ class Sound
     static Sound _instance;
     string base_sound_directory;
     bool initialized;
+    // Error &error;
 
   public:
 
@@ -24,7 +25,7 @@ class Sound
 
     // used by Engine/racer.cpp
     // configures the base directory for sound assets, otherwise, cwd is assumed
-    void setDir(string);
+    void setDir(const string);
 
     // used by Engine/racer.cpp
     // does the stuff that should be done exactly once like open devices and load sound assets
@@ -37,7 +38,7 @@ class Sound
     void render();
 
     // when we switch camera (modes), switch listener, and periodically update since camera moves
-    void update_listener(Camera); // get from that the pos, up, target, agent->velocity
+    void update_listener(const Camera&); // get from that the pos, up, target, agent->velocity
 
     // used by tests/setups/sound.cpp
     // I made an object, attach this sound information to it

@@ -52,6 +52,13 @@ Kinematic &Agent::getKinematic ()
     return kinematic;
 }
 
+/* \brief get current kinematic for const agent
+ */
+const Kinematic &Agent::getKinematic () const
+{
+    return kinematic;
+}
+
 /* \brief set kinematic for agent
  * \param kinematic a Kinematic object with the desired new parameters
  */
