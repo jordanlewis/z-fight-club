@@ -1,8 +1,15 @@
 #include "sound.h"
 #include "../Utilities/error.h"
 #include <boost/lexical_cast.hpp>
-#include <al.h>
-#include <alc.h>
+
+#if defined(__APPLE__) && defined(__MACH__)
+#  include <OpenAL/al.h>
+#  include <OpenAL/alc.h>
+#else
+#  define GL_GLEXT_PROTOTYPES
+#  include <AL/gl.h>
+#  include <AL/alc.h>
+#endif
 
 Sound Sound::_instance;
 
