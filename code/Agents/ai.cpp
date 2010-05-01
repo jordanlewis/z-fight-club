@@ -11,7 +11,7 @@
 #include "Parser/track-parser.h"
 
 #define ARC_RESOLUTION 20
-#define DEFAULT_PRECISION 5.0f
+#define DEFAULT_PRECISION 7.0f
 
 Path::Path() {}
 
