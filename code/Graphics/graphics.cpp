@@ -222,6 +222,7 @@ void Graphics::render(TrackData_t *track)
         int len;
         float ang;
 
+        glLineWidth(4);
         glBegin(GL_LINES);
         for (i = 0; i < track->nLanes; i++)
         {
@@ -244,8 +245,6 @@ void Graphics::render(TrackData_t *track)
                         ang = seg->end > seg->start ? seg->angle : -seg->angle;
                         gluPartialDisk(quadobj, len-.05, len, 40, 5,
                                         0, ang);
-                        gluPartialDisk(quadobj, len-.05, len, 40, 5,
-                                    0, ang);
 
                         glPopMatrix();
                         glBegin(GL_LINES);
@@ -254,6 +253,7 @@ void Graphics::render(TrackData_t *track)
             }
         }
         glEnd();
+        glLineWidth(1);
         gluDeleteQuadric(quadobj);
 
     }
