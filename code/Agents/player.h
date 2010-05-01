@@ -2,6 +2,7 @@
 #define PLAYER_H
 
 #include "agent.h"
+#include <iostream>
 
 typedef enum {
     BRAKE = 0,

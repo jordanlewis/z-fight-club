@@ -42,6 +42,7 @@ void PlayerController::updateAgent()
     if (!agent)
         return;
     SteerInfo steerInfo;
+    steerInfo.weapon = agent->getSteering().weapon;
     switch (engineState) {
         case BRAKE:
         case NEUTRAL: steerInfo.acceleration = 0; break;
@@ -58,10 +59,15 @@ void PlayerController::updateAgent()
     switch (weaponState) {
         case FIRE: steerInfo.fire = 1; weaponState = HOLD; break;
         case HOLD: steerInfo.fire = 0; break;
-        case CHANGE: break; //NYI
+        case CHANGE: 
+	    steerInfo.weapon = (Weapon_t)((int)steerInfo.weapon + 1);
+	    if (steerInfo.weapon == NWEAPONS){
+		steerInfo.weapon = (Weapon_t)0;
+	    }
+	    weaponState = HOLD;
+	    break;
         default: break;
     }
-    steerInfo.weapon = RAYGUN; //Need to implement weapon selection
 
     agent->setSteering(steerInfo);
 }

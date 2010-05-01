@@ -24,6 +24,8 @@ int Input::processInput()
                         player->setEngineState(ACCELERATE); break;
                     case SDLK_DOWN:
                         player->setEngineState(REVERSE); break;
+		    case SDLK_TAB:
+			player->setWeaponState(CHANGE); break;
 		    case SDLK_f:
 			player->setWeaponState(FIRE); break;
                     default: break;
