@@ -115,8 +115,8 @@ void AIController::lane(int laneIndex)
 
     /* check if this is a valid lane */
     if (laneIndex >= world.track->nLanes) {
-	error.log(AI, IMPORTANT, "AI: asked to join a lane index out of range\n");
-	return;
+        error.log(AI, IMPORTANT, "AI: asked to join a lane index out of range\n");
+        return;
     }
 
     /* we're going to specify an entirely new path */
@@ -153,8 +153,10 @@ void AIController::cruise()
 {
     SteerInfo steerInfo;
     if ((path.knots.front() - agent->kinematic.pos).length() < path.precision.front()) {
-	path.knots.pop_front();
-	path.precision.pop_front();
+       path.knots.push_back(path.knots.front());
+       path.knots.pop_front();
+       path.precision.push_back(path.precision.front());
+       path.precision.pop_front();
     }
 
     seek(path.knots.front());
