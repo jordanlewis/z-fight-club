@@ -59,7 +59,7 @@ void raygun(unsigned int srcAgentID, int force){
 	    
 	    CollQuery query;
 	    rayCast(ray, query);
-	    for (list<CollContact>::iterator iter = query.contacts.begin();
+	    for (std::list<CollContact>::iterator iter = query.contacts.begin();
 		 iter != query.contacts.end();
 		 iter++){
 		//Force Push!

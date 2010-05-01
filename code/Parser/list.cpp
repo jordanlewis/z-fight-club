@@ -4,6 +4,11 @@
 #include <stdio.h>
 
 // internal helper functions
+
+using namespace Obj;
+
+namespace Obj {
+
 char list_is_full(list *listo)
 {
 	return(listo->item_count == listo->current_max_size);
@@ -14,12 +19,12 @@ void list_grow(list *old_listo)
 	int i;
 	list new_listo;
 	
-	list_make(&new_listo, old_listo->current_max_size*2, old_listo->growable++);
+	Obj::list_make(&new_listo, old_listo->current_max_size*2, old_listo->growable++);
 	
 	for(i=0; i<old_listo->current_max_size; i++)
-		list_add_item(&new_listo, old_listo->items[i] , old_listo->names[i]);
+		Obj::list_add_item(&new_listo, old_listo->items[i] , old_listo->names[i]);
 	
-	list_free(old_listo);
+	Obj::list_free(old_listo);
 	
 	//copy new structure to old list
 	old_listo->names = new_listo.names;
@@ -132,7 +137,7 @@ void list_delete_item(list *listo, void *item)
 	for(i=0; i < listo->item_count; i++)
 	{		
 		if( listo->items[i] == item )
-			list_delete_index(listo, i);
+			Obj::list_delete_index(listo, i);
 	}
 }
 
@@ -153,7 +158,7 @@ void list_delete_name(list *listo, char *name)
 		item_name = strlen(name);
 				
 		if( name != NULL && (strncmp(listo->names[i], name, strlen(name)) == 0) )
-			list_delete_index(listo, i);
+			Obj::list_delete_index(listo, i);
 	}
 }
 
@@ -182,14 +187,14 @@ void list_delete_all(list *listo)
 	int i;
 	
 	for(i=listo->item_count-1; i>=0; i--)
-		list_delete_index(listo, i);
+		Obj::list_delete_index(listo, i);
 }
 
 void list_free(list *listo)
 {
-	list_delete_all(listo);
-	free(listo->names);
-	free(listo->items);
+    Obj::list_delete_all(listo);
+    free(listo->names);
+    free(listo->items);
 }
 
 void list_print_list(list *listo)
@@ -202,4 +207,5 @@ void list_print_list(list *listo)
 	{
 		printf("list[%i]: %s\n", i, listo->names[i]);
 	}
+}
 }

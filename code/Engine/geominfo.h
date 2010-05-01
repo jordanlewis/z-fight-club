@@ -75,6 +75,6 @@ class ObjMeshInfo : public GeomInfo
 	dGeomID createGeom(dSpaceID space);
 	void createMass(dMass *, float);
 	void draw();
-}
+};
 
 #endif
