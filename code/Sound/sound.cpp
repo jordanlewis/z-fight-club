@@ -7,7 +7,7 @@
 #  include <OpenAL/alc.h>
 #else
 #  define GL_GLEXT_PROTOTYPES
-#  include <AL/gl.h>
+#  include <AL/al.h>
 #  include <AL/alc.h>
 #endif
 
