@@ -66,9 +66,9 @@ void Camera::setProjectionMatrix()
     float smoothness = .9;
 
     switch (mode) {
-        case FIRSTPERSON: smoothness = .9;
-        case THIRDPERSON: smoothness = .9;
-        case BIRDSEYE:    smoothness = .99;
+        case FIRSTPERSON: smoothness = 0; break;
+        case THIRDPERSON: smoothness = .9; break;
+        case BIRDSEYE:    smoothness = .99; break;
         default: break;
     }
     if (agent != NULL)
