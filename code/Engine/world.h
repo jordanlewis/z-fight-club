@@ -9,6 +9,7 @@
 #include "Graphics/gobject.h"
 #include "Graphics/camera.h"
 #include "Graphics/polygon.h"
+#include "Sound/sobject.h"
 #include "Parser/track-parser.h"
 
 class PGeom;
@@ -25,7 +26,7 @@ class WorldObject
   public:
     PGeom *pobject;
     GObject *gobject;
-    // SObject *sobject; // possible future SObject for sound properties
+    SObject *sobject;
     Agent *agent;
     WorldObject(PGeom * pobject, GObject * gobject, Agent * agent);
 

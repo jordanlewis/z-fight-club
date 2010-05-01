@@ -2,49 +2,8 @@
 #define SOUND_H
 
 #include "../Engine/world.h"
-#include <SDL/SDL.h>
-#include <SDL/SDL_audio.h>
+#include "../Graphics/camera.h"
 #include <string>
-#include <map>
-#include <queue>
-using namespace std;
-
-#define SM_VOICES 8
-
-// use strings to uniquely identify playable sounds that may have been loaded by the server
-// sound_handle uniquely identifies a sound instance in the queue, scheduled for play
-typedef int sound_handle;
-
-class sound_resource;
-// low level metadata needed to actually play the sound
-// eg. pointer to sound data in memory, sound format details
-
-typedef struct
-{
-        Sint16  *data;
-        int     length;
-        int     position;
-        int     l_vol;
-        int     r_vol;
-} SM_voice;
-
-class Sound;
-
-class playing_sound
-{
-  protected:
-    sound_handle id;
-    const sound_resource* s;
-    double start_time;
-    int repeat;
-  public:
-    bool operator<(const playing_sound &s) const;
-    playing_sound(const sound_resource* s, double start_time, int repeat);
-    friend class Sound;
-    friend ostream &operator<<(ostream&, const playing_sound&);
-  private:
-    static sound_handle next_handle;
-};
 
 class Sound
 {
@@ -53,49 +12,55 @@ class Sound
     ~Sound();
     Sound(const Sound&);
     Sound &operator=(const Sound &);
-    void load_sound(const string sound_name);
-    SM_voice myvoices[SM_VOICES];
-    static int cur_voice;  
     static Sound _instance;
-
-    bool initialized;    /* !<is SDL audio ready to go */
-    SDL_AudioSpec audiospec;
-    string dir; // "tests/sounds/";
+    string base_sound_directory;
+    bool initialized;
 
   public:
-    void initSound();
-    // needs directory to scan for sound files
-    // will probably preload all of them for simplicity
-    void setDir(const char *dir);
-    const sound_handle schedule_sound(const string sound_name, double start_time, Vec3f location);
-    // ignoring location information, playing equally loud in both channels.
-    // no support for looping, just schedule again if you want it again.
-    // no support for stopping a particular sound, or sound at all. too bad.
-    // if the sound you asked for isn't found, it just doesn't play.
 
-    void process_queue();
+    // used anywhere we need to interact with sound
+    // returns reference to the single instance of the Sound class
     static Sound &getInstance();
-    void mixer(Uint8 *stream, int len);
-    void play(const playing_sound ps);
 
-  private:
-    // map<Key, Data, Compare, Alloc>
-    map<const string, const sound_resource*> sound_library; // load_sound adds items here
+    // used by Engine/racer.cpp
+    // configures the base directory for sound assets, otherwise, cwd is assumed
+    void setDir(string);
 
-    // priority_queue<T, Sequence, Compare>
-    priority_queue<playing_sound> sound_queue; // play and loop add here
-                                               // stop and stopall remove items
-                                               // pause and pause all do... different things
+    // used by Engine/racer.cpp
+    // does the stuff that should be done exactly once like open devices and load sound assets
+    void initSound();
 
-/* Not sure what of this, if any, I will keep    
+    // used by Engine/scheduler.cpp
+    // do some stuff whenever we get a chance
+    // eg. (re)fill buffers, clear things that are done
+    // (sometimes?) update listener and source locations, velocities, etc.
+    void render();
 
-    sound_handle loop(const string, double start_time, int repeat);
-    int stop(sound_handle);
-    int stopall();
-    int pause(sound_handle);
-    int pauseall();
-*/
+    // when we switch camera (modes), switch listener, and periodically update since camera moves
+    void update_listener(Camera); // get from that the pos, up, target, agent->velocity
+
+    // used by tests/setups/sound.cpp
+    // I made an object, attach this sound information to it
+    static void register_source(WorldObject*, SObject*);
 
 };
+
+// sounds come from various sources:
+// 1) an agent moving around the track
+// 2) a fixed object (singing rock)
+// 3) an interaction between two objects (car hits wall)
+// 4) metatron (voices in my head, pre-mixed in stereo)
+
+// When a WorldObject is created, it can have a SObject associated with it
+// the SObject will start by just having a looping sound, always playing
+// with a particular gain.
+
+// When an interaction happens... physics should add a new world object
+// with sound, maybe graphics, a velocity. for instance, skidding might
+// match the car, but leave trails, a collision will stay at the point
+// of impact, and include some pretty explosions
+
+// When metatron has something to say, Sound will take care of it
+// directly, without a location or velocity or WorldObject
 
 #endif

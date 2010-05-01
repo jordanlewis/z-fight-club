@@ -60,7 +60,7 @@ void Scheduler::loopForever()
 
         ai.run();
         graphics->render();
-        sound->process_queue();
+        sound->render();
 	ai.run();
 
         usleep(10000);

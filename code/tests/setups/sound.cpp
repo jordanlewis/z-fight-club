@@ -5,42 +5,36 @@
 #include "Engine/world.h"
 #include "Sound/sound.h"
 #include "Utilities/vec3f.h"
-#include "Utilities/defs.h"
+#include "Utilities/error.h"
 
 void testSetup()
 {
-    World &world     = World::getInstance();
-    Physics &physics = Physics::getInstance();
-    Sound &sound     = Sound::getInstance();
-    Input &input     = Input::getInstance();
+    Error &error = Error::getInstance();
+    error.on(SOUND);
 
-    PlaneInfo info = PlaneInfo(0, 1, 0, 0, 0, 0, 0, physics.getOdeSpace());
-    new PGeom(&info);
+    World &world = World::getInstance();
+    Physics &physics  = Physics::getInstance();
+    Sound &sound = Sound::getInstance();
+    Input &input = Input::getInstance();
 
-    Vec3f pos = Vec3f(82, 5, 28);
-    Agent *agent = new Agent(pos, M_PI / 2);
+
+    PlaneInfo info = PlaneInfo(0, 1, 0, 0);
+    new PGeom(&info, physics.getOdeSpace());
+
+    Vec3f pos = Vec3f(85, 5, 20);
+    Agent *agent = new Agent(pos, M_PI);
 
     world.addAgent(*agent);
+    /* Agents will become world objects, right?
+     * then we'll someone give them useful SObject components */
+    // Sound::register_source(...);
+    world.camera = Camera(THIRDPERSON,agent);
+    /* The microphones will get their location, orientation, and velocity from the camera */
+    sound.update_listener(world.camera);
 
     /* Instantiate a playercontroller to handle input -> steering conversion for
      * this agent */
     PlayerController *p = new PlayerController(*agent);
     /* Tell input to send input to that playerController */
     input.controlPlayer(*p);
-
-    double now = GetTime();
-    double start = now+1;
-    for (int b = 0; b < 33; b++) // for sixteen beats
-    {
-        double t = b/4.0; // where each beat is a quarter of a second
-        if ((b%4) == 0)
-            sound.schedule_sound("808-bassdrum.wav", start+t, Vec3f(0,0,0));
-        if ((b%4) == 2)
-            sound.schedule_sound("808-hihat.wav", start+t, Vec3f(0,0,0));
-        if ((b%8) == 4)
-            sound.schedule_sound("808-clap.wav", start+t, Vec3f(0,0,0));
-        if ((b%8) == 0 || (b%8) == 7)
-            sound.schedule_sound("808-cowbell.wav", start+t, Vec3f(0,0,0));
-    }
-
 }
