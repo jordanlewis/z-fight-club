@@ -63,8 +63,17 @@ void Camera::setProjectionMatrix()
     float maxfovy = 90;
     Vec3f dolly;
 
+    float smoothness = .9;
+
+    switch (mode) {
+        case FIRSTPERSON: smoothness = .9;
+        case THIRDPERSON: smoothness = .9;
+        case BIRDSEYE:    smoothness = .99;
+        default: break;
+    }
     if (agent != NULL)
-        smooth_orientation = .9 * smooth_orientation + .1 * agent->kinematic.orientation_v;
+        smooth_orientation = smoothness * smooth_orientation +
+                             (1 - smoothness) * agent->kinematic.orientation_v;
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
