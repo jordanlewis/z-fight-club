@@ -88,6 +88,10 @@ void PMoveable::kinematicToOde()
     dQuaternion q;
 
     dBodySetPosition(body, k->pos[0], k->pos[1], k->pos[2]);
+    Vec3f newvel = Vec3f(k->vel[0], 0, k->vel[2]);
+    newvel = .995 * k->vel + .005 * k->orientation_v * k->vel.length();
+    newvel[1] = k->vel[1];
+    dBodySetLinearVel(body, newvel[0], newvel[1], newvel[2]);
     // get orientation as angle around y axis; give that quat to the body
     dQFromAxisAndAngle(q, 0, 1, 0, kinematic->orientation);
     dBodySetQuaternion(body, q);

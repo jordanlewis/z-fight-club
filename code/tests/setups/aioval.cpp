@@ -16,11 +16,11 @@ void testSetup()
     PlaneInfo info = PlaneInfo(0, 1, 0, 0);
     new PGeom(&info, physics.getOdeSpace());
 
-    Vec3f pos = Vec3f(44, 2, 6);
+    Vec3f pos = Vec3f(25, 2, 7.5);
     Agent *aiagent = new Agent(pos, M_PI_2);
 
-    Vec3f pos2 = Vec3f(85, 2, 25);
-    Agent *humanagent = new Agent(pos2, -1.337);
+    Vec3f pos2 = Vec3f(25, 2, 4.5);
+    Agent *humanagent = new Agent(pos2, M_PI_2);
 
     world.addAgent(*aiagent);
     world.addAgent(*humanagent);
@@ -28,6 +28,7 @@ void testSetup()
     world.camera = Camera(THIRDPERSON, humanagent);
 
     ai.control(*aiagent);
+    ai.controllers[0]->lane(1);
 
     /* Instantiate a playercontroller to handle input -> steering conversion for
      * this agent */
