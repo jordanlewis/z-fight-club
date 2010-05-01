@@ -70,7 +70,7 @@ void Camera::setProjectionMatrix()
     SteerInfo s;
     float minfovy = 55.0;
     float maxfovy = 90;
-    Vec3f dolly;
+    Vec3f dolly, camDirection;
 
     float smoothness = .9;
 
@@ -116,11 +116,11 @@ void Camera::setProjectionMatrix()
             s = agent->getSteering();
             if (s.acceleration > 0 && FOVY < maxfovy)
             {
-                FOVY = .9 * FOVY + .1 * (FOVY + 5 * (1 - (FOVY - minfovy) / (maxfovy - minfovy)));
+                FOVY += ((maxfovy - FOVY)/(maxfovy - minfovy))/2;
             }
             else if (s.acceleration <= 0 && FOVY > minfovy)
             {
-                FOVY = .9 * FOVY + .1 * (FOVY - 5 * (1 - (maxfovy - FOVY) / (maxfovy - minfovy)));
+                FOVY -= ((FOVY - minfovy)/(maxfovy - minfovy))/2;
             }
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
@@ -128,16 +128,19 @@ void Camera::setProjectionMatrix()
 
             glMatrixMode(GL_MODELVIEW);
 
-            dolly = (pos - agent->kinematic.pos);
+            camDirection = (pos - target).unit();
+            dolly = (pos - agent->kinematic.pos).dot(camDirection) * camDirection;
             /* Dolly = old dolly scaled properly for dollyzoom with respect to
              * FOVY, plus an extra length corresponding to how zoomed out we
              * are. the extra length makes it so the dolly zoom is slightly
              * laggy - i.e. it doesn't dolly quite enough to match the zoom.
              */
-            dolly = dolly.length() * dolly.unit() *
-                    tan(toRads(minfovy/2)) / tan(toRads(FOVY/2)) +
-                    dolly.unit() * .05 * (FOVY - minfovy);
-            pos = agent->kinematic.pos + dolly;
+            dolly = (
+              ((dolly.length()*tan(toRads(minfovy/2))) / tan(toRads(FOVY/2)))
+              +(.05 * (FOVY - minfovy))
+              +(agent->kinematic.pos - target).dot(camDirection)
+                    ) * camDirection;
+            pos =  target + dolly;
 
 	    break;
 	case BIRDSEYE:
