@@ -35,9 +35,16 @@ void WorldObject::draw()
 {
     if (gobject == NULL)
         return;
-    Quatf_t quat;
-    getQuat(quat);
-    gobject->draw(getPos(), quat);
+    if (pobject->isPlaceable())
+    {
+        Quatf_t quat;
+        getQuat(quat);
+        gobject->draw(getPos(), quat);
+    }
+    else
+    {
+        gobject->draw();
+    }
 }
 
 World::World()

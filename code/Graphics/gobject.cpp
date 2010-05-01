@@ -29,3 +29,8 @@ void GObject::draw(Vec3f pos, Quatf_t quat)
 
     glPopMatrix();
 }
+
+void GObject::draw()
+{
+    geominfo->draw();
+}

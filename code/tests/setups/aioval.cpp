@@ -13,8 +13,11 @@ void testSetup()
     Input &input = Input::getInstance();
     AIManager &ai = AIManager::getInstance();
 
-    PlaneInfo info = PlaneInfo(0, 1, 0, 0);
-    new PGeom(&info, physics.getOdeSpace());
+    PlaneInfo *info = new PlaneInfo(0, 1, 0, 0);
+    PGeom *geom = new PGeom(info, physics.getOdeSpace());
+    GObject *gobj  = new GObject(info);
+    world.addObject(WorldObject(geom, gobj, NULL));
+
 
     Vec3f pos = Vec3f(25, 2, 7.5);
     Agent *aiagent = new Agent(pos, M_PI_2);

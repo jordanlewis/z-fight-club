@@ -44,6 +44,7 @@ class PlaneInfo : public GeomInfo
     float a, b, c, d;
     PlaneInfo(float a, float b, float c, float d);
     dGeomID createGeom(dSpaceID space);
+    void draw();
 };
 
 //Packages info for a ray of length len

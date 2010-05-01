@@ -11,5 +11,7 @@ class GObject
   public:
     GObject(GeomInfo *geominfo);
     void draw(Vec3f pos, Quatf_t quat);
+    void draw(); /* !< dont' transform before drawing shape - for non-placeable
+                  * geoms */
 };
 #endif
