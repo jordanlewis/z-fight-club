@@ -5,6 +5,7 @@
 #include "kinematic.h"
 #include "constants.h"
 #include <vector>
+#include <list>
 #include <iostream>
 
 using namespace std;

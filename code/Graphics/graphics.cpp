@@ -6,6 +6,8 @@
 #include "Agents/ai.h"
 #include <SDL/SDL.h>
 
+#define MAX_TRAIL_LENGTH 3600 
+
 extern "C" {
 #include "Parser/track-parser.h"
 }
@@ -164,6 +166,9 @@ void Graphics::render(Agent * agent)
     }
 
     agent->trail.push_back(agent->kinematic.pos);
+
+    if (agent->trail.size() > MAX_TRAIL_LENGTH)
+	agent->trail.erase(agent->trail.begin());
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
