@@ -4,19 +4,24 @@ SObject::SObject(string soundName, double startTime, bool loop) : startTime(star
 {
     Sound &sound = Sound::getInstance();
     sr = sound.lookup(soundName);
-    alGenSources(1, &source);
-    alSourcei(source, AL_LOOPING, loop);
-    alSourceQueueBuffers(source, 1, &(sr->buffer));
-    float size, bits, frequency, channels;
-    alGetBufferf(sr->buffer, AL_SIZE, &size);
-    alGetBufferf(sr->buffer, AL_BITS, &bits);
-    alGetBufferf(sr->buffer, AL_FREQUENCY, &frequency);
-    alGetBufferf(sr->buffer, AL_CHANNELS, &channels);
-    duration = size * sizeof(char) / bits / frequency / channels;
+    duration = 0;
+    if (sr)
+    {
+        alGenSources(1, &source);
+        alSourcei(source, AL_LOOPING, loop);
+        alSourceQueueBuffers(source, 1, &(sr->buffer));
+        float size, bits, frequency, channels;
+        alGetBufferf(sr->buffer, AL_SIZE, &size);
+        alGetBufferf(sr->buffer, AL_BITS, &bits);
+        alGetBufferf(sr->buffer, AL_FREQUENCY, &frequency);
+        alGetBufferf(sr->buffer, AL_CHANNELS, &channels);
+        duration = size * sizeof(char) / bits / frequency / channels;
+    }
 }
 
 void SObject::update(WorldObject *host)
 {
+    if (!duration || !sr) return;
     double now = GetTime();
 
     // if it should be done, stop it

@@ -34,6 +34,7 @@ class PGeom
     CollType_t collType;
     WorldObject *worldObject;
 
+    bool isPlaceable();
     Vec3f getPos();
     void setPos(Vec3f position);
     void getQuat(Quatf_t quat);

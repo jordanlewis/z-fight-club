@@ -42,6 +42,14 @@ PAgent::PAgent(const Kinematic *kinematic, const SteerInfo *steering,
 {
 }
 
+bool PGeom::isPlaceable()
+{
+    int c = dGeomGetClass(geom);
+    if (c == dPlaneClass || c == dRayClass)
+        return false;
+    else
+        return true;
+}
 
 Vec3f PGeom::getPos()
 {
