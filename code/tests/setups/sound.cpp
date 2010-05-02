@@ -38,7 +38,10 @@ void testSetup()
     sound.registerListener(&world.camera);
 
     ai.control(*aiagent);
-    ai.controllers[0]->lane(1);
+    if (world.getTrack())
+    {
+        ai.controllers[0]->lane(1);
+    }
 
     /* Instantiate a playercontroller to handle input -> steering conversion for
      * this agent */

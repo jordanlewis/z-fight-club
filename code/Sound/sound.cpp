@@ -28,6 +28,7 @@ void DisplayALError(string, ALuint);
 int am_big_endian();
 int ends_with(string, string);
 ALuint dataToBuffer(char*, BasicWAVEHeader);
+ALuint filenameToBuffer(const string);
 
 sound_resource::sound_resource(ALuint buffer) : buffer(buffer)
 {
@@ -53,8 +54,6 @@ void Sound::setDir(string dirname)
 {
     base_sound_directory = dirname;
 }
-
-ALuint filenameToBuffer(const string);
 
 void Sound::initSound()
 {
@@ -94,11 +93,10 @@ void Sound::updateListener()
     Error &error = Error::getInstance();
     if (!initialized)
     {
-        error.log(SOUND, CRITICAL, "Can't update listener, sound not initialized\n");
-        exit(0);
+        error.log(SOUND, IMPORTANT, "Can't update listener, sound is not initialized");
+        return;
     }
-
-    if(camera == NULL)
+    if(!camera)
     {
         error.log(SOUND, IMPORTANT, "Can't update listener, no listener is registered");
         return;
@@ -150,6 +148,11 @@ vector<string> *Sound::get_wav_filenames()
     vector<string> *wav_filenames = new vector<string>;
     struct dirent *dirent;
     DIR *dir;
+    if (base_sound_directory.empty())
+    {
+        error.log(SOUND, IMPORTANT, "No sound directory specified\n");
+        return NULL;
+    }
     if ((dir = opendir(base_sound_directory.c_str())) == NULL)
     {
         error.log(SOUND, CRITICAL, "Can't open " + base_sound_directory + "\n");
