@@ -10,6 +10,7 @@ void testSetup()
     World &world = World::getInstance();
     Physics &physics  = Physics::getInstance();
     Input &input = Input::getInstance();
+    Sound &sound = Sound::getInstance();
 
     //PlaneInfo info = PlaneInfo(0, 1, 0, 0, 0, 0, 0);
     //new PGeom(&info, physics.getOdeSpace());
@@ -22,6 +23,7 @@ void testSetup()
 
     world.addAgent(*agent);
     world.camera = Camera(THIRDPERSON,agent);
+    sound.registerListener(&world.camera);
 
     /* Instantiate a playercontroller to handle input -> steering conversion for
      * this agent */

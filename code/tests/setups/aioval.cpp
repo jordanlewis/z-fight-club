@@ -8,10 +8,11 @@
 
 void testSetup()
 {
-    World &world = World::getInstance();
+    World &world  = World::getInstance();
     Physics &physics  = Physics::getInstance();
-    Input &input = Input::getInstance();
+    Input &input  = Input::getInstance();
     AIManager &ai = AIManager::getInstance();
+    Sound &sound  = Sound::getInstance();
 
     PlaneInfo info = PlaneInfo(0, 1, 0, 0);
     new PGeom(&info, physics.getOdeSpace());
@@ -26,6 +27,7 @@ void testSetup()
     world.addAgent(*humanagent);
 
     world.camera = Camera(THIRDPERSON, humanagent);
+    sound.registerListener(&world.camera);
 
     ai.control(*aiagent);
     ai.controllers[0]->lane(1);

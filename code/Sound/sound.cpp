@@ -97,6 +97,13 @@ void Sound::updateListener()
         error.log(SOUND, CRITICAL, "Can't update listener, sound not initialized\n");
         exit(0);
     }
+
+    if(camera == NULL)
+    {
+        error.log(SOUND, IMPORTANT, "Can't update listener, no listener is registered");
+        return;
+    }
+
     const Vec3f &p = camera->getPos();
     const Vec3f &t = camera->getTarget();
     const Vec3f &up = camera->getUp();
