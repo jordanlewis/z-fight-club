@@ -1,7 +1,7 @@
 #include <SDL/SDL.h>
 #include "input.h"
+#include "world.h"
 #include "Agents/player.h"
-#include "Engine/world.h"
 
 Input Input::_instance;
 

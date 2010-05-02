@@ -1,9 +1,9 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
-#include "../Engine/world.h"
-#include "../Agents/agent.h"
-#include "../Agents/ai.h"
-#include "../Utilities/vec3f.h"
+#include "Engine/world.h"
+#include "Agents/agent.h"
+#include "Agents/ai.h"
+#include "Utilities/vec3f.h"
 #include "color.h"
 #include <vector>
 #include <deque>

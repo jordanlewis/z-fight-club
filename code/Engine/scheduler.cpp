@@ -3,7 +3,7 @@
 #include <SDL/SDL.h>
 #include "scheduler.h"
 #include "world.h"
-#include "Engine/input.h"
+#include "input.h"
 #include "Utilities/defs.h"
 #include "Agents/ai.h"
 

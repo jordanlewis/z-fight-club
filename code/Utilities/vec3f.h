@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <deque>
-#include "Utilities/vector.h"
+#include "vector.h"
 
 class Vec3f {
     /*! \brief Checks if the vector is very small, and, if so, sets it to 0

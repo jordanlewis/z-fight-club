@@ -4,6 +4,8 @@
 #include <ode/ode.h>
 
 #include <vector>
+using namespace std;
+
 #include "Agents/agent.h"
 #include "Physics/pobject.h"
 #include "Graphics/gobject.h"
@@ -13,6 +15,7 @@
 #include "Parser/track-parser.h"
 
 class PGeom;
+class SObject;
 
 /*! \brief WorldObject collects all of the possible representations of an object
  * \brief in the world.
