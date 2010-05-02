@@ -2,6 +2,7 @@
 #include "Graphics/polygon.h"
 #include "Graphics/gobject.h"
 #include "Physics/pobject.h"
+#include "Sound/sobject.h"
 extern "C" {
     #include "Parser/track-parser.h"
 }
@@ -11,8 +12,8 @@ float World::zMax = 1000; // XXX this too
 
 World World::_instance;
 
-WorldObject::WorldObject(PGeom *pobject, GObject *gobject, Agent *agent)
-                        : pobject(pobject), gobject(gobject), agent(agent)
+WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject, Agent *agent)
+                        : pobject(pobject), gobject(gobject), sobject(sobject), agent(agent)
 {
     if (pobject != NULL)
 	{
@@ -51,7 +52,7 @@ World::~World()
 
 void World::addObject(WorldObject obj)
 {
-    wobjects.push_back(WorldObject(obj.pobject, obj.gobject, obj.agent));
+    wobjects.push_back(WorldObject(obj.pobject, obj.gobject, obj.sobject, obj.agent));
 }
 
 void World::addAgent(Agent &agent)
@@ -61,8 +62,9 @@ void World::addAgent(Agent &agent)
                               agent.mass, box);
     pobj->bounce = 1;
     GObject *gobj = new GObject(box);
+    SObject *sobj = NULL;
 
-    addObject(WorldObject(pobj, gobj, &agent));/*
+    addObject(WorldObject(pobj, gobj, sobj, &agent));/*
     cout << "Created agent with id " << wobjects.back().agent->id << endl;
     cout << "stored in worldobject " << &wobjects.back() << endl;
     cout << "ugly ugly hacking... " << endl;*/
@@ -128,7 +130,7 @@ void World::loadTrack(const char *file)
                 /* now we make a corresponding gobject */
                 gobj = new GObject(box);
 
-                addObject(WorldObject(geom, gobj, NULL));
+                addObject(WorldObject(geom, gobj, NULL, NULL));
             }
         }
     }

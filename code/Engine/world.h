@@ -28,7 +28,7 @@ class WorldObject
     GObject *gobject;
     SObject *sobject;
     Agent *agent;
-    WorldObject(PGeom * pobject, GObject * gobject, Agent * agent);
+    WorldObject(PGeom * pobject, GObject * gobject, SObject * sobject, Agent * agent);
 
     Vec3f getPos();
     void getRot(Mat4x4f_t);
