@@ -37,6 +37,12 @@ void Error::setVerbosity(ErrorVerbosity_t verbosity)
     this->verbosity = verbosity;
 }
 
+void Error::log(ErrorModule_t error, ErrorVerbosity_t verbosity, const string msg)
+{
+    if (module[error] || verbosity >= this->verbosity)
+	std::cerr << msg;
+}
+
 void Error::log(ErrorModule_t error, ErrorVerbosity_t verbosity, const char * msg)
 {
     if (module[error] || verbosity >= this->verbosity)
