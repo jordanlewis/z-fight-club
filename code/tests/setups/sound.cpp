@@ -3,6 +3,7 @@
 #include "Agents/player.h"
 #include "Engine/input.h"
 #include "Engine/world.h"
+#include "Agents/ai.h"
 #include "Sound/sound.h"
 #include "Utilities/vec3f.h"
 #include "Utilities/error.h"
@@ -14,27 +15,34 @@ void testSetup()
 
     World &world = World::getInstance();
     Physics &physics  = Physics::getInstance();
+    AIManager &ai = AIManager::getInstance();
     Sound &sound = Sound::getInstance();
     Input &input = Input::getInstance();
-
 
     PlaneInfo info = PlaneInfo(0, 1, 0, 0);
     new PGeom(&info, physics.getOdeSpace());
 
-    Vec3f pos = Vec3f(85, 5, 20);
-    Agent *agent = new Agent(pos, M_PI);
+    Vec3f pos = Vec3f(25, 2, 7.5);
+    Agent *aiagent = new Agent(pos, M_PI_2);
 
-    world.addAgent(*agent);
-    /* Agents will become world objects, right?
-     * then we'll someone give them useful SObject components */
-    // Sound::register_source(...);
-    world.camera = Camera(THIRDPERSON,agent);
+    Vec3f pos2 = Vec3f(25, 2, 4.5);
+    Agent *humanagent = new Agent(pos2, M_PI_2);
+
+    world.addAgent(*aiagent);
+    world.wobjects.back().sobject = new SObject("snore.wav", GetTime()+1, AL_TRUE);
+    world.addAgent(*humanagent);
+    world.wobjects.back().sobject = new SObject("s2.wav", GetTime()+3, AL_TRUE);
+
+    world.camera = Camera(THIRDPERSON, humanagent);
     /* The microphones will get their location, orientation, and velocity from the camera */
-    sound.update_listener((const Camera &) world.camera);
+    sound.registerListener(&world.camera);
+
+    ai.control(*aiagent);
+    ai.controllers[0]->lane(1);
 
     /* Instantiate a playercontroller to handle input -> steering conversion for
      * this agent */
-    PlayerController *p = new PlayerController(*agent);
-    /* Tell input to send input to that playerController */
+    PlayerController *p = new PlayerController(*humanagent);
+    ///* Tell input to send input to that playerController */
     input.controlPlayer(*p);
 }

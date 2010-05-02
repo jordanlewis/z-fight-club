@@ -1,9 +1,33 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#include "../Engine/world.h"
-#include "../Graphics/camera.h"
+#include "Engine/world.h"
+#include "Graphics/camera.h"
+#include "sobject.h"
 #include <string>
+#include <map>
+using namespace std;
+
+#if defined(__APPLE__) && defined(__MACH__)
+#  include <OpenAL/al.h>
+#  include <OpenAL/alc.h>
+#else
+#  include <AL/al.h>
+#  include <AL/alc.h>
+#endif
+
+class SObject;
+class WorldObject;
+
+class sound_resource
+{
+  private:
+    // low level metadata needed to actually play the sound
+    // eg. pointer to sound data in memory, sound format details
+  public:
+    ALuint buffer; // maybe just use the buffer identifier instead of this whole class. we'll see.
+    sound_resource(ALuint buffer);
+};
 
 class Sound
 {
@@ -15,6 +39,9 @@ class Sound
     static Sound _instance;
     string base_sound_directory;
     bool initialized;
+    const Camera *camera;
+    vector<string> *get_wav_filenames();
+    map<const string, sound_resource*> sound_library; 
     // Error &error;
 
   public:
@@ -37,13 +64,16 @@ class Sound
     // (sometimes?) update listener and source locations, velocities, etc.
     void render();
 
-    // when we switch camera (modes), switch listener, and periodically update since camera moves
-    void update_listener(const Camera&); // get from that the pos, up, target, agent->velocity
+    // when we switch camera (modes), switch listener
+    void registerListener(const Camera*);
+    // periodically update based on camera movement
+    void updateListener();
 
     // used by tests/setups/sound.cpp
     // I made an object, attach this sound information to it
-    static void register_source(WorldObject*, SObject*);
+    void registerSource(WorldObject*, SObject*);
 
+    sound_resource *lookup(const string);
 };
 
 // sounds come from various sources:
