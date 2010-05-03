@@ -15,6 +15,7 @@ World World::_instance;
 WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject, Agent *agent)
                         : pobject(pobject), gobject(gobject), sobject(sobject), agent(agent)
 {
+    pos = Vec3f(-1,-1,-1);
     if (pobject != NULL)
 	{
 	    pobject->worldObject = this;
@@ -24,7 +25,14 @@ WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject, Age
 
 Vec3f WorldObject::getPos()
 {
-    return pobject->getPos();
+    if (pobject) return pobject->getPos();
+    return pos;
+}
+
+void WorldObject::setPos(Vec3f position)
+{
+    if (pobject) pobject->setPos(position);
+    pos = position;
 }
 
 void WorldObject::getQuat(Quatf_t quat)
@@ -52,7 +60,7 @@ World::~World()
 
 void World::addObject(WorldObject obj)
 {
-    wobjects.push_back(WorldObject(obj.pobject, obj.gobject, obj.sobject, obj.agent));
+    wobjects.push_back(WorldObject(obj));
 }
 
 void World::addAgent(Agent &agent)

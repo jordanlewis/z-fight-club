@@ -26,6 +26,8 @@ class SObject;
  */
 class WorldObject
 {
+  private:
+    Vec3f pos;
   public:
     PGeom *pobject;
     GObject *gobject;
@@ -34,6 +36,7 @@ class WorldObject
     WorldObject(PGeom * pobject, GObject * gobject, SObject * sobject, Agent * agent);
 
     Vec3f getPos();
+    void setPos(Vec3f position);
     void getRot(Mat4x4f_t);
     void getQuat(Quatf_t);
 

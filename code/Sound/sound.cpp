@@ -139,7 +139,7 @@ void Sound::render()
 
 void Sound::registerSource(WorldObject *w, SObject *s)
 {
-
+    w->sobject = s;
 }
 
 vector<string> *Sound::get_wav_filenames()
