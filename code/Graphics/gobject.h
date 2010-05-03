@@ -4,6 +4,7 @@
 #include "Utilities/vec3f.h"
 #include "Utilities/quat.h"
 #include "Utilities/matrix.h"
+#include "Agents/agent.h"
 
 class GObject
 {
@@ -11,5 +12,6 @@ class GObject
   public:
     GObject(GeomInfo *geominfo);
     void draw(Vec3f pos, Quatf_t quat);
+    void draw(Vec3f pos, Quatf_t quat, Agent *agent);
 };
 #endif

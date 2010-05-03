@@ -29,3 +29,21 @@ void GObject::draw(Vec3f pos, Quatf_t quat)
 
     glPopMatrix();
 }
+
+void GObject::draw(Vec3f pos, Quatf_t quat, Agent* agent)
+{
+    SteerInfo s = agent->getSteering();
+    if (s.acceleration > 0)
+    {
+        glColor3f(.3, 1, .3);
+    }
+    else if (s.acceleration < 0)
+    {
+        glColor3f(1, .3, .3);
+    }
+    else
+    {
+        glColor3f(1,1,1);
+    }
+    draw(pos, quat);
+}

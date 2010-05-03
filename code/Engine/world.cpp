@@ -46,7 +46,10 @@ void WorldObject::draw()
         return;
     Quatf_t quat;
     getQuat(quat);
-    gobject->draw(getPos(), quat);
+    if (agent == NULL)
+        gobject->draw(getPos(), quat);
+    else
+        gobject->draw(getPos(), quat, agent);
 }
 
 World::World()
