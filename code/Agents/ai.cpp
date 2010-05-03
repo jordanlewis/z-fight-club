@@ -47,10 +47,12 @@ void AIController::seek(const Vec3f target, float slowRadius, float targetRadius
     }
     else if (distance > slowRadius)
     {
+        /* Always executed without slowRadius parameter */
         s.acceleration = maxAccel;
     }
     else
     {
+        /* If we're between our slowRadius and our targetRadius */
         targetSpeed = maxSpeed * distance / slowRadius;
         s.acceleration = (targetSpeed - k.vel.length()) / .1;
         if (s.acceleration > maxAccel)
@@ -61,7 +63,7 @@ void AIController::seek(const Vec3f target, float slowRadius, float targetRadius
     agent->setSteering(s);
 }
 
-void AIController::align(float target)
+float AIController::align(float target)
 {
     float targetRadius = .01;
     float slowRadius = 0;
@@ -98,6 +100,84 @@ void AIController::align(float target)
         s.rotation = agent->maxRotate * diffSize / slowRadius;
         s.rotation *= diff / diffSize;
     }
+    agent->setSteering(s);
+
+    return diff;
+}
+
+void AIController::brake()
+{
+    Kinematic k = agent->getKinematic();
+    SteerInfo s;
+    float speed = k.orientation_v.dot(k.vel);
+    if (speed > 0)
+        s.acceleration = -agent->getMaxAccel();
+    else if (speed < 0)
+        s.acceleration = agent->getMaxAccel();
+    agent->setSteering(s);
+}
+
+void AIController::smartGo(const Vec3f target)
+{
+    Vec3f dir;
+    SteerInfo s;
+    Error error = Error::getInstance();
+
+    Kinematic k = agent->getKinematic();
+    dir = target - agent->kinematic.pos;
+    float distance = dir.length();
+    dir.normalize();
+
+    float angle = abs(align(atan2(dir[0], dir[2])));
+    /* Angle between 0 and pi */
+    s = agent->getSteering();
+
+    short go; /* 1 = accelerate, -1 = reverse acceleration, 0 = neither*/
+
+    if (k.forwardSpeed() > 6)
+    {
+        if (angle < M_PI / 10)
+        {
+            error.log(AI, TRIVIAL, "AI: basic forward movement\n");
+            go = 1;
+        }
+        else if (angle < 7 * M_PI / 8)
+        {
+            error.log(AI, TRIVIAL, "AI: sharp turn\n");
+            go = -1;
+        }
+        else
+        {
+            error.log(AI, TRIVIAL, "AI: reverse movement\n");
+            align(atan2(dir[0], dir[2]) + M_PI);
+            s = agent->getSteering();
+            go = -1;
+        }
+    }
+    else
+    {
+        if (angle > 7 * M_PI / 8)
+        {
+            if (distance < 5)
+            {
+                error.log(AI, TRIVIAL, "AI: backing in\n");
+                align(atan2(dir[0], dir[2]) + M_PI);
+                s = agent->getSteering();
+                go = -1;
+            }
+            else
+            {
+                go = 1;
+                error.log(AI, TRIVIAL, "AI: turning around\n");
+            }
+        }
+        else
+        {
+            error.log(AI, TRIVIAL, "AI: speed up\n");
+            go = 1;
+        }
+    }
+    s.acceleration = go * agent->getMaxAccel();
     agent->setSteering(s);
 }
 
@@ -159,8 +239,12 @@ void AIController::cruise()
        path.precision.push_back(path.precision.front());
        path.precision.pop_front();
     }
+    int tgtIdx = 0;
+    /* Find a better node to seek to, ignoring walls */
+    while ((path.knots.front() - path.knots[tgtIdx++]).length() <
+           1.5 * path.precision.front());
 
-    seek(path.knots.front());
+    smartGo(path.knots[tgtIdx - 1]);
 }
 
 void AIController::run()

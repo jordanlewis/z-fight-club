@@ -14,6 +14,7 @@ class Kinematic
 
     Kinematic(Vec3f pos=Vec3f(0,0,0), Vec3f vel=Vec3f(0,0,0),
               float orientation=0.0);
+    float forwardSpeed() const; /*Return the speed along orientation_v */
 };
 
 //! \brief Writes this kinematic to the given output stream.

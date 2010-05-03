@@ -30,7 +30,9 @@ class AIController
     Path path;	/* !< the path we're on */
     Agent *agent;
     void seek(const Vec3f target, float slowRadius = 0, float targetRadius = 1);
-    void align(float target);
+    float align(float target); /*!<try to point to tgt; returns angle to tgt */
+    void brake();
+    void smartGo(const Vec3f target);
     void cruise(Path *path);
     AIController(Agent &);
     void lane(int);	/* !< load a lane as the path */

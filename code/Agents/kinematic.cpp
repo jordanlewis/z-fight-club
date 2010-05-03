@@ -12,3 +12,8 @@ Kinematic::Kinematic(Vec3f pos, Vec3f vel, float orientation)
                       orientation_v(Vec3f(0,0,0))
 {
 }
+
+float Kinematic::forwardSpeed() const
+{
+    return vel.dot(orientation_v);
+}
