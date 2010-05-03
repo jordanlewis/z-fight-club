@@ -5,17 +5,18 @@ SObject::SObject(string soundName, double startTime, bool loop) : startTime(star
     Sound &sound = Sound::getInstance();
     sr = sound.lookup(soundName);
     duration = 0;
+    playing = false;
     if (sr)
     {
         alGenSources(1, &source);
         alSourcei(source, AL_LOOPING, loop);
         alSourceQueueBuffers(source, 1, &(sr->buffer));
-        float size, bits, frequency, channels;
-        alGetBufferf(sr->buffer, AL_SIZE, &size);
-        alGetBufferf(sr->buffer, AL_BITS, &bits);
-        alGetBufferf(sr->buffer, AL_FREQUENCY, &frequency);
-        alGetBufferf(sr->buffer, AL_CHANNELS, &channels);
-        duration = size * sizeof(char) / bits / frequency / channels;
+        ALint size = -1, bits = -1, frequency = -1, channels = -1;
+        alGetBufferi(sr->buffer, AL_FREQUENCY, &frequency);
+        alGetBufferi(sr->buffer, AL_BITS, &bits);
+        alGetBufferi(sr->buffer, AL_CHANNELS, &channels);
+        alGetBufferi(sr->buffer, AL_SIZE, &size);
+        duration = (float) size * sizeof(char) / bits / frequency / channels;
     }
 }
 

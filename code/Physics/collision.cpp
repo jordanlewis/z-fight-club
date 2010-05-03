@@ -1,4 +1,5 @@
 #include "collision.h"
+#include "Sound/sound.h"
 
 void nearCallback (void *data, dGeomID o1, dGeomID o2)
 {
@@ -78,6 +79,39 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
 	if (numCollisions > 0)
 	    {
 		//cout << numCollisions << " collisions detected" << endl;
+		// William suggests using force to determine whether to 
+		// make a noise, rather than velocity. This way I won't
+		// have to deal with ground scraping as a special case.
+                dVector3 b1_vel = { 0, 0, 0 };
+                dVector3 b2_vel = { 0, 0, 0 };
+                if (g1->isPlaceable() && b1)
+                {
+                    const dReal *o1_pos = dGeomGetPosition(o1);
+                    dBodyGetPointVel(b1, o1_pos[0], o1_pos[1], o1_pos[2], b1_vel);
+                }
+                if (g2->isPlaceable() && b2)
+                {
+                    const dReal *o2_pos = dGeomGetPosition(o2);
+                    dBodyGetPointVel(b2, o2_pos[0], o2_pos[1], o2_pos[2], b2_vel);
+                }
+                Vec3f v1 = Vec3f(b1_vel[0], b1_vel[1], b1_vel[2]);
+                Vec3f v2 = Vec3f(b2_vel[0], b2_vel[1], b2_vel[2]);
+                if ((v1.length() > 3) &&
+                    (v2.length() > 3) &&
+                    ((v1-v2).length() > 3))
+                {
+                    WorldObject w = WorldObject(NULL,
+                                                NULL,
+                                                new SObject("menu_change.wav", GetTime(), AL_FALSE),
+                                                NULL);
+		    Vec3f p = Vec3f(contact[0].geom.pos[0],
+                                    contact[0].geom.pos[1],
+                                    contact[0].geom.pos[2]);
+		    w.setPos(p);
+                    World &world = World::getInstance();
+                    world.addObject(w);
+                }
+
 		for (int i = 0; i < numCollisions; i++)
 		    {
 			contact[i].surface.mode = mode;
