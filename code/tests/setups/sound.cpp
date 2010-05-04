@@ -32,7 +32,7 @@ void testSetup()
     sound.registerSource(&world.wobjects.back(), new SObject("snore.wav", GetTime()+1, AL_TRUE));
     world.wobjects.back().sobject = new SObject("snore.wav", GetTime()+1, AL_TRUE);
     world.addAgent(*humanagent);
-    sound.registerSource(&world.wobjects.back(), new SObject("s2.wav", GetTime()+3, AL_TRUE));
+    sound.registerSource(&world.wobjects.back(), new SObject("s4_phase.wav", GetTime()+1, AL_TRUE));
 
     world.camera = Camera(THIRDPERSON, humanagent);
     /* The microphones will get their location, orientation, and velocity from the camera */

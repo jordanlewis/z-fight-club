@@ -111,10 +111,12 @@ void Sound::updateListener()
     ALfloat pos[6] = { p[0], p[1], p[2] };
     float orient[6] = { at[0], at[1], at[2], up[0], up[1], up[2] };
     ALfloat vel[3] = { v[0], v[1], v[2] };
+    ALfloat gain[1] = { 2.0 };
 
     alListenerfv(AL_POSITION, pos);
     alListenerfv(AL_ORIENTATION, orient);
     alListenerfv(AL_VELOCITY, vel);
+    alListenerfv(AL_GAIN, gain);
 }
 
 void Sound::render()

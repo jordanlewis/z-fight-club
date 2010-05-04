@@ -4,7 +4,6 @@ ODEFLAGS = $(shell ode-config --cflags)
 CFLAGS   = -Wall --std=gnu99 -ggdb $(ODEFLAGS) -I.
 CXXFLAGS = -Wall -Wno-deprecated -ggdb $(ODEFLAGS) -I.
 
-#LDFLAGS  = -lenet -lSDL -lode -lboost_program_options-mt -lopenal
 LDFLAGS  = -lenet -lSDL -lode -lboost_program_options-mt
 
 ifeq ($(OS),Darwin)
