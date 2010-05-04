@@ -9,6 +9,7 @@
 #include "Engine/world.h"
 #include "Utilities/error.h"
 #include "Parser/track-parser.h"
+#include "Utilities/defs.h"
 
 #define ARC_RESOLUTION 20
 #define DEFAULT_PRECISION 7.0f
@@ -24,6 +25,30 @@ void Path::clear()
     knots.clear();
     precision.clear();
 }
+
+Avoid::Avoid() 
+{
+    time = GetTime();
+    ttl = 3.0f;
+}
+
+Avoid::Avoid(Vec3f &pos)
+{
+    this->pos = pos;
+    this->str = 1.0;
+    time = GetTime();
+    ttl = 3.0f;
+}
+
+Avoid::Avoid(Vec3f &pos, float str) 
+{
+    this->pos = pos;
+    this->str = str;
+    time = GetTime();
+    ttl = 3.0f;
+}
+
+Avoid::~Avoid() {}
 
 void AIController::seek(const Vec3f target, float slowRadius, float targetRadius)
 {
@@ -125,6 +150,12 @@ void AIController::smartGo(const Vec3f target)
 
     Kinematic k = agent->getKinematic();
     dir = target - agent->kinematic.pos;
+
+    for (deque<Avoid>::iterator it = obstacles.begin(); it != obstacles.end(); it++) {
+	/* nudge the dir to avoid obstacles */
+	dir += (1.0f / pow((agent->kinematic.pos - it->pos).length(), 2.0f)) * it->str * (agent->kinematic.pos - it->pos);
+    }
+
     float distance = dir.length();
     dir.normalize();
 
@@ -184,6 +215,7 @@ void AIController::smartGo(const Vec3f target)
 AIController::AIController(Agent& agent)
 {
     path = Path();
+    obstacles = std::deque<Avoid>(); 
     this->agent = &agent;
 }
 
@@ -230,8 +262,19 @@ void AIController::lane(int laneIndex)
     }
 }
 
+void AIController::avoid(Vec3f &pos)
+{
+    obstacles.push_back(Avoid(pos));
+}
+
 void AIController::cruise()
 {
+    double now = GetTime();
+    for (deque<Avoid>::iterator it = obstacles.begin(); it != obstacles.end(); it++) {
+	if((it->time + it->ttl) < now)
+	    obstacles.erase(it);
+    }
+
     SteerInfo steerInfo;
     if ((path.knots.front() - agent->kinematic.pos).length() < path.precision.front()) {
        path.knots.push_back(path.knots.front());
