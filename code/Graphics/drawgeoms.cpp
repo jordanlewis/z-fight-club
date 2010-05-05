@@ -170,3 +170,9 @@ void TriMeshInfo::draw()
     glDisableClientState(GL_NORMAL_ARRAY);
     glEnable(GL_CULL_FACE);
 }
+
+void SphereInfo::draw()
+{
+    GLUquadric * quad = gluNewQuadric();
+    gluSphere(quad, radius, 20, 20);
+}
