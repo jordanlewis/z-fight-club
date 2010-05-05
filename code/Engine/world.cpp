@@ -13,14 +13,13 @@ float World::zMax = 1000; // XXX this too
 World World::_instance;
 
 WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject, Agent *agent)
-                        : pobject(pobject), gobject(gobject), sobject(sobject), agent(agent)
+    : pobject(pobject), gobject(gobject), sobject(sobject), agent(agent)
 {
     pos = Vec3f(-1,-1,-1);
     if (pobject != NULL)
 	{
 	    pobject->worldObject = this;
 	}
-    //cout << "Constructed wobject " << this << " on pobject " << pobject << endl; 
 }
 
 Vec3f WorldObject::getPos()
@@ -61,9 +60,9 @@ World::~World()
     FreeTrackData(track);
 }
 
-void World::addObject(WorldObject obj)
+void World::addObject(WorldObject *obj)
 {
-    wobjects.push_back(WorldObject(obj));
+    wobjects.push_back(obj);
 }
 
 void World::addAgent(Agent &agent)
@@ -75,11 +74,10 @@ void World::addAgent(Agent &agent)
     GObject *gobj = new GObject(box);
     SObject *sobj = NULL;
 
-    addObject(WorldObject(pobj, gobj, sobj, &agent));/*
-    cout << "Created agent with id " << wobjects.back().agent->id << endl;
-    cout << "stored in worldobject " << &wobjects.back() << endl;
-    cout << "ugly ugly hacking... " << endl;*/
-    wobjects.back().pobject->worldObject = &wobjects.back();
+    WorldObject *wobject = new WorldObject(pobj, gobj, sobj, &agent);
+
+    addObject(wobject);
+
     Physics::getInstance().getAgentMap()[agent.id] = pobj;
 
     agents.push_back(&agent);
@@ -141,7 +139,9 @@ void World::loadTrack(const char *file)
                 /* now we make a corresponding gobject */
                 gobj = new GObject(box);
 
-                addObject(WorldObject(geom, gobj, NULL, NULL));
+		WorldObject *wobj = new WorldObject(geom, gobj, NULL, NULL);
+
+                addObject(wobj);
             }
         }
     }

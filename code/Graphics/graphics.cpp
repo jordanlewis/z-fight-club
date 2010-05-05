@@ -134,9 +134,10 @@ void Graphics::render()
     glEnd();
 
     glEnable(GL_LIGHTING);
-    for (vector<WorldObject>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
+    for (vector<WorldObject *>::iterator i = world->wobjects.begin();
+	 i != world->wobjects.end(); i++)
     {
-        i->draw();
+        (*i)->draw();
     }
 
     render(world->track);

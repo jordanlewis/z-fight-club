@@ -130,10 +130,11 @@ void Sound::render()
 
     World *world = &World::getInstance();
 
-    for (vector<WorldObject>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
+    for (vector<WorldObject *>::iterator i = world->wobjects.begin();
+	 i != world->wobjects.end(); i++)
     {
-        if (!i->sobject) continue;
-        i->sobject->update(&(*i));
+        if (!(*i)->sobject) continue;
+        (*i)->sobject->update(&(**i));
     }
 
     updateListener();

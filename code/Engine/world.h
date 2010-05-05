@@ -33,7 +33,8 @@ class WorldObject
     GObject *gobject;
     SObject *sobject;
     Agent *agent;
-    WorldObject(PGeom * pobject, GObject * gobject, SObject * sobject, Agent * agent);
+    WorldObject(PGeom * pobject, GObject * gobject,
+		SObject * sobject, Agent * agent);
 
     Vec3f getPos();
     void setPos(Vec3f position);
@@ -63,9 +64,9 @@ class World
     dWorldID ode_world;
     dSpaceID ode_space;
     std::vector<Agent *> agents; /* the agents in the world */
-    std::vector<WorldObject> wobjects; /* the objects in the world */
+    std::vector<WorldObject *> wobjects; /* the objects in the world */
 
-    void addObject(WorldObject obj);
+    void addObject(WorldObject *obj);
     void addAgent(Agent &agent);
     void loadTrack(const char *file);
     const TrackData_t * getTrack();

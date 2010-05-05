@@ -87,12 +87,14 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
                 if (g1->isPlaceable() && b1)
                 {
                     const dReal *o1_pos = dGeomGetPosition(o1);
-                    dBodyGetPointVel(b1, o1_pos[0], o1_pos[1], o1_pos[2], b1_vel);
+                    dBodyGetPointVel(b1, o1_pos[0], o1_pos[1], o1_pos[2],
+				     b1_vel);
                 }
                 if (g2->isPlaceable() && b2)
                 {
                     const dReal *o2_pos = dGeomGetPosition(o2);
-                    dBodyGetPointVel(b2, o2_pos[0], o2_pos[1], o2_pos[2], b2_vel);
+                    dBodyGetPointVel(b2, o2_pos[0], o2_pos[1], o2_pos[2],
+				     b2_vel);
                 }
                 Vec3f v1 = Vec3f(b1_vel[0], b1_vel[1], b1_vel[2]);
                 Vec3f v2 = Vec3f(b2_vel[0], b2_vel[1], b2_vel[2]);
@@ -100,14 +102,16 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
                     (v2.length() > 3) &&
                     ((v1-v2).length() > 3))
                 {
-                    WorldObject w = WorldObject(NULL,
-                                                NULL,
-                                                new SObject("menu_change.wav", GetTime(), AL_FALSE),
-                                                NULL);
+                    WorldObject *w;
+		    w = new WorldObject(NULL, NULL,
+					new SObject("menu_change.wav", 
+						    GetTime(),
+						    AL_FALSE),
+					NULL);
 		    Vec3f p = Vec3f(contact[0].geom.pos[0],
                                     contact[0].geom.pos[1],
                                     contact[0].geom.pos[2]);
-		    w.setPos(p);
+		    w->setPos(p);
                     World &world = World::getInstance();
                     world.addObject(w);
                 }

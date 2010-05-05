@@ -1,5 +1,5 @@
-#ifndef PHYSICS_CONSTANTS
-#define PHYSICS_CONSTANTS
+#ifndef PHYSICS_CONSTANTS_H
+#define PHYSICS_CONSTANTS_H
 /* Holds default values for all physics constants.  All constants should be
  * named with the prefix PH in order to avoid name collisions. */
 
