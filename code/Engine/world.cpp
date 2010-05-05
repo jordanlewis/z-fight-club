@@ -128,7 +128,7 @@ void World::loadTrack(const char *file)
                 len = LengthV2f(xzwall);
 
                 /* this bit makes a pgeom and sets its position and rotation */
-                BoxInfo *box = new BoxInfo(len, height + wall[1], depth);
+                BoxInfo *box = new BoxInfo(len, abs(height + wall[1]), depth);
                 theta = atan2(wall[2], wall[0]);
                 geom = new PGeom(box);
                 geom->bounce = 1;
