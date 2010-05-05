@@ -58,14 +58,13 @@ class AIController
 
 class AIManager
 {
-  public:
-    std::vector<AIController *> controllers; /* !< active AI controllers */
-
-    static AIManager _instance;
     AIManager();
     ~AIManager();
     AIManager(const AIManager *);
-    AIManager &operator=(const AIManager *);
+    AIManager &operator=(const AIManager&);
+    static AIManager _instance;
+  public:
+    std::vector<AIController *> controllers; /* !< active AI controllers */
 
     void control(Agent *); /* !< assume AI control of given agent */
     void release(Agent *); /* !< release AI control of given agent */
