@@ -13,9 +13,10 @@ PlaneInfo::PlaneInfo(float a, float b, float c, float d)
 RayInfo::RayInfo(float len)
     : GeomInfo(), len(len)
 {}
-TriMeshInfo::TriMeshInfo(dTriMeshDataID meshID, const void * verts,
-                         const void * tris)
-    : GeomInfo(), meshID(meshID), verts(verts), tris(tris)
+TriMeshInfo::TriMeshInfo(dTriMeshDataID meshID, int nVerts, const void * verts,
+                                                int nTris,  const void * tris)
+    : GeomInfo(), meshID(meshID), nVerts(nVerts), verts(verts), nTris(nTris),
+      tris(tris)
 {}
 
 dGeomID SphereInfo::createGeom(dSpaceID space)

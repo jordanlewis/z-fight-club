@@ -143,3 +143,11 @@ void ObjMeshInfo::draw()
     delete [] quadNormal;
     delete [] quadUv;
 }
+
+void TriMeshInfo::draw()
+{
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, verts);
+    glDrawElements(GL_TRIANGLES, nTris, GL_UNSIGNED_INT, tris);
+    glDisableClientState(GL_VERTEX_ARRAY);
+}

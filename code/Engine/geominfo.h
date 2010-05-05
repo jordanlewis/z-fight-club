@@ -60,11 +60,14 @@ class TriMeshInfo : public GeomInfo
 {
  public:
     dTriMeshDataID meshID;
+    int nVerts;
     const void * verts;
+    int nTris;
     const void * tris;
-    TriMeshInfo(dTriMeshDataID meshID, const void * verts, const void * tris
-);
+    TriMeshInfo(dTriMeshDataID meshID, int nVerts, const void * verts,
+                                       int nTris,  const void * tris);
     dGeomID createGeom(dSpaceID space);
+    void draw();
 };
 
 class ObjMeshInfo : public GeomInfo

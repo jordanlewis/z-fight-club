@@ -4,6 +4,7 @@
 #include "Physics/pobject.h"
 #include "Sound/sobject.h"
 #include "Utilities/error.h"
+#include <ode/ode.h>
 extern "C" {
     #include "Parser/track-parser.h"
 }
@@ -87,9 +88,9 @@ void World::addAgent(Agent *agent)
 void World::loadTrack(const char *file)
 {
     track = LoadTrackData(file);
+    Error error = Error::getInstance();
     if (!track) {
-        Error error = Error::getInstance();
-	error.log(PARSER, CRITICAL, "Track load failed\n");
+        error.log(PARSER, CRITICAL, "Track load failed\n");
     }
 
     /* Now create WorldObjects to represent the track */
@@ -105,14 +106,29 @@ void World::loadTrack(const char *file)
     Edge_t *e, *next;
     PGeom *geom;
     GObject *gobj;
-    dQuaternion quat;
-    Vec3f position;
+    dQuaternion quat, quattmp;
+    Vec3f position, diff;
 
+    int *indices = new int[track->nSects * 6];
+    dTriMeshDataID tmid = dGeomTriMeshDataCreate();
     for (i = 0; i < track->nSects; i++)
     {
         /* for each edge in every sector, if its a wall edge, create a box
          * that represents the wall
          */
+        if (track->sects[i].nEdges != 4)
+        {
+            error.log(ENGINE, CRITICAL, "Non-rect sectors unsupported\n");
+            return;
+        }
+
+        indices[6 * i]     = track->sects[i].edges[0].start;
+        indices[6 * i + 1] = track->sects[i].edges[1].start;
+        indices[6 * i + 2] = track->sects[i].edges[2].start;
+        indices[6 * i + 3] = track->sects[i].edges[2].start;
+        indices[6 * i + 4] = track->sects[i].edges[3].start;
+        indices[6 * i + 5] = track->sects[i].edges[0].start;
+
         for (j = 0; j < track->sects[i].nEdges; j++)
         {
             e = track->sects[i].edges + j;
@@ -142,12 +158,21 @@ void World::loadTrack(const char *file)
                 /* now we make a corresponding gobject */
                 gobj = new GObject(box);
 
-		WorldObject *wobj = new WorldObject(geom, gobj, NULL, NULL);
+                WorldObject *wobj = new WorldObject(geom, gobj, NULL, NULL);
 
                 addObject(wobj);
             }
         }
     }
+    dGeomTriMeshDataBuildSingle(tmid,
+                                track->verts, sizeof(Vec3f_t), track->nVerts,
+                                indices, track->nSects * 6, sizeof(int) * 3);
+    TriMeshInfo *tmeshinfo = new TriMeshInfo(tmid, track->nVerts, track->verts,
+                                             track->nSects * 6, indices);
+    geom = new PGeom(tmeshinfo);
+    gobj = new GObject(tmeshinfo);
+    WorldObject *wobj = new WorldObject(geom, gobj, NULL, NULL);
+    addObject(wobj);
 
 }
 
@@ -156,7 +181,7 @@ const TrackData_t *World::getTrack()
     return track;
 }
 
-World &World::getInstance() 
+World &World::getInstance()
 {
     return _instance;
 }
