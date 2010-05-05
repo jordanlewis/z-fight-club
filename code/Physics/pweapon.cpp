@@ -59,11 +59,12 @@ void raygun(unsigned int srcAgentID, int force){
 	    
 	    CollQuery query;
 	    rayCast(ray, query);
-	    for (std::list<CollContact>::iterator iter = query.contacts.begin();
+	    for (std::list<CollContact>::iterator iter=query.contacts.begin();
 		 iter != query.contacts.end();
 		 iter++){
 		//Force Push!
 		if ((*iter).obj != NULL){
+		    //cout << "Hit object: " << (*iter).obj << endl;
 		    if ((*iter).obj->agent != NULL){
 			if ((*iter).obj->agent->id != srcAgentID){
 			    smack((*iter).obj->agent->id, force);
