@@ -3,6 +3,7 @@
 #include "Graphics/gobject.h"
 #include "Physics/pobject.h"
 #include "Sound/sobject.h"
+#include "Utilities/error.h"
 extern "C" {
     #include "Parser/track-parser.h"
 }
@@ -86,8 +87,10 @@ void World::addAgent(Agent *agent)
 void World::loadTrack(const char *file)
 {
     track = LoadTrackData(file);
-    if (!track)
-        return; /* error */
+    if (!track) {
+        Error error = Error::getInstance();
+	error.log(PARSER, CRITICAL, "Track load failed\n");
+    }
 
     /* Now create WorldObjects to represent the track */
 
