@@ -25,6 +25,7 @@ PMoveable::PMoveable(const Kinematic *kinematic, float mass,
                      GeomInfo *info, dSpaceID space)
     : PGeom(info, space), kinematic(kinematic)
 {
+    dQuaternion q;
     //Create a body, give it mass, and bind it to the geom
     body = dBodyCreate(Physics::getInstance().getOdeWorld());
     info->createMass(&this->mass, mass);
@@ -32,8 +33,11 @@ PMoveable::PMoveable(const Kinematic *kinematic, float mass,
     dBodySetMass(body, &this->mass);
     dGeomSetBody(geom, body);
 
-    //Sync Kinematic info -- initial position and orientation
+    //Sync Kinematic info -- initial position and velocity
     kinematicToOde();
+    // get orientation as angle around y axis; give that quat to the body
+    dQFromAxisAndAngle(q, 0, 1, 0, kinematic->orientation);
+    dBodySetQuaternion(body, q);
 }
 
 PAgent::PAgent(const Kinematic *kinematic, const SteerInfo *steering,
@@ -93,16 +97,9 @@ const dBodyID &PMoveable::getBody()
 void PMoveable::kinematicToOde()
 {
     const Kinematic *k = kinematic;
-    dQuaternion q;
 
     dBodySetPosition(body, k->pos[0], k->pos[1], k->pos[2]);
-    Vec3f newvel = Vec3f(k->vel[0], 0, k->vel[2]);
-    newvel = .995 * k->vel + .005 * k->orientation_v * k->vel.length();
-    newvel[1] = k->vel[1];
-    dBodySetLinearVel(body, newvel[0], newvel[1], newvel[2]);
-    // get orientation as angle around y axis; give that quat to the body
-    dQFromAxisAndAngle(q, 0, 1, 0, kinematic->orientation);
-    dBodySetQuaternion(body, q);
+    dBodySetLinearVel(body, k->vel[0], k->vel[1], k->vel[2]);
 }
 
 /* /brief Copys the ode info into the associated kinematic struct
@@ -171,6 +168,18 @@ const Kinematic &PMoveable::odeToKinematic(){
 }
 
 
+void PAgent::kinematicToOde()
+{
+    PMoveable::kinematicToOde();
+
+    const Kinematic *k = kinematic;
+    dQuaternion q;
+    Vec3f newvel = Vec3f(k->vel[0], 0, k->vel[2]);
+    newvel = .995 * k->vel + .005 * k->orientation_v * k->vel.length();
+    newvel[1] = k->vel[1];
+    dBodySetLinearVel(body, newvel[0], newvel[1], newvel[2]);
+}
+
 /* \brief Translates the object's steering info into ODE forces and angular
  * \brief velocity.
  * \warning Since we add the angular velocity component directly to ODE's
@@ -211,5 +220,4 @@ void PAgent::resetOdeAngularVelocity(int nSteps)
     dBodySetAngularVel(body, angVel[0], 
 		       angVel[1]-steering->rotation*pow(1-PH_ANGDAMP, nSteps),
 		       angVel[2]);
-    
 }

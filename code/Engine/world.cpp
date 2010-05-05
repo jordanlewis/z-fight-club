@@ -106,7 +106,7 @@ void World::loadTrack(const char *file)
     Edge_t *e, *next;
     PGeom *geom;
     GObject *gobj;
-    dQuaternion quat, quattmp;
+    dQuaternion quat;
     Vec3f position, diff;
 
     int *indices = new int[track->nSects * 6];
