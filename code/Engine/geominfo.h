@@ -3,6 +3,7 @@
 
 #include <ode/ode.h>
 #include "Parser/objLoader.h"
+#include "Utilities/vector.h"
 
 /* Stores info common to all geoms.  Cannot be constructed directly -- must be
    constructed by a child class */
@@ -61,11 +62,13 @@ class TriMeshInfo : public GeomInfo
  public:
     dTriMeshDataID meshID;
     int nVerts;
-    const void * verts;
+    const Vec3f_t * verts;
     int nTris;
-    const void * tris;
-    TriMeshInfo(dTriMeshDataID meshID, int nVerts, const void * verts,
-                                       int nTris,  const void * tris);
+    const int * tris;
+    Vec3f_t * normals;
+    TriMeshInfo(dTriMeshDataID meshID, int nVerts, const Vec3f_t * verts,
+                                       int nTris,  const int * tris,
+                                       Vec3f_t * normals);
     dGeomID createGeom(dSpaceID space);
     void draw();
 };

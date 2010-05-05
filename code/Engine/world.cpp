@@ -168,7 +168,7 @@ void World::loadTrack(const char *file)
                                 track->verts, sizeof(Vec3f_t), track->nVerts,
                                 indices, track->nSects * 6, sizeof(int) * 3);
     TriMeshInfo *tmeshinfo = new TriMeshInfo(tmid, track->nVerts, track->verts,
-                                             track->nSects * 6, indices);
+                                             track->nSects * 6, indices, NULL);
     geom = new PGeom(tmeshinfo);
     gobj = new GObject(tmeshinfo);
     WorldObject *wobj = new WorldObject(geom, gobj, NULL, NULL);

@@ -9,6 +9,8 @@
 
 #include "Engine/geominfo.h"
 #include "Utilities/error.h"
+#include "Utilities/vector.h"
+
 
 /* Credit to ODE's drawstuff library */
 void BoxInfo::draw()
@@ -146,8 +148,25 @@ void ObjMeshInfo::draw()
 
 void TriMeshInfo::draw()
 {
+    if (normals == NULL)
+    {
+        normals = new Vec3f_t[nTris / 3];
+        Vec3f_t tmp1, tmp2;
+        for (int i = 0; i < nTris / 3; i++)
+        {
+            SubV3f(verts[i * 3 + 1], verts[i * 3], tmp1);
+            SubV3f(verts[i * 3 + 2], verts[i * 3], tmp2);
+            CrossV3f(tmp1, tmp2, tmp1);
+            memcpy(normals + i, tmp1, sizeof(float) * 3);
+        }
+    }
+    glDisable(GL_CULL_FACE);
     glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
     glVertexPointer(3, GL_FLOAT, 0, verts);
+    glNormalPointer(GL_FLOAT, 0, normals);
     glDrawElements(GL_TRIANGLES, nTris, GL_UNSIGNED_INT, tris);
     glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glEnable(GL_CULL_FACE);
 }
