@@ -26,21 +26,21 @@ void testSetup()
     Vec3f pos3 = Vec3f(25, 2, 4.5);
     Agent *aiagent2 = new Agent(pos3, M_PI_2);
 
-    world.addAgent(*aiagent);
-    world.addAgent(*humanagent);
-    world.addAgent(*aiagent2);
+    world.addAgent(aiagent);
+    world.addAgent(humanagent);
+    world.addAgent(aiagent2);
 
     world.camera = Camera(THIRDPERSON, humanagent);
     sound.registerListener(&world.camera);
 
-    ai.control(*aiagent);
+    ai.control(aiagent);
     ai.controllers[0]->lane(1);
-    ai.control(*aiagent2);
+    ai.control(aiagent2);
     ai.controllers[1]->lane(0);
 
     /* Instantiate a playercontroller to handle input -> steering conversion for
      * this agent */
-    PlayerController *p = new PlayerController(*humanagent);
+    PlayerController *p = new PlayerController(humanagent);
     ///* Tell input to send input to that playerController */
-    input.controlPlayer(*p);
+    input.controlPlayer(p);
 }

@@ -49,7 +49,7 @@ class AIController
     void brake();
     void smartGo(const Vec3f target);
     void cruise(Path *path);
-    AIController(Agent &);
+    AIController(Agent *);
     void lane(int);	/* !< load a lane as the path */
     void avoid(Vec3f&);	/* !< add a new point to be avoided */
     void cruise(); 	/* !< follow path at maximum possible speed */
@@ -64,11 +64,11 @@ class AIManager
     static AIManager _instance;
     AIManager();
     ~AIManager();
-    AIManager(const AIManager&);
-    AIManager &operator=(const AIManager&);
+    AIManager(const AIManager *);
+    AIManager &operator=(const AIManager *);
 
-    void control(Agent &); /* !< assume AI control of given agent */
-    void release(Agent &); /* !< release AI control of given agent */
+    void control(Agent *); /* !< assume AI control of given agent */
+    void release(Agent *); /* !< release AI control of given agent */
     void run(); /* !< Give new steering information to each agent under our control*/
 
     static AIManager &getInstance();

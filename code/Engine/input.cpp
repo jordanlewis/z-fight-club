@@ -77,9 +77,9 @@ const PlayerController &Input::getPlayerController() const
     return *player;
 }
 
-void Input::controlPlayer(PlayerController &p)
+void Input::controlPlayer(PlayerController *p)
 {
-    player = &p;
+    player = p;
 }
 
 Input &Input::getInstance()

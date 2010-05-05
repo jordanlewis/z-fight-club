@@ -212,11 +212,11 @@ void AIController::smartGo(const Vec3f target)
     agent->setSteering(s);
 }
 
-AIController::AIController(Agent& agent)
+AIController::AIController(Agent *agent)
 {
     path = Path();
     obstacles = std::deque<Avoid>(); 
-    this->agent = &agent;
+    this->agent = agent;
 }
 
 void AIController::lane(int laneIndex)
@@ -303,13 +303,13 @@ AIManager::AIManager() {}
 
 AIManager::~AIManager() {}
 
-void AIManager::control(Agent &agent)
+void AIManager::control(Agent *agent)
 {
     AIController *newController = new AIController(agent);
     controllers.push_back(newController);
 }
 
-void AIManager::release(Agent &agent)
+void AIManager::release(Agent *agent)
 {
     /* is there a less ugly way of doing an iterator loop like this? */
     for (std::vector<AIController*>::iterator it = controllers.begin();
@@ -317,7 +317,7 @@ void AIManager::release(Agent &agent)
     {
         /* Look through our controller array, and remove the controller that
          * has the agent with the ID of the input agent */
-        if ((*it)->agent->id == agent.id)
+        if ((*it)->agent->id == agent->id)
         {
             controllers.erase(it);
             return;

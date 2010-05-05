@@ -15,7 +15,7 @@ class Input
     static Input &getInstance();
     const PlayerController &getPlayerController() const;
     int processInput();
-    void controlPlayer(PlayerController &p);
+    void controlPlayer(PlayerController *p);
 };
 
 #endif

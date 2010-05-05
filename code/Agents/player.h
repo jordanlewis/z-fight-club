@@ -43,7 +43,7 @@ class PlayerController
     const Agent &getAgent() const;
     void updateAgent();
 
-    PlayerController(Agent &agent);
+    PlayerController(Agent *agent);
     PlayerController();
 };
 

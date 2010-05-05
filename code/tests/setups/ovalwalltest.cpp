@@ -18,13 +18,13 @@ void testSetup()
     Vec3f pos = Vec3f(82, 5, 28);
     Agent *agent = new Agent(pos, M_PI / 2);
 
-    world.addAgent(*agent);
+    world.addAgent(agent);
 
     world.camera = Camera(THIRDPERSON, agent);
 
     /* Instantiate a playercontroller to handle input -> steering conversion for
      * this agent */
-    PlayerController *p = new PlayerController(*agent);
+    PlayerController *p = new PlayerController(agent);
     /* Tell input to send input to that playerController */
-    input.controlPlayer(*p);
+    input.controlPlayer(p);
 }

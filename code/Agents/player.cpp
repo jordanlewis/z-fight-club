@@ -72,9 +72,9 @@ void PlayerController::updateAgent()
     agent->setSteering(steerInfo);
 }
 
-PlayerController::PlayerController(Agent &agent)
-                                  : turnState(STRAIGHT),
-                                    engineState(NEUTRAL), agent(&agent)
+PlayerController::PlayerController(Agent *agent)
+                                  : turnState(STRAIGHT), engineState(NEUTRAL),
+                                    weaponState(HOLD), agent(agent)
 {
 }
 

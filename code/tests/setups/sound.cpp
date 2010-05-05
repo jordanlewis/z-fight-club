@@ -28,17 +28,17 @@ void testSetup()
     Vec3f pos2 = Vec3f(25, 2, 4.5);
     Agent *humanagent = new Agent(pos2, M_PI_2);
 
-    world.addAgent(*aiagent);
-    sound.registerSource(&world.wobjects.back(), new SObject("snore.wav", GetTime()+1, AL_TRUE));
-    world.wobjects.back().sobject = new SObject("snore.wav", GetTime()+1, AL_TRUE);
-    world.addAgent(*humanagent);
-    sound.registerSource(&world.wobjects.back(), new SObject("s4_phase.wav", GetTime()+1, AL_TRUE));
+    world.addAgent(aiagent);
+    sound.registerSource(world.wobjects.back(), new SObject("snore.wav", GetTime()+1, AL_TRUE));
+    world.wobjects.back()->sobject = new SObject("snore.wav", GetTime()+1, AL_TRUE);
+    world.addAgent(humanagent);
+    sound.registerSource(world.wobjects.back(), new SObject("s4_phase.wav", GetTime()+1, AL_TRUE));
 
     world.camera = Camera(THIRDPERSON, humanagent);
     /* The microphones will get their location, orientation, and velocity from the camera */
     sound.registerListener(&world.camera);
 
-    ai.control(*aiagent);
+    ai.control(aiagent);
     if (world.getTrack())
     {
         ai.controllers[0]->lane(1);
@@ -46,7 +46,7 @@ void testSetup()
 
     /* Instantiate a playercontroller to handle input -> steering conversion for
      * this agent */
-    PlayerController *p = new PlayerController(*humanagent);
+    PlayerController *p = new PlayerController(humanagent);
     ///* Tell input to send input to that playerController */
-    input.controlPlayer(*p);
+    input.controlPlayer(p);
 }

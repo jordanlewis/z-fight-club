@@ -65,22 +65,22 @@ void World::addObject(WorldObject *obj)
     wobjects.push_back(obj);
 }
 
-void World::addAgent(Agent &agent)
+void World::addAgent(Agent *agent)
 {
-    BoxInfo *box = new BoxInfo(agent.width, agent.height, agent.depth);
-    PAgent *pobj = new PAgent(&(agent.getKinematic()), &(agent.getSteering()),
-                              agent.mass, box);
+    BoxInfo *box = new BoxInfo(agent->width, agent->height, agent->depth);
+    PAgent *pobj = new PAgent(&(agent->getKinematic()), &(agent->getSteering()),
+                              agent->mass, box);
     pobj->bounce = 1;
     GObject *gobj = new GObject(box);
     SObject *sobj = NULL;
 
-    WorldObject *wobject = new WorldObject(pobj, gobj, sobj, &agent);
+    WorldObject *wobject = new WorldObject(pobj, gobj, sobj, agent);
 
     addObject(wobject);
 
-    Physics::getInstance().getAgentMap()[agent.id] = pobj;
+    Physics::getInstance().getAgentMap()[agent->id] = pobj;
 
-    agents.push_back(&agent);
+    agents.push_back(agent);
 }
 
 void World::loadTrack(const char *file)

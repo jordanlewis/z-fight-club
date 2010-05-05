@@ -19,11 +19,11 @@ void testSetup()
     Vec3f pos = Vec3f(25, 2, 7.5);
     Agent *agent = new Agent(pos, M_PI / 2);
 
-    world.addAgent(*agent);
+    world.addAgent(agent);
     world.camera = Camera(BIRDSEYE, agent);
 
     AIManager &ai = AIManager::getInstance();
-    ai.control(*agent);
+    ai.control(agent);
 
     ai.controllers[0]->lane(1);
     /* Vec3f obstacle1 = Vec3f(35, 0, 8.0);
