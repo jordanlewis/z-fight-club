@@ -89,89 +89,102 @@ void World::loadTrack(const char *file)
 {
     track = LoadTrackData(file);
     Error error = Error::getInstance();
+
     if (!track) {
         error.log(PARSER, CRITICAL, "Track load failed\n");
     }
 
-    /* Now create WorldObjects to represent the track */
-
-    float depth = .1;
-    float height = 2;
-    float len;
-
-    Vec2f_t xzwall;
-    Vec3f_t wall;
-    int i, j;
-    float theta;
-    Edge_t *e, *next;
+    int i, pos;
+    dTriMeshDataID floor = dGeomTriMeshDataCreate();
+    dTriMeshDataID walls = dGeomTriMeshDataCreate();
     PGeom *geom;
     GObject *gobj;
-    dQuaternion quat, quattmp;
-    Vec3f position, diff;
+    WorldObject *wobj;
+    TriMeshInfo *tmeshinfo;
+    Vec3f_t tmp1, tmp2;
 
-    int *indices = new int[track->nSects * 6];
-    dTriMeshDataID tmid = dGeomTriMeshDataCreate();
+    Vec3f_t *floorverts = new Vec3f_t[track->nVerts];
+    Vec3f_t *wallverts  = new Vec3f_t[track->nVerts * 2];
+    int *flooridxs = new int[track->nSects * 6];
+    int *wallidxs  = new int[track->nSects * 12];
+    Vec3f_t *wallnorms = new Vec3f_t[track->nSects * 4];
+
+    memcpy(floorverts, track->verts, track->nVerts * sizeof(Vec3f_t));
+
+    for (i = 0; i < track->nVerts; i++)
+    {
+        CopyV3f(track->verts[i], wallverts[i * 2]);
+        CopyV3f(track->verts[i], wallverts[i * 2 + 1]);
+        wallverts[i * 2 + 1][1] += 2;
+    }
+
     for (i = 0; i < track->nSects; i++)
     {
-        /* for each edge in every sector, if its a wall edge, create a box
-         * that represents the wall
+        // two triangles per floor quad
+        pos = 6 * i;
+        flooridxs[pos]     = track->sects[i].edges[0].start;
+        flooridxs[pos + 1] = track->sects[i].edges[1].start;
+        flooridxs[pos + 2] = track->sects[i].edges[2].start;
+
+        flooridxs[pos + 3] = track->sects[i].edges[2].start;
+        flooridxs[pos + 4] = track->sects[i].edges[3].start;
+        flooridxs[pos + 5] = track->sects[i].edges[0].start;
+
+
+        /* 2 triangles per wall per sector
+         * this assumes that the edge order of sectors always goes
+         * entry, wall, exit, wall
          */
-        if (track->sects[i].nEdges != 4)
-        {
-            error.log(ENGINE, CRITICAL, "Non-rect sectors unsupported\n");
-            return;
-        }
+        pos = 12 * i;
+        wallidxs[pos]      = track->sects[i].edges[0].start * 2;
+        wallidxs[pos + 1]  = track->sects[i].edges[3].start * 2;
+        wallidxs[pos + 2]  = track->sects[i].edges[3].start * 2 + 1;
 
-        indices[6 * i]     = track->sects[i].edges[0].start;
-        indices[6 * i + 1] = track->sects[i].edges[1].start;
-        indices[6 * i + 2] = track->sects[i].edges[2].start;
-        indices[6 * i + 3] = track->sects[i].edges[2].start;
-        indices[6 * i + 4] = track->sects[i].edges[3].start;
-        indices[6 * i + 5] = track->sects[i].edges[0].start;
+        SubV3f(track->verts[wallidxs[pos + 1]], track->verts[wallidxs[pos]], tmp1);
+        SubV3f(track->verts[wallidxs[pos + 2]], track->verts[wallidxs[pos]], tmp2);
+        CrossV3f(tmp1, tmp2, wallnorms[4 * i]);
 
-        for (j = 0; j < track->sects[i].nEdges; j++)
-        {
-            e = track->sects[i].edges + j;
-            if (j == track->sects[i].nEdges - 1)
-                next = e - 3;
-            else
-                next = e + 1;
-            if (e->kind == WALL_EDGE)
-            {
-                SubV3f(track->verts[e->start],track->verts[next->start], wall);
-                xzwall[0] = wall[0];
-                xzwall[1] = wall[2];
-                len = LengthV2f(xzwall);
+        wallidxs[pos + 3]  = track->sects[i].edges[3].start * 2 + 1;
+        wallidxs[pos + 4]  = track->sects[i].edges[0].start * 2 + 1;
+        wallidxs[pos + 5]  = track->sects[i].edges[0].start * 2;
+        SubV3f(track->verts[wallidxs[pos + 4]], track->verts[wallidxs[pos + 3]], tmp1);
+        SubV3f(track->verts[wallidxs[pos + 5]], track->verts[wallidxs[pos + 3]], tmp2);
+        CrossV3f(tmp1, tmp2, wallnorms[4 * i + 1]);
 
-                /* this bit makes a pgeom and sets its position and rotation */
-                BoxInfo *box = new BoxInfo(len, abs(height + wall[1]), depth);
-                theta = atan2(wall[2], wall[0]);
-                geom = new PGeom(box);
-                geom->bounce = 1;
-                dQFromAxisAndAngle(quat, 0, 1, 0, -theta);
-                geom->setQuat(quat);
-                LerpV3f(track->verts[e->start], .5, track->verts[next->start],
-                        wall);
-                position = Vec3f(wall[0], wall[1], wall[2]);
-                geom->setPos(position);
+        wallidxs[pos + 6]  = track->sects[i].edges[1].start * 2;
+        wallidxs[pos + 7]  = track->sects[i].edges[1].start * 2 + 1;
+        wallidxs[pos + 8]  = track->sects[i].edges[2].start * 2 + 1;
+        SubV3f(track->verts[wallidxs[pos + 6]], track->verts[wallidxs[pos + 6]], tmp1);
+        SubV3f(track->verts[wallidxs[pos + 7]], track->verts[wallidxs[pos + 6]], tmp2);
+        CrossV3f(tmp1, tmp2, wallnorms[4 * i + 2]);
 
-                /* now we make a corresponding gobject */
-                gobj = new GObject(box);
-
-                WorldObject *wobj = new WorldObject(geom, gobj, NULL, NULL);
-
-                addObject(wobj);
-            }
-        }
+        wallidxs[pos + 9]  = track->sects[i].edges[2].start * 2 + 1;
+        wallidxs[pos + 10] = track->sects[i].edges[2].start * 2;
+        wallidxs[pos + 11] = track->sects[i].edges[1].start * 2;
+        SubV3f(track->verts[wallidxs[pos + 10]], track->verts[wallidxs[pos + 9]], tmp1);
+        SubV3f(track->verts[wallidxs[pos + 11]], track->verts[wallidxs[pos + 9]], tmp2);
+        CrossV3f(tmp1, tmp2, wallnorms[4 * i + 3]);
     }
-    dGeomTriMeshDataBuildSingle(tmid,
+    dGeomTriMeshDataBuildSingle(floor,
                                 track->verts, sizeof(Vec3f_t), track->nVerts,
-                                indices, track->nSects * 6, sizeof(int) * 3);
-    TriMeshInfo *tmeshinfo = new TriMeshInfo(tmid, track->nVerts, track->verts,
-                                             track->nSects * 6, indices);
+                                flooridxs, track->nSects * 6, sizeof(int) * 3);
+    tmeshinfo = new TriMeshInfo(floor, track->nVerts, floorverts,
+                                       track->nSects * 6, flooridxs,
+                                       NULL);
     geom = new PGeom(tmeshinfo);
     gobj = new GObject(tmeshinfo);
-    WorldObject *wobj = new WorldObject(geom, gobj, NULL, NULL);
+    wobj = new WorldObject(geom, gobj, NULL, NULL);
+    addObject(wobj);
+
+    dGeomTriMeshDataBuildSingle(walls,
+                                wallverts, sizeof(Vec3f_t), track->nVerts * 2,
+                                wallidxs, track->nSects * 12, sizeof(int) * 3);
+    tmeshinfo = new TriMeshInfo(walls, track->nVerts * 2, wallverts,
+                               track->nSects * 12, wallidxs,
+                               wallnorms);
+    geom = new PGeom(tmeshinfo);
+    gobj = new GObject(tmeshinfo);
+    wobj = new WorldObject(geom, gobj, NULL, NULL);
     addObject(wobj);
 
 }
