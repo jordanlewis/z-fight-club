@@ -94,6 +94,7 @@ void World::loadTrack(const char *file)
         error.log(PARSER, CRITICAL, "Track load failed\n");
     }
 
+    TrackData_t *t = track;
     int i, pos;
     dTriMeshDataID floor = dGeomTriMeshDataCreate();
     dTriMeshDataID walls = dGeomTriMeshDataCreate();
@@ -103,73 +104,90 @@ void World::loadTrack(const char *file)
     TriMeshInfo *tmeshinfo;
     Vec3f_t tmp1, tmp2;
 
-    Vec3f_t *floorverts = new Vec3f_t[track->nVerts];
-    Vec3f_t *wallverts  = new Vec3f_t[track->nVerts * 2];
-    int *flooridxs = new int[track->nSects * 6];
-    int *wallidxs  = new int[track->nSects * 12];
-    Vec3f_t *wallnorms = new Vec3f_t[track->nSects * 4];
+    Vec3f_t *floorverts = new Vec3f_t[t->nVerts];
+    Vec3f_t *wallverts  = new Vec3f_t[t->nVerts * 2];
+    int *flooridxs = new int[t->nSects * 6];
+    int *wallidxs  = new int[t->nSects * 24];
+    Vec3f_t *wallnorms = new Vec3f_t[t->nSects * 8];
 
-    memcpy(floorverts, track->verts, track->nVerts * sizeof(Vec3f_t));
+    memcpy(floorverts, t->verts, t->nVerts * sizeof(Vec3f_t));
 
-    for (i = 0; i < track->nVerts; i++)
+    for (i = 0; i < t->nVerts; i++)
     {
-        CopyV3f(track->verts[i], wallverts[i * 2]);
-        CopyV3f(track->verts[i], wallverts[i * 2 + 1]);
+        CopyV3f(t->verts[i], wallverts[i * 2]);
+        CopyV3f(t->verts[i], wallverts[i * 2 + 1]);
         wallverts[i * 2 + 1][1] += 2;
     }
 
-    for (i = 0; i < track->nSects; i++)
+    for (i = 0; i < t->nSects; i++)
     {
         // two triangles per floor quad
         pos = 6 * i;
-        flooridxs[pos]     = track->sects[i].edges[0].start;
-        flooridxs[pos + 1] = track->sects[i].edges[1].start;
-        flooridxs[pos + 2] = track->sects[i].edges[2].start;
+        flooridxs[pos]     = t->sects[i].edges[0].start;
+        flooridxs[pos + 1] = t->sects[i].edges[1].start;
+        flooridxs[pos + 2] = t->sects[i].edges[2].start;
 
-        flooridxs[pos + 3] = track->sects[i].edges[2].start;
-        flooridxs[pos + 4] = track->sects[i].edges[3].start;
-        flooridxs[pos + 5] = track->sects[i].edges[0].start;
+        flooridxs[pos + 3] = t->sects[i].edges[2].start;
+        flooridxs[pos + 4] = t->sects[i].edges[3].start;
+        flooridxs[pos + 5] = t->sects[i].edges[0].start;
 
 
         /* 2 triangles per wall per sector
          * this assumes that the edge order of sectors always goes
          * entry, wall, exit, wall
          */
-        pos = 12 * i;
-        wallidxs[pos]      = track->sects[i].edges[0].start * 2;
-        wallidxs[pos + 1]  = track->sects[i].edges[3].start * 2;
-        wallidxs[pos + 2]  = track->sects[i].edges[3].start * 2 + 1;
+        pos = 24 * i;
+        wallidxs[pos]      = t->sects[i].edges[0].start * 2;
+        wallidxs[pos + 1]  = t->sects[i].edges[3].start * 2;
+        wallidxs[pos + 2]  = t->sects[i].edges[3].start * 2 + 1;
 
-        SubV3f(track->verts[wallidxs[pos + 1]], track->verts[wallidxs[pos]], tmp1);
-        SubV3f(track->verts[wallidxs[pos + 2]], track->verts[wallidxs[pos]], tmp2);
-        CrossV3f(tmp1, tmp2, wallnorms[4 * i]);
+        wallidxs[pos + 3]  = t->sects[i].edges[3].start * 2 + 1;
+        wallidxs[pos + 4]  = t->sects[i].edges[0].start * 2 + 1;
+        wallidxs[pos + 5]  = t->sects[i].edges[0].start * 2;
 
-        wallidxs[pos + 3]  = track->sects[i].edges[3].start * 2 + 1;
-        wallidxs[pos + 4]  = track->sects[i].edges[0].start * 2 + 1;
-        wallidxs[pos + 5]  = track->sects[i].edges[0].start * 2;
-        SubV3f(track->verts[wallidxs[pos + 4]], track->verts[wallidxs[pos + 3]], tmp1);
-        SubV3f(track->verts[wallidxs[pos + 5]], track->verts[wallidxs[pos + 3]], tmp2);
-        CrossV3f(tmp1, tmp2, wallnorms[4 * i + 1]);
+        wallidxs[pos + 6]  = t->sects[i].edges[1].start * 2;
+        wallidxs[pos + 7]  = t->sects[i].edges[1].start * 2 + 1;
+        wallidxs[pos + 8]  = t->sects[i].edges[2].start * 2 + 1;
 
-        wallidxs[pos + 6]  = track->sects[i].edges[1].start * 2;
-        wallidxs[pos + 7]  = track->sects[i].edges[1].start * 2 + 1;
-        wallidxs[pos + 8]  = track->sects[i].edges[2].start * 2 + 1;
-        SubV3f(track->verts[wallidxs[pos + 6]], track->verts[wallidxs[pos + 6]], tmp1);
-        SubV3f(track->verts[wallidxs[pos + 7]], track->verts[wallidxs[pos + 6]], tmp2);
-        CrossV3f(tmp1, tmp2, wallnorms[4 * i + 2]);
+        wallidxs[pos + 9]  = t->sects[i].edges[2].start * 2 + 1;
+        wallidxs[pos + 10] = t->sects[i].edges[2].start * 2;
+        wallidxs[pos + 11] = t->sects[i].edges[1].start * 2;
 
-        wallidxs[pos + 9]  = track->sects[i].edges[2].start * 2 + 1;
-        wallidxs[pos + 10] = track->sects[i].edges[2].start * 2;
-        wallidxs[pos + 11] = track->sects[i].edges[1].start * 2;
-        SubV3f(track->verts[wallidxs[pos + 10]], track->verts[wallidxs[pos + 9]], tmp1);
-        SubV3f(track->verts[wallidxs[pos + 11]], track->verts[wallidxs[pos + 9]], tmp2);
-        CrossV3f(tmp1, tmp2, wallnorms[4 * i + 3]);
+        /* now do the outside face: opposite winding */
+        wallidxs[pos + 12] = t->sects[i].edges[0].start * 2;
+        wallidxs[pos + 13] = t->sects[i].edges[0].start * 2 + 1;
+        wallidxs[pos + 14] = t->sects[i].edges[3].start * 2 + 1;
+
+        wallidxs[pos + 15] = t->sects[i].edges[3].start * 2 + 1;
+        wallidxs[pos + 16] = t->sects[i].edges[3].start * 2;
+        wallidxs[pos + 17] = t->sects[i].edges[0].start * 2;
+
+        wallidxs[pos + 18] = t->sects[i].edges[1].start * 2;
+        wallidxs[pos + 19] = t->sects[i].edges[2].start * 2;
+        wallidxs[pos + 20] = t->sects[i].edges[2].start * 2 + 1;
+
+        wallidxs[pos + 21] = t->sects[i].edges[2].start * 2 + 1;
+        wallidxs[pos + 22] = t->sects[i].edges[1].start * 2 + 1;
+        wallidxs[pos + 23] = t->sects[i].edges[1].start * 2;
+
+
+        /* Calculate normals */
+        for (int j = 0; j < 4; j++)
+        {
+            SubV3f(t->verts[wallidxs[pos + 1]], t->verts[wallidxs[pos]], tmp1);
+            SubV3f(t->verts[wallidxs[pos + 2]], t->verts[wallidxs[pos]], tmp2);
+            CrossV3f(tmp1, tmp2, wallnorms[4 * i + j]);
+            ZeroV3f(tmp1);
+            NormalizeV3f(wallnorms[4 * i + j]);
+            SubV3f(tmp1, wallnorms[4 * i + j], wallnorms[4 * i + j + 4]);
+            pos += 3;
+        }
     }
     dGeomTriMeshDataBuildSingle(floor,
-                                track->verts, sizeof(Vec3f_t), track->nVerts,
-                                flooridxs, track->nSects * 6, sizeof(int) * 3);
-    tmeshinfo = new TriMeshInfo(floor, track->nVerts, floorverts,
-                                       track->nSects * 6, flooridxs,
+                                t->verts, sizeof(Vec3f_t), t->nVerts,
+                                flooridxs, t->nSects * 6, sizeof(int) * 3);
+    tmeshinfo = new TriMeshInfo(floor, t->nVerts, floorverts,
+                                       t->nSects * 6, flooridxs,
                                        NULL);
     geom = new PGeom(tmeshinfo);
     gobj = new GObject(tmeshinfo);
@@ -177,10 +195,10 @@ void World::loadTrack(const char *file)
     addObject(wobj);
 
     dGeomTriMeshDataBuildSingle(walls,
-                                wallverts, sizeof(Vec3f_t), track->nVerts * 2,
-                                wallidxs, track->nSects * 12, sizeof(int) * 3);
-    tmeshinfo = new TriMeshInfo(walls, track->nVerts * 2, wallverts,
-                               track->nSects * 12, wallidxs,
+                                wallverts, sizeof(Vec3f_t), t->nVerts * 2,
+                                wallidxs, t->nSects * 24, sizeof(int) * 3);
+    tmeshinfo = new TriMeshInfo(walls, t->nVerts * 2, wallverts,
+                               t->nSects * 24, wallidxs,
                                wallnorms);
     geom = new PGeom(tmeshinfo);
     gobj = new GObject(tmeshinfo);
