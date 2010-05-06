@@ -3,13 +3,11 @@
 
 #include <iostream>
 
-#define DEFAULT_NETWORK_PORT 6888
-#define DEFAULT_MAX_SERVER_CONNECTIONS 16
 
 using namespace std;
 
 
-int network_init()
+int networkInit()
 {
     if (enet_initialize() != 0)
 	{
@@ -23,36 +21,62 @@ int network_init()
 
 Server::Server(uint32_t addr = ENET_HOST_ANY,
 	       uint16_t port = DEFAULT_NETWORK_PORT,
-	       int max_conns = DEFAULT_MAX_SERVER_CONNECTIONS)
+	       int maxConns = DEFAULT_MAX_SERVER_CONNECTIONS)
 {
-    //gethostname()
     
-    enet_address.host = addr;
-    enet_address.port = port;
+    enetAddress.host = addr;
+    enetAddress.port = port;
     
-    enet_server = enet_host_create(&enet_address, max_conns, 0, 0);
+    enetServer = enet_host_create(&enetAddress, maxConns, 0, 0);
     
-    if (enet_server == NULL)
+    if (enetServer == NULL)
 	{
 	    cerr << "ENet could not initialize server" << endl;
 	}
-    
 }
-    
 
+//General loop structure taken from the tutorial on enet.bespin.org
+void Server::serverFrame(){
 
-/*
-  int main(int argc, const char * argv[]){
-  
-  network_init();
-  
-  Server new_server;
-  //new_server.init();
-  
-    Client new_client;
-    //new_client.init();
-    
-    return 0;
-    
+    ENetEvent event;
+    while ( enet_host_service(enetServer, &event, 0) > 0){
+	switch (event.type)
+	    {
+	    case ENET_EVENT_TYPE_NONE:
+		break;
+	    case ENET_EVENT_TYPE_CONNECT:
+		{
+		    ClientInfo client;
+		    int successFlag = 0;
+		    client.ipAddr = event.peer->address.host;
+		    client.port = event.peer->address.port;
+		
+		    //Find smallest unused identifier
+		    //for (uint8_t i = UINT8_MIN; i < UINT8_MAX; i++){ //Want...
+		    for (uint8_t i = 0; i < 255; i++){
+			if (clients.find(i) == clients.end()){
+			    client.identifier = i;
+			    successFlag = 1;
+			    break;
+			}		    
+		    }
+		    
+		    if (successFlag)  {
+			clients[client.identifier] = client;
+		    }
+		    else {
+			cerr << "Cannot accomodate more clients" << endl;
+		    }
+		    break;
+		}
+	    case ENET_EVENT_TYPE_RECEIVE: //NYI
+		break;
+
+	    case ENET_EVENT_TYPE_DISCONNECT:  //NYI
+		break;
+
+	    }
+		
     }
-*/
+
+}
