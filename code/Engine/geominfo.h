@@ -25,6 +25,7 @@ class SphereInfo : public GeomInfo
     SphereInfo(float radius);
     dGeomID createGeom(dSpaceID space);
     void createMass(dMass *, float);
+    void draw();
 };
 
 //Packages info for a box of dimensions lx*ly*lz
