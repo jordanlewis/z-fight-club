@@ -178,18 +178,19 @@ void World::loadTrack(const char *file)
 
 void World::setRunType(const string str){
     Error error = Error::getInstance();
-
-    if ( (str == "client") || (str == "Client") ){
-	runType = CLIENT;
-    }
+	
     if ( (str == "server") || (str == "Server") ){
 	runType = SERVER;
     }
-    if ( (str == "solo") || (str == "Solo") ) {
+    else if ( (str =="client") || (str == "Client") ) {
+	runType = CLIENT;
+    }
+    else if ( (str == "solo") || (str == "Solo") ) {
 	runType = SOLO;
     }
     else {
-	error.log(NETWORK, CRITICAL, "Unrecognized netmode. Default to solo.");
+	error.log(NETWORK, IMPORTANT,
+		  "Unrecognized netmode. Defaulting to solo\n.");
 	runType = SOLO;
     }
     return;
