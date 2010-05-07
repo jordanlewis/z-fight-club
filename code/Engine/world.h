@@ -4,6 +4,7 @@
 #include <ode/ode.h>
 
 #include <vector>
+#include <string>
 using namespace std;
 
 #include "Agents/agent.h"
@@ -44,6 +45,13 @@ class WorldObject
     void draw();
 };
 
+//What mode are we running our game in?
+typedef enum {
+    SOLO = 0,
+    CLIENT = 1,
+    SERVER = 2
+} RunType_t;
+
 class World
 {
   private:
@@ -54,9 +62,10 @@ class World
     ~World();
     World(const World&);
     World& operator=(const World&);
-
+    
     static World _instance;
   public:
+    RunType_t runType;
     Camera camera;
     TrackData_t *track;
     static float xMax;   /* XXX what are these? */
@@ -69,6 +78,7 @@ class World
     void addObject(WorldObject *obj);
     void addAgent(Agent *agent);
     void loadTrack(const char *file);
+    void setRunType(const string str);
     const TrackData_t * getTrack();
     static World &getInstance();
 

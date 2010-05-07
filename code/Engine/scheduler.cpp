@@ -36,7 +36,7 @@ void Scheduler::schedule(ComponentEvent &evt)
     eventQueue.push(evt);
 }
 
-void Scheduler::loopForever()
+void Scheduler::soloLoopForever()
 {
     int done = 0;
     double now;

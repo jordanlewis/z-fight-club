@@ -176,6 +176,25 @@ void World::loadTrack(const char *file)
 
 }
 
+void World::setRunType(const string str){
+    Error error = Error::getInstance();
+
+    if ( (str == "client") || (str == "Client") ){
+	runType = CLIENT;
+    }
+    if ( (str == "server") || (str == "Server") ){
+	runType = SERVER;
+    }
+    if ( (str == "solo") || (str == "Solo") ) {
+	runType = SOLO;
+    }
+    else {
+	error.log(NETWORK, CRITICAL, "Unrecognized netmode. Default to solo.");
+	runType = SOLO;
+    }
+    return;
+}
+
 const TrackData_t *World::getTrack()
 {
     return track;

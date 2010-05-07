@@ -44,7 +44,9 @@ class Scheduler
     Scheduler &operator=(const Scheduler&);
   public:
     void schedule(ComponentEvent &evt);
-    void loopForever();
+    void soloLoopForever();
+    void clientLoopForever();
+    void serverLoopForever();
 
     static Scheduler &getInstance();
 };

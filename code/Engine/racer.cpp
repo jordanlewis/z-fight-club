@@ -11,6 +11,7 @@
 #include "Physics/physics.h"
 #include "Graphics/graphics.h"
 #include "Sound/sound.h"
+#include "Network/network.h"
 #include "input.h"
 #include "setup.h"
 
@@ -36,6 +37,9 @@ int main(int argc, char *argv[])
             ("help", "produce help message")
             ("track", po::value<string>(), "set track file")
             ("sounds", po::value<string>(), "set sounds directory")
+	    ("network", po::value<string>(), "set network mode")
+	    ("ipaddr", po::value<int>(), "set server ip address")
+	    ("port", po::value<int>(), "set server port")
         ;
     
         po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -56,6 +60,14 @@ int main(int argc, char *argv[])
         {
             sound.setDir(vm["sounds"].as<string>().c_str());
         }
+	if (vm.count("network"))
+	{
+	    world.setRunType(vm["network"].as<string>().c_str()); 
+	}
+	else {
+	    world.setRunType("Solo");
+	} 
+	    
     }
     catch(exception& e) {
         cerr << "error: " << e.what() << "\n";
@@ -65,17 +77,21 @@ int main(int argc, char *argv[])
         cerr << "Exception of unknown type!\n";
         return 2;
     }
+    if (world.runType == SOLO) {
 
     srand(time(NULL));
-
     graphics.initGraphics();
     sound.initSound();
-
     world.getTrack();
-
     testSetup();
+    scheduler.soloLoopForever();
+    }
+    if (world.runType == CLIENT) {
 
-    scheduler.loopForever();
+    }
+    if (world.runType == SERVER) {
+
+    }
 
     return 0;
 }
