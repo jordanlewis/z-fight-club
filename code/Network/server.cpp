@@ -8,7 +8,9 @@ Server::Server()
 
 Server::~Server()
 {
-    enet_host_destroy(enetServer);
+    if (enetServer != NULL) {
+	enet_host_destroy(enetServer);
+    }
 }
 
 Server &Server::getInstance()
