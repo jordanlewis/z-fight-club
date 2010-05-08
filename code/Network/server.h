@@ -24,6 +24,8 @@ class Server {
 
     static Server _instance;
 
+    void updateFromClient(uint8_t clientId); //NYI (call from within serverFrame)
+
  public:
     /* Member Functions */
     static Server &getInstance();
@@ -34,9 +36,7 @@ class Server {
     void setServerPort(uint16_t port);
     
     void pushToClient (uint8_t clientId); //NYI
-    void updateFromClient(uint8_t clientId); //NYI
-    void serverFrame(); //Run the server once through its loop
-    int listen(); //Listen for incoming connections.  NYI.
+    void serverFrame(); //Service any incoming connections/packets
     int closeClient(uint8_t id); //NYI
     
 };

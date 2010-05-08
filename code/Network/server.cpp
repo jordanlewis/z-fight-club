@@ -67,8 +67,7 @@ void Server::serverFrame(){
 		    client.port = event.peer->address.port;
 		
 		    //Find smallest unused identifier
-		    //for (uint8_t i = UINT8_MIN; i < UINT8_MAX; i++){//Want...
-		    for (uint8_t i = 0; i < 255; i++){
+		    for (uint8_t i = 0; i < UINT8_MAX; i++){
 			if (clients.find(i) == clients.end()){
 			    client.identifier = i;
 			    successFlag = 1;
