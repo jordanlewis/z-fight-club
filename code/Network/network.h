@@ -21,5 +21,5 @@ using namespace std;
 /* General Networking functions */
 int networkInit(); //Initialize the network code.
 int setPort(int port);
-int setAddr(int addr);
+int setAddr(const char*);
 #endif

@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
             ("track", po::value<string>(), "set track file")
             ("sounds", po::value<string>(), "set sounds directory")
 	    ("network", po::value<string>(), "set network mode")
-	    ("ipaddr", po::value<int>(), "set server ip address")
+	    ("ipaddr", po::value<string>(), "set server ip address")
 	    ("port", po::value<int>(), "set server port")
         ;
     
@@ -55,6 +55,11 @@ int main(int argc, char *argv[])
         {
             world.loadTrack(vm["track"].as<string>().c_str());
         }
+	else 
+	{
+	    cout << "Error:  No track file given.";
+	    return 0;
+	}
     
         if (vm.count("sounds"))
         {
@@ -64,10 +69,18 @@ int main(int argc, char *argv[])
 	{
 	    world.setRunType(vm["network"].as<string>().c_str()); 
 	}
-	else {
+	else 
+	{
 	    world.setRunType("Solo");
 	} 
-	    
+	if (vm.count("ipaddr"))
+	{
+	    setAddr(vm["ipaddr"].as<string>().c_str());
+	}
+	if (vm.count("port"))
+	{
+	    setPort(vm["port"].as<int>());
+	}
     }
     catch(exception& e) {
         cerr << "error: " << e.what() << "\n";
