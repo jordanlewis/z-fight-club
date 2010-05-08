@@ -16,10 +16,7 @@ int networkInit()
 
 int setPort(int port){
     Error &error = Error::getInstance();
-    World &world = World::getInstance();
-    Client &client = Client::getInstance();
-    Server &server = Server::getInstance();
-    
+
     if (port < 0)
 	{
 	    error.log(NETWORK, CRITICAL,
@@ -33,13 +30,13 @@ int setPort(int port){
 	    return -1;
 	}
     
-    switch (world.runType)
+    switch (World::getInstance().runType)
 	{ 
 	case CLIENT: 
-	    client.setServerPort(port);
+	    Client::getInstance().setServerPort(port);
 	    break;
 	case SERVER:
-	    server.setServerPort(port);
+	    Server::getInstance().setServerPort(port);
 	    break;
 	case SOLO:
 	default:
@@ -53,10 +50,6 @@ int setPort(int port){
 
 int setAddr(const char *addr) {
     Error &error = Error::getInstance();
-    World &world = World::getInstance();
-    Client &client = Client::getInstance();
-    Server &server = Server::getInstance();
-    
     in_addr address;
     
     //Convert our address into an integer
@@ -66,19 +59,19 @@ int setAddr(const char *addr) {
 	return -1;
     }
     
-    switch (world.runType)
+    switch (World::getInstance().runType)
 	{ 
 	case CLIENT: 
-	    client.setServerAddr(address.s_addr);
+	    Client::getInstance().setServerAddr(address.s_addr);
 	    break;
 	case SERVER:
-	server.setServerPort(address.s_addr);
-	break;
+	    Server::getInstance().setServerPort(address.s_addr);
+	    break;
 	case SOLO:
 	default:
-	error.log(NETWORK, CRITICAL,
-		  "Must be in client or server mode to set address.");
-	return -2;
+	    error.log(NETWORK, CRITICAL,
+		      "Must be in client or server mode to set address.");
+	    return -2;
 	}	 
 
     return 0;

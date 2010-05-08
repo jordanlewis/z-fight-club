@@ -7,6 +7,8 @@
 #include "Physics/physics.h"
 #include "Sound/sound.h"
 #include "Agents/ai.h"
+#include "Network/client.h"
+#include "Network/server.h"
 
 typedef enum
 {
@@ -36,6 +38,8 @@ class Scheduler
     Sound    *sound;
     Physics  *physics;
     AIManager *ai;
+    Client *client;
+    Server *server;
 
     static Scheduler _instance;
     Scheduler();

@@ -27,7 +27,10 @@ Scheduler::Scheduler() :
     graphics(&Graphics::getInstance()),
     sound(&Sound::getInstance()),
     physics(&Physics::getInstance()),
-    ai(&AIManager::getInstance())
+    ai(&AIManager::getInstance()),
+    client(&Client::getInstance()),
+    server(&Server::getInstance())
+
 {
 }
 
@@ -90,6 +93,22 @@ void Scheduler::soloLoopForever()
 
     /* clean everything up */
     /* SDL_CloseAudio(); */
+}
+
+void Scheduler::clientLoopForever(){
+    while (0)
+	{
+	    
+	}
+    return;
+}
+
+void Scheduler::serverLoopForever(){
+    while (1)
+	{
+	    server->serverFrame();
+	}
+    return;
 }
 
 Scheduler::~Scheduler()

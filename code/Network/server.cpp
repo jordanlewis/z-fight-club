@@ -54,6 +54,7 @@ void Server::serverFrame(){
 		break;
 	    case ENET_EVENT_TYPE_CONNECT:
 		{
+		    cout << "New client connected!" << endl;
 		    ClientInfo client;
 		    int successFlag = 0;
 		    client.ipAddr = event.peer->address.host;

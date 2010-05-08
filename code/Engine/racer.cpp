@@ -12,6 +12,8 @@
 #include "Graphics/graphics.h"
 #include "Sound/sound.h"
 #include "Network/network.h"
+#include "Network/client.h"
+#include "Network/server.h"
 #include "input.h"
 #include "setup.h"
 
@@ -29,6 +31,8 @@ int main(int argc, char *argv[])
     Sound     &sound    = Sound::getInstance();
     Graphics  &graphics = Graphics::getInstance();
     Scheduler &scheduler = Scheduler::getInstance();
+    Client &client = Client::getInstance();
+    Server &server = Server::getInstance();
 
     try {
         // Declare the supported options.
@@ -90,20 +94,31 @@ int main(int argc, char *argv[])
         cerr << "Exception of unknown type!\n";
         return 2;
     }
-    if (world.runType == SOLO) {
-
     srand(time(NULL));
-    graphics.initGraphics();
-    sound.initSound();
-    world.getTrack();
-    testSetup();
-    scheduler.soloLoopForever();
-    }
-    if (world.runType == CLIENT) {
 
+    if (world.runType == SOLO) 
+    {
+	graphics.initGraphics();
+	sound.initSound();
+	world.getTrack();
+	testSetup();
+	scheduler.soloLoopForever();
     }
-    if (world.runType == SERVER) {
-
+    if (world.runType == CLIENT)
+    {
+	//graphics.initGraphics();
+	//sound.initSound();
+	world.getTrack();
+	testSetup();
+	client.connectToServer();
+	scheduler.clientLoopForever();
+    }
+    if (world.runType == SERVER) 
+    {
+	world.getTrack();
+	testSetup();
+	server.createHost();
+	scheduler.serverLoopForever();
     }
 
     return 0;
