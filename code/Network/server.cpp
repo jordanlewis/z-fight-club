@@ -1,4 +1,7 @@
 #include "server.h"
+#include "Engine/world.h"
+#include "Agents/agent.h"
+#include "Utilities/error.h"
 
 Server Server::_instance;
 
@@ -26,7 +29,7 @@ int Server::createHost()
     enetServer = enet_host_create(&enetAddress, maxConns, 0, 0);
     
     if (enetServer == NULL)
-	{
+        {
 	    cerr << "ENet could not initialize server" << endl;
 	    return -1;
 	}
@@ -47,14 +50,17 @@ void Server::setServerPort(uint16_t port){
 void Server::serverFrame(){
 
     ENetEvent event;
+    usleep(1000000);
+    cout << "Server loops" << endl;
     while ( enet_host_service(enetServer, &event, 0) > 0){
+	Error error = Error::getInstance();
 	switch (event.type)
 	    {
 	    case ENET_EVENT_TYPE_NONE:
 		break;
 	    case ENET_EVENT_TYPE_CONNECT:
 		{
-		    cout << "New client connected!" << endl;
+		    error.log(NETWORK, IMPORTANT, "New client connected!");
 		    ClientInfo client;
 		    int successFlag = 0;
 		    client.ipAddr = event.peer->address.host;
@@ -76,12 +82,20 @@ void Server::serverFrame(){
 		    else {
 			cerr << "Cannot accomodate more clients" << endl;
 		    }
+		    
+		    //Place client's agent;
+		    Vec3f pos = Vec3f(82,5,28);
+		    Agent *agent = new Agent(pos,M_PI/2);
+		    World::getInstance().addAgent(agent);
+
 		    break;
 		}
 	    case ENET_EVENT_TYPE_RECEIVE: //NYI
+		error.log(NETWORK, TRIVIAL, "Packet Received");
 		break;
 
 	    case ENET_EVENT_TYPE_DISCONNECT:  //NYI
+		error.log(NETWORK, IMPORTANT, "Client disconnecting");
 		break;
 
 	    }

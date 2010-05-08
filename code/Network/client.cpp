@@ -40,7 +40,6 @@ int Client::connectToServer()
 {
     ENetAddress enetAddress;
     ENetEvent event;
-    ENetPeer *peer;
 
     if (serverPort == 0){
 	cerr << "No server port specificied" << endl;
@@ -66,14 +65,22 @@ int Client::connectToServer()
     if (enet_host_service(enetClient, &event, 5000) > 0 &&
 	event.type == ENET_EVENT_TYPE_CONNECT)
 	{
-	    cout << "Connection successful" << endl;
+	    cout << "Client reports successful connection" << endl;
 	}
     else 
 	{
 	    enet_peer_reset(peer);
 	    cout << "Connection failed." << endl;
+	    return -1;
     }
 
     return 0;
 
+}
+
+void Client::pushToServer(){
+    ENetPacket *packet = enet_packet_create("packet", strlen("packet")+1,0);
+    enet_peer_send(peer, 0, packet);
+    enet_host_flush(enetClient);
+    //enet_packet_destroy(packet);
 }

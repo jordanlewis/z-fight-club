@@ -17,7 +17,7 @@ int networkInit()
 int setPort(int port){
     Error &error = Error::getInstance();
 
-    if (port < 0)
+    if (port <= 0)
 	{
 	    error.log(NETWORK, CRITICAL,
 		      "port must be a positive integer.");

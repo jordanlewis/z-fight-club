@@ -12,6 +12,7 @@ class Client {
     
     uint32_t serverAddr;
     uint16_t serverPort;
+    ENetPeer *peer;
 
     Client();
     ~Client();
