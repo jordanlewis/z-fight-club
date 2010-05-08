@@ -96,9 +96,9 @@ void Scheduler::soloLoopForever()
 }
 
 void Scheduler::clientLoopForever(){
-    while (0)
+    while (1)
 	{
-	    
+	    client->pushToServer();
 	}
     return;
 }

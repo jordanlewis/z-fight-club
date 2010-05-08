@@ -110,14 +110,22 @@ int main(int argc, char *argv[])
 	//sound.initSound();
 	world.getTrack();
 	testSetup();
-	client.connectToServer();
+	if (client.connectToServer() < 0)
+	{
+	    cerr << "Fatal error:  Cannot connect to server" << endl;
+	    return -1;
+	}
 	scheduler.clientLoopForever();
     }
     if (world.runType == SERVER) 
     {
 	world.getTrack();
 	testSetup();
-	server.createHost();
+	if (server.createHost() < 0) 
+	{
+	    cerr << "Fatal error:  Server could not be established" << endl;
+	    return -1;
+	}
 	scheduler.serverLoopForever();
     }
 
