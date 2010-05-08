@@ -2,8 +2,11 @@
 
 Server Server::_instance;
 
-Server::Server()
+Server::Server() 
+    : maxConns(DEFAULT_MAX_SERVER_CONNECTIONS)
 {
+    enetAddress.host = htonl(ENET_HOST_ANY);
+    enetAddress.port = DEFAULT_NETWORK_PORT;
 }
 
 Server::~Server()
@@ -18,14 +21,8 @@ Server &Server::getInstance()
     return _instance;
 }
 
-int Server::createHost(uint32_t addr = ENET_HOST_ANY,
-		       uint16_t port = DEFAULT_NETWORK_PORT,
-		       int maxConns = DEFAULT_MAX_SERVER_CONNECTIONS)
+int Server::createHost()
 {
-    
-    enetAddress.host = addr;
-    enetAddress.port = port;
-    
     enetServer = enet_host_create(&enetAddress, maxConns, 0, 0);
     
     if (enetServer == NULL)
@@ -34,6 +31,16 @@ int Server::createHost(uint32_t addr = ENET_HOST_ANY,
 	    return -1;
 	}
     return 0;
+}
+
+void Server::setServerAddr(uint32_t addr){
+    enetAddress.host = htonl(addr);
+    return;
+}
+
+void Server::setServerPort(uint16_t port){
+    enetAddress.port = port;
+    return;
 }
 
 //General loop structure taken from the tutorial on enet.bespin.org

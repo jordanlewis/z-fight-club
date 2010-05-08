@@ -6,8 +6,12 @@
 //Client Class
 class Client {
  private:
-    ClientInfo info;
+    uint32_t clientAddr;
+    uint16_t clientPort;
     ENetHost *enetClient;
+    
+    uint32_t serverAddr;
+    uint16_t serverPort;
 
     Client();
     ~Client();
@@ -15,9 +19,11 @@ class Client {
     static Client _instance;
  public: 
     /*  Member Functions  */
-    Client &getInstance();
+    static Client &getInstance();
 
-    int connectToServer(uint32_t ipAddr, uint16_t port); //NYI
+    void setServerAddr(uint32_t addr);
+    void setServerPort(uint16_t port);
+    int connectToServer();
     void pushToServer(); //NYI
     void updateFromServer();  //NYI
     int disconnect();  //Self-explanatory. NYI

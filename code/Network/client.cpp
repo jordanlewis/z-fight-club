@@ -15,7 +15,9 @@ Client::Client()
 
 Client::~Client()
 {
-    enet_host_destroy(enetClient);
+    if (enetClient != NULL) {
+	enet_host_destroy(enetClient);
+    }
 }
 
 Client &Client::getInstance()
@@ -23,15 +25,34 @@ Client &Client::getInstance()
     return _instance;
 }
 
+void Client::setServerAddr(uint32_t addr){
+    serverAddr = addr;
+    return;
+}
+
+void Client::setServerPort(uint16_t port){
+    serverPort = port;
+    return;
+}
+
 //Taken mostly from the tutorial at enet.bespin.org
-int Client::connectToServer(uint32_t ipAddr, uint16_t port)
+int Client::connectToServer()
 {
     ENetAddress enetAddress;
     ENetEvent event;
     ENetPeer *peer;
 
-    enetAddress.host = ipAddr;
-    enetAddress.port = port;
+    if (serverPort == 0){
+	cerr << "No server port specificied" << endl;
+	return -1;
+    }
+    if (serverAddr == 0) {
+	cerr << "No server address specified" << endl;
+	return -1;
+    }
+
+    enetAddress.host = serverAddr;
+    enetAddress.port = serverPort;
     
     peer = enet_host_connect(enetClient, &enetAddress, 1);
 
