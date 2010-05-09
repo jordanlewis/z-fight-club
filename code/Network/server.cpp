@@ -24,22 +24,31 @@ Server::~Server()
 
 int Server::createNetObj(netObjID_t ID) {
     int successFlag = 0;
-    
+    netObjID_t i = 0;
     //Find smallest unused identifier
-    for (netObjID_t i = 0; i < NETOBJID_MAX; i++){
-	/*if (netobjs.find(i) == clients.end()){
-	    
+    for (; i < NETOBJID_MAX; i++)
+    {
+	if (netobjs.find(i) == netobjs.end())
+        {
+	    WorldObject *wobject = new WorldObject(NULL, NULL, NULL, NULL);
+	    netobjs[i] = wobject;
 	    successFlag = 1;
 	    break;
-	    }	*/	    
+	}	    
     }
-    /*
-    if (successFlag)  {
-	clients[client.identifier] = client;
+    
+    if (successFlag)
+    {
+	struct RPCreateNetObj toSend;
+	toSend.ID = i;
+	ENetPacket *packet = makeRacerPacket(RP_CREATENETOBJ, &toSend,
+					     sizeof(RPCreateNetObj));
+	enet_host_broadcast(enetServer, 0, packet);
     }
-    else {
+    else  
+    {
 	cerr << "Cannot accomodate more clients" << endl;
-	}*/
+    }
     
     return successFlag;
 }

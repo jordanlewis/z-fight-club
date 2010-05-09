@@ -17,10 +17,8 @@ class ClientInfo {
 //Server class
 class Server {
  private:
-    map<uint8_t, ClientInfo> clients; //tracks all connected clients by id
-    map<netObjID_t, uint32_t> netobjs; /* Tracks network based world objects.
-					 * Assumes at most UINT32_MAX wobjects
-					 * created */
+    map<uint8_t, ClientInfo> clients; //Tracks all connected clients by id
+    map<netObjID_t, WorldObject *> netobjs; //Tracks networked world objects
     int createNetObj(netObjID_t ID);
     WorldObject *getNetObject(netObjID_t ID);
 

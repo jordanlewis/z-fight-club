@@ -8,3 +8,4 @@ ENetPacket *makeRacerPacket(racerPacketType_t type, const void *data, int size){
     memcpy(&(packet->data[sizeof(racerPacketType_t)]), data, size);
     return packet;
 }
+

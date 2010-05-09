@@ -15,9 +15,7 @@ class Client {
     uint16_t serverPort;
     ENetPeer *peer;
 
-    map<netObjID_t, int> netobjs; /* Tracks all network created world objects.
-				   * Assumes at most UINT32_MAX netobjs
-				   * created */
+    map<netObjID_t, WorldObject *> netobjs; //Tracks networked world objects.
     int createNetObj(netObjID_t ID);
     WorldObject *getNetObj(netObjID_t ID);
 
