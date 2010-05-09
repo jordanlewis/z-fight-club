@@ -3,6 +3,8 @@
 #include "Engine/world.h"
 #include "Agents/agent.h"
 #include "Utilities/error.h"
+#include "Physics/pobject.h"
+#include "racerpacket.h"
 
 Server Server::_instance;
 
@@ -18,6 +20,28 @@ Server::~Server()
     if (enetServer != NULL) {
         enet_host_destroy(enetServer);
     }
+}
+
+int Server::createNetObj(netObjID_t ID) {
+    int successFlag = 0;
+    /*
+    //Find smallest unused identifier
+    for (int i = 0; i < ; i++){
+	if (clients.find(i) == clients.end()){
+	    client.identifier = i;
+	    successFlag = 1;
+	    break;
+	}		    
+    }
+    
+    if (successFlag)  {
+	clients[client.identifier] = client;
+    }
+    else {
+	cerr << "Cannot accomodate more clients" << endl;
+    }
+    */
+    return successFlag;
 }
 
 Server &Server::getInstance()
@@ -63,7 +87,7 @@ void Server::gatherPlayers()
                     break;
                 case ENET_EVENT_TYPE_RECEIVE:
                   {
-                    error.log(NETWORK, IMPORTANT, "Packet Received, maybe it says START\n");
+                    error.log(NETWORK, IMPORTANT, "Packet Received\n");
                     racerPacketType_t pt = *((racerPacketType_t*) event.packet->data);
                     printf(" length: %u\n contents: %u\n sender: %x\n channel: %u\n",
                            (unsigned) event.packet->dataLength,
@@ -71,8 +95,9 @@ void Server::gatherPlayers()
                            event.peer->host->address.host,
                            event.channelID);
                     enet_packet_destroy(event.packet);
-                    if (pt == START)
+                    if (pt == RP_START)
                     {
+                        cout << "it was a RP_START packet" << endl;
                         return; // someone hit start, done gathering players
                     }
                   }
@@ -111,6 +136,26 @@ void Server::gatherPlayers()
             } // end switch
         } // end if
     } // end while
+}
+
+void Server::packageObject(netObjID_t objID){
+    World &world = World::getInstance();
+    PMoveable *moveable;
+    PAgent *agent;
+    WorldObject *wobject;
+    /*
+    if (wobject->pobject != NULL)
+    {
+	//Eeeeewww... dynamic_cast...
+	moveable = dynamic_cast<PMoveable *>((*iter)->pobject);
+	if (moveable != NULL) {
+	    agent = dynamic_cast<PAgent *>((*iter)->pobject);
+	    if (agent != NULL) {
+
+	    }
+	}
+    }
+    */
 }
 
 //General loop structure taken from the tutorial on enet.bespin.org

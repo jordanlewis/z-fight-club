@@ -15,8 +15,9 @@
 #include "Engine/world.h"
 #include "constants.h"
 
-
 using namespace std;
+
+typedef int netObjID_t;
 
 /* General Networking functions */
 int networkInit(); //Initialize the network code.

@@ -6,8 +6,10 @@
 
 
 typedef enum {
-    START = 0,
-    AGENT_PACKET
+    RP_START = 0,
+    RP_AGENT,
+    RP_KINEMATIC,
+    RP_PMOVEABLE
 } racerPacketType_t;
 
 /* makeRacerPacket:  Creates a RacerPacket.  RacerPackets begin with a

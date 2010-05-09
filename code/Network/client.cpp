@@ -81,14 +81,14 @@ int Client::connectToServer()
 
 void Client::sendStartRequest()
 {
-    ENetPacket *packet = makeRacerPacket(START, NULL, 0);
+    ENetPacket *packet = makeRacerPacket(RP_START, NULL, 0);
     enet_peer_send(peer, 0, packet);
     enet_host_flush(enetClient);
 }
 
 void Client::pushToServer(){
     string msg = "intentions";
-    ENetPacket *packet = makeRacerPacket(AGENT_PACKET, msg.c_str(), msg.length());
+    ENetPacket *packet = makeRacerPacket(RP_AGENT, msg.c_str(), msg.length());
     enet_peer_send(peer, 0, packet);
     enet_host_flush(enetClient);
 }
