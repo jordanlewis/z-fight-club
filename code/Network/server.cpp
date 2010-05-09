@@ -103,7 +103,7 @@ void Server::gatherPlayers()
                 case ENET_EVENT_TYPE_RECEIVE:
                   {
                     error.log(NETWORK, IMPORTANT, "Packet Received\n");
-                    racerPacketType_t pt = *((racerPacketType_t*) event.packet->data);
+                    racerPacketType_t pt = (racerPacketType_t) htonl(*((racerPacketType_t*) event.packet->data));
                     printf(" length: %u\n contents: %u\n sender: %x\n channel: %u\n",
                            (unsigned) event.packet->dataLength,
                            pt,
