@@ -59,6 +59,11 @@ void Sound::initSound()
 {
     Error &error = Error::getInstance();
 
+    if (base_sound_directory.empty())
+    {
+        return;
+    }
+
     // Open device, create context
     ALCdevice *Device = alcOpenDevice(NULL);
     ALCcontext *Context;
