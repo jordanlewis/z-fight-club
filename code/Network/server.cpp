@@ -23,23 +23,23 @@ Server::~Server()
 
 int Server::createNetObj(netObjID_t ID) {
     int successFlag = 0;
-    /*
+    
     //Find smallest unused identifier
-    for (int i = 0; i < ; i++){
-	if (clients.find(i) == clients.end()){
-	    client.identifier = i;
+    for (netObjID_t i = 0; i < NETOBJID_MAX; i++){
+	/*if (netobjs.find(i) == clients.end()){
+	    
 	    successFlag = 1;
 	    break;
-	}		    
+	    }	*/	    
     }
-    
+    /*
     if (successFlag)  {
 	clients[client.identifier] = client;
     }
     else {
 	cerr << "Cannot accomodate more clients" << endl;
-    }
-    */
+	}*/
+    
     return successFlag;
 }
 

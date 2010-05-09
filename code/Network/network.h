@@ -15,9 +15,11 @@
 #include "Engine/world.h"
 #include "constants.h"
 
+#define NETOBJID_MAX UINT32_MAX
+
 using namespace std;
 
-typedef int netObjID_t;
+typedef uint32_t netObjID_t;
 
 /* General Networking functions */
 int networkInit(); //Initialize the network code.
