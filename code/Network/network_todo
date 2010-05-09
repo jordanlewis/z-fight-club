@@ -1,6 +1,8 @@
     nick  0) state enum: eg. { waiting for first client to hit go, playing, showing who won, ... }
+So far this has taken the form of the loops in scheduler.cpp
           
  youlian  1)  Packet format
+enum for header in place
           
     nick  2)  client::pushToServer()
           3)  server::updateFromClient()

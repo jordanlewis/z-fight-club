@@ -1,4 +1,5 @@
 #include "client.h"
+#include "racerpacket.h"
 
 Client Client::_instance;
 
@@ -78,8 +79,16 @@ int Client::connectToServer()
 
 }
 
+void Client::sendStartRequest()
+{
+    ENetPacket *packet = makeRacerPacket(RP_START, NULL, 0);
+    enet_peer_send(peer, 0, packet);
+    enet_host_flush(enetClient);
+}
+
 void Client::pushToServer(){
-    ENetPacket *packet = enet_packet_create("packet", strlen("packet")+1,0);
+    string msg = "intentions";
+    ENetPacket *packet = makeRacerPacket(RP_AGENT, msg.c_str(), msg.length());
     enet_peer_send(peer, 0, packet);
     enet_host_flush(enetClient);
 }
