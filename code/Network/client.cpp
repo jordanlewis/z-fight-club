@@ -125,9 +125,28 @@ void Client::sendStartRequest()
 }
 
 void Client::pushToServer(){
-    string msg = "intentions";
-    ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
-					 msg.c_str(), msg.length());
-    enet_peer_send(peer, 0, packet);
-    enet_host_flush(enetClient);
+    /* netobjs is empty right now, use world objects instead
+    for (map<netObjID_t, WorldObject *>::iterator iter = netobjs.begin();
+         iter != netobjs.end();
+         iter++)
+    {
+        WorldObject *wo = iter->second;
+     */
+    World &world = World::getInstance();
+    for (vector<WorldObject *>::iterator iter = world.wobjects.begin();
+         iter != world.wobjects.end();
+         iter++)
+    {
+        WorldObject *wo = *iter;
+        if (wo->agent != NULL)
+        {
+            struct RPUpdate_Agent payload;
+            payload.ID = 0xdeadbeef; /* iter->first */
+            payload.steerInfo = wo->agent->getSteering();
+            ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
+                                                 &payload, sizeof(payload));
+            enet_peer_send(peer, 0, packet);
+            enet_host_flush(enetClient);
+        }
+    }
 }

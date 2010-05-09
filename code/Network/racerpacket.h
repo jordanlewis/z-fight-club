@@ -30,6 +30,11 @@ typedef enum {
 ENetPacket *makeRacerPacket(racerPacketType_t type, const void *data, 
 			    int size);
 
+struct RPUpdate_Agent {
+    netObjID_t ID;
+    SteerInfo steerInfo;
+};
+
 struct RPCreateNetObj {
     netObjID_t ID;
 };
