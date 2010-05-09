@@ -1,5 +1,6 @@
 #include "client.h"
 #include "racerpacket.h"
+#include <cassert>
 
 Client Client::_instance;
 
@@ -76,6 +77,43 @@ int Client::connectToServer()
     }
 
     return 0;
+
+}
+
+void Client::updateFromServer() {
+    
+    ENetEvent event;
+    racerPacketType_t type;
+    void * payload;
+
+    while(enet_host_service(enetClient, &event, 0) > 0) {
+	switch (event.type) 
+	{
+	case ENET_EVENT_TYPE_CONNECT:
+	    cerr << "Connection event?  How did that happen?" << endl;
+	    break;
+	case ENET_EVENT_TYPE_RECEIVE:
+	    type = (racerPacketType_t) *(event.packet->data);
+	    payload = event.packet->data+sizeof(racerPacketType_t);
+	    switch(type)
+	    {
+	    case RP_CREATE_NET_OBJ:
+	    {
+		RPCreateNetObj info = *(RPCreateNetObj *)payload;
+		WorldObject *wobject = new WorldObject(NULL, NULL, NULL, NULL);
+		netobjs[info.ID] = wobject;
+	    } 
+	    default: break;
+	    }
+	    break;
+	case ENET_EVENT_TYPE_DISCONNECT:
+	    break;
+	case ENET_EVENT_TYPE_NONE:
+	    assert(0);
+	    break;
+	default: break;
+	}
+    }
 
 }
 
