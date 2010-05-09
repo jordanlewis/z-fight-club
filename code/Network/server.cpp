@@ -41,7 +41,7 @@ int Server::createNetObj(netObjID_t ID) {
     {
 	struct RPCreateNetObj toSend;
 	toSend.ID = i;
-	ENetPacket *packet = makeRacerPacket(RP_CREATENETOBJ, &toSend,
+	ENetPacket *packet = makeRacerPacket(RP_CREATE_NETOBJ, &toSend,
 					     sizeof(RPCreateNetObj));
 	enet_host_broadcast(enetServer, 0, packet);
     }

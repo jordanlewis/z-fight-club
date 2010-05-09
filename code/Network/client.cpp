@@ -88,7 +88,8 @@ void Client::sendStartRequest()
 
 void Client::pushToServer(){
     string msg = "intentions";
-    ENetPacket *packet = makeRacerPacket(RP_AGENT, msg.c_str(), msg.length());
+    ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
+					 msg.c_str(), msg.length());
     enet_peer_send(peer, 0, packet);
     enet_host_flush(enetClient);
 }

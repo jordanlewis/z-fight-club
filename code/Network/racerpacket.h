@@ -8,11 +8,17 @@
 
 typedef enum {
     RP_START = 0,
-    RP_AGENT,
+    RP_ATTACH_AGENT,
+    RP_UPDATE_AGENT,
     RP_KINEMATIC,
     RP_PMOVEABLE,
-    RP_CREATENETOBJ,
-    RP_ATTACHKINEMATIC
+    RP_CREATE_NETOBJ,
+    RP_ATTACH_PGEOM,
+    RP_UPDATE_PGEOM,
+    RP_ATTACH_PMOVEABLE,
+    RP_UPDATE_PMOVEABLE,
+    RP_ATTACH_PAGENT,
+    RP_UPDATE_PAGENT
 } racerPacketType_t;
 
 /* makeRacerPacket:  Creates a RacerPacket.  RacerPackets begin with a
