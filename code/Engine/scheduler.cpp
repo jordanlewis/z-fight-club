@@ -62,31 +62,9 @@ void Scheduler::soloLoopForever()
         ai->run();
         graphics->render();
         sound->render();
-	ai->run();
+        ai->run();
 
         usleep(10000);
-
-
-#ifdef USING_COMPLICATED_SCHEDULER
-        if (eventQueue.empty())
-            continue;
-
-        const ComponentEvent &evt = eventQueue.top();
-        if (evt.at < now)
-        {
-            switch (evt.component)
-            {
-                case AI:
-                case GRAPHICS:
-                case INPUT:
-                case NETWORK:
-                case PHYSICS:
-                case SOUND:
-                default: break;
-            }
-        }
-#endif
-
     }
 
     /* clean everything up */
@@ -115,6 +93,7 @@ void Scheduler::clientLoopForever(){
                     if (SDLevt.key.keysym.sym == SDLK_SPACE)
                     {
                         cout << "asking the server to start the game..." << endl;
+                        client->sendStartRequest();
                     }
                     break;
                 case SDL_QUIT:
@@ -140,19 +119,21 @@ void Scheduler::clientLoopForever(){
     {
         /* Grab input from SDL loop */
         done = input->processInput();
+        client->pushToServer();
 
+        // client->updateFromServer();
+        // physics will operate on latest data from server, right?
         now = GetTime();
         if (now - last > 0)
         {
             physics->simulate(now - last);
         }
         last = now;
-
-        client->pushToServer();
+        // ai will be replaced by server info, right?
         ai->run();
+
         graphics->render();
         sound->render();
-        ai->run();
 
         usleep(10000);
     }
@@ -160,10 +141,15 @@ void Scheduler::clientLoopForever(){
 }
 
 void Scheduler::serverLoopForever(){
+    // wait for client connections, disconnections, or START messages
+    server->gatherPlayers();
+    // send out start message to all clients
     while (1)
-	{
-	    server->serverFrame();
-	}
+    {
+        // run physics, ai
+        // optionally run graphics, sound, and observer form of input
+        server->serverFrame();
+    }
     return;
 }
 

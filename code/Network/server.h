@@ -36,7 +36,8 @@ class Server {
     void setServerPort(uint16_t port);
     
     void pushToClient (uint8_t clientId); //NYI
-    void serverFrame(); //Service any incoming connections/packets
+    void gatherPlayers(); //Service (dis)connections and START requests during game setup
+    void serverFrame(); //Service incoming packets during gameplay
     int closeClient(uint8_t id); //NYI
     
 };

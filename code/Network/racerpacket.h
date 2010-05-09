@@ -7,7 +7,7 @@
 
 typedef enum {
     START = 0,
-    AGENT
+    AGENT_PACKET
 } racerPacketType_t;
 
 /* makeRacerPacket:  Creates a RacerPacket.  RacerPackets begin with a
@@ -16,6 +16,6 @@ typedef enum {
  * arg2:  pointer to packet payload (not counting the type)
  * arg3:  size of packet payload (not counting the type)
  */
-ENetPacket *makeRacerPacket(racerPacketType_t type, void *data, int size);
+ENetPacket *makeRacerPacket(racerPacketType_t type, const void *data, int size);
 
 #endif

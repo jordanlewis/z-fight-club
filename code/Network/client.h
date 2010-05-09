@@ -27,6 +27,7 @@ class Client {
     int connectToServer();
     void pushToServer(); //NYI
     void updateFromServer();  //NYI
+    void sendStartRequest();
     int disconnect();  //Self-explanatory. NYI
 };
 

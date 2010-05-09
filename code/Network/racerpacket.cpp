@@ -1,6 +1,6 @@
 #include "racerpacket.h"
 
-ENetPacket *makeRacerPacket(racerPacketType_t type, void *data, int size){
+ENetPacket *makeRacerPacket(racerPacketType_t type, const void *data, int size){
 
     ENetPacket *packet = enet_packet_create(&type,
 					    sizeof(racerPacketType_t) + size,
