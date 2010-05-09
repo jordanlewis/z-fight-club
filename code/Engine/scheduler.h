@@ -3,6 +3,7 @@
 
 #include <queue>
 #include "world.h"
+#include "input.h"
 #include "Graphics/graphics.h"
 #include "Physics/physics.h"
 #include "Sound/sound.h"
@@ -38,6 +39,7 @@ class Scheduler
     Sound    *sound;
     Physics  *physics;
     AIManager *ai;
+    Input    *input;
     Client *client;
     Server *server;
 

@@ -106,8 +106,8 @@ int main(int argc, char *argv[])
     }
     if (world.runType == CLIENT)
     {
-	//graphics.initGraphics();
-	//sound.initSound();
+	graphics.initGraphics();
+	sound.initSound();
 	world.getTrack();
 	testSetup();
 	if (client.connectToServer() < 0)
