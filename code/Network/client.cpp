@@ -82,5 +82,4 @@ void Client::pushToServer(){
     ENetPacket *packet = enet_packet_create("packet", strlen("packet")+1,0);
     enet_peer_send(peer, 0, packet);
     enet_host_flush(enetClient);
-    //enet_packet_destroy(packet);
 }
