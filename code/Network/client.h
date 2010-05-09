@@ -2,6 +2,7 @@
 #define CLIENT_H
 
 #include "network.h"
+#include "Engine/world.h"
 
 //Client Class
 class Client {
@@ -13,6 +14,11 @@ class Client {
     uint32_t serverAddr;
     uint16_t serverPort;
     ENetPeer *peer;
+
+    map<netObjID_t, int> wobjects; /* Tracks all network created world objects.
+				  * Assumes at most MAX_INT wobjects created */
+    int createNetObj(netObjID_t ID);
+    WorldObject *getNetObj(netObjID_t ID);
 
     Client();
     ~Client();

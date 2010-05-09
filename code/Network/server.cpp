@@ -2,6 +2,8 @@
 #include "Engine/world.h"
 #include "Agents/agent.h"
 #include "Utilities/error.h"
+#include "Physics/pobject.h"
+#include "racerpacket.h"
 
 Server Server::_instance;
 
@@ -17,6 +19,28 @@ Server::~Server()
     if (enetServer != NULL) {
 	enet_host_destroy(enetServer);
     }
+}
+
+int Server::createNetObj(netObjID_t ID) {
+    int successFlag = 0;
+    /*
+    //Find smallest unused identifier
+    for (int i = 0; i < ; i++){
+	if (clients.find(i) == clients.end()){
+	    client.identifier = i;
+	    successFlag = 1;
+	    break;
+	}		    
+    }
+    
+    if (successFlag)  {
+	clients[client.identifier] = client;
+    }
+    else {
+	cerr << "Cannot accomodate more clients" << endl;
+    }
+    */
+    return successFlag;
 }
 
 Server &Server::getInstance()
@@ -44,6 +68,28 @@ void Server::setServerAddr(uint32_t addr){
 void Server::setServerPort(uint16_t port){
     enetAddress.port = port;
     return;
+}
+
+
+void Server::packageObject(netObjID_t objID){
+    World &world = World::getInstance();
+    PMoveable *moveable;
+    PAgent *agent;
+    WorldObject *wobject;
+    /*
+    if (wobject->pobject != NULL)
+    {
+	//Eeeeewww... dynamic_cast...
+	moveable = dynamic_cast<PMoveable *>((*iter)->pobject);
+	if (moveable != NULL) {
+	    agent = dynamic_cast<PAgent *>((*iter)->pobject);
+	    if (agent != NULL) {
+
+	    }
+	}
+    }
+    */
+    
 }
 
 //General loop structure taken from the tutorial on enet.bespin.org
