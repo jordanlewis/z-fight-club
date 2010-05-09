@@ -93,7 +93,7 @@ void Client::updateFromServer() {
 	    cerr << "Connection event?  How did that happen?" << endl;
 	    break;
 	case ENET_EVENT_TYPE_RECEIVE:
-	    type = (racerPacketType_t) ntohl(*((racerPacketType_t *)(event.packet->data)));
+	    type = getRacerPacketType(event.packet);
 	    payload = event.packet->data+sizeof(racerPacketType_t);
 	    switch(type)
 	    {

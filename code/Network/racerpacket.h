@@ -23,12 +23,18 @@ typedef enum {
 
 /* makeRacerPacket:  Creates a RacerPacket.  RacerPackets begin with a
  * racerPacketType_t describing the payload, followed by the payload itself.
- * arg1:  packet type
+ * The packet type will be converted into network byte order before 
+ * transmission, and so should be passed to makeRacerPacket in host byte order.
+ * arg1:  packet type (in host byte order)
  * arg2:  pointer to packet payload (not counting the type)
  * arg3:  size of packet payload (not counting the type)
  */
 ENetPacket *makeRacerPacket(racerPacketType_t type, const void *data, 
 			    int size);
+
+/* getRacerPacketType:  Given a packet, returns the packet type in host byte
+ * order */
+racerPacketType_t getRacerPacketType(ENetPacket *packet);
 
 struct RPUpdate_Agent {
     netObjID_t ID;

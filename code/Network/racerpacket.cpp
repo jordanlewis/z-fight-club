@@ -9,3 +9,6 @@ ENetPacket *makeRacerPacket(racerPacketType_t type, const void *data, int size){
     return packet;
 }
 
+racerPacketType_t getRacerPacketType(ENetPacket *packet){
+    return (racerPacketType_t)ntohl(*((racerPacketType_t *)(packet->data)));
+}
