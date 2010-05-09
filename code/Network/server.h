@@ -47,7 +47,7 @@ class Server {
     void setServerAddr(uint32_t addr);
     void setServerPort(uint16_t port);
     
-    void packageObject(netObjID_t ID); //NYI
+    ENetPacket *packageObject(netObjID_t ID); //NYI
     void gatherPlayers(); //Service (dis)connections and RP_START requests during setup
     void serverFrame(); //Service incoming packets during gameplay
     int closeClient(uint8_t clientID); //NYI

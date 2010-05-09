@@ -102,7 +102,7 @@ void Client::updateFromServer() {
 		RPCreateNetObj info = *(RPCreateNetObj *)payload;
 		WorldObject *wobject = new WorldObject(NULL, NULL, NULL, NULL);
 		netobjs[ntohl(info.ID)] = wobject;
-		cout << "Created netobj # " << ntohl(info.ID) << endl;
+		cout << "Created netobj # " << htonl(info.ID) << endl;
 	    } 
 	    default: break;
 	    }

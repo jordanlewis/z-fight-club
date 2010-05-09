@@ -55,6 +55,10 @@ int Server::createNetObj(netObjID_t &ID) {
     return 0;
 }
 
+WorldObject *Server::getNetObject(netObjID_t ID) {
+    return netobjs[ID];
+}
+
 Server &Server::getInstance()
 {
     return _instance;
@@ -149,24 +153,38 @@ void Server::gatherPlayers()
     } // end while
 }
 
-void Server::packageObject(netObjID_t objID){
-    World &world = World::getInstance();
+/* Packages a netobject's physics data to be sent over the network.  Returns
+ * null if a netobject's worldobject has no associated physics pointer.
+ */
+ENetPacket *Server::packageObject(netObjID_t objID){
     PMoveable *moveable;
     PAgent *agent;
-    WorldObject *wobject;
-    /*
+    WorldObject *wobject = getNetObject(objID);
+
     if (wobject->pobject != NULL)
     {
 	//Eeeeewww... dynamic_cast...
-	moveable = dynamic_cast<PMoveable *>((*iter)->pobject);
+	moveable = dynamic_cast<PMoveable *>(wobject->pobject);
 	if (moveable != NULL) {
-	    agent = dynamic_cast<PAgent *>((*iter)->pobject);
-	    if (agent != NULL) {
-
+	    agent = dynamic_cast<PAgent *>(wobject->pobject);
+	    if (agent != NULL) 
+	    {
+		return makeRacerPacket(RP_UPDATE_PMOVEABLE, moveable, 
+				       sizeof(PMoveable));
+	    }
+	    else 
+	    {
+		return makeRacerPacket(RP_UPDATE_PAGENT, agent, 
+				       sizeof(PAgent));
 	    }
 	}
+	else 
+	{
+	    return makeRacerPacket(RP_UPDATE_PGEOM, wobject->pobject,
+				   sizeof(PGeom));
+	}
     }
-    */
+    return NULL;
 }
 
 //General loop structure taken from the tutorial on enet.bespin.org
