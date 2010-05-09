@@ -22,7 +22,7 @@ Server::~Server()
     }
 }
 
-int Server::createNetObj(netObjID_t ID) {
+int Server::createNetObj(netObjID_t &ID) {
     int successFlag = 0;
     netObjID_t i = 0;
     //Find smallest unused identifier
@@ -32,6 +32,7 @@ int Server::createNetObj(netObjID_t ID) {
         {
 	    WorldObject *wobject = new WorldObject(NULL, NULL, NULL, NULL);
 	    netobjs[i] = wobject;
+	    ID = i;
 	    successFlag = 1;
 	    break;
 	}	    
@@ -48,9 +49,10 @@ int Server::createNetObj(netObjID_t ID) {
     else  
     {
 	cerr << "Cannot accomodate more clients" << endl;
+	return -1;
     }
     
-    return successFlag;
+    return 0;
 }
 
 Server &Server::getInstance()

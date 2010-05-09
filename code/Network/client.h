@@ -16,9 +16,7 @@ class Client {
     ENetPeer *peer;
 
     map<netObjID_t, WorldObject *> netobjs; //Tracks networked world objects.
-    int createNetObj(netObjID_t ID);
-    WorldObject *getNetObj(netObjID_t ID);
-
+    
     Client();
     ~Client();
 
@@ -26,6 +24,10 @@ class Client {
  public: 
     /*  Member Functions  */
     static Client &getInstance();
+
+    int createNetObj(netObjID_t ID);
+    WorldObject *getNetObj(netObjID_t ID);
+
 
     void setServerAddr(uint32_t addr);
     void setServerPort(uint16_t port);

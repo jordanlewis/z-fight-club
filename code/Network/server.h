@@ -19,8 +19,6 @@ class Server {
  private:
     map<uint8_t, ClientInfo> clients; //Tracks all connected clients by id
     map<netObjID_t, WorldObject *> netobjs; //Tracks networked world objects
-    int createNetObj(netObjID_t ID);
-    WorldObject *getNetObject(netObjID_t ID);
 
     ENetAddress enetAddress;
     ENetHost *enetServer;
@@ -32,6 +30,12 @@ class Server {
     ~Server();
 
     static Server _instance;
+
+    int createNetObj(netObjID_t &ID); /* attempts to create a netobj.  
+				       * Returns 0 on success, -1 otherwise.
+				       * Stores the id of the generated netobj
+				       * in the ID argument. */
+    WorldObject *getNetObject(netObjID_t ID);
 
     void updateFromClient(uint8_t clientId); //NYI (call within serverFrame)
 
