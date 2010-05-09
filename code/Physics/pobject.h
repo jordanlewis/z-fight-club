@@ -13,8 +13,8 @@ using namespace std;
 
 class Physics;
 class WorldObject;
-//How our objects will interact with the collision simulation
 
+//How our objects will interact with the collision simulation
 typedef enum {
     REAL = 0, //Acts and collides as you would expect an object to act
     PHANTOM // Phantom objects do not affect the physics simulation
@@ -27,13 +27,17 @@ class PGeom
 {
  protected:
     dGeomID geom;    
+
+    //Defining this function gives us a vtable.  The function does nothing.
+    virtual void forceVtableCreation(); 
+
  public:
     dSpaceID space;
     float bounce;
     float mu1, mu2;
     CollType_t collType;
     WorldObject *worldObject;
-
+    
     bool isPlaceable();
     Vec3f getPos();
     void setPos(Vec3f position);
@@ -72,7 +76,7 @@ class PAgent: public PMoveable
     const SteerInfo *steering;
  public:
     PAgent(const Kinematic *kinematic, const SteerInfo *steering,
-           float mass, GeomInfo *info, dSpaceID space=NULL);
+            float mass, GeomInfo *info, dSpaceID space=NULL);
     void kinematicToOde();
     void steeringToOde(); //Write steering info into the ODE structs
     void resetOdeAngularVelocity(int nsteps);

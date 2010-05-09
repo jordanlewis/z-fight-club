@@ -46,6 +46,10 @@ PAgent::PAgent(const Kinematic *kinematic, const SteerInfo *steering,
 {
 }
 
+void PGeom::forceVtableCreation(){
+    return;
+}
+
 bool PGeom::isPlaceable()
 {
     int c = dGeomGetClass(geom);
