@@ -57,7 +57,7 @@ class Agent
     Kinematic &getKinematic ();     /* !< get agent's kinematic */
     const Kinematic &getKinematic () const;     /* !< get const agent's kinematic */
     void setSteering (const SteerInfo &); /* !< Change desired steering */
-    SteerInfo &getSteering ();      /* !< Change desired steering */
+    SteerInfo &getSteering ();      /* !< Get current steering */
 };
 
 //! \brief Writes this agent to the given output stream.

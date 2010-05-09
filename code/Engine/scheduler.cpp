@@ -94,6 +94,7 @@ void Scheduler::clientLoopForever(){
                     {
                         cout << "asking the server to start the game..." << endl;
                         client->sendStartRequest();
+                        t = GetTime();
                     }
                     break;
                 case SDL_QUIT:
@@ -101,7 +102,7 @@ void Scheduler::clientLoopForever(){
                     return;
             }
         }
-        if (GetTime() > t+35) // pretend there's a network "go" or disconnect message
+        if (GetTime() > t+5) // pretend there's a network "go" or disconnect message
         {
             cout << "ah, a message from the server" << endl
                  << "must be time to play" << endl;
