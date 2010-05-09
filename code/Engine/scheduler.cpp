@@ -104,8 +104,33 @@ void Scheduler::clientLoopForever(){
 }
 
 void Scheduler::serverLoopForever(){
-    while (1)
+    int done = 0;
+    double now;
+    double last = GetTime();
+    
+    Input &input = Input::getInstance();
+    AIManager &ai = AIManager::getInstance();
+    
+    cout << "Looping forever..." << endl;
+    while (!done)
 	{
+	    /* Grab input from SDL loop */
+	    done = input.processInput();
+	    
+	    now = GetTime();
+	    if (now - last > 0)
+		{
+		    physics->simulate(now - last);
+		}
+	    last = now;
+	    
+	    ai.run();
+	    //graphics->render();
+	    //sound->render();
+	    ai.run();
+	    
+	    usleep(10000);
+	    
 	    server->serverFrame();
 	}
     return;
