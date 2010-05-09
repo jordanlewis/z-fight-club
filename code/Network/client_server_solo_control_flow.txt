@@ -1,0 +1,90 @@
+#define MAX_CONNECTION_ATTEMPTS 5
+
+clientLoop()    
+{
+    int result, attempts = 0;
+    while(1)
+    {
+        result = try_to_connect(server);
+        if (result == SUCCESS)
+        {
+            break; // leave the connect loop
+        }
+        if (++attempts > MAX_CONNECTION_ATTEMPTS)
+        {
+            cerr << "couldn't connect to " << server;
+            exit(-1);
+        }
+        usleep(500000); // wait half a second before trying again
+    }
+    
+    draw_welcome_screen();
+    
+    while (get_network_event() || get_keyboard_event())
+    {
+        if (event == SPACEBAR)
+        {
+            send_to_server("let's start");
+            usleep(200000); // wait 200 milliseconds before checking again
+        }
+        else if (event == QUIT)
+        {
+            send_to_server("disconnect");
+            exit(0);
+        }
+        else if (event == "server says go at time=T")
+        {
+            draw_321go_screen(until T);
+            race();
+            draw_welcome_screen();
+        }
+        else if (event == "server disconnect")
+        {
+            cerr << "lost connection to " << server;
+            exit(-1);
+        }
+    }
+}
+
+serverLoop()
+{
+    while (get_network_event())
+    {
+        if (event == "client connection")
+        {
+            add_to_clients();
+        }
+        else if (event == "let's start")
+        {
+            send_to_all_clients("go at time=now()+3 seconds");
+            manage_race(); // optionally watching it and offering camera controls?
+        }
+        else if (event == "client disconnect")
+        {
+            remove_from_clients();
+        }
+    }
+}
+
+soloLoop()
+{
+    draw_welcome_screen();
+    while (get_keyboard_event())
+    {
+        if (event == SPACEBAR)
+        {
+            draw_321go_screen();
+            race();
+            draw_welcome_screen();
+        }
+        if (event == QUIT)
+        {
+            exit(0);
+        }
+}
+
+/* Questions:
+ *  When should we send reliable packets?
+ *  General answer: when we'd do something useful if we knew the packet wasn't received.
+ *
+ */

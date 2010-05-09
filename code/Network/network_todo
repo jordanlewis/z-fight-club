@@ -1,0 +1,11 @@
+    nick  0) state enum: eg. { waiting for first client to hit go, playing, showing who won, ... }
+          
+ youlian  1)  Packet format
+          
+    nick  2)  client::pushToServer()
+          3)  server::updateFromClient()
+          
+ youlian  4)  server::pushToClient()
+          5)  client::updateFromServer()
+          
+    nick  code is pretty ugly and probably not well error checked
