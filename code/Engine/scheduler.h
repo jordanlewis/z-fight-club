@@ -3,10 +3,13 @@
 
 #include <queue>
 #include "world.h"
+#include "input.h"
 #include "Graphics/graphics.h"
 #include "Physics/physics.h"
 #include "Sound/sound.h"
 #include "Agents/ai.h"
+#include "Network/client.h"
+#include "Network/server.h"
 
 typedef enum
 {
@@ -36,6 +39,9 @@ class Scheduler
     Sound    *sound;
     Physics  *physics;
     AIManager *ai;
+    Input    *input;
+    Client *client;
+    Server *server;
 
     static Scheduler _instance;
     Scheduler();
@@ -44,7 +50,9 @@ class Scheduler
     Scheduler &operator=(const Scheduler&);
   public:
     void schedule(ComponentEvent &evt);
-    void loopForever();
+    void soloLoopForever();
+    void clientLoopForever();
+    void serverLoopForever();
 
     static Scheduler &getInstance();
 };

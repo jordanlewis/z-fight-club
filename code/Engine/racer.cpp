@@ -11,6 +11,9 @@
 #include "Physics/physics.h"
 #include "Graphics/graphics.h"
 #include "Sound/sound.h"
+#include "Network/network.h"
+#include "Network/client.h"
+#include "Network/server.h"
 #include "input.h"
 #include "setup.h"
 
@@ -28,6 +31,8 @@ int main(int argc, char *argv[])
     Sound     &sound    = Sound::getInstance();
     Graphics  &graphics = Graphics::getInstance();
     Scheduler &scheduler = Scheduler::getInstance();
+    Client &client = Client::getInstance();
+    Server &server = Server::getInstance();
 
     try {
         // Declare the supported options.
@@ -36,6 +41,9 @@ int main(int argc, char *argv[])
             ("help", "produce help message")
             ("track", po::value<string>(), "set track file")
             ("sounds", po::value<string>(), "set sounds directory")
+	    ("network", po::value<string>(), "set network mode")
+	    ("ipaddr", po::value<string>(), "set server ip address")
+	    ("port", po::value<int>(), "set server port")
         ;
     
         po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -51,11 +59,32 @@ int main(int argc, char *argv[])
         {
             world.loadTrack(vm["track"].as<string>().c_str());
         }
+	else 
+	{
+	    cout << "Error:  No track file given.";
+	    return 0;
+	}
     
         if (vm.count("sounds"))
         {
             sound.setDir(vm["sounds"].as<string>().c_str());
         }
+	if (vm.count("network"))
+	{
+	    world.setRunType(vm["network"].as<string>().c_str()); 
+	}
+	else 
+	{
+	    world.setRunType("Solo");
+	} 
+	if (vm.count("ipaddr"))
+	{
+	    setAddr(vm["ipaddr"].as<string>().c_str());
+	}
+	if (vm.count("port"))
+	{
+	    setPort(vm["port"].as<int>());
+	}
     }
     catch(exception& e) {
         cerr << "error: " << e.what() << "\n";
@@ -65,17 +94,40 @@ int main(int argc, char *argv[])
         cerr << "Exception of unknown type!\n";
         return 2;
     }
-
     srand(time(NULL));
 
-    graphics.initGraphics();
-    sound.initSound();
-
-    world.getTrack();
-
-    testSetup();
-
-    scheduler.loopForever();
+    if (world.runType == SOLO) 
+    {
+	graphics.initGraphics();
+	sound.initSound();
+	world.getTrack();
+	testSetup();
+	scheduler.soloLoopForever();
+    }
+    if (world.runType == CLIENT)
+    {
+	graphics.initGraphics();
+	sound.initSound();
+	world.getTrack();
+	testSetup();
+	if (client.connectToServer() < 0)
+	{
+	    cerr << "Fatal error:  Cannot connect to server" << endl;
+	    return -1;
+	}
+	scheduler.clientLoopForever();
+    }
+    if (world.runType == SERVER) 
+    {
+	world.getTrack();
+	testSetup();
+	if (server.createHost() < 0) 
+	{
+	    cerr << "Fatal error:  Server could not be established" << endl;
+	    return -1;
+	}
+	scheduler.serverLoopForever();
+    }
 
     return 0;
 }

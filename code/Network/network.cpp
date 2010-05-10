@@ -1,15 +1,9 @@
-#include <enet/enet.h>
 #include "network.h"
+#include "Utilities/error.h"
+#include "client.h"
+#include "server.h"
 
-#include <iostream>
-
-#define DEFAULT_NETWORK_PORT 6888
-#define DEFAULT_MAX_SERVER_CONNECTIONS 16
-
-using namespace std;
-
-
-int network_init()
+int networkInit()
 {
     if (enet_initialize() != 0)
 	{
@@ -20,39 +14,65 @@ int network_init()
     return 0;
 }
 
+int setPort(int port){
+    Error &error = Error::getInstance();
 
-Server::Server(uint32_t addr = ENET_HOST_ANY,
-	       uint16_t port = DEFAULT_NETWORK_PORT,
-	       int max_conns = DEFAULT_MAX_SERVER_CONNECTIONS)
-{
-    //gethostname()
-    
-    enet_address.host = addr;
-    enet_address.port = port;
-    
-    enet_server = enet_host_create(&enet_address, max_conns, 0, 0);
-    
-    if (enet_server == NULL)
+    if (port <= 0)
 	{
-	    cerr << "ENet could not initialize server" << endl;
+	    error.log(NETWORK, CRITICAL,
+		      "port must be a positive integer.");
+	    return -1;
+	} 
+    if (port > 65535) 
+	{
+	    error.log(NETWORK, CRITICAL,
+		      "port must be smaller than 65535");
+	    return -1;
 	}
     
-}
-    
+    switch (World::getInstance().runType)
+	{ 
+	case CLIENT: 
+	    Client::getInstance().setServerPort(port);
+	    break;
+	case SERVER:
+	    Server::getInstance().setServerPort(port);
+	    break;
+	case SOLO:
+	default:
+	    error.log(NETWORK, CRITICAL,
+		      "Must be in client or server mode to set port.");
+	    return -2;
+	}	 
 
-
-/*
-  int main(int argc, const char * argv[]){
-  
-  network_init();
-  
-  Server new_server;
-  //new_server.init();
-  
-    Client new_client;
-    //new_client.init();
-    
     return 0;
+}
+
+int setAddr(const char *addr) {
+    Error &error = Error::getInstance();
+    in_addr address;
     
+    //Convert our address into an integer
+    if (!inet_aton(addr, &address)) {
+	error.log(NETWORK, CRITICAL, 
+		  "Invalid ip address");
+	return -1;
     }
-*/
+    
+    switch (World::getInstance().runType)
+	{ 
+	case CLIENT: 
+	    Client::getInstance().setServerAddr(address.s_addr);
+	    break;
+	case SERVER:
+	    Server::getInstance().setServerPort(address.s_addr);
+	    break;
+	case SOLO:
+	default:
+	    error.log(NETWORK, CRITICAL,
+		      "Must be in client or server mode to set address.");
+	    return -2;
+	}	 
+
+    return 0;
+}

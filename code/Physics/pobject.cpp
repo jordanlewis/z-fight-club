@@ -46,6 +46,10 @@ PAgent::PAgent(const Kinematic *kinematic, const SteerInfo *steering,
 {
 }
 
+void PGeom::forceVtableCreation(){
+    return;
+}
+
 bool PGeom::isPlaceable()
 {
     int c = dGeomGetClass(geom);
@@ -173,7 +177,6 @@ void PAgent::kinematicToOde()
     PMoveable::kinematicToOde();
 
     const Kinematic *k = kinematic;
-    dQuaternion q;
     Vec3f newvel = Vec3f(k->vel[0], 0, k->vel[2]);
     newvel = .995 * k->vel + .005 * k->orientation_v * k->vel.length();
     newvel[1] = k->vel[1];
