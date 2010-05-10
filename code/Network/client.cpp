@@ -141,7 +141,7 @@ void Client::pushToServer(){
         WorldObject *wo = *iter;
         if (wo->agent != NULL)
         {
-            struct RPUpdate_Agent payload;
+            RPUpdateAgent payload;
             payload.ID = 0xdeadbeef; /* iter->first */
             payload.steerInfo = wo->agent->getSteering();
             ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,

@@ -142,13 +142,18 @@ void Scheduler::clientLoopForever(){
 }
 
 void Scheduler::serverLoopForever(){
-    // wait for client connections, disconnections, or START messages
     server->gatherPlayers();
-    // send out start message to all clients
+    double now;
+    double last = GetTime();
     while (1)
     {
-        // run physics, ai
-        // optionally run graphics, sound, and observer form of input
+        now = GetTime();
+        if (now - last > 0)
+        {
+            physics->simulate(now - last);
+        }
+        last = now;
+        ai->run();
         server->serverFrame();
     }
     return;

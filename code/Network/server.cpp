@@ -89,11 +89,10 @@ void Server::setServerPort(uint16_t port){
 void Server::gatherPlayers()
 {
     Error error = Error::getInstance();
-    cout << "Gathering players..." << endl;
     while(1)
     {
         ENetEvent event;
-        usleep(500000);
+        usleep(10000);
         if (enet_host_service(enetServer, &event, 0) > 0)
         {
             switch (event.type)
@@ -104,16 +103,10 @@ void Server::gatherPlayers()
                   {
                     error.log(NETWORK, IMPORTANT, "Packet Received\n");
                     racerPacketType_t pt = getRacerPacketType(event.packet);
-                    printf(" length: %u\n contents: %u\n sender: %x\n channel: %u\n",
-                           (unsigned) event.packet->dataLength,
-                           pt,
-                           event.peer->host->address.host,
-                           event.channelID);
                     enet_packet_destroy(event.packet);
                     if (pt == RP_START)
                     {
-                        cout << "it was a RP_START packet" << endl;
-                        return; // someone hit start, done gathering players
+                        return;
                     }
                   }
                     break;
@@ -189,12 +182,13 @@ ENetPacket *Server::packageObject(netObjID_t objID){
 
 //General loop structure taken from the tutorial on enet.bespin.org
 void Server::serverFrame(){
+    Error error = Error::getInstance();
     ENetEvent event;
-    usleep(1000000);
-    cout << "Server loops" << endl;
+    usleep(10000);
+    racerPacketType_t type;
+    void * payload;
     while (enet_host_service(enetServer, &event, 0) > 0)
     {
-        Error error = Error::getInstance();
         switch (event.type)
         {
             case ENET_EVENT_TYPE_NONE:
@@ -203,9 +197,27 @@ void Server::serverFrame(){
                 // no connecting after the game starts.
                 // later we might make observers in this case
                 break;
-            case ENET_EVENT_TYPE_RECEIVE: //NYI
-                error.log(NETWORK, TRIVIAL,
-                          "Packet Received, probably should do something with it...\n");
+            case ENET_EVENT_TYPE_RECEIVE:
+                {
+                    type = (racerPacketType_t) *(event.packet->data);
+                    payload = event.packet->data+sizeof(racerPacketType_t);
+                    switch(type)
+                    {
+                        case RP_UPDATE_AGENT:
+                            {
+                                RPUpdateAgent info = *(RPUpdateAgent *)payload;
+                                WorldObject *wo = netobjs[info.ID];
+                                if (wo && wo->agent)
+                                {
+                                    // do we want to adjust gradally using an average?
+                                    wo->agent->setSteering(info.steerInfo);
+                                }
+                                break;
+                            }
+                        default:
+                             break;
+                    }
+                }
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:  //NYI
                 error.log(NETWORK, IMPORTANT, "Client disconnecting");

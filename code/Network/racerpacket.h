@@ -36,7 +36,7 @@ ENetPacket *makeRacerPacket(racerPacketType_t type, const void *data,
  * order */
 racerPacketType_t getRacerPacketType(ENetPacket *packet);
 
-struct RPUpdate_Agent {
+struct RPUpdateAgent {
     netObjID_t ID;
     SteerInfo steerInfo;
 };
