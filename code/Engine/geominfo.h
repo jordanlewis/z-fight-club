@@ -78,6 +78,8 @@ class ObjMeshInfo : public GeomInfo
 {
     public:
 	objLoader obj; /* contains the data as well as loading it */
+	ObjMeshInfo(char *filename);
+	~ObjMeshInfo();
 	void load(char *filename);
 	dGeomID createGeom(dSpaceID space);
 	void createMass(dMass *, float);

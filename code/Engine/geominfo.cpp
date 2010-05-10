@@ -21,6 +21,11 @@ TriMeshInfo::TriMeshInfo(dTriMeshDataID meshID,
       tris(tris), normals(normals)
 {}
 
+ObjMeshInfo::ObjMeshInfo(char *filename)
+{
+    load(filename);
+}
+
 dGeomID SphereInfo::createGeom(dSpaceID space)
 { return dCreateSphere (space, radius); }
 dGeomID BoxInfo::createGeom(dSpaceID space)
@@ -31,6 +36,8 @@ dGeomID RayInfo::createGeom(dSpaceID space)
 { return dCreateRay(space, len); }
 dGeomID TriMeshInfo::createGeom(dSpaceID space)
 { return dCreateTriMesh(space, meshID, NULL, NULL, NULL); }
+dGeomID ObjMeshInfo::createGeom(dSpaceID space)
+{ return dCreateSphere (space, 1.0); }
 
 void SphereInfo::createMass(dMass * mass, float massVal)
 {
@@ -40,6 +47,11 @@ void SphereInfo::createMass(dMass * mass, float massVal)
 void BoxInfo::createMass(dMass * mass, float massVal)
 {
     dMassSetBoxTotal(mass, massVal, lx, ly, lz);
+}
+
+void ObjMeshInfo::createMass(dMass * mass, float massVal)
+{
+    dMassSetBoxTotal(mass, massVal, 1.0, 1.0, 1.0);
 }
 
 void ObjMeshInfo::load(char *filename)
