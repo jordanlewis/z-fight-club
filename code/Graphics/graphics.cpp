@@ -50,7 +50,7 @@ void Graphics::initGraphics()
         exit(1);
     }
 
-    SDL_WM_SetCaption("Racer", "racer");
+    SDL_WM_SetCaption("z fight club presents: Tensor Rundown", "Tensor Rundown");
     initialized = true;
 
 }

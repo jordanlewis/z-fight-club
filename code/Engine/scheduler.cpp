@@ -73,10 +73,10 @@ void Scheduler::soloLoopForever()
 
 void Scheduler::clientLoopForever(){
     // draw_welcome_screen
-    cout << "welcome to z-fight-club's racer" << endl << endl
-         << "  up and down arrow keys accelerate forwards and backwards" << endl
-         << "     left and right rotate your vehicle" << endl
-         << " mash the spacebar to begin" << endl;
+    cout << "z fight club presents: Tensor Rundown" << endl << endl
+         << "    up and down arrow keys accelerate forwards and backwards" << endl
+         << "       left and right rotate your vehicle" << endl
+         << "  mash the spacebar to begin" << endl;
     cout.flush();
 
     // wait for space, network "go", quit, or disconnect
