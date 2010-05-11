@@ -143,7 +143,11 @@ void Client::pushToServer(){
         {
             RPUpdateAgent payload;
             payload.ID = 0xdeadbeef; /* iter->first */
-            payload.steerInfo = wo->agent->getSteering();
+            SteerInfo steerInfo = wo->agent->getSteering();
+            payload.a = htonf(steerInfo.acceleration);
+            payload.r = htonf(steerInfo.rotation);
+            payload.w = htons(steerInfo.weapon);
+            payload.f = htons(steerInfo.fire);
             ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
                                                  &payload, sizeof(payload));
             enet_peer_send(peer, 0, packet);

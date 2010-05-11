@@ -2,6 +2,8 @@
 #include "Utilities/error.h"
 #include "client.h"
 #include "server.h"
+#include <assert.h>
+#include <arpa/inet.h>
 
 int networkInit()
 {
@@ -75,4 +77,69 @@ int setAddr(const char *addr) {
 	}	 
 
     return 0;
+}
+
+
+int big_endian()
+{
+    long one= 1;
+    return !(*((char *)(&one)));
+}
+
+// http://www.gamedev.net/community/forums/topic.asp?topic_id=406142
+unsigned long htonf(float f)
+{
+    assert(sizeof(float) == sizeof(unsigned long));
+    return htonl(*reinterpret_cast<long *>(&f));
+}
+
+float ntohf(unsigned long l)
+{
+    assert(sizeof(float) == sizeof(unsigned long));
+    unsigned long g = ntohl(l);
+    return *reinterpret_cast<float *> (&g);
+}
+
+// http://www.dmh2000.com/cpp/dswap.shtml
+unsigned long long htond(double d)
+{
+    assert(sizeof(double) == sizeof(unsigned long long));
+    if (big_endian()) return *reinterpret_cast<unsigned long long *> (&d);
+
+    unsigned long long a;
+    unsigned char *dst = (unsigned char *)&a;
+    unsigned char *src = (unsigned char *)&d;
+
+    dst[0] = src[7];
+    dst[1] = src[6];
+    dst[2] = src[5];
+    dst[3] = src[4];
+    dst[4] = src[3];
+    dst[5] = src[2];
+    dst[6] = src[1];
+    dst[7] = src[0];
+
+    return a;
+}
+
+double ntohd(unsigned long long a) 
+{
+    assert(sizeof(double) == sizeof(unsigned long long));
+    if (big_endian()) return *reinterpret_cast<double *> (&a);
+
+    double d;
+    assert(sizeof(d) == sizeof(a));
+    unsigned char *src = (unsigned char *)&a;
+    unsigned char *dst = (unsigned char *)&d;
+
+    dst[0] = src[7];
+    dst[1] = src[6];
+    dst[2] = src[5];
+    dst[3] = src[4];
+    dst[4] = src[3];
+    dst[5] = src[2];
+    dst[6] = src[1];
+    dst[7] = src[0];
+
+    return d;
 }

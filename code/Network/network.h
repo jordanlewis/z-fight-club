@@ -25,4 +25,9 @@ typedef uint32_t netObjID_t;
 int networkInit(); //Initialize the network code.
 int setPort(int port);
 int setAddr(const char*);
+int big_endian();
+unsigned long htonf(float f);
+float ntohf(unsigned long l);
+unsigned long long htond(double d);
+double ntohd(unsigned long long a);
 #endif

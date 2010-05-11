@@ -199,7 +199,7 @@ void Server::serverFrame(){
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
                 {
-                    type = (racerPacketType_t) *(event.packet->data);
+                    type = getRacerPacketType(event.packet);
                     payload = event.packet->data+sizeof(racerPacketType_t);
                     switch(type)
                     {
@@ -207,10 +207,27 @@ void Server::serverFrame(){
                             {
                                 RPUpdateAgent info = *(RPUpdateAgent *)payload;
                                 WorldObject *wo = netobjs[info.ID];
+                                SteerInfo steerInfo;
+                                steerInfo.acceleration = ntohf(info.a);
+                                steerInfo.rotation = ntohf(info.r);
+                                steerInfo.weapon = static_cast<Weapon_t>(ntohs(info.w));
+                                steerInfo.fire = ntohs(info.f);
+                                // float acceleration; float rotation;
+                                // Weapon_t weapon; int fire;
+                                printf("acc[%u]: %5.1f rot[%u]: %5.1f "
+                                       "weapon[%u]: %u fire[%u]: %u\n",
+                                       sizeof(steerInfo.acceleration),
+                                       steerInfo.acceleration,
+                                       sizeof(steerInfo.rotation),
+                                       steerInfo.rotation,
+                                       sizeof(steerInfo.weapon),
+                                       steerInfo.weapon,
+                                       sizeof(steerInfo.fire),
+                                       steerInfo.fire);
                                 if (wo && wo->agent)
                                 {
                                     // do we want to adjust gradally using an average?
-                                    wo->agent->setSteering(info.steerInfo);
+                                    wo->agent->setSteering(steerInfo);
                                 }
                                 break;
                             }
