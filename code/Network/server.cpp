@@ -214,8 +214,8 @@ void Server::serverFrame(){
                                 steerInfo.fire = ntohs(info.f);
                                 // float acceleration; float rotation;
                                 // Weapon_t weapon; int fire;
-                                printf("acc[%u]: %5.1f rot[%u]: %5.1f "
-                                       "weapon[%u]: %u fire[%u]: %u\n",
+                                printf("acc[%lu]: %5.1f rot[%lu]: %5.1f "
+                                       "weapon[%lu]: %d fire[%lu]: %d\n",
                                        sizeof(steerInfo.acceleration),
                                        steerInfo.acceleration,
                                        sizeof(steerInfo.rotation),

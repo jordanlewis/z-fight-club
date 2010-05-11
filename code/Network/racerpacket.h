@@ -38,8 +38,8 @@ racerPacketType_t getRacerPacketType(ENetPacket *packet);
 
 struct RPUpdateAgent {
     netObjID_t ID;
-    short a;
-    short r;
+    unsigned long a;
+    unsigned long r;
     short w;
     short f;
 };

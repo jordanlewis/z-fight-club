@@ -90,7 +90,7 @@ int big_endian()
 unsigned long htonf(float f)
 {
     assert(sizeof(float) == sizeof(unsigned long));
-    return htonl(*reinterpret_cast<long *>(&f));
+    return htonl(*reinterpret_cast<unsigned long *>(&f));
 }
 
 float ntohf(unsigned long l)
