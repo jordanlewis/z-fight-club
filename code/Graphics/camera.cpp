@@ -159,7 +159,10 @@ void Camera::setProjectionMatrix()
 
 void Camera::setOrthoMatrix()
 {
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
     glOrtho(0, (GLdouble) wres, hres, 0, zNear, zFar);
+		glMatrixMode(GL_MODELVIEW);
 }
 
 const Vec3f &Camera::getTarget() const

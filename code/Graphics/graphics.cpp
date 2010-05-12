@@ -4,6 +4,7 @@
 #include "Utilities/vector.h"
 #include "Utilities/error.h"
 #include "Agents/ai.h"
+#include "hud.h"
 #include <SDL/SDL.h>
 
 #define MAX_TRAIL_LENGTH 3600 
@@ -165,6 +166,8 @@ void Graphics::render()
     world->camera.setOrthoMatrix();
 
     /* render 2d stuff */
+		Hud hud = Hud::getInstance();
+		render(&hud);
 
     glPopMatrix();
 }
@@ -274,6 +277,13 @@ void Graphics::render(TrackData_t *track)
         gluDeleteQuadric(quadobj);
 
     }
+}
+
+void Graphics::render(Hud *hud)
+{
+		for (vector<Widget>::iterator it = hud->widget.begin(); it != hud->widget.end(); it++) {
+				it->draw();
+		}
 }
 
 void Graphics::render(std::vector<Vec3f> path)
