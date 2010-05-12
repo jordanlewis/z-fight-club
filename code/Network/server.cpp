@@ -8,6 +8,8 @@
 
 Server Server::_instance;
 
+void populateSteerInfo(SteerInfo *, const RPUpdateAgent *);
+
 Server::Server()
     : maxConns(DEFAULT_MAX_SERVER_CONNECTIONS)
 {
@@ -208,21 +210,17 @@ void Server::serverFrame(){
                                 RPUpdateAgent info = *(RPUpdateAgent *)payload;
                                 WorldObject *wo = netobjs[info.ID];
                                 SteerInfo steerInfo;
-                                steerInfo.acceleration = ntohf(info.a);
-                                steerInfo.rotation = ntohf(info.r);
-                                steerInfo.weapon = static_cast<Weapon_t>(ntohs(info.w));
-                                steerInfo.fire = ntohs(info.f);
-                                // float acceleration; float rotation;
-                                // Weapon_t weapon; int fire;
-                                printf("acc[%lu]: %5.1f rot[%lu]: %5.1f "
+                                printf("%d\n", info.a);
+                                populateSteerInfo(&steerInfo, &info);
+                                printf("acc[%lu]: %9.1f rot[%lu]: %5.1f "
                                        "weapon[%lu]: %d fire[%lu]: %d\n",
-                                       sizeof(steerInfo.acceleration),
+                                       (unsigned long) sizeof(steerInfo.acceleration),
                                        steerInfo.acceleration,
-                                       sizeof(steerInfo.rotation),
+                                       (unsigned long) sizeof(steerInfo.rotation),
                                        steerInfo.rotation,
-                                       sizeof(steerInfo.weapon),
+                                       (unsigned long) sizeof(steerInfo.weapon),
                                        steerInfo.weapon,
-                                       sizeof(steerInfo.fire),
+                                       (unsigned long) sizeof(steerInfo.fire),
                                        steerInfo.fire);
                                 if (wo && wo->agent)
                                 {
@@ -245,4 +243,12 @@ void Server::serverFrame(){
                 break;
         }
     }
+}
+
+void populateSteerInfo(SteerInfo *s, const RPUpdateAgent *info)
+{
+    s->acceleration = ntohf(info->a);
+    s->rotation = ntohf(info->r);
+    s->weapon = static_cast<Weapon_t>(ntohl(info->w));
+    s->fire = ntohl(info->f);
 }

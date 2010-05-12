@@ -87,26 +87,26 @@ int big_endian()
 }
 
 // http://www.gamedev.net/community/forums/topic.asp?topic_id=406142
-unsigned long htonf(float f)
+uint32_t htonf(float f)
 {
-    assert(sizeof(float) == sizeof(unsigned long));
-    return htonl(*reinterpret_cast<unsigned long *>(&f));
+    assert(sizeof(float) == sizeof(uint32_t));
+    return htonl(*reinterpret_cast<uint32_t *>(&f));
 }
 
-float ntohf(unsigned long l)
+float ntohf(uint32_t i)
 {
-    assert(sizeof(float) == sizeof(unsigned long));
-    unsigned long g = ntohl(l);
+    assert(sizeof(float) == sizeof(uint32_t));
+    uint32_t g = ntohl(i);
     return *reinterpret_cast<float *> (&g);
 }
 
 // http://www.dmh2000.com/cpp/dswap.shtml
-unsigned long long htond(double d)
+uint64_t htond(double d)
 {
-    assert(sizeof(double) == sizeof(unsigned long long));
-    if (big_endian()) return *reinterpret_cast<unsigned long long *> (&d);
+    assert(sizeof(double) == sizeof(uint64_t));
+    if (big_endian()) return *reinterpret_cast<uint64_t *> (&d);
 
-    unsigned long long a;
+    uint64_t a;
     unsigned char *dst = (unsigned char *)&a;
     unsigned char *src = (unsigned char *)&d;
 
@@ -122,13 +122,13 @@ unsigned long long htond(double d)
     return a;
 }
 
-double ntohd(unsigned long long a) 
+double ntohd(uint64_t a) 
 {
-    assert(sizeof(double) == sizeof(unsigned long long));
+    assert(sizeof(double) == sizeof(uint64_t));
     if (big_endian()) return *reinterpret_cast<double *> (&a);
 
     double d;
-    assert(sizeof(d) == sizeof(a));
+    assert(sizeof(double) == sizeof(uint64_t));
     unsigned char *src = (unsigned char *)&a;
     unsigned char *dst = (unsigned char *)&d;
 
