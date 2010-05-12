@@ -39,6 +39,7 @@ class Camera {
     void setTarget(Vec3f target);
     void cycleView(); /* !< cycle camera views */
     void setProjectionMatrix(); //Maybe this should be protected, and we call
+    void setOrthoMatrix(); //for 2d graphics
     const Vec3f &getTarget() const;   //graphics a friend class, then it won't be
     const Vec3f &getPos() const;      //visible to people that don't need it.
     const Vec3f &getUp() const;

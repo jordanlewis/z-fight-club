@@ -104,7 +104,10 @@ void Graphics::render()
     GLfloat ambient_color[]={ 0.2, 0.2, 0.2, 1.0 };
     GLfloat mat_specular[]={ .2, .2, .2, 1.0 };
 
+    glPushMatrix();
     world->camera.setProjectionMatrix();
+
+    /* render 3d graphics */
 
     glShadeModel(GL_SMOOTH);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );
@@ -156,6 +159,14 @@ void Graphics::render()
     DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(0.0f, 2.0f, 0.0f));
     DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(0.0f, 0.0f, 2.0f));
     SDL_GL_SwapBuffers();
+    glPopMatrix();
+
+    glPushMatrix();
+    world->camera.setOrthoMatrix();
+
+    /* render 2d stuff */
+
+    glPopMatrix();
 }
 
 void Graphics::render(Agent * agent)
