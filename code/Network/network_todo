@@ -11,3 +11,5 @@ enum for header in place
           5)  client::updateFromServer()
           
     nick  code is pretty ugly and probably not well error checked
+
+http://stackoverflow.com/questions/332030/when-should-static-cast-dynamic-cast-and-reinterpret-cast-be-used

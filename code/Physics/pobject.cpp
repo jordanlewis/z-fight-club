@@ -1,4 +1,5 @@
 #include "pobject.h"
+#include "Engine/scheduler.h"
 #include <ode/ode.h>
 
 #define DEBUG
@@ -192,12 +193,12 @@ void PAgent::kinematicToOde()
  */
 void PAgent::steeringToOde()
 {
+    if (Scheduler::getInstance().raceState <= COUNTDOWN)
+        return;
+
     const dReal* angVel = dBodyGetAngularVel(body);
     if (steering->acceleration || steering->rotation)
         dBodyEnable(body);
-
-    dBodySetAngularVel(body, angVel[0], angVel[1] + steering->rotation,
-      angVel[2]);
 
     Vec3f f = Vec3f(sin(kinematic->orientation),0,cos(kinematic->orientation));
     if (steering->acceleration < PH_MAXACC && steering->acceleration > -PH_MAXACC) {
@@ -208,6 +209,9 @@ void PAgent::steeringToOde()
     else if (steering->acceleration > PH_MAXACC)
         f *= PH_MAXACC * mass.mass;
 
+
+    dBodySetAngularVel(body, angVel[0], angVel[1] + steering->rotation,
+    angVel[2]);
     dBodyAddForce(body, f[0], f[1], f[2]);
 }
 
@@ -217,7 +221,9 @@ void PAgent::steeringToOde()
  */
 void PAgent::resetOdeAngularVelocity(int nSteps)
 {
-    //return;
+    if (Scheduler::getInstance().raceState <= COUNTDOWN)
+        return;
+
     const dReal* angVel = dBodyGetAngularVel(body);
     //cout << "Modding by rotation: " << steering->rotation << endl;
     dBodySetAngularVel(body, angVel[0], 

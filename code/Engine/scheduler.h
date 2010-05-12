@@ -30,6 +30,14 @@ class ComponentEvent
     ComponentEvent(double when, Component_t which);
 };
 
+typedef enum
+{
+    COUNTDOWN,
+    RACE,
+    PLAYER_DONE,
+    ALL_DONE
+} RaceState_t;
+
 class Scheduler
 {
     std::priority_queue <ComponentEvent> eventQueue; /* !<queue of events */
@@ -49,6 +57,8 @@ class Scheduler
     Scheduler(const Scheduler&);
     Scheduler &operator=(const Scheduler&);
   public:
+    RaceState_t raceState;
+    double timeStarted;
     void schedule(ComponentEvent &evt);
     void soloLoopForever();
     void clientLoopForever();

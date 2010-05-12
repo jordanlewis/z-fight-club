@@ -1,25 +1,57 @@
-This file should hold issues to be discussed at our soonest
-convenience, either after class meeting or when we're all on IRC.
-
 --------------------------------------------------------
-Unified error handling system.
- ala syslog, with priority and facility (Jordan)
+Tue May 11 17:52:14 CDT 2010
 
-Asset handling: SDL_image, SDL_sound, SDL_RWops, PhysicsFS?
- getopts, option for asset directory, track file
+Schedule time to all code
+ clean up bad stuff, add stuff with support
 
-Networking:
- Nick: look into enet and SDL_net
- Youlian: check out SDL_net
+2D code
+ widgets, for example HUD, speedometer
+ menu
 
-Testing:
- cleanup/rename racer.cpp, pull out world/agent configuration
- so different devs can use different configs at build-time
+Objects/Meshes
+ try Reppy's obj loader
 
-by Apr 27:
- getopts (Nick)
- track with constraining walls, in good view of camera (Joe, Jordan)
- ai that can try to round the track (Joe, Jordan)
- car trails, (past and future) (Joe, Matt)
- velocity (linear and angular?) limiting (Youlian, Jordan)
+Track files
+ starting player positions
+
+Looking good
+ shader loading
+ skybox
+ glow
+ 
+Handling
+ not flipping over (check and fix)
+ suspension (tilt during turns)
+
+get rid of test setups
+ position ai/human cars
+ turn into command-line or menu
+ number of human players, number of ai agents
+
+Game states
+ showing 3..2..1.. screen
+ waiting for clients
+ transitions
+  from menu to non-menu
+  countdown to start
+  waiting for network
+ implementation
+  objects
+  switches
+  n^2 transition table
+
+Try this:
+
+Scheduler
+ initialize everything
+ while(1)
+   switch (state)
+     case starting:
+       ...
+     case playing:
+       physics.go
+       input.go
+     case pause:
+       ...
+     case menu:
 --------------------------------------------------------

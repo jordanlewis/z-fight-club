@@ -43,8 +43,13 @@ void Scheduler::schedule(ComponentEvent &evt)
 void Scheduler::soloLoopForever()
 {
     int done = 0;
+    int curCount = 0;
     double now;
     double last = GetTime();
+    double sinceStart;
+
+    timeStarted = last;
+    raceState = COUNTDOWN;
 
     cout << "Looping forever...(solo)" << endl;
     while (!done)
@@ -53,6 +58,22 @@ void Scheduler::soloLoopForever()
         done = input->processInput();
 
         now = GetTime();
+        sinceStart = now - timeStarted;
+
+        if (raceState <= COUNTDOWN)
+        {
+            if (sinceStart > curCount)
+            {
+                if (curCount == 3)
+                {
+                    cout << "GO!!!!!!!!" << endl;
+                    raceState = RACE;
+                }
+                else
+                    cout << 3 - curCount++ << "..." << endl;
+            }
+        }
+
         if (now - last > 0)
         {
             physics->simulate(now - last);
@@ -62,7 +83,6 @@ void Scheduler::soloLoopForever()
         ai->run();
         graphics->render();
         sound->render();
-        ai->run();
 
         usleep(10000);
     }
@@ -73,10 +93,10 @@ void Scheduler::soloLoopForever()
 
 void Scheduler::clientLoopForever(){
     // draw_welcome_screen
-    cout << "welcome to z-fight-club's racer" << endl << endl
-         << "  up and down arrow keys accelerate forwards and backwards" << endl
-         << "     left and right rotate your vehicle" << endl
-         << " mash the spacebar to begin" << endl;
+    cout << "z fight club presents: Tensor Rundown" << endl << endl
+         << "    up and down arrow keys accelerate forwards and backwards" << endl
+         << "       left and right rotate your vehicle" << endl
+         << "  mash the spacebar to begin" << endl;
     cout.flush();
 
     // wait for space, network "go", quit, or disconnect

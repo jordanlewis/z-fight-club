@@ -38,7 +38,10 @@ racerPacketType_t getRacerPacketType(ENetPacket *packet);
 
 struct RPUpdateAgent {
     netObjID_t ID;
-    SteerInfo steerInfo;
+    unsigned long a;
+    unsigned long r;
+    short w;
+    short f;
 };
 
 struct RPCreateNetObj {
