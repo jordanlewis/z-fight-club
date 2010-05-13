@@ -86,14 +86,4 @@ class ObjMeshInfo : public GeomInfo
 	void createMass(dMass *, float);
 	void draw();
 };
-
-class SkyBox : public GeomInfo
-{
-		Image2D_t *image;	/* !< texture for the skybox */
-		SkyBox(const char *texfname);
-		~SkyBox();
-		dGeomID createGeom(dSpaceID space);
-		void createMass(dMass *, float);
-		void draw();
-};
 #endif
