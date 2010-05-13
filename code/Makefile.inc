@@ -4,7 +4,7 @@ ODEFLAGS = $(shell ode-config --cflags)
 CFLAGS   = -Wall --std=gnu99 -ggdb $(ODEFLAGS) -I.
 CXXFLAGS = -Wall -Wno-long-long -Wno-deprecated -ggdb $(ODEFLAGS) -I.
 
-LDFLAGS  = -lenet -lSDL -lode -lboost_program_options-mt
+LDFLAGS  = -lenet -lSDL -lode -lboost_program_options-mt -lpng
 
 ifeq ($(OS),Darwin)
   GLFLAGS  = -framework GLUT -framework OpenGL -framework Foundation

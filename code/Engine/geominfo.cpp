@@ -38,6 +38,8 @@ dGeomID TriMeshInfo::createGeom(dSpaceID space)
 { return dCreateTriMesh(space, meshID, NULL, NULL, NULL); }
 dGeomID ObjMeshInfo::createGeom(dSpaceID space)
 { return dCreateSphere (space, 1.0); }
+dGeomID SkyBox::createGeom(dSpaceID space)
+{ return dCreateSphere(space, 1.0); }
 
 void SphereInfo::createMass(dMass * mass, float massVal)
 {
@@ -52,6 +54,11 @@ void BoxInfo::createMass(dMass * mass, float massVal)
 void ObjMeshInfo::createMass(dMass * mass, float massVal)
 {
     dMassSetBoxTotal(mass, massVal, 1.0, 1.0, 1.0);
+}
+
+void SkyBox::createMass(dMass * mass, float massVal)
+{
+		dMassSetBoxTotal(mass, massVal, 1.0, 1.0, 1.0);
 }
 
 void ObjMeshInfo::load(char *filename)

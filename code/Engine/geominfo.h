@@ -4,6 +4,7 @@
 #include <ode/ode.h>
 #include "Parser/objLoader.h"
 #include "Utilities/vector.h"
+#include "Utilities/load-png.h"
 
 /* Stores info common to all geoms.  Cannot be constructed directly -- must be
    constructed by a child class */
@@ -86,4 +87,13 @@ class ObjMeshInfo : public GeomInfo
 	void draw();
 };
 
+class SkyBox : public GeomInfo
+{
+		Image2D_t *image;	/* !< texture for the skybox */
+		SkyBox(const char *texfname);
+		~SkyBox();
+		dGeomID createGeom(dSpaceID space);
+		void createMass(dMass *, float);
+		void draw();
+};
 #endif
