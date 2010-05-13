@@ -16,9 +16,6 @@ void testSetup()
     Sound &sound  = Sound::getInstance();
 		Hud &hud = Hud::getInstance();
 
-    PlaneInfo info = PlaneInfo(0, 1, 0, -.1);
-    new PGeom(&info, physics.getOdeSpace());
-
     Vec3f pos = Vec3f(25, 2, 7.5);
     Agent *aiagent = new Agent(pos, M_PI_2);
 

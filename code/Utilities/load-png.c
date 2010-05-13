@@ -29,7 +29,7 @@ Image2D_t *LoadImage (const char *file, bool flip, ImageFormat_t fmt)
   /* check PNG signature */
     unsigned char sig[8];
     if ((fread(sig, 1, 8, inS) != 8)
-    || (! png_check_sig(sig, 8))) {
+    || (png_sig_cmp(sig, 0, 8))) {
 	fprintf (stderr, "error reading \"%s\": bad signature\n", file);
 	fclose(inS);
 	return 0;
@@ -72,7 +72,7 @@ Image2D_t *LoadImage (const char *file, bool flip, ImageFormat_t fmt)
     png_set_sig_bytes (pngPtr, 8);
 
   /* get file info */
-    unsigned long width, height;
+    png_uint_32 width, height;
     int bitDepth, colorType;
     png_read_info (pngPtr, infoPtr);
     png_get_IHDR (pngPtr, infoPtr, &width, &height,
@@ -83,7 +83,7 @@ Image2D_t *LoadImage (const char *file, bool flip, ImageFormat_t fmt)
     switch (colorType) {
       case PNG_COLOR_TYPE_GRAY:
 	if (bitDepth < 8) {
-	    png_set_gray_1_2_4_to_8(pngPtr);
+	    png_set_expand_gray_1_2_4_to_8(pngPtr);
 	}
 	if (fmt != GRAY_IMAGE) {
 	    fprintf(stderr, "unexpected GRAY image format\n");
