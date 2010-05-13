@@ -12,9 +12,6 @@ void testSetup()
     Input &input = Input::getInstance();
     Sound &sound = Sound::getInstance();
 
-    PlaneInfo info = PlaneInfo(0, 1, 0, -.1);
-    new PGeom(&info, physics.getOdeSpace());
-
     Vec3f pos = Vec3f(85, 5, 20);
     Agent *agent = new Agent(pos, M_PI);
 

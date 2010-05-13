@@ -12,9 +12,6 @@ void testSetup()
     Physics &physics  = Physics::getInstance();
     Input &input = Input::getInstance();
 
-    PlaneInfo info = PlaneInfo(0, 1, 0, -2);
-    new PGeom(&info, physics.getOdeSpace());
-
     Vec3f pos = Vec3f(2,10,2);
     Agent *agent = new Agent(pos, M_PI / 2);
 

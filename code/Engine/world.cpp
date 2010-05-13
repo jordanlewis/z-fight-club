@@ -93,6 +93,16 @@ void World::loadTrack(const char *file)
         error.log(PARSER, CRITICAL, "Track load failed\n");
     }
 
+    PGeom *geom;
+    GObject *gobj;
+    WorldObject *wobj;
+
+    /* Create bottom plane */
+    PlaneInfo info = PlaneInfo(0, 1, 0, -.1);
+    geom = new PGeom(&info);
+    wobj = new WorldObject(geom, NULL, NULL, NULL);
+    addObject(wobj);
+
     /* Now create WorldObjects to represent the track */
 
     float depth = .1;
@@ -104,8 +114,6 @@ void World::loadTrack(const char *file)
     int i, j;
     float theta;
     Edge_t *e, *next;
-    PGeom *geom;
-    GObject *gobj;
     dQuaternion quat;
     Vec3f position, diff;
 
@@ -171,7 +179,7 @@ void World::loadTrack(const char *file)
                                              track->nSects * 6, indices, NULL);
     geom = new PGeom(tmeshinfo);
     gobj = new GObject(tmeshinfo);
-    WorldObject *wobj = new WorldObject(geom, gobj, NULL, NULL);
+    wobj = new WorldObject(geom, gobj, NULL, NULL);
     addObject(wobj);
 
 }
