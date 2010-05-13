@@ -24,6 +24,7 @@ typedef struct struct_sect Sector_t;
 typedef struct struct_edge Edge_t;
 typedef struct struct_lane Lane_t;
 typedef struct struct_segment Segment_t;
+typedef struct struct_start Start_t;
 
 typedef enum {			//!< kinds of walls
     WALL_EDGE,
@@ -41,9 +42,12 @@ typedef struct {
     int		nVerts;		//!< number of vertices
     int		nSects;		//!< number of sectors
     int		nLanes;		//!< number of lanes
+    int		nStarts;	//!< number of starts
     Vec3f_t	*verts;		//!< array of #nVerts vertices
     Sector_t	*sects;		//!< array of #nSects sectors
     Lane_t	*lanes;		//!< array of #nLanes lanes
+    Start_t	*starts;	//!< array of start points
+
 } TrackData_t;
 
 struct struct_sect {
@@ -72,6 +76,12 @@ struct struct_segment {
     uint16_t	center;		//!< vertex ID for center point of an arc segment
     float	length;		//!< length of the segment
     float	angle;		//!< angle of an arc segment
+};
+
+/* !< struct to hold a starting point for a racer */
+struct struct_start {
+    uint16_t	pos;		//!< the vertex the start point is located at
+    uint16_t	sect;		//!< which sect the start point is in (for orientation)
 };
 
 /*! \brief load a track file
