@@ -126,6 +126,7 @@ void Scheduler::clientLoopForever(){
         {
             cout << "ah, a message from the server" << endl
                  << "must be time to play" << endl;
+            raceState = RACE;
             break;
         }
         usleep(10000);

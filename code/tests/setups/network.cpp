@@ -10,9 +10,4 @@ void testSetup()
 {
     Error &error = Error::getInstance();
     error.on(NETWORK);
-
-    World &world = World::getInstance();
-    Physics &physics  = Physics::getInstance();
-    Input &input = Input::getInstance();
-
 }

@@ -1,4 +1,5 @@
 #include "agent.h"
+#include "Network/racerpacket.h"
 #include "Utilities/vec3f.h"
 
 unsigned int Agent::maxId = 0;    /* !<highest id number we've reached */
@@ -72,6 +73,18 @@ void Agent::setKinematic (const Kinematic &kinematic)
 SteerInfo &Agent::getSteering ()
 {
     return steerInfo;
+}
+
+/* \brief serialize steering information for sending over the network
+ * \param payload a place to write out the network-ready data
+ */
+void SteerInfo::hton(RPUpdateAgent *payload)
+{
+    payload->a = htonf(acceleration);
+    payload->r = htonf(rotation);
+    payload->w = htonl(weapon);
+    payload->f = htonl(fire);
+    return;
 }
 
 /* \brief set desired steering information for agent

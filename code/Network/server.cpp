@@ -50,8 +50,9 @@ int Server::createNetObj(netObjID_t &ID) {
     }
     else  
     {
-	cerr << "Cannot accomodate more clients" << endl;
-	return -1;
+        Error error = Error::getInstance();
+        error.log(NETWORK, IMPORTANT, "Cannot accomodate more clients\n");
+        return -1;
     }
     
     return 0;
@@ -72,7 +73,8 @@ int Server::createHost()
 
     if (enetServer == NULL)
         {
-            cerr << "ENet could not initialize server" << endl;
+            Error error = Error::getInstance();
+            error.log(NETWORK, IMPORTANT, "ENet could not initialize server\n");
             return -1;
         }
     return 0;
@@ -210,7 +212,6 @@ void Server::serverFrame(){
                                 RPUpdateAgent info = *(RPUpdateAgent *)payload;
                                 WorldObject *wo = netobjs[info.ID];
                                 SteerInfo steerInfo;
-                                printf("%d\n", info.a);
                                 populateSteerInfo(&steerInfo, &info);
                                 printf("acc[%lu]: %9.1f rot[%lu]: %5.1f "
                                        "weapon[%lu]: %d fire[%lu]: %d\n",
