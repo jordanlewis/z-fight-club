@@ -65,6 +65,8 @@ class World
     
     static World _instance;
   public:
+    int PlayerQty;
+    int AIQty;
     RunType_t runType;
     Camera camera;
     TrackData_t *track;
@@ -81,6 +83,7 @@ class World
     Agent *placeAgent(int place);
     void makeAI();
     void makePlayer();
+    void makeAgents();
     void loadTrack(const char *file);
     void setRunType(const string str);
     const TrackData_t * getTrack();
