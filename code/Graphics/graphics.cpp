@@ -211,27 +211,23 @@ void Graphics::render(AIController *aiController)
 void Graphics::render(TrackData_t *track)
 {
     if (!initialized) {
-	Error error = Error::getInstance();
-	error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
-	exit(0);
+        Error error = Error::getInstance();
+        error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+        exit(0);
     }
 
     if (track) {
-	int i, j;
-	/* load in the vertices */
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, track->verts);
+        int i, j;
+        /* load in the vertices */
 
-	/* draw sectors */
-	for (i = 0; i < track->nSects; i++) {
-	    uint16_t *lineIndices = new uint16_t[track->sects[i].nEdges];
-	    for (j = 0; j < track->sects[i].nEdges; j++) {
-		lineIndices[j] = track->sects[i].edges[j].start;
-	    }
-	    glDrawElements(GL_LINE_LOOP, track->sects[i].nEdges, GL_UNSIGNED_SHORT, lineIndices);
-	    delete [] lineIndices;
-	}
-	glDisableClientState(GL_VERTEX_ARRAY);
+        glBegin(GL_LINE_LOOP);
+        /* draw sectors */
+        for (i = 0; i < track->nSects; i++) {
+            for (j = 0; j < track->sects[i].nEdges; j++) {
+                glVertex3fv(track->verts[track->sects[i].edges[j].start]);
+            }
+        }
+        glEnd();
 
         glColor3f(1,1,0);
         GLUquadricObj *quadobj = gluNewQuadric();
@@ -287,53 +283,37 @@ void Graphics::render(Hud *hud)
 void Graphics::render(std::vector<Vec3f> path)
 {
     if (!initialized) {
-	Error error = Error::getInstance();
-	error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
-	exit(0);
+        Error error = Error::getInstance();
+        error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+        exit(0);
     }
 
     unsigned int i;
 
-    float *rawVerts = makeArray(path);
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, rawVerts);
-
-    uint16_t *lineIndices = new uint16_t[path.size()];
+    glBegin(GL_LINE_STRIP);
     for (i = 0; i < path.size(); i++)
-	lineIndices[i] = i;
-
-    glDrawElements(GL_LINE_STRIP, path.size(), GL_UNSIGNED_SHORT, lineIndices);
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-
-    delete []rawVerts;
+    {
+        glVertex3f(path[i].x, path[i].y, path[i].z);
+    }
+    glEnd();
 }
 
 void Graphics::render(std::deque<Vec3f> path)
 {
     if (!initialized) {
-	Error error = Error::getInstance();
-	error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
-	exit(0);
+        Error error = Error::getInstance();
+        error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+        exit(0);
     }
 
     unsigned int i;
-    
-    float *rawVerts = makeArray(path);
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, rawVerts);
-
-    uint16_t *lineIndices = new uint16_t[path.size()];
+    glBegin(GL_LINE_STRIP);
     for (i = 0; i < path.size(); i++)
-	lineIndices[i] = i;
+    {
+        glVertex3f(path[i].x, path[i].y, path[i].z);
+    }
+    glEnd();
 
-    glDrawElements(GL_LINE_STRIP, path.size(), GL_UNSIGNED_SHORT, lineIndices);
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-
-    delete []rawVerts;
 }
 
 Graphics &Graphics::getInstance()
