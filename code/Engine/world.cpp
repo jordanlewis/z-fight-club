@@ -216,9 +216,10 @@ void World::makeAI()
     if (!track)
         return;
     AIManager &ai = AIManager::getInstance();
-    Agent *agent = placeAgent(agents.size());
+    int nAgents = agents.size();
+    Agent *agent = placeAgent(nAgents);
     ai.control(agent);
-    ai.controllers[0]->lane(0);
+    ai.controllers.back()->lane((nAgents + 1) % 2);
 }
 
 
