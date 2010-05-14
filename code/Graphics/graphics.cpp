@@ -207,6 +207,8 @@ void Graphics::render(AIController *aiController)
     }
 
     glColor3f(0,1,0);
+    DrawArrow(aiController->agent->getKinematic().pos,
+              aiController->path.knots.front());
     render(aiController->path.knots);
 }
 
