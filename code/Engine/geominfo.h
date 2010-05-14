@@ -2,7 +2,6 @@
 #define GEOMINFO_H
 
 #include <ode/ode.h>
-#include "Parser/objLoader.h"
 #include "Utilities/vector.h"
 #include "Utilities/load-png.h"
 
@@ -78,7 +77,6 @@ class TriMeshInfo : public GeomInfo
 class ObjMeshInfo : public GeomInfo
 {
     public:
-	objLoader obj; /* contains the data as well as loading it */
 	ObjMeshInfo(char *filename);
 	~ObjMeshInfo();
 	void load(char *filename);
