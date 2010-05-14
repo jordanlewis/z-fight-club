@@ -42,7 +42,6 @@ class Graphics
     void renderBoxPGeoms();
     void render(std::deque<Vec3f>);
     void render(std::vector<Vec3f>);
-    int sphere(Vec3f, float, Color);
 
     static Graphics &getInstance();
 };

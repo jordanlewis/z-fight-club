@@ -24,8 +24,6 @@ typedef float        Vec2f_t[2];    //!< 2D vector (used for texture coords)
 typedef float        Vec3f_t[3];    //!< 3D vector
 typedef float        Vec4f_t[4];    //!< 4D vector
 typedef float        Color_t[4];    //!< RGBA color representation
-typedef unsigned char    RGB_t[3];    //!< Byte representation of colors
-typedef unsigned char    RGBA_t[4];    //!< Byte representation of colors
 
 /*! \brief a ray */
 typedef struct {
@@ -402,32 +400,6 @@ static inline void CopyV4f (Vec4f_t src, Vec4f_t dst)
     dst[2] = src[2];
     dst[3] = src[3];
 }
-
-
-/***** Color functions *****/
-
-//! \brief copy a color
-//! \param src the source color
-//! \param dst the destination color
-static inline void CopyRGBA (RGBA_t src, RGBA_t dst)
-{
-    dst[0] = src[0];
-    dst[1] = src[1];
-    dst[2] = src[2];
-    dst[3] = src[3];
-}
-
-//! \brief copy a color
-//! \param src the source color
-//! \param dst the destination color
-static inline void CopyColor (Color_t src, Color_t dst)
-{
-    dst[0] = src[0];
-    dst[1] = src[1];
-    dst[2] = src[2];
-    dst[3] = src[3];
-}
-
 
 /***** Ray functions *****/
 

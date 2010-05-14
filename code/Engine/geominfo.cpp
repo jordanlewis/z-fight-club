@@ -23,7 +23,6 @@ TriMeshInfo::TriMeshInfo(dTriMeshDataID meshID,
 
 ObjMeshInfo::ObjMeshInfo(char *filename)
 {
-    load(filename);
 }
 
 dGeomID SphereInfo::createGeom(dSpaceID space)
@@ -52,9 +51,4 @@ void BoxInfo::createMass(dMass * mass, float massVal)
 void ObjMeshInfo::createMass(dMass * mass, float massVal)
 {
     dMassSetBoxTotal(mass, massVal, 1.0, 1.0, 1.0);
-}
-
-void ObjMeshInfo::load(char *filename)
-{
-    obj.load(filename);
 }
