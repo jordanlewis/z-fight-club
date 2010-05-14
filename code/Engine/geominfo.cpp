@@ -1,5 +1,6 @@
 #include <ode/ode.h>
 #include "geominfo.h"
+#include "Network/racerpacket.h"
 
 BoxInfo::BoxInfo(float lx, float ly, float lz)
     : GeomInfo(), lx(lx), ly(ly), lz(lz)
@@ -51,4 +52,59 @@ void BoxInfo::createMass(dMass * mass, float massVal)
 void ObjMeshInfo::createMass(dMass * mass, float massVal)
 {
     dMassSetBoxTotal(mass, massVal, 1.0, 1.0, 1.0);
+}
+
+void SphereInfo::hton(RPAttachPGeom *payload) {
+    if (payload == NULL){
+        cerr << "Payload is null!" << endl;
+        return;
+    }
+    payload->radius = htonf(radius);
+}
+
+void BoxInfo::hton(RPAttachPGeom *payload) {
+    if (payload == NULL){
+        cerr << "Payload is null!" << endl;
+        return;
+    }
+    payload->lx = htonf(lx);
+    payload->ly = htonf(ly);
+    payload->lz = htonf(lz);
+}
+
+void PlaneInfo::hton(RPAttachPGeom *payload) {
+    if (payload == NULL){
+        cerr << "Payload is null!" << endl;
+        return;
+    }
+    payload->a = htonf(a);
+    payload->b = htonf(b);
+    payload->c = htonf(c);
+    payload->d = htonf(d);
+}
+
+void SphereInfo::ntoh(RPAttachPGeom *payload) {
+    if (payload == NULL) {
+        cerr << "Payload is null!" << endl;
+    }
+    payload->radius = radius;
+}
+
+void BoxInfo::ntoh(RPAttachPGeom *payload) {
+    if (payload == NULL) {
+        cerr << "Payload is null!" << endl;
+    }
+    payload->lx = lx;
+    payload->ly = ly;
+    payload->lz = lz;
+}
+
+void PlaneInfo::ntoh(RPAttachPGeom *payload) {
+    if (payload == NULL) {
+        cerr << "Payload is null!" << endl;
+    }
+    payload->a = a;
+    payload->b = b;
+    payload->c = c;
+    payload->d = d;
 }

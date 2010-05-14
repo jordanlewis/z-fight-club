@@ -51,7 +51,9 @@ struct RPCreateNetObj {
 
 struct RPAttachPGeom {
     netObjID_t ID;
-    PGeom pgeom;
+    uint32_t radius;
+    uint32_t lx, ly, lz; 
+    uint32_t a, b, c, d;
 };
 
 struct RPAttachPMoveable{
