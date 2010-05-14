@@ -191,9 +191,10 @@ Agent *World::placeAgent(int place)
 {
     if (!track)
         return NULL;
-    int zp = place / 2;
+    int zp = place / 4;
     int xp = place % 2;
     int nsects = track->nSects;
+    int backerSect = track->nSects - (zp + 1);
     int backSect = zp == 0 ? 0 : track->nSects - (zp);
     int frontSect = zp <= 1 ? 1 - zp : track->nSects - (zp - 1);
     Vec3f diff = Vec3f(track->verts[track->sects[frontSect].edges[0].start]) -
@@ -201,6 +202,10 @@ Agent *World::placeAgent(int place)
     Vec3f pos = lerp(Vec3f(track->verts[track->sects[backSect].edges[0].start]),
                      Vec3f(track->verts[track->sects[backSect].edges[1].start]),
                      xp == 0 ? .33 : .66);
+    pos += Vec3f(track->verts[track->sects[backerSect].edges[0].start]) -
+           lerp(Vec3f(track->verts[track->sects[backSect].edges[0].start]),
+                Vec3f(track->verts[track->sects[backerSect].edges[0].start]),
+                place % 4 < 2 ? 0 : .5);
     pos[1] += 2;
 
     float orient = acos(Vec3f(0,0,1).dot(diff.unit()));
