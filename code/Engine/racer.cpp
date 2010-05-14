@@ -41,50 +41,63 @@ int main(int argc, char *argv[])
             ("help", "produce help message")
             ("track", po::value<string>(), "set track file")
             ("sounds", po::value<string>(), "set sounds directory")
-	    ("network", po::value<string>(), "set network mode")
-	    ("ipaddr", po::value<string>(), "set server ip address")
-	    ("port", po::value<int>(), "set server port")
+            ("network", po::value<string>(), "set network mode")
+            ("ipaddr", po::value<string>(), "set server ip address")
+            ("port", po::value<int>(), "set server port")
+            ("ai-players", po::value<int>(), "set number of AI players")
         ;
-    
+
         po::store(po::parse_command_line(argc, argv, desc), vm);
-        po::notify(vm);    
-    
+        po::notify(vm);
+
         if (vm.count("help"))
         {
             cout << desc << "\n";
             return 0;
         }
-    
+
         if (vm.count("track"))
         {
             world.loadTrack(vm["track"].as<string>().c_str());
         }
-	else 
-	{
-	    cout << "Error:  No track file given.";
-	    return 0;
-	}
-    
+        else
+        {
+            cout << "Error:  No track file given.";
+            return 0;
+        }
+
         if (vm.count("sounds"))
         {
             sound.setDir(vm["sounds"].as<string>().c_str());
         }
-	if (vm.count("network"))
-	{
-	    world.setRunType(vm["network"].as<string>().c_str()); 
-	}
-	else 
-	{
-	    world.setRunType("Solo");
-	} 
-	if (vm.count("ipaddr"))
-	{
-	    setAddr(vm["ipaddr"].as<string>().c_str());
-	}
-	if (vm.count("port"))
-	{
-	    setPort(vm["port"].as<int>());
-	}
+        if (vm.count("network"))
+        {
+            world.setRunType(vm["network"].as<string>().c_str()); 
+        }
+        else
+        {
+            world.setRunType("Solo");
+        }
+        if (!vm.count("no-human"))
+        {
+            world.makePlayer();
+        }
+        if (vm.count("ai-players") && world.runType == SOLO)
+        {
+            for (int i = 0; i < vm["ai-players"].as<int>(); i++)
+            {
+                world.makeAI();
+            }
+        }
+
+        if (vm.count("ipaddr"))
+        {
+            setAddr(vm["ipaddr"].as<string>().c_str());
+        }
+        if (vm.count("port"))
+        {
+            setPort(vm["port"].as<int>());
+        }
     }
     catch(exception& e) {
         cerr << "error: " << e.what() << "\n";
@@ -98,35 +111,32 @@ int main(int argc, char *argv[])
 
     if (world.runType == SOLO) 
     {
-	graphics.initGraphics();
-	sound.initSound();
-	world.getTrack();
-	testSetup();
-	scheduler.soloLoopForever();
+        graphics.initGraphics();
+        sound.initSound();
+        testSetup();
+        scheduler.soloLoopForever();
     }
     if (world.runType == CLIENT)
     {
-	graphics.initGraphics();
-	sound.initSound();
-	world.getTrack();
-	testSetup();
-	if (client.connectToServer() < 0)
-	{
-	    cerr << "Fatal error:  Cannot connect to server" << endl;
-	    return -1;
-	}
-	scheduler.clientLoopForever();
+        graphics.initGraphics();
+        sound.initSound();
+        testSetup();
+        if (client.connectToServer() < 0)
+        {
+            cerr << "Fatal error:  Cannot connect to server" << endl;
+            return -1;
+        }
+        scheduler.clientLoopForever();
     }
     if (world.runType == SERVER) 
     {
-	world.getTrack();
-	testSetup();
-	if (server.createHost() < 0) 
-	{
-	    cerr << "Fatal error:  Server could not be established" << endl;
-	    return -1;
-	}
-	scheduler.serverLoopForever();
+        testSetup();
+        if (server.createHost() < 0) 
+        {
+            cerr << "Fatal error:  Server could not be established" << endl;
+            return -1;
+        }
+        scheduler.serverLoopForever();
     }
 
     return 0;
