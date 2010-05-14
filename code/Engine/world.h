@@ -76,6 +76,7 @@ class World
     dSpaceID ode_space;
     std::vector<Agent *> agents; /* the agents in the world */
     std::vector<WorldObject *> wobjects; /* the objects in the world */
+    string assetsDir;   /* !< base directory for asset files */
 
     void addObject(WorldObject *obj);
     void addAgent(Agent *agent);
@@ -87,6 +88,7 @@ class World
     void setRunType(const string str);
     const TrackData_t * getTrack();
     static World &getInstance();
+    void setDir(const string);
 
     friend class Graphics;
 };

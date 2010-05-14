@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
             ("help", "produce help message")
             ("track", po::value<string>(), "set track file")
             ("sounds", po::value<string>(), "set sounds directory")
+            ("assets", po::value<string>(), "set assets directory")
             ("network", po::value<string>(), "set network mode")
             ("ipaddr", po::value<string>(), "set server ip address")
             ("port", po::value<int>(), "set server port")
@@ -70,6 +71,12 @@ int main(int argc, char *argv[])
         {
             sound.setDir(vm["sounds"].as<string>().c_str());
         }
+
+        if (vm.count("assets"))
+        {
+            world.setDir(vm["assets"].as<string>().c_str());
+        }
+
         if (vm.count("network"))
         {
             world.setRunType(vm["network"].as<string>().c_str()); 

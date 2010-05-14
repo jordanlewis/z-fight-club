@@ -4,6 +4,10 @@
 #include <ode/ode.h>
 #include "Utilities/vector.h"
 #include "Utilities/load-png.h"
+#include <string>
+extern "C" {
+    #include "Parser/obj-reader.h"
+}
 
 /* Stores info common to all geoms.  Cannot be constructed directly -- must be
    constructed by a child class */
@@ -77,7 +81,8 @@ class TriMeshInfo : public GeomInfo
 class ObjMeshInfo : public GeomInfo
 {
     public:
-	ObjMeshInfo(char *filename);
+	OBJmodel	*model;		/* !< pointer to obj model */
+	ObjMeshInfo(std::string);
 	~ObjMeshInfo();
 	void load(char *filename);
 	dGeomID createGeom(dSpaceID space);

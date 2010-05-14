@@ -279,3 +279,8 @@ World &World::getInstance()
 {
     return _instance;
 }
+
+void World::setDir(const string dirname)
+{
+    assetsDir = dirname;
+}
