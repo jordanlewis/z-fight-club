@@ -29,7 +29,7 @@ void smackAll(Agent * agent, int force)
 
         if ((*iter)->agent != agent)
         {
-            smack(agent, force);
+            smack((*iter)->agent, force);
         }
     }
 }
