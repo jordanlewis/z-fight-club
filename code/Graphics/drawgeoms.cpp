@@ -150,14 +150,16 @@ void TriMeshInfo::draw()
 {
     if (normals == NULL)
     {
-        normals = new Vec3f_t[nTris / 3];
+        normals = new Vec3f_t[nTris];
         Vec3f_t tmp1, tmp2;
         for (int i = 0; i < nTris / 3; i++)
         {
-            SubV3f(verts[i * 3 + 1], verts[i * 3], tmp1);
-            SubV3f(verts[i * 3 + 2], verts[i * 3], tmp2);
+            SubV3f(verts[tris[i * 3 + 1]], verts[tris[i * 3]], tmp1);
+            SubV3f(verts[tris[i * 3 + 2]], verts[tris[i * 3]], tmp2);
             CrossV3f(tmp1, tmp2, tmp1);
-            memcpy(normals + i, tmp1, sizeof(float) * 3);
+            memcpy(normals + i * 3, tmp1, sizeof(float) * 3);
+            memcpy(normals + i * 3 + 1, tmp1, sizeof(float) * 3);
+            memcpy(normals + i * 3 + 2, tmp1, sizeof(float) * 3);
         }
     }
     glDisable(GL_CULL_FACE);
