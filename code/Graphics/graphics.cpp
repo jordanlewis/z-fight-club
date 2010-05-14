@@ -63,31 +63,27 @@ void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
 
     float l = dir.length();
     /* the 6 verts we need for the arrow */
-    std::vector<Vec3f> verts;
-    verts.push_back(pos);
-    verts.push_back(pos + dir);
+    Vec3f_t verts[6];
+    pos.toArray(        verts[0]);
+    (pos + dir).toArray(verts[1]);
 
     /* make perpendicular vectors */
     Vec3f p1 = dir.perp();
     Vec3f p2 = dir.perp(p1);
 
-    verts.push_back(pos + (dir * 0.7f) + (p1 * l * 0.3f));
-    verts.push_back(pos + (dir * 0.7f) - (p1 * l * 0.3f));
-    verts.push_back(pos + (dir * 0.7f) + (p2 * l * 0.3f));
-    verts.push_back(pos + (dir * 0.7f) - (p2 * l * 0.3f));
-
-    /* vertex array in opengl usable form */
-    float *rawVerts = makeArray(verts);
+    (pos + (dir * 0.7f) + (p1 * l * 0.3f)).toArray(verts[2]);
+    (pos + (dir * 0.7f) - (p1 * l * 0.3f)).toArray(verts[3]);
+    (pos + (dir * 0.7f) + (p2 * l * 0.3f)).toArray(verts[4]);
+    (pos + (dir * 0.7f) - (p2 * l * 0.3f)).toArray(verts[5]);
 
     glEnableClientState(GL_VERTEX_ARRAY);
 
-    glVertexPointer(3, GL_FLOAT, 0, rawVerts);
+    glVertexPointer(3, GL_FLOAT, 0, verts);
     uint16_t lineIndices[2 * 5] = {0, 1, 1, 2, 1, 3, 1, 4, 1, 5}; /* 2 indices per line, 5 lines */
     glDrawElements(GL_LINES, 2 * 5, GL_UNSIGNED_SHORT, lineIndices);
 
     glDisableClientState(GL_VERTEX_ARRAY);
 
-    delete [] rawVerts;
 }
 
 void Graphics::render()
