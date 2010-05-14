@@ -48,7 +48,7 @@ $(TARGET): $(BUILDDIR) $(OBJECTBUILDS) $(SETUPOBJ)
 
 .PHONY: test clean
 test: all
-	./$(TARGET) --track=tests/tracks/oval.trk --sounds=tests/sounds/ --ai-players=3
+	./$(TARGET) --track=tests/tracks/oval.trk --sounds=tests/sounds/ --ai-players=3 --assets=../assets/
 clean:
 	rm -rf $(BUILDDIR) $(CTAGS)
 

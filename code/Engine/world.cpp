@@ -212,6 +212,7 @@ Agent *World::placeAgent(int place)
 
     Agent *agent = new Agent(pos, orient);
     addAgent(agent);
+    Sound::getInstance().registerSource(wobjects.back(), new SObject("snore.wav", GetTime(), AL_TRUE));
 
     return agent;
 }
@@ -238,6 +239,15 @@ void World::makePlayer()
     Sound::getInstance().registerListener(&camera);
     PlayerController *p = new PlayerController(agent);
     Input::getInstance().controlPlayer(p);
+}
+
+void World::makeAgents()
+{
+    if (PlayerQty == 1) makePlayer();
+    for (int i = 0; i < AIQty; i++)
+    {
+        makeAI();
+    }
 }
 
 void World::setRunType(const string str){
@@ -268,4 +278,9 @@ const TrackData_t *World::getTrack()
 World &World::getInstance()
 {
     return _instance;
+}
+
+void World::setDir(const string dirname)
+{
+    assetsDir = dirname;
 }

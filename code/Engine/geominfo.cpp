@@ -1,6 +1,11 @@
 #include <ode/ode.h>
 #include "geominfo.h"
+#include <string>
 #include "Network/racerpacket.h"
+#include "Engine/world.h"
+extern "C" {
+    #include "Parser/obj-reader.h"
+}
 
 BoxInfo::BoxInfo(float lx, float ly, float lz)
     : GeomInfo(), lx(lx), ly(ly), lz(lz)
@@ -22,8 +27,10 @@ TriMeshInfo::TriMeshInfo(dTriMeshDataID meshID,
       tris(tris), normals(normals)
 {}
 
-ObjMeshInfo::ObjMeshInfo(char *filename)
+ObjMeshInfo::ObjMeshInfo(std::string filename)
 {
+    World &world = World::getInstance();
+    model = OBJReadOBJ((world.assetsDir + filename).c_str());
 }
 
 dGeomID SphereInfo::createGeom(dSpaceID space)
@@ -107,4 +114,9 @@ void PlaneInfo::ntoh(RPAttachPGeom *payload) {
     payload->b = b;
     payload->c = c;
     payload->d = d;
+}
+
+ObjMeshInfo::~ObjMeshInfo()
+{
+    OBJDelete(model);
 }

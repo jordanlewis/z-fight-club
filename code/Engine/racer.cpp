@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
             ("help", "produce help message")
             ("track", po::value<string>(), "set track file")
             ("sounds", po::value<string>(), "set sounds directory")
+            ("assets", po::value<string>(), "set assets directory")
             ("network", po::value<string>(), "set network mode")
             ("ipaddr", po::value<string>(), "set server ip address")
             ("port", po::value<int>(), "set server port")
@@ -70,6 +71,12 @@ int main(int argc, char *argv[])
         {
             sound.setDir(vm["sounds"].as<string>().c_str());
         }
+
+        if (vm.count("assets"))
+        {
+            world.setDir(vm["assets"].as<string>().c_str());
+        }
+
         if (vm.count("network"))
         {
             world.setRunType(vm["network"].as<string>().c_str()); 
@@ -80,14 +87,11 @@ int main(int argc, char *argv[])
         }
         if (!vm.count("no-human"))
         {
-            world.makePlayer();
+            world.PlayerQty = 1;
         }
         if (vm.count("ai-players") && world.runType == SOLO)
         {
-            for (int i = 0; i < vm["ai-players"].as<int>(); i++)
-            {
-                world.makeAI();
-            }
+            world.AIQty = vm["ai-players"].as<int>();
         }
 
         if (vm.count("ipaddr"))
@@ -113,6 +117,7 @@ int main(int argc, char *argv[])
     {
         graphics.initGraphics();
         sound.initSound();
+        world.makeAgents();
         testSetup();
         scheduler.soloLoopForever();
     }

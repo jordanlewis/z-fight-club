@@ -4,6 +4,10 @@
 #include <ode/ode.h>
 #include "Utilities/vector.h"
 #include "Utilities/load-png.h"
+#include <string>
+extern "C" {
+    #include "Parser/obj-reader.h"
+}
 
 struct RPAttachPGeom;
 
@@ -87,7 +91,8 @@ class TriMeshInfo : public GeomInfo
 class ObjMeshInfo : public GeomInfo
 {
     public:
-	ObjMeshInfo(char *filename);
+	OBJmodel	*model;		/* !< pointer to obj model */
+	ObjMeshInfo(std::string);
 	~ObjMeshInfo();
 	void load(char *filename);
 	dGeomID createGeom(dSpaceID space);
