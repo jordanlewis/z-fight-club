@@ -77,6 +77,9 @@ class World
 
     void addObject(WorldObject *obj);
     void addAgent(Agent *agent);
+    Agent *placeAgent(int place);
+    void makeAI();
+    void makePlayer();
     void loadTrack(const char *file);
     void setRunType(const string str);
     const TrackData_t * getTrack();

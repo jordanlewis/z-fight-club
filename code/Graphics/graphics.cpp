@@ -63,31 +63,27 @@ void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
 
     float l = dir.length();
     /* the 6 verts we need for the arrow */
-    std::vector<Vec3f> verts;
-    verts.push_back(pos);
-    verts.push_back(pos + dir);
+    Vec3f_t verts[6];
+    pos.toArray(        verts[0]);
+    (pos + dir).toArray(verts[1]);
 
     /* make perpendicular vectors */
     Vec3f p1 = dir.perp();
     Vec3f p2 = dir.perp(p1);
 
-    verts.push_back(pos + (dir * 0.7f) + (p1 * l * 0.3f));
-    verts.push_back(pos + (dir * 0.7f) - (p1 * l * 0.3f));
-    verts.push_back(pos + (dir * 0.7f) + (p2 * l * 0.3f));
-    verts.push_back(pos + (dir * 0.7f) - (p2 * l * 0.3f));
-
-    /* vertex array in opengl usable form */
-    float *rawVerts = makeArray(verts);
+    (pos + (dir * 0.7f) + (p1 * l * 0.3f)).toArray(verts[2]);
+    (pos + (dir * 0.7f) - (p1 * l * 0.3f)).toArray(verts[3]);
+    (pos + (dir * 0.7f) + (p2 * l * 0.3f)).toArray(verts[4]);
+    (pos + (dir * 0.7f) - (p2 * l * 0.3f)).toArray(verts[5]);
 
     glEnableClientState(GL_VERTEX_ARRAY);
 
-    glVertexPointer(3, GL_FLOAT, 0, rawVerts);
+    glVertexPointer(3, GL_FLOAT, 0, verts);
     uint16_t lineIndices[2 * 5] = {0, 1, 1, 2, 1, 3, 1, 4, 1, 5}; /* 2 indices per line, 5 lines */
     glDrawElements(GL_LINES, 2 * 5, GL_UNSIGNED_SHORT, lineIndices);
 
     glDisableClientState(GL_VERTEX_ARRAY);
 
-    delete [] rawVerts;
 }
 
 void Graphics::render()
@@ -207,33 +203,33 @@ void Graphics::render(AIController *aiController)
     }
 
     glColor3f(0,1,0);
+    DrawArrow(aiController->agent->getKinematic().pos,
+              aiController->path.knots.front() - aiController->agent->getKinematic().pos);
     render(aiController->path.knots);
 }
 
 void Graphics::render(TrackData_t *track)
 {
     if (!initialized) {
-	Error error = Error::getInstance();
-	error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
-	exit(0);
+        Error error = Error::getInstance();
+        error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+        exit(0);
     }
 
     if (track) {
-	int i, j;
-	/* load in the vertices */
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, track->verts);
+        int i, j;
+        /* load in the vertices */
 
-	/* draw sectors */
-	for (i = 0; i < track->nSects; i++) {
-	    uint16_t *lineIndices = new uint16_t[track->sects[i].nEdges];
-	    for (j = 0; j < track->sects[i].nEdges; j++) {
-		lineIndices[j] = track->sects[i].edges[j].start;
-	    }
-	    glDrawElements(GL_LINE_LOOP, track->sects[i].nEdges, GL_UNSIGNED_SHORT, lineIndices);
-	    delete [] lineIndices;
-	}
-	glDisableClientState(GL_VERTEX_ARRAY);
+        Vec3f_t vert;
+        glBegin(GL_LINE_LOOP);
+        /* draw sectors */
+        for (i = 0; i < track->nSects; i++) {
+            for (j = 0; j < track->sects[i].nEdges; j++) {
+                CopyV3f(track->verts[track->sects[i].edges[j].start], vert);
+                glVertex3f(vert[0], vert[1] + .01, vert[2]);
+            }
+        }
+        glEnd();
 
         glColor3f(1,1,0);
         GLUquadricObj *quadobj = gluNewQuadric();
@@ -250,14 +246,16 @@ void Graphics::render(TrackData_t *track)
                 seg = &track->lanes[i].segs[j];
                 switch (track->lanes[i].segs[j].kind) {
                     case LINE_SEGMENT:
-                        glVertex3fv(track->verts[seg->start]);
-                        glVertex3fv(track->verts[seg->end]);
+                        CopyV3f(track->verts[seg->start], vert);
+                        glVertex3f(vert[0], vert[1] + .01, vert[2]);
+                        CopyV3f(track->verts[seg->end], vert);
+                        glVertex3f(vert[0], vert[1] + .01, vert[2]);
                         break;
                     case ARC_SEGMENT:
                         glEnd();
                         CopyV3f(track->verts[seg->center],v);
                         glPushMatrix();
-                        glTranslatef(v[0], v[1], v[2]);
+                        glTranslatef(v[0], v[1] + .01, v[2]);
                         glRotatef(-90,1,0,0);
                         SubV3f(v, track->verts[seg->start], v);
                         len = LengthV3f(v);
@@ -289,53 +287,37 @@ void Graphics::render(Hud *hud)
 void Graphics::render(std::vector<Vec3f> path)
 {
     if (!initialized) {
-	Error error = Error::getInstance();
-	error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
-	exit(0);
+        Error error = Error::getInstance();
+        error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+        exit(0);
     }
 
     unsigned int i;
 
-    float *rawVerts = makeArray(path);
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, rawVerts);
-
-    uint16_t *lineIndices = new uint16_t[path.size()];
+    glBegin(GL_LINE_STRIP);
     for (i = 0; i < path.size(); i++)
-	lineIndices[i] = i;
-
-    glDrawElements(GL_LINE_STRIP, path.size(), GL_UNSIGNED_SHORT, lineIndices);
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-
-    delete []rawVerts;
+    {
+        glVertex3f(path[i].x, path[i].y, path[i].z);
+    }
+    glEnd();
 }
 
 void Graphics::render(std::deque<Vec3f> path)
 {
     if (!initialized) {
-	Error error = Error::getInstance();
-	error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
-	exit(0);
+        Error error = Error::getInstance();
+        error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+        exit(0);
     }
 
     unsigned int i;
-    
-    float *rawVerts = makeArray(path);
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, rawVerts);
-
-    uint16_t *lineIndices = new uint16_t[path.size()];
+    glBegin(GL_LINE_STRIP);
     for (i = 0; i < path.size(); i++)
-	lineIndices[i] = i;
+    {
+        glVertex3f(path[i].x, path[i].y, path[i].z);
+    }
+    glEnd();
 
-    glDrawElements(GL_LINE_STRIP, path.size(), GL_UNSIGNED_SHORT, lineIndices);
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-
-    delete []rawVerts;
 }
 
 Graphics &Graphics::getInstance()

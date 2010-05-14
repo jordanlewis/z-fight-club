@@ -152,8 +152,8 @@ void AIController::smartGo(const Vec3f target)
     dir = target - agent->kinematic.pos;
 
     for (deque<Avoid>::iterator it = obstacles.begin(); it != obstacles.end(); it++) {
-	/* nudge the dir to avoid obstacles */
-	dir += (1.0f / pow((agent->kinematic.pos - it->pos).length(), 2.0f)) * it->str * (agent->kinematic.pos - it->pos);
+        /* nudge the dir to avoid obstacles */
+        dir += (1.0f / pow((agent->kinematic.pos - it->pos).length(), 2.0f)) * it->str * (agent->kinematic.pos - it->pos);
     }
 
     float distance = dir.length();
@@ -234,16 +234,58 @@ void AIController::lane(int laneIndex)
     /* we're going to specify an entirely new path */
     path.clear();
 
-    Lane_t lane = world.track->lanes[laneIndex];
+    Vec3f us = agent->getKinematic().pos;
+    int startSeg = -1;
+    float dist;
+    float bestDist = 100000;
+    Vec3f bestMid, mid;
+    int best = -1;
+    TrackData_t *track = world.track;
+    /* find the section the agent is currently in */
+    for (i = 0; i < track->nSects; i++)
+    {
+        mid = lerp(track->verts[track->sects[i].edges[0].start],
+                   track->verts[track->sects[i].edges[1].start], .5);
+        mid = lerp(mid, track->verts[track->sects[i].edges[2].start],.5);
+        mid = lerp(mid, track->verts[track->sects[i].edges[3].start],.5);
+
+        dist = (mid - us).length();
+        if (dist < bestDist)
+        {
+            bestDist = dist;
+            best = i;
+            bestMid = mid;
+        }
+    }
+    /* now find the closest segment to that section */
+
+    bestDist = 100000;
+    best = -1;
+    Lane_t lane = track->lanes[laneIndex];
+    for (i = 0; i < lane.nSegs; i++)
+    {
+        dist = (Vec3f(track->verts[lane.segs[i].start]) - bestMid).length();
+        if (dist < bestDist)
+        {
+            bestDist = dist;
+            best = i;
+        }
+    }
+
+    startSeg = best;
+    cout << best << endl;
+
     for (i = 0; i < lane.nSegs; i++) {
-        path.knots.push_back(Vec3f(world.track->verts[lane.segs[i].start]));
+        int seg = (i + startSeg + 1) % lane.nSegs;
+
+        path.knots.push_back(Vec3f(track->verts[lane.segs[seg].start]));
         path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
-        if (lane.segs[i].kind == ARC_SEGMENT) {
-	    Vec3f center = Vec3f(world.track->verts[lane.segs[i].center]);
-	    Vec3f start =  Vec3f(world.track->verts[lane.segs[i].start]);
-	    Vec3f end =  Vec3f(world.track->verts[lane.segs[i].end]);
-	    // this way the theta should be != 180
-	    center.x += lane.segs[i].end > lane.segs[i].start ? -.01 : .01;
+        if (lane.segs[seg].kind == ARC_SEGMENT) {
+            Vec3f center = Vec3f(track->verts[lane.segs[seg].center]);
+            Vec3f start =  Vec3f(track->verts[lane.segs[seg].start]);
+            Vec3f end =  Vec3f(track->verts[lane.segs[seg].end]);
+            // this way the theta should be != 180
+            center.x += lane.segs[seg].end > lane.segs[seg].start ? -.01 : .01;
 
             for (j = 1; j < ARC_RESOLUTION; j++) {
                 path.knots.push_back(
@@ -256,7 +298,7 @@ void AIController::lane(int laneIndex)
         }
         /* if we're on the last segment we need to put the end vertex on too */
         if (i == (lane.nSegs - 1)) {
-            path.knots.push_back(Vec3f(world.track->verts[lane.segs[i].end]));
+            path.knots.push_back(Vec3f(track->verts[lane.segs[seg].end]));
             path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
         }
     }
@@ -271,8 +313,8 @@ void AIController::cruise()
 {
     double now = GetTime();
     for (deque<Avoid>::iterator it = obstacles.begin(); it != obstacles.end(); it++) {
-	if((it->time + it->ttl) < now)
-	    obstacles.erase(it);
+        if((it->time + it->ttl) < now)
+            obstacles.erase(it);
     }
 
     SteerInfo steerInfo;

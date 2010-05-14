@@ -104,6 +104,9 @@ class Vec3f {
 
     //! \brief return a vector perpendicular to this one and another one
     Vec3f perp(const Vec3f&) const;
+
+    //! \brief Write out the Vec3f into a float array
+    void toArray(float *array);
 };
 
 // --------- Scalar Multiplication --------- 
@@ -130,4 +133,8 @@ float *makeArray(const std::vector<Vec3f>);
 //! \brief create an array of floats usable by opengle
 //	out of a deque of Vec3fs
 float *makeArray(std::deque<Vec3f>);
+
+//! \brief create an array of floats usable by opengl out of an array of Vec3fs
+float *makeArray(Vec3f * array, int nvecs);
+
 #endif

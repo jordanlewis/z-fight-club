@@ -2,6 +2,9 @@
 #include "Graphics/polygon.h"
 #include "Graphics/gobject.h"
 #include "Physics/pobject.h"
+#include "Agents/player.h"
+#include "Agents/ai.h"
+#include "Engine/input.h"
 #include "Sound/sobject.h"
 #include "Utilities/error.h"
 #include <ode/ode.h>
@@ -182,6 +185,59 @@ void World::loadTrack(const char *file)
     wobj = new WorldObject(geom, gobj, NULL, NULL);
     addObject(wobj);
 
+}
+
+Agent *World::placeAgent(int place)
+{
+    if (!track)
+        return NULL;
+    int zp = place / 4;
+    int xp = place % 2;
+    int nsects = track->nSects;
+    int backerSect = track->nSects - (zp + 1);
+    int backSect = zp == 0 ? 0 : track->nSects - (zp);
+    int frontSect = zp <= 1 ? 1 - zp : track->nSects - (zp - 1);
+    Vec3f diff = Vec3f(track->verts[track->sects[frontSect].edges[0].start]) -
+                 Vec3f(track->verts[track->sects[backSect].edges[0].start]);
+    Vec3f pos = lerp(Vec3f(track->verts[track->sects[backSect].edges[0].start]),
+                     Vec3f(track->verts[track->sects[backSect].edges[1].start]),
+                     xp == 0 ? .33 : .66);
+    pos += Vec3f(track->verts[track->sects[backerSect].edges[0].start]) -
+           lerp(Vec3f(track->verts[track->sects[backSect].edges[0].start]),
+                Vec3f(track->verts[track->sects[backerSect].edges[0].start]),
+                place % 4 < 2 ? 0 : .5);
+    pos[1] += 2;
+
+    float orient = acos(Vec3f(0,0,1).dot(diff.unit()));
+
+    Agent *agent = new Agent(pos, orient);
+    addAgent(agent);
+
+    return agent;
+}
+
+void World::makeAI()
+{
+    if (!track)
+        return;
+    AIManager &ai = AIManager::getInstance();
+    int nAgents = agents.size();
+    Agent *agent = placeAgent(nAgents);
+    ai.control(agent);
+    ai.controllers.back()->lane((nAgents + 1) % 2);
+}
+
+
+void World::makePlayer()
+{
+    if (!track)
+        return;
+
+    Agent *agent = placeAgent(agents.size());
+    camera = Camera(THIRDPERSON, agent);
+    Sound::getInstance().registerListener(&camera);
+    PlayerController *p = new PlayerController(agent);
+    Input::getInstance().controlPlayer(p);
 }
 
 void World::setRunType(const string str){
