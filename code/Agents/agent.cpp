@@ -22,7 +22,7 @@ SteerInfo::SteerInfo() : acceleration(0), rotation(0), weapon(NONE), fire(0)
 /* \brief initialize an agent class
  * \param position the agent's initial position
  */
-Agent::Agent(Vec3f position) : steerInfo(), id(maxId++), kinematic(position)
+Agent::Agent(Vec3f position) : steerInfo(), kinematic(position)
 {
 }
 
@@ -31,8 +31,7 @@ Agent::Agent(Vec3f position) : steerInfo(), id(maxId++), kinematic(position)
  * \param orientation the agent's initial orientation
  */
 Agent::Agent(Vec3f position, float orientation)
-            : steerInfo(), id(maxId++), kinematic(position, Vec3f(0,0,0),
-                                                  orientation)
+            : steerInfo(), kinematic(position, Vec3f(0,0,0), orientation)
 {
 }
 

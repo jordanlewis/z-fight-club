@@ -9,8 +9,8 @@
 #include <iostream>
 
 void useWeapons(Agent *agent);
-void smackAll(unsigned int srcAgentID, int force);
-void smack(unsigned int tarAgentID, int force);
-void raygun(unsigned int srcAgentID, int force);
+void smackAll(Agent *agent, int force);
+void smack(Agent *agent, int force);
+void raygun(Agent *agent, int force);
 
 #endif

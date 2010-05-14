@@ -1,6 +1,5 @@
 #include <math.h>
 #include <ode/ode.h>
-#include <ext/hash_map>
 
 #include "physics.h"
 #include "Utilities/vector.h"
@@ -12,15 +11,11 @@ using namespace std;
 
 Physics Physics::_instance;
 
-__gnu_cxx::hash_map<int, PAgent *> &Physics::getAgentMap(){
-    return pagents;
-}
-
 void Physics::simulate(float dt)
 {
     static float dtRemainder;
     World &world = World::getInstance();
-    vector<Agent *>::iterator iter;
+    vector<WorldObject *>::iterator iter;
     PAgent *p;
     Agent *a;
     int nSteps, i;
@@ -28,13 +23,15 @@ void Physics::simulate(float dt)
 
     dt += dtRemainder * PH_TIMESTEP;
 
-    for (iter = world.agents.begin(); iter != world.agents.end(); iter++)
+    for (iter = world.wobjects.begin(); iter != world.wobjects.end(); iter++)
     {
-        a = (*iter);
-        p = pagents[a->id];
+        if (!(*iter)->agent)
+            continue;
+        a = (*iter)->agent;
+        p = dynamic_cast<PAgent *>(a->worldObject->pobject);
         p->kinematicToOde();
         p->steeringToOde();
-	useWeapons(a);	
+        useWeapons(a);
     }
     nTimeSteps = dt / PH_TIMESTEP;
     nSteps = floorf(nTimeSteps);
@@ -48,11 +45,13 @@ void Physics::simulate(float dt)
     }
 
 
-    for (iter = world.agents.begin(); iter != world.agents.end(); iter++)
+    for (iter = world.wobjects.begin(); iter != world.wobjects.end(); iter++)
     {
-        a = (*iter);
-        p = pagents[a->id];
-        const Kinematic &k = pagents[a->id]->odeToKinematic();
+        if (!(*iter)->agent)
+            continue;
+        a = (*iter)->agent;
+        p = dynamic_cast<PAgent *>(a->worldObject->pobject);
+        const Kinematic &k = p->odeToKinematic();
         a->setKinematic(k);
         p->resetOdeAngularVelocity(nSteps);
     }

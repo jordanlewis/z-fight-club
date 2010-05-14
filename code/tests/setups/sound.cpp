@@ -12,11 +12,4 @@ void testSetup()
 {
     Error &error = Error::getInstance();
     error.on(SOUND);
-
-    World &world = World::getInstance();
-    Physics &physics  = Physics::getInstance();
-    AIManager &ai = AIManager::getInstance();
-    Sound &sound = Sound::getInstance();
-    Input &input = Input::getInstance();
-
 }
