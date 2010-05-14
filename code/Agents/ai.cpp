@@ -234,14 +234,54 @@ void AIController::lane(int laneIndex)
     /* we're going to specify an entirely new path */
     path.clear();
 
-    Lane_t lane = world.track->lanes[laneIndex];
-    for (i = 0; i < lane.nSegs; i++) {
-        path.knots.push_back(Vec3f(world.track->verts[lane.segs[i].start]));
+    Vec3f us = agent->getKinematic().pos;
+    int startSeg = -1;
+    float dist;
+    float bestDist = 100000;
+    Vec3f bestMid, mid;
+    int best = -1;
+    TrackData_t *track = world.track;
+    /* find the section the agent is currently in */
+    for (i = 0; i < track->nSects; i++)
+    {
+        mid = lerp(track->verts[track->sects[i].edges[0].start],
+                   track->verts[track->sects[i].edges[1].start], .5);
+        mid = lerp(mid, track->verts[track->sects[i].edges[2].start],.5);
+        mid = lerp(mid, track->verts[track->sects[i].edges[3].start],.5);
+
+        dist = (mid - us).length();
+        if (dist < bestDist)
+        {
+            bestDist = dist;
+            best = i;
+            bestMid = mid;
+        }
+    }
+    /* now find the closest segment to that section */
+
+    bestDist = 100000;
+    best = -1;
+    Lane_t lane = track->lanes[laneIndex];
+    for (i = 0; i < lane.nSegs; i++)
+    {
+        dist = (Vec3f(track->verts[lane.segs[i].start]) - bestMid).length();
+        if (dist < bestDist)
+        {
+            bestDist = dist;
+            best = i;
+        }
+    }
+
+    startSeg = best;
+
+    for (i = startSeg + 1; i != startSeg;
+         i = i < lane.nSegs ? i + 1 : 0) {
+        path.knots.push_back(Vec3f(track->verts[lane.segs[i].start]));
         path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
         if (lane.segs[i].kind == ARC_SEGMENT) {
-	    Vec3f center = Vec3f(world.track->verts[lane.segs[i].center]);
-	    Vec3f start =  Vec3f(world.track->verts[lane.segs[i].start]);
-	    Vec3f end =  Vec3f(world.track->verts[lane.segs[i].end]);
+	    Vec3f center = Vec3f(track->verts[lane.segs[i].center]);
+	    Vec3f start =  Vec3f(track->verts[lane.segs[i].start]);
+	    Vec3f end =  Vec3f(track->verts[lane.segs[i].end]);
 	    // this way the theta should be != 180
 	    center.x += lane.segs[i].end > lane.segs[i].start ? -.01 : .01;
 
@@ -256,7 +296,7 @@ void AIController::lane(int laneIndex)
         }
         /* if we're on the last segment we need to put the end vertex on too */
         if (i == (lane.nSegs - 1)) {
-            path.knots.push_back(Vec3f(world.track->verts[lane.segs[i].end]));
+            path.knots.push_back(Vec3f(track->verts[lane.segs[i].end]));
             path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
         }
     }
