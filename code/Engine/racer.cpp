@@ -80,14 +80,11 @@ int main(int argc, char *argv[])
         }
         if (!vm.count("no-human"))
         {
-            world.makePlayer();
+            world.PlayerQty = 1;
         }
         if (vm.count("ai-players") && world.runType == SOLO)
         {
-            for (int i = 0; i < vm["ai-players"].as<int>(); i++)
-            {
-                world.makeAI();
-            }
+            world.AIQty = vm["ai-players"].as<int>();
         }
 
         if (vm.count("ipaddr"))
@@ -113,6 +110,7 @@ int main(int argc, char *argv[])
     {
         graphics.initGraphics();
         sound.initSound();
+        world.makeAgents();
         testSetup();
         scheduler.soloLoopForever();
     }
