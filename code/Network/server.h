@@ -4,6 +4,8 @@
 #include "network.h"
 #include "Engine/world.h"
 
+class GeomInfo;
+
 //Store a client's connection info
 class ClientInfo {
  public:
@@ -36,6 +38,7 @@ class Server {
 				       * Stores the id of the generated netobj
 				       * in the ID argument. */
     WorldObject *getNetObject(netObjID_t ID);
+    int attachPGeom(GeomInfo *info, netObjID_t ID); 
 
     void updateFromClient(uint8_t clientId); //NYI (call within serverFrame)
 

@@ -1,6 +1,7 @@
 #include "server.h"
 #include "racerpacket.h"
 #include "Engine/world.h"
+#include "Engine/geominfo.h"
 #include "Agents/agent.h"
 #include "Utilities/error.h"
 #include "Physics/pobject.h"
@@ -57,8 +58,31 @@ int Server::createNetObj(netObjID_t &ID) {
     return 0;
 }
 
+//should return NULL if unable to find an object with the given ID...
 WorldObject *Server::getNetObject(netObjID_t ID) {
     return netobjs[ID];
+}
+
+int Server::attachPGeom(GeomInfo *info, netObjID_t ID){
+    WorldObject *obj = getNetObject(ID);
+    if (obj == NULL)
+        {
+            cout << "No net object to attach to!" << endl;
+            return -1;
+        }
+    //Attach the PGeom locally
+    PGeom *pgeom = new PGeom(info, Physics::getInstance().getOdeSpace());
+    obj->pobject = pgeom;
+    pgeom->worldObject = obj;
+
+    //Tell networked agents to attach the PGeom
+    struct RPAttachPGeom toSend;
+    toSend.ID = RP_ATTACH_PGEOM;
+    info->hton(&toSend);
+    ENetPacket *packet = makeRacerPacket(RP_ATTACH_PGEOM, &toSend,
+                                         sizeof(RPAttachPGeom));
+    enet_host_broadcast(enetServer, 0, packet);
+    return 0;
 }
 
 Server &Server::getInstance()
