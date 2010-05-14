@@ -34,8 +34,7 @@ class WorldObject
     GObject *gobject;
     SObject *sobject;
     Agent *agent;
-    WorldObject(PGeom * pobject, GObject * gobject,
-		SObject * sobject, Agent * agent);
+    WorldObject(PGeom * pobject, GObject * gobject, SObject * sobject, Agent * agent);
 
     Vec3f getPos();
     void setPos(Vec3f position);
@@ -55,8 +54,6 @@ typedef enum {
 class World
 {
   private:
-    std::vector<Polygon> environment; /* The Environmental geometry */
-
     // Prevent construction, destruction, copying, or assignment in singleton
     World();
     ~World();
@@ -74,11 +71,13 @@ class World
     static float zMax;
     dWorldID ode_world;
     dSpaceID ode_space;
-    std::vector<Agent *> agents; /* the agents in the world */
     std::vector<WorldObject *> wobjects; /* the objects in the world */
     string assetsDir;   /* !< base directory for asset files */
 
     void addObject(WorldObject *obj);
+
+    int numAgents();
+
     void addAgent(Agent *agent);
     Agent *placeAgent(int place);
     void makeAI();

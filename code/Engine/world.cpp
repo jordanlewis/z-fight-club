@@ -22,9 +22,13 @@ WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject, Age
 {
     pos = Vec3f(-1,-1,-1);
     if (pobject != NULL)
-	{
-	    pobject->worldObject = this;
-	}
+    {
+        pobject->worldObject = this;
+    }
+    if (agent != NULL)
+    {
+        agent->worldObject = this;
+    }
 }
 
 Vec3f WorldObject::getPos()
@@ -57,8 +61,8 @@ void WorldObject::draw()
 }
 
 World::World()
-            : environment(std::vector<Polygon>()), agents(std::vector<Agent*>())
-{}
+{
+}
 
 World::~World()
 {
@@ -68,6 +72,18 @@ World::~World()
 void World::addObject(WorldObject *obj)
 {
     wobjects.push_back(obj);
+}
+
+int World::numAgents()
+{
+    int num = 0;
+    for (vector<WorldObject *>::iterator iter = wobjects.begin(); iter != wobjects.end();
+         iter++)
+    {
+        if ((*iter)->agent)
+            num++;
+    }
+    return num;
 }
 
 void World::addAgent(Agent *agent)
@@ -83,9 +99,7 @@ void World::addAgent(Agent *agent)
 
     addObject(wobject);
 
-    Physics::getInstance().getAgentMap()[agent->id] = pobj;
 
-    agents.push_back(agent);
 }
 
 void World::loadTrack(const char *file)
@@ -222,7 +236,7 @@ void World::makeAI()
     if (!track)
         return;
     AIManager &ai = AIManager::getInstance();
-    int nAgents = agents.size();
+    int nAgents = numAgents();
     Agent *agent = placeAgent(nAgents);
     ai.control(agent);
     ai.controllers.back()->lane((nAgents + 1) % 2);
@@ -234,7 +248,7 @@ void World::makePlayer()
     if (!track)
         return;
 
-    Agent *agent = placeAgent(agents.size());
+    Agent *agent = placeAgent(numAgents());
     camera = Camera(THIRDPERSON, agent);
     Sound::getInstance().registerListener(&camera);
     PlayerController *p = new PlayerController(agent);

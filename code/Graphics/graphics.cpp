@@ -134,16 +134,17 @@ void Graphics::render()
     glEnd();
 
     glEnable(GL_LIGHTING);
-    for (vector<WorldObject *>::iterator i = world->wobjects.begin();
-	 i != world->wobjects.end(); i++)
+    for (vector<WorldObject *>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
     {
         (*i)->draw();
     }
 
     render(world->track);
 
-    for(vector<Agent*>::iterator i = world->agents.begin(); i != world->agents.end(); i++) {
-	    render(*i);
+    for (vector<WorldObject *>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
+    {
+        if ((*i)->agent)
+            render((*i)->agent);
     }
 
     AIManager &aiManager = AIManager::getInstance();
