@@ -220,11 +220,13 @@ void Graphics::render(TrackData_t *track)
         int i, j;
         /* load in the vertices */
 
+        Vec3f_t vert;
         glBegin(GL_LINE_LOOP);
         /* draw sectors */
         for (i = 0; i < track->nSects; i++) {
             for (j = 0; j < track->sects[i].nEdges; j++) {
-                glVertex3fv(track->verts[track->sects[i].edges[j].start]);
+                CopyV3f(track->verts[track->sects[i].edges[j].start], vert);
+                glVertex3f(vert[0], vert[1] + .01, vert[2]);
             }
         }
         glEnd();
@@ -244,14 +246,16 @@ void Graphics::render(TrackData_t *track)
                 seg = &track->lanes[i].segs[j];
                 switch (track->lanes[i].segs[j].kind) {
                     case LINE_SEGMENT:
-                        glVertex3fv(track->verts[seg->start]);
-                        glVertex3fv(track->verts[seg->end]);
+                        CopyV3f(track->verts[seg->start], vert);
+                        glVertex3f(vert[0], vert[1] + .01, vert[2]);
+                        CopyV3f(track->verts[seg->end], vert);
+                        glVertex3f(vert[0], vert[1] + .01, vert[2]);
                         break;
                     case ARC_SEGMENT:
                         glEnd();
                         CopyV3f(track->verts[seg->center],v);
                         glPushMatrix();
-                        glTranslatef(v[0], v[1], v[2]);
+                        glTranslatef(v[0], v[1] + .01, v[2]);
                         glRotatef(-90,1,0,0);
                         SubV3f(v, track->verts[seg->start], v);
                         len = LengthV3f(v);
