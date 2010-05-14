@@ -5,8 +5,8 @@ CFLAGS   = -Wall --std=gnu99 -ggdb $(ODEFLAGS) -I.
 CXXFLAGS = -Wall -Wno-long-long -Wno-deprecated -ggdb $(ODEFLAGS) -I.
 
 ############ GPROF PROFILING: UNCOMMENT THESE **************
-#CFLAGS   = -Wall --std=gnu99 -ggdb $(ODEFLAGS) -I.
-#CXXFLAGS = -Wall -Wno-long-long -Wno-deprecated -ggdb $(ODEFLAGS) -I.
+#CFLAGS   = -Wall --std=gnu99 -ggdb $(ODEFLAGS) -I. -pg
+#CXXFLAGS = -Wall -Wno-long-long -Wno-deprecated -ggdb $(ODEFLAGS) -I. -pg
 
 LDFLAGS  = -lenet -lSDL -lode -lboost_program_options-mt -lpng
 
