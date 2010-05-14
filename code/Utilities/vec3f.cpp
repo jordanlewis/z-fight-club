@@ -304,4 +304,27 @@ float *makeArray(std::deque<Vec3f> array)
 
     return verts;
 }
+
+float *makeArray(Vec3f * array, int nvecs)
+{
+    float *verts = new float[3 * nvecs];
+
+    int i, j;
+    for (i = 0; i < nvecs; i++)
+    {
+        for (j = 0; j < 3; j++)
+            verts[i * 3 + j] = array[i][j];
+    }
+
+    return verts;
+}
+
+void Vec3f::toArray(float *array)
+{
+    array[0] = x;
+    array[1] = y;
+    array[2] = z;
+}
+
+
 #undef EPSILON
