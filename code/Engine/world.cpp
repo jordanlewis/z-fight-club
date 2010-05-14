@@ -194,9 +194,9 @@ Agent *World::placeAgent(int place)
     int zp = place / 4;
     int xp = place % 2;
     int nsects = track->nSects;
-    int backerSect = track->nSects - (zp + 1);
-    int backSect = zp == 0 ? 0 : track->nSects - (zp);
-    int frontSect = zp <= 1 ? 1 - zp : track->nSects - (zp - 1);
+    int backerSect = nsects - (zp + 1);
+    int backSect = zp == 0 ? 0 : nsects - (zp);
+    int frontSect = zp <= 1 ? 1 - zp : nsects - (zp - 1);
     Vec3f diff = Vec3f(track->verts[track->sects[frontSect].edges[0].start]) -
                  Vec3f(track->verts[track->sects[backSect].edges[0].start]);
     Vec3f pos = lerp(Vec3f(track->verts[track->sects[backSect].edges[0].start]),
