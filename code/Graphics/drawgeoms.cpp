@@ -10,6 +10,9 @@
 #include "Engine/geominfo.h"
 #include "Utilities/error.h"
 #include "Utilities/vector.h"
+extern "C" {
+    #include "Parser/obj-reader.h"
+}
 
 
 /* Credit to ODE's drawstuff library */
@@ -57,7 +60,108 @@ void BoxInfo::draw()
 }
 
 void ObjMeshInfo::draw()
-{}
+{
+    static uint32_t i;
+    static OBJgroup* group;
+    static OBJtriangle* triangle;
+    static OBJmaterial* material;
+    
+    assert(model);
+    assert(model->vertices);
+
+    uint32_t mode = OBJ_SMOOTH|OBJ_MATERIAL|OBJ_TEXTURE;
+    
+    /* do a bit of warning */
+    if (mode & OBJ_FLAT && !model->facetnorms) {
+        printf("OBJDraw() warning: flat render mode requested "
+            "with no facet normals defined.\n");
+        mode &= ~OBJ_FLAT;
+    }
+    if (mode & OBJ_SMOOTH && !model->normals) {
+        printf("OBJDraw() warning: smooth render mode requested "
+            "with no normals defined.\n");
+        mode &= ~OBJ_SMOOTH;
+    }
+    if (mode & OBJ_TEXTURE && !model->texcoords) {
+        printf("OBJDraw() warning: texture render mode requested "
+            "with no texture coordinates defined.\n");
+        mode &= ~OBJ_TEXTURE;
+    }
+    if (mode & OBJ_FLAT && mode & OBJ_SMOOTH) {
+        printf("OBJDraw() warning: flat render mode requested "
+            "and smooth render mode requested (using smooth).\n");
+        mode &= ~OBJ_FLAT;
+    }
+    if (mode & OBJ_COLOR && !model->materials) {
+        printf("OBJDraw() warning: color render mode requested "
+            "with no materials defined.\n");
+        mode &= ~OBJ_COLOR;
+    }
+    if (mode & OBJ_MATERIAL && !model->materials) {
+        printf("OBJDraw() warning: material render mode requested "
+            "with no materials defined.\n");
+        mode &= ~OBJ_MATERIAL;
+    }
+    if (mode & OBJ_COLOR && mode & OBJ_MATERIAL) {
+        printf("OBJDraw() warning: color and material render mode requested "
+            "using only material mode.\n");
+        mode &= ~OBJ_COLOR;
+    }
+    if (mode & OBJ_COLOR)
+        glEnable(GL_COLOR_MATERIAL);
+    else if (mode & OBJ_MATERIAL)
+        glDisable(GL_COLOR_MATERIAL);
+    
+    /* perhaps this loop should be unrolled into material, color, flat,
+       smooth, etc. loops?  since most cpu's have good branch prediction
+       schemes (and these branches will always go one way), probably
+       wouldn't gain too much?  */
+    
+    group = model->groups;
+    while (group) {
+        if (mode & OBJ_MATERIAL) {
+            material = &model->materials[group->material];
+            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, material->ambient);
+            glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material->diffuse);
+            glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, material->specular);
+            glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material->shininess);
+        }
+        
+        if (mode & OBJ_COLOR) {
+            glColor3fv(material->diffuse);
+        }
+        
+        glBegin(GL_TRIANGLES);
+        for (i = 0; i < group->numtriangles; i++) {
+            triangle = &(model->triangles[group->triangles[i]]);
+            
+            if (mode & OBJ_FLAT)
+                glNormal3fv(model->facetnorms[triangle->findex]);
+            
+            if (mode & OBJ_SMOOTH)
+                glNormal3fv(model->normals[triangle->nindices[0]]);
+            if (mode & OBJ_TEXTURE)
+                glTexCoord2fv(model->texcoords[triangle->tindices[0]]);
+            glVertex3fv(model->vertices[triangle->vindices[0]]);
+            
+            if (mode & OBJ_SMOOTH)
+                glNormal3fv(model->normals[triangle->nindices[1]]);
+            if (mode & OBJ_TEXTURE)
+                glTexCoord2fv(model->texcoords[triangle->tindices[1]]);
+            glVertex3fv(model->vertices[triangle->vindices[1]]);
+            
+            if (mode & OBJ_SMOOTH)
+                glNormal3fv(model->normals[triangle->nindices[2]]);
+            if (mode & OBJ_TEXTURE)
+                glTexCoord2fv(model->texcoords[triangle->tindices[2]]);
+            glVertex3fv(model->vertices[triangle->vindices[2]]);
+            
+        }
+        glEnd();
+        
+        group = group->next;
+    }
+}
 
 void TriMeshInfo::draw()
 {

@@ -1,5 +1,10 @@
 #include <ode/ode.h>
 #include "geominfo.h"
+#include <string>
+#include "Engine/world.h"
+extern "C" {
+    #include "Parser/obj-reader.h"
+}
 
 BoxInfo::BoxInfo(float lx, float ly, float lz)
     : GeomInfo(), lx(lx), ly(ly), lz(lz)
@@ -21,8 +26,10 @@ TriMeshInfo::TriMeshInfo(dTriMeshDataID meshID,
       tris(tris), normals(normals)
 {}
 
-ObjMeshInfo::ObjMeshInfo(char *filename)
+ObjMeshInfo::ObjMeshInfo(std::string filename)
 {
+    World &world = World::getInstance();
+    model = OBJReadOBJ((world.assetsDir + filename).c_str());
 }
 
 dGeomID SphereInfo::createGeom(dSpaceID space)
@@ -51,4 +58,9 @@ void BoxInfo::createMass(dMass * mass, float massVal)
 void ObjMeshInfo::createMass(dMass * mass, float massVal)
 {
     dMassSetBoxTotal(mass, massVal, 1.0, 1.0, 1.0);
+}
+
+ObjMeshInfo::~ObjMeshInfo()
+{
+    OBJDelete(model);
 }
