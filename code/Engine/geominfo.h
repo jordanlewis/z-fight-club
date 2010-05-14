@@ -9,6 +9,8 @@ extern "C" {
     #include "Parser/obj-reader.h"
 }
 
+struct RPAttachPGeom;
+
 /* Stores info common to all geoms.  Cannot be constructed directly -- must be
    constructed by a child class */
 class GeomInfo
@@ -19,6 +21,8 @@ class GeomInfo
     /*! \brief draw() simply render the appropriate shape for this geom type.
      * the caller will deal with position and orientation setup. */
     virtual void draw() {return;};
+    virtual void ntoh(RPAttachPGeom *payload) {return;};
+    virtual void hton(RPAttachPGeom *payload) {return;};
 };
 
 //Packages info for a Sphere of radius r
@@ -30,6 +34,8 @@ class SphereInfo : public GeomInfo
     dGeomID createGeom(dSpaceID space);
     void createMass(dMass *, float);
     void draw();
+    void ntoh(RPAttachPGeom *payload);
+    void hton(RPAttachPGeom *payload);
 };
 
 //Packages info for a box of dimensions lx*ly*lz
@@ -41,6 +47,8 @@ class BoxInfo : public GeomInfo
     dGeomID createGeom(dSpaceID space);
     void createMass(dMass *, float);
     void draw();
+    void ntoh(RPAttachPGeom *payload);
+    void hton(RPAttachPGeom *payload);
 };
 
 
@@ -51,6 +59,8 @@ class PlaneInfo : public GeomInfo
     float a, b, c, d;
     PlaneInfo(float a, float b, float c, float d);
     dGeomID createGeom(dSpaceID space);
+    void ntoh(RPAttachPGeom *payload);
+    void hton(RPAttachPGeom *payload);
 };
 
 //Packages info for a ray of length len

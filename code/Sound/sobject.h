@@ -33,6 +33,7 @@ class SObject
     bool playing;       // whether it's playing right now
     ALfloat duration;
     // could have lots of other data, like whether to fade in, out, etc.
+    ~SObject();
   public:
     SObject(string soundName, double startTime, bool loop);
     void update(WorldObject*); // play, restart, stop, update kinematics, etc. as appropriate

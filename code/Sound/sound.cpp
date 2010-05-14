@@ -98,12 +98,12 @@ void Sound::updateListener()
     Error &error = Error::getInstance();
     if (!initialized)
     {
-        error.log(SOUND, IMPORTANT, "Can't update listener, sound is not initialized");
+        error.log(SOUND, IMPORTANT, "Can't update listener, sound is not initialized\n");
         return;
     }
     if(!camera)
     {
-        error.log(SOUND, IMPORTANT, "Can't update listener, no listener is registered");
+        error.log(SOUND, IMPORTANT, "Can't update listener, no listener is registered\n");
         return;
     }
 
@@ -147,6 +147,8 @@ void Sound::render()
 
 void Sound::registerSource(WorldObject *w, SObject *s)
 {
+    Error &error = Error::getInstance();
+    error.log(SOUND, TRIVIAL, "registered source\n");
     w->sobject = s;
 }
 
