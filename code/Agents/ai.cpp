@@ -152,8 +152,8 @@ void AIController::smartGo(const Vec3f target)
     dir = target - agent->kinematic.pos;
 
     for (deque<Avoid>::iterator it = obstacles.begin(); it != obstacles.end(); it++) {
-	/* nudge the dir to avoid obstacles */
-	dir += (1.0f / pow((agent->kinematic.pos - it->pos).length(), 2.0f)) * it->str * (agent->kinematic.pos - it->pos);
+        /* nudge the dir to avoid obstacles */
+        dir += (1.0f / pow((agent->kinematic.pos - it->pos).length(), 2.0f)) * it->str * (agent->kinematic.pos - it->pos);
     }
 
     float distance = dir.length();
@@ -273,17 +273,19 @@ void AIController::lane(int laneIndex)
     }
 
     startSeg = best;
+    cout << best << endl;
 
-    for (i = startSeg + 1; i != startSeg;
-         i = i < lane.nSegs ? i + 1 : 0) {
-        path.knots.push_back(Vec3f(track->verts[lane.segs[i].start]));
+    for (i = 0; i < lane.nSegs; i++) {
+        int seg = (i + startSeg + 1) % lane.nSegs;
+
+        path.knots.push_back(Vec3f(track->verts[lane.segs[seg].start]));
         path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
-        if (lane.segs[i].kind == ARC_SEGMENT) {
-	    Vec3f center = Vec3f(track->verts[lane.segs[i].center]);
-	    Vec3f start =  Vec3f(track->verts[lane.segs[i].start]);
-	    Vec3f end =  Vec3f(track->verts[lane.segs[i].end]);
-	    // this way the theta should be != 180
-	    center.x += lane.segs[i].end > lane.segs[i].start ? -.01 : .01;
+        if (lane.segs[seg].kind == ARC_SEGMENT) {
+            Vec3f center = Vec3f(track->verts[lane.segs[seg].center]);
+            Vec3f start =  Vec3f(track->verts[lane.segs[seg].start]);
+            Vec3f end =  Vec3f(track->verts[lane.segs[seg].end]);
+            // this way the theta should be != 180
+            center.x += lane.segs[seg].end > lane.segs[seg].start ? -.01 : .01;
 
             for (j = 1; j < ARC_RESOLUTION; j++) {
                 path.knots.push_back(
@@ -296,7 +298,7 @@ void AIController::lane(int laneIndex)
         }
         /* if we're on the last segment we need to put the end vertex on too */
         if (i == (lane.nSegs - 1)) {
-            path.knots.push_back(Vec3f(track->verts[lane.segs[i].end]));
+            path.knots.push_back(Vec3f(track->verts[lane.segs[seg].end]));
             path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
         }
     }
@@ -311,8 +313,8 @@ void AIController::cruise()
 {
     double now = GetTime();
     for (deque<Avoid>::iterator it = obstacles.begin(); it != obstacles.end(); it++) {
-	if((it->time + it->ttl) < now)
-	    obstacles.erase(it);
+        if((it->time + it->ttl) < now)
+            obstacles.erase(it);
     }
 
     SteerInfo steerInfo;
