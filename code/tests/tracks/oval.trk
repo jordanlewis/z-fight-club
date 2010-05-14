@@ -267,5 +267,7 @@
             { "kind" : "arc", "start" : 4, "end" : 3, "length" : 53.4071, "center" : 0, "angle" : 180 }
           ]
       }
-    ]
+    ],
+	"num-starts" : 0,
+	"starts" : []
 }
