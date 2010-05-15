@@ -37,19 +37,23 @@ ENetPacket *makeRacerPacket(racerPacketType_t type, const void *data,
  * order */
 racerPacketType_t getRacerPacketType(ENetPacket *packet);
 
-struct RPUpdateAgent {
-    netObjID_t ID;
-    /* Network-safe version of SteerInfo */
+
+struct RPGeomInfo{
+    uint32_t radius;
+    uint32_t lx, ly, lz; 
+    uint32_t a, b, c, d;
+};
+
+struct RPSteerInfo{
     uint32_t a;
     uint32_t r;
     uint32_t w;
     uint32_t f;
 };
 
-struct RPGeomInfo{
-    uint32_t radius;
-    uint32_t lx, ly, lz; 
-    uint32_t a, b, c, d;
+struct RPUpdateAgent {
+    netObjID_t ID;
+    RPSteerInfo info;
 };
 
 struct RPCreateNetObj {

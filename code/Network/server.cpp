@@ -278,10 +278,10 @@ void Server::serverFrame(){
     }
 }
 
-void populateSteerInfo(SteerInfo *s, const RPUpdateAgent *info)
+void populateSteerInfo(SteerInfo *s, const RPUpdateAgent *payload)
 {
-    s->acceleration = ntohf(info->a);
-    s->rotation = ntohf(info->r);
-    s->weapon = static_cast<Weapon_t>(ntohl(info->w));
-    s->fire = ntohl(info->f);
+    s->acceleration = ntohf((payload->info).a);
+    s->rotation = ntohf((payload->info).r);
+    s->weapon = static_cast<Weapon_t>(ntohl((payload->info).w));
+    s->fire = ntohl((payload->info).f);
 }

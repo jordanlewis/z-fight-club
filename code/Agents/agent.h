@@ -4,7 +4,7 @@
 #include "Utilities/vec3f.h"
 #include "kinematic.h"
 #include "constants.h"
-struct RPUpdateAgent;
+struct RPSteerInfo;
 #include <vector>
 #include <list>
 #include <iostream>
@@ -26,7 +26,7 @@ class SteerInfo
     Weapon_t weapon;
     int fire;
     SteerInfo();
-    void hton(RPUpdateAgent*);
+    void hton(RPSteerInfo *);
 };
  
 class WorldObject;

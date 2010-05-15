@@ -77,7 +77,7 @@ SteerInfo &Agent::getSteering ()
 /* \brief serialize steering information for sending over the network
  * \param payload a place to write out the network-ready data
  */
-void SteerInfo::hton(RPUpdateAgent *payload)
+void SteerInfo::hton(RPSteerInfo *payload)
 {
     payload->a = htonf(acceleration);
     payload->r = htonf(rotation);
