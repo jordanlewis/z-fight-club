@@ -9,8 +9,6 @@
 
 Server Server::_instance;
 
-void populateSteerInfo(SteerInfo *, const RPUpdateAgent *);
-
 Server::Server()
     : maxConns(DEFAULT_MAX_SERVER_CONNECTIONS), pingclock(0)
 {
@@ -240,10 +238,10 @@ void Server::serverFrame(){
                     {
                         case RP_UPDATE_AGENT:
                             {
-                                RPUpdateAgent info = *(RPUpdateAgent *)payload;
-                                WorldObject *wo = netobjs[info.ID];
+                                RPUpdateAgent *P = (RPUpdateAgent *)payload;
+                                WorldObject *wo = netobjs[P->ID];
                                 SteerInfo steerInfo;
-                                populateSteerInfo(&steerInfo, &info);
+                                steerInfo.ntoh(&P->info);
                                 printf("acc[%lu]: %9.1f rot[%lu]: %5.1f "
                                        "weapon[%lu]: %d fire[%lu]: %d\n",
                                        (unsigned long) sizeof(steerInfo.acceleration),
@@ -276,12 +274,4 @@ void Server::serverFrame(){
                 break;
         }
     }
-}
-
-void populateSteerInfo(SteerInfo *s, const RPUpdateAgent *payload)
-{
-    s->acceleration = ntohf((payload->info).a);
-    s->rotation = ntohf((payload->info).r);
-    s->weapon = static_cast<Weapon_t>(ntohl((payload->info).w));
-    s->fire = ntohl((payload->info).f);
 }
