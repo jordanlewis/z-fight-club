@@ -79,7 +79,7 @@ int Server::attachPGeom(GeomInfo *info, netObjID_t ID){
     //Tell networked agents to attach the PGeom
     struct RPAttachPGeom toSend;
     toSend.ID = RP_ATTACH_PGEOM;
-    info->hton(&toSend);
+    info->hton(&(toSend.info));
     ENetPacket *packet = makeRacerPacket(RP_ATTACH_PGEOM, &toSend,
                                          sizeof(RPAttachPGeom));
     enet_host_broadcast(enetServer, 0, packet);

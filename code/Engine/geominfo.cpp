@@ -61,7 +61,7 @@ void ObjMeshInfo::createMass(dMass * mass, float massVal)
     dMassSetBoxTotal(mass, massVal, 1.0, 1.0, 1.0);
 }
 
-void SphereInfo::hton(RPAttachPGeom *payload) {
+void SphereInfo::hton(RPGeomInfo *payload) {
     if (payload == NULL){
         cerr << "Payload is null!" << endl;
         return;
@@ -69,7 +69,7 @@ void SphereInfo::hton(RPAttachPGeom *payload) {
     payload->radius = htonf(radius);
 }
 
-void BoxInfo::hton(RPAttachPGeom *payload) {
+void BoxInfo::hton(RPGeomInfo *payload) {
     if (payload == NULL){
         cerr << "Payload is null!" << endl;
         return;
@@ -79,7 +79,7 @@ void BoxInfo::hton(RPAttachPGeom *payload) {
     payload->lz = htonf(lz);
 }
 
-void PlaneInfo::hton(RPAttachPGeom *payload) {
+void PlaneInfo::hton(RPGeomInfo *payload) {
     if (payload == NULL){
         cerr << "Payload is null!" << endl;
         return;
@@ -90,14 +90,14 @@ void PlaneInfo::hton(RPAttachPGeom *payload) {
     payload->d = htonf(d);
 }
 
-void SphereInfo::ntoh(RPAttachPGeom *payload) {
+void SphereInfo::ntoh(RPGeomInfo *payload) {
     if (payload == NULL) {
         cerr << "Payload is null!" << endl;
     }
     payload->radius = radius;
 }
 
-void BoxInfo::ntoh(RPAttachPGeom *payload) {
+void BoxInfo::ntoh(RPGeomInfo *payload) {
     if (payload == NULL) {
         cerr << "Payload is null!" << endl;
     }
@@ -106,7 +106,7 @@ void BoxInfo::ntoh(RPAttachPGeom *payload) {
     payload->lz = lz;
 }
 
-void PlaneInfo::ntoh(RPAttachPGeom *payload) {
+void PlaneInfo::ntoh(RPGeomInfo *payload) {
     if (payload == NULL) {
         cerr << "Payload is null!" << endl;
     }

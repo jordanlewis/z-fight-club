@@ -46,15 +46,19 @@ struct RPUpdateAgent {
     uint32_t f;
 };
 
+struct RPGeomInfo{
+    uint32_t radius;
+    uint32_t lx, ly, lz; 
+    uint32_t a, b, c, d;
+};
+
 struct RPCreateNetObj {
     netObjID_t ID;
 };
 
 struct RPAttachPGeom {
     netObjID_t ID;
-    uint32_t radius;
-    uint32_t lx, ly, lz; 
-    uint32_t a, b, c, d;
+    RPGeomInfo info;
 };
 
 struct RPAttachPMoveable{
