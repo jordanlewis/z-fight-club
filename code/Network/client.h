@@ -10,18 +10,18 @@ class Client {
     uint32_t clientAddr;
     uint16_t clientPort;
     ENetHost *enetClient;
-    
+
     uint32_t serverAddr;
     uint16_t serverPort;
     ENetPeer *peer;
 
     map<netObjID_t, WorldObject *> netobjs; //Tracks networked world objects.
-    
+
     Client();
     ~Client();
 
     static Client _instance;
- public: 
+ public:
     /*  Member Functions  */
     static Client &getInstance();
 

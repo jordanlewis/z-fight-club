@@ -31,7 +31,7 @@ class Graphics
      *         This exists for debugging purposes, particularly problems with matrix transformations
      */
     void DrawCube(Vec3f);
-        
+
   public:
     void initGraphics();
     void render();
@@ -45,5 +45,5 @@ class Graphics
 
     static Graphics &getInstance();
 };
-    
+
 #endif

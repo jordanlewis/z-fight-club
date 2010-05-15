@@ -26,10 +26,10 @@ typedef enum {
 class PGeom
 {
  protected:
-    dGeomID geom;    
+    dGeomID geom;
 
     //Defining this function gives us a vtable.  The function does nothing.
-    virtual void forceVtableCreation(); 
+    virtual void forceVtableCreation();
 
  public:
     dSpaceID space;
@@ -37,7 +37,7 @@ class PGeom
     float mu1, mu2;
     CollType_t collType;
     WorldObject *worldObject;
-    
+
     bool isPlaceable();
     Vec3f getPos();
     void setPos(Vec3f position);

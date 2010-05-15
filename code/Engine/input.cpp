@@ -57,7 +57,7 @@ int Input::processInput()
                         }
                     case SDLK_DOWN:
                         if (keystate[SDLK_UP]) {
-                            player->setEngineState(ACCELERATE); 
+                            player->setEngineState(ACCELERATE);
                             break;
                         }
                         player->setEngineState(NEUTRAL);

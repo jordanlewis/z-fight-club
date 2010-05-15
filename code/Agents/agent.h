@@ -33,7 +33,7 @@ class SteerInfo
 //! \brief Writes this SteerInfo to the given output stream.
 //         This will be used for debugging.
 std::ostream &operator<<(std::ostream&, const SteerInfo&);
- 
+
 class WorldObject;
 
 class Agent

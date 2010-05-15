@@ -34,7 +34,7 @@ SObject::~SObject()
     string msg = "destroying sobject using sound resource ";
     msg += boost::lexical_cast<string>(sr) + "\n";
     error.log(SOUND, TRIVIAL, msg);
-    
+
 }
 
 void SObject::update(WorldObject *host)
@@ -59,7 +59,7 @@ void SObject::update(WorldObject *host)
         return;
     }
 
-    // use pos, vel from host to (re)configure the source 
+    // use pos, vel from host to (re)configure the source
     Vec3f p = host->getPos();
     float pos[3] = { p[0], p[1], p[2] };
     float gain[1] = { 2.0 };

@@ -21,7 +21,7 @@ struct CollContact{
 //  Space reserved for future additions to the CollQuery struct
 struct CollQuery{
  public:
-     std::list<CollContact> contacts;  //depth-sorted list of all contacts 
+     std::list<CollContact> contacts;  //depth-sorted list of all contacts
 };
 
 void nearCallback(void *data, dGeomID o1, dGeomID o2);

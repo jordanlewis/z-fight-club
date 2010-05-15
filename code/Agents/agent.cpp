@@ -3,14 +3,14 @@
 #include "Utilities/vec3f.h"
 
 unsigned int Agent::maxId = 0;    /* !<highest id number we've reached */
-float        Agent::mass = AG_DEFAULT_MASS;   
-float        Agent::power = AG_DEFAULT_POWER;  
-float        Agent::maxRotate = AG_DEFAULT_MAX_ROTATE; 
+float        Agent::mass = AG_DEFAULT_MASS;
+float        Agent::power = AG_DEFAULT_POWER;
+float        Agent::maxRotate = AG_DEFAULT_MAX_ROTATE;
 float        Agent::height = AG_DEFAULT_HEIGHT;
 float        Agent::width = AG_DEFAULT_WIDTH;
 float        Agent::depth = AG_DEFAULT_DEPTH;
 
-Agent::Agent() 
+Agent::Agent()
 {
 }
 
@@ -87,10 +87,10 @@ void SteerInfo::hton(RPSteerInfo *payload)
 }
 
 /* \brief unserialize steering information received over the network
- * \param payload a place to read in data 
+ * \param payload a place to read in data
  */
 void SteerInfo::ntoh(const RPSteerInfo *payload)
-{   
+{
     acceleration = ntohf(payload->a);
     rotation = ntohf(payload->r);
     weapon = static_cast<Weapon_t>(ntohl(payload->w));

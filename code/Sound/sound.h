@@ -60,7 +60,7 @@ class Sound
     bool initialized;
     const Camera *camera;
     vector<string> *get_wav_filenames();
-    map<const string, sound_resource*> sound_library; 
+    map<const string, sound_resource*> sound_library;
     Error *error;
 
     ALuint dataToBuffer(char*, BasicWAVEHeader);

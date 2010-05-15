@@ -5,7 +5,7 @@
 
 Client Client::_instance;
 
-Client::Client() 
+Client::Client()
 {
     enetClient = enet_host_create(NULL, 1, 0, 0);
 
@@ -13,7 +13,7 @@ Client::Client()
         {
             cerr << "Could not initialize client" << endl;
         }
-    
+
 }
 
 Client::~Client()
@@ -55,7 +55,7 @@ int Client::connectToServer()
 
     enetAddress.host = serverAddr;
     enetAddress.port = serverPort;
-    
+
     peer = enet_host_connect(enetClient, &enetAddress, 1);
 
     if (peer == NULL)
@@ -70,7 +70,7 @@ int Client::connectToServer()
     {
             cout << "Client reports successful connection" << endl;
     }
-    else 
+    else
     {
             enet_peer_reset(peer);
             cout << "Connection failed." << endl;
@@ -83,14 +83,14 @@ int Client::connectToServer()
 
 void Client::updateFromServer()
 {
-    Error& error = Error::getInstance();    
+    Error& error = Error::getInstance();
     error.pin(P_CLIENT);
     ENetEvent event;
     racerPacketType_t type;
     void * payload;
 
     while(enet_host_service(enetClient, &event, 0) > 0) {
-        switch (event.type) 
+        switch (event.type)
         {
         case ENET_EVENT_TYPE_CONNECT:
             cerr << "Connection event?  How did that happen?" << endl;
@@ -112,7 +112,7 @@ void Client::updateFromServer()
                         error.log(NETWORK, TRIVIAL, msg);
 
                         break;
-                    } 
+                    }
                 default: break;
             }
             break;

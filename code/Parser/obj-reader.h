@@ -1,8 +1,8 @@
-/*    
+/*
       obj-reader.h
       Nate Robins, 1997, 2000
       nate@pobox.com, http://www.pobox.com/~nate
- 
+
       Wavefront OBJ model file format reader/writer/manipulator.
 
       Includes routines for generating smooth normals with
@@ -26,7 +26,7 @@
 #define OBJ_MATERIAL (1 << 4)       /* render with materials */
 
 
-/* OBJmaterial: Structure that defines a material in a model. 
+/* OBJmaterial: Structure that defines a material in a model.
  */
 typedef struct _OBJmaterial
 {
@@ -94,7 +94,7 @@ typedef struct _OBJmodel {
  * scaling it to fit in a unit cube around the origin.  Returns the
  * scalefactor used.
  *
- * model - properly initialized OBJmodel structure 
+ * model - properly initialized OBJmodel structure
  */
 float
 OBJUnitize(OBJmodel* model);
@@ -109,7 +109,7 @@ void
 OBJDimensions(OBJmodel* model, Vec3f_t dimensions);
 
 /* OBJScale: Scales a model by a given amount.
- * 
+ *
  * model - properly initialized OBJmodel structure
  * scale - scalefactor (0.5 = half as large, 2.0 = twice as large)
  */
@@ -119,8 +119,8 @@ OBJScale(OBJmodel* model, float scale);
 /* OBJReverseWinding: Reverse the polygon winding for all polygons in
  * this model.  Default winding is counter-clockwise.  Also changes
  * the direction of the normals.
- * 
- * model - properly initialized OBJmodel structure 
+ *
+ * model - properly initialized OBJmodel structure
  */
 void
 OBJReverseWinding(OBJmodel* model);
@@ -187,9 +187,9 @@ OBJDelete(OBJmodel* model);
  * Returns a pointer to the created object which should be free'd with
  * OBJDelete().
  *
- * filename - name of the file containing the Wavefront .OBJ format data.  
+ * filename - name of the file containing the Wavefront .OBJ format data.
  */
-OBJmodel* 
+OBJmodel*
 OBJReadOBJ(const char* filename);
 
 /* OBJWriteOBJ: Writes a model description in Wavefront .OBJ format to

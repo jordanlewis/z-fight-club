@@ -59,7 +59,7 @@ class World
     ~World();
     World(const World&);
     World& operator=(const World&);
-    
+
     static World _instance;
   public:
     int PlayerQty;

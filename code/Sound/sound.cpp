@@ -161,7 +161,7 @@ sound_resource *Sound::lookup(const string name)
 
 ALuint Sound::filenameToBuffer(const string filename)
 {
-    if (filename.empty()) 
+    if (filename.empty())
     {
         error->log(SOUND, CRITICAL, "Not passed a valid filename.\n");
         exit(0);
@@ -194,7 +194,7 @@ ALuint Sound::filenameToBuffer(const string filename)
 char* Sound::fileToData(FILE *file, BasicWAVEHeader* header)
 {
     char* buffer = NULL;
-  
+
     if (fread(header, sizeof(BasicWAVEHeader), 1, file))
     {
         header->riffSize = swapends(header->riffSize);
@@ -230,7 +230,7 @@ ALuint Sound::dataToBuffer(char* data, BasicWAVEHeader header)
 {
     int errno;
     ALuint buffer = 0;
-  
+
     ALuint format = 0;
     switch (header.bitsPerSample){
       case 8:
@@ -242,7 +242,7 @@ ALuint Sound::dataToBuffer(char* data, BasicWAVEHeader header)
       default:
         return 0;
     }
-  
+
     alGetError();
     alGenBuffers(1, &buffer);
     if ((errno = alGetError()) != AL_NO_ERROR)
@@ -287,7 +287,7 @@ void Sound::DisplayALError(string msg, ALuint errno)
     const char *errMsg = NULL;
     switch (errno)
     {
-        case AL_NO_ERROR:     errMsg = "None"; 
+        case AL_NO_ERROR:     errMsg = "None";
                               break;
         case AL_INVALID_NAME: errMsg = "Invalid name.";
                               break;
@@ -302,7 +302,7 @@ void Sound::DisplayALError(string msg, ALuint errno)
                               break;
     }
     error->log(SOUND, CRITICAL, msg + errMsg);
-} 
+}
 
 int Sound::am_big_endian()
 {

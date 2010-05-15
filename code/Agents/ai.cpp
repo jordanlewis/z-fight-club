@@ -26,7 +26,7 @@ void Path::clear()
     precision.clear();
 }
 
-Avoid::Avoid() 
+Avoid::Avoid()
 {
     time = GetTime();
     ttl = 3.0f;
@@ -40,7 +40,7 @@ Avoid::Avoid(Vec3f &pos)
     ttl = 3.0f;
 }
 
-Avoid::Avoid(Vec3f &pos, float str) 
+Avoid::Avoid(Vec3f &pos, float str)
 {
     this->pos = pos;
     this->str = str;
@@ -215,7 +215,7 @@ void AIController::smartGo(const Vec3f target)
 AIController::AIController(Agent *agent)
 {
     path = Path();
-    obstacles = std::deque<Avoid>(); 
+    obstacles = std::deque<Avoid>();
     this->agent = agent;
 }
 

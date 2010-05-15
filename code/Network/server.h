@@ -34,25 +34,25 @@ class Server {
 
     static Server _instance;
 
-    /* attempts to create a netobj.  
+    /* attempts to create a netobj.
     * Returns 0 on success, -1 otherwise.
     * Stores the id of the generated netobj
     * in the ID argument. */
     int createNetObj(netObjID_t &ID);
 
     WorldObject *getNetObject(netObjID_t ID);
-    int attachPGeom(GeomInfo *info, netObjID_t ID); 
+    int attachPGeom(GeomInfo *info, netObjID_t ID);
 
     void updateFromClient(uint8_t clientId); //NYI (call within serverFrame)
 
     /* Member Functions */
     static Server &getInstance();
-    
+
     //Should be called to initialize our server once server info is set:
-    int createHost(); 
+    int createHost();
     void setServerAddr(uint32_t addr);
     void setServerPort(uint16_t port);
-    
+
     ENetPacket *packageObject(netObjID_t ID); //NYI
     void gatherPlayers(); //Service (dis)connections and RP_START requests during setup
     void serverFrame(); //Service incoming packets during gameplay

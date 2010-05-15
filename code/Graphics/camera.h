@@ -35,7 +35,7 @@ class Camera {
     Camera();
     Camera(CameraMode_t, Agent *);
     ~Camera();
-    
+
     void setTarget(Vec3f target);
     void cycleView(); /* !< cycle camera views */
     void setProjectionMatrix(); //Maybe this should be protected, and we call
@@ -44,7 +44,7 @@ class Camera {
     const Vec3f &getPos() const;      //visible to people that don't need it.
     const Vec3f &getUp() const;
     const Agent *getAgent() const;
-                                
+
 };
 
 #endif

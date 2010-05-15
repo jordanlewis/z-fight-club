@@ -50,7 +50,7 @@ Camera::~Camera()
 {
     // do nothing for now
 }
-        
+
 void Camera::setTarget(Vec3f target)
 {
     return;

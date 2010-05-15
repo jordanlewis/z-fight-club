@@ -7,7 +7,7 @@
 #include "hud.h"
 #include <SDL/SDL.h>
 
-#define MAX_TRAIL_LENGTH 3600 
+#define MAX_TRAIL_LENGTH 3600
 
 extern "C" {
 #include "Parser/track-parser.h"
@@ -154,7 +154,7 @@ void Graphics::render()
     for (vector<AIController *>::iterator i = aiManager.controllers.begin(); i != aiManager.controllers.end(); i++) {
         render(*i);
     }
-    
+
     DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(2.0f, 0.0f, 0.0f));
     DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(0.0f, 2.0f, 0.0f));
     DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(0.0f, 0.0f, 2.0f));

@@ -5,7 +5,7 @@
 
 #define STR( foo ) # foo
 
-const char* ProfileNames[] = 
+const char* ProfileNames[] =
 {
     STR( P_INPUT ),
     STR( P_PHYSICS ),

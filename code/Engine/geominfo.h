@@ -66,7 +66,7 @@ class PlaneInfo : public GeomInfo
 //Packages info for a ray of length len
 class RayInfo : public GeomInfo
 {
- public: 
+ public:
     float len;
     RayInfo(float len);
     dGeomID createGeom(dSpaceID space);

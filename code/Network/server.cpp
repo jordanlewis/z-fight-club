@@ -36,9 +36,9 @@ int Server::createNetObj(netObjID_t &ID) {
             ID = i;
             successFlag = 1;
             break;
-        }            
+        }
     }
-    
+
     if (successFlag)
     {
         struct RPCreateNetObj toSend;
@@ -47,13 +47,13 @@ int Server::createNetObj(netObjID_t &ID) {
                                              sizeof(RPCreateNetObj));
         enet_host_broadcast(enetServer, 0, packet);
     }
-    else  
+    else
     {
         Error& error = Error::getInstance();
         error.log(NETWORK, IMPORTANT, "Cannot accomodate more clients\n");
         return -1;
     }
-    
+
     return 0;
 }
 
@@ -186,18 +186,18 @@ ENetPacket *Server::packageObject(netObjID_t objID){
         moveable = dynamic_cast<PMoveable *>(wobject->pobject);
         if (moveable != NULL) {
             agent = dynamic_cast<PAgent *>(wobject->pobject);
-            if (agent != NULL) 
+            if (agent != NULL)
             {
-                return makeRacerPacket(RP_UPDATE_PMOVEABLE, moveable, 
+                return makeRacerPacket(RP_UPDATE_PMOVEABLE, moveable,
                                        sizeof(PMoveable));
             }
-            else 
+            else
             {
-                return makeRacerPacket(RP_UPDATE_PAGENT, agent, 
+                return makeRacerPacket(RP_UPDATE_PAGENT, agent,
                                        sizeof(PAgent));
             }
         }
-        else 
+        else
         {
             return makeRacerPacket(RP_UPDATE_PGEOM, wobject->pobject,
                                    sizeof(PGeom));
