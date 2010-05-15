@@ -49,7 +49,7 @@ int Server::createNetObj(netObjID_t &ID) {
     }
     else  
     {
-        Error error = Error::getInstance();
+        Error& error = Error::getInstance();
         error.log(NETWORK, IMPORTANT, "Cannot accomodate more clients\n");
         return -1;
     }
@@ -95,7 +95,7 @@ int Server::createHost()
 
     if (enetServer == NULL)
         {
-            Error error = Error::getInstance();
+            Error& error = Error::getInstance();
             error.log(NETWORK, IMPORTANT, "ENet could not initialize server\n");
             return -1;
         }
@@ -114,7 +114,7 @@ void Server::setServerPort(uint16_t port){
 
 void Server::gatherPlayers()
 {
-    Error error = Error::getInstance();
+    Error& error = Error::getInstance();
     while(1)
     {
         ENetEvent event;
@@ -208,7 +208,8 @@ ENetPacket *Server::packageObject(netObjID_t objID){
 
 //General loop structure taken from the tutorial on enet.bespin.org
 void Server::serverFrame(){
-    Error error = Error::getInstance();
+    Error& error = Error::getInstance();
+    error.pin(P_SERVER);
     ENetEvent event;
     usleep(10000);
     racerPacketType_t type;
@@ -242,16 +243,7 @@ void Server::serverFrame(){
                                 WorldObject *wo = netobjs[P->ID];
                                 SteerInfo steerInfo;
                                 steerInfo.ntoh(&P->info);
-                                printf("acc[%lu]: %9.1f rot[%lu]: %5.1f "
-                                       "weapon[%lu]: %d fire[%lu]: %d\n",
-                                       (unsigned long) sizeof(steerInfo.acceleration),
-                                       steerInfo.acceleration,
-                                       (unsigned long) sizeof(steerInfo.rotation),
-                                       steerInfo.rotation,
-                                       (unsigned long) sizeof(steerInfo.weapon),
-                                       steerInfo.weapon,
-                                       (unsigned long) sizeof(steerInfo.fire),
-                                       steerInfo.fire);
+                                cerr << steerInfo << endl;
                                 if (wo && wo->agent)
                                 {
                                     // do we want to adjust gradally using an average?
@@ -274,4 +266,5 @@ void Server::serverFrame(){
                 break;
         }
     }
+    error.pout(P_SERVER);
 }

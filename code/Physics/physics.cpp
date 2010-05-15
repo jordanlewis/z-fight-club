@@ -13,6 +13,8 @@ Physics Physics::_instance;
 
 void Physics::simulate(float dt)
 {
+    Error& error = Error::getInstance();
+    error.pin(P_PHYSICS);
     static float dtRemainder;
     World &world = World::getInstance();
     vector<WorldObject *>::iterator iter;
@@ -55,7 +57,7 @@ void Physics::simulate(float dt)
         a->setKinematic(k);
         p->resetOdeAngularVelocity(nSteps);
     }
-
+    error.pout(P_PHYSICS);
 }
 
 Physics::Physics()

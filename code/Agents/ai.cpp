@@ -146,7 +146,7 @@ void AIController::smartGo(const Vec3f target)
 {
     Vec3f dir;
     SteerInfo s;
-    Error error = Error::getInstance();
+    Error& error = Error::getInstance();
 
     Kinematic k = agent->getKinematic();
     dir = target - agent->kinematic.pos;
@@ -222,7 +222,7 @@ AIController::AIController(Agent *agent)
 void AIController::lane(int laneIndex)
 {
     int i, j;
-    Error error = Error::getInstance();
+    Error& error = Error::getInstance();
     World &world = World::getInstance();
 
     /* check if this is a valid lane */
@@ -369,10 +369,13 @@ void AIManager::release(Agent *agent)
 
 void AIManager::run()
 {
+    Error& error = Error::getInstance();
+    error.pin(P_AI);
     for (unsigned int i = 0; i < controllers.size(); i++)
     {
         controllers[i]->run();
     }
+    error.pout(P_AI);
 }
 
 AIManager &AIManager::getInstance()

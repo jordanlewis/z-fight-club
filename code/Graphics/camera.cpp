@@ -66,7 +66,7 @@ void Camera::cycleView()
 
 void Camera::setProjectionMatrix()
 {
-    Error error = Error::getInstance();
+    Error& error = Error::getInstance();
     SteerInfo s;
     float minfovy = 55.0;
     float maxfovy = 90;

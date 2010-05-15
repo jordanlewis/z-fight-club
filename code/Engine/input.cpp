@@ -7,6 +7,8 @@ Input Input::_instance;
 
 int Input::processInput()
 {
+    Error& error = Error::getInstance();
+    error.pin(P_INPUT);
     SDL_Event SDLevt;
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
@@ -16,6 +18,7 @@ int Input::processInput()
             case SDL_KEYDOWN:
                 switch (SDLevt.key.keysym.sym) {
                     case SDLK_q:
+                        error.pout(P_INPUT);
                         return 1;
                     case SDLK_LEFT:
                         player->setTurnState(LEFT); break;
@@ -62,6 +65,7 @@ int Input::processInput()
                     default: break;
                 } break;
             case SDL_QUIT:
+                error.pout(P_INPUT);
                 return 1;
             default:
                 break;
@@ -69,6 +73,7 @@ int Input::processInput()
     }
     if (player)
 	player->updateAgent();
+    error.pout(P_INPUT);
     return 0;
 }
 

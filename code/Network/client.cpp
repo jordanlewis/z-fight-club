@@ -1,6 +1,7 @@
 #include "client.h"
 #include "racerpacket.h"
 #include <cassert>
+#include <boost/lexical_cast.hpp>
 
 Client Client::_instance;
 
@@ -80,8 +81,10 @@ int Client::connectToServer()
 
 }
 
-void Client::updateFromServer() {
-    
+void Client::updateFromServer()
+{
+    Error& error = Error::getInstance();    
+    error.pin(P_CLIENT);
     ENetEvent event;
     racerPacketType_t type;
     void * payload;
@@ -98,14 +101,16 @@ void Client::updateFromServer() {
             switch(type)
             {
                 case RP_PING:
-                    cerr << "pong" << endl;
                     break;
                 case RP_CREATE_NET_OBJ:
                     {
                         RPCreateNetObj info = *(RPCreateNetObj *)payload;
                         WorldObject *wobject = new WorldObject(NULL, NULL, NULL, NULL);
                         netobjs[ntohl(info.ID)] = wobject;
-                        cout << "Created netobj # " << htonl(info.ID) << endl;
+                        string msg = "Created netobj # ";
+                        msg += boost::lexical_cast<string>(htonl(info.ID)) + "\n";
+                        error.log(NETWORK, TRIVIAL, msg);
+
                         break;
                     } 
                 default: break;
@@ -119,7 +124,7 @@ void Client::updateFromServer() {
         default: break;
         }
     }
-
+    error.pout(P_CLIENT);
 }
 
 void Client::sendStartRequest()

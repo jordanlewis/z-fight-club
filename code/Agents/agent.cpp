@@ -110,3 +110,14 @@ std::ostream &operator<<(std::ostream &os, const Agent &agent)
     os << agent.kinematic << std::endl;
     return os;
 }
+
+std::ostream &operator<<(std::ostream &os, const SteerInfo &steerInfo)
+{
+    // *pretending* to dump to the output stream, but not actually doing it
+    printf("acc: %9.1f rot: %5.1f weapon: %d fire: %d",
+        steerInfo.acceleration,
+        steerInfo.rotation,
+        steerInfo.weapon,
+        steerInfo.fire);
+    return os;
+}

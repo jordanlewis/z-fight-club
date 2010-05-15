@@ -59,7 +59,7 @@ void Graphics::initGraphics()
 void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
 {
     if (!initialized)
-	; /* error */
+        ; /* error */
 
     float l = dir.length();
     /* the 6 verts we need for the arrow */
@@ -88,10 +88,12 @@ void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
 
 void Graphics::render()
 {
+    Error& error = Error::getInstance();
+    error.pin(P_GRAPHICS);
     if (!initialized) {
-	Error error = Error::getInstance();
-	error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
-	exit(0);
+        Error& error = Error::getInstance();
+        error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+        exit(0);
     }
 
     World *world = &World::getInstance();
@@ -150,7 +152,7 @@ void Graphics::render()
     AIManager &aiManager = AIManager::getInstance();
 
     for (vector<AIController *>::iterator i = aiManager.controllers.begin(); i != aiManager.controllers.end(); i++) {
-	render(*i);
+        render(*i);
     }
     
     DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(2.0f, 0.0f, 0.0f));
@@ -163,24 +165,25 @@ void Graphics::render()
     world->camera.setOrthoMatrix();
 
     /* render 2d stuff */
-		Hud hud = Hud::getInstance();
-		render(&hud);
+    Hud hud = Hud::getInstance();
+    render(&hud);
 
     glPopMatrix();
+    error.pout(P_GRAPHICS);
 }
 
 void Graphics::render(Agent * agent)
 {
     if (!initialized) {
-	Error error = Error::getInstance();
-	error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
-	exit(0);
+        Error& error = Error::getInstance();
+        error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+        exit(0);
     }
 
     agent->trail.push_back(agent->kinematic.pos);
 
     if (agent->trail.size() > MAX_TRAIL_LENGTH)
-	agent->trail.erase(agent->trail.begin());
+        agent->trail.erase(agent->trail.begin());
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -198,9 +201,9 @@ void Graphics::render(Agent * agent)
 void Graphics::render(AIController *aiController)
 {
     if (!initialized) {
-	Error error = Error::getInstance();
-	error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
-	exit(0);
+        Error& error = Error::getInstance();
+        error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+        exit(0);
     }
 
     glColor3f(0,1,0);
@@ -212,7 +215,7 @@ void Graphics::render(AIController *aiController)
 void Graphics::render(TrackData_t *track)
 {
     if (!initialized) {
-        Error error = Error::getInstance();
+        Error& error = Error::getInstance();
         error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
         exit(0);
     }
@@ -280,15 +283,16 @@ void Graphics::render(TrackData_t *track)
 
 void Graphics::render(Hud *hud)
 {
-		for (vector<Widget>::iterator it = hud->widget.begin(); it != hud->widget.end(); it++) {
-				it->draw();
-		}
+    for (vector<Widget>::iterator it = hud->widget.begin(); it != hud->widget.end(); it++)
+    {
+        it->draw();
+    }
 }
 
 void Graphics::render(std::vector<Vec3f> path)
 {
     if (!initialized) {
-        Error error = Error::getInstance();
+        Error& error = Error::getInstance();
         error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
         exit(0);
     }
@@ -306,7 +310,7 @@ void Graphics::render(std::vector<Vec3f> path)
 void Graphics::render(std::deque<Vec3f> path)
 {
     if (!initialized) {
-        Error error = Error::getInstance();
+        Error& error = Error::getInstance();
         error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
         exit(0);
     }

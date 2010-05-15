@@ -105,7 +105,7 @@ void World::addAgent(Agent *agent)
 void World::loadTrack(const char *file)
 {
     track = LoadTrackData(file);
-    Error error = Error::getInstance();
+    Error& error = Error::getInstance();
     if (!track) {
         error.log(PARSER, CRITICAL, "Track load failed\n");
     }
@@ -265,7 +265,7 @@ void World::makeAgents()
 }
 
 void World::setRunType(const string str){
-    Error error = Error::getInstance();
+    Error& error = Error::getInstance();
 	
     if ( (str == "server") || (str == "Server") ){
 	runType = SERVER;

@@ -4,23 +4,13 @@
 #include "scheduler.h"
 #include "world.h"
 #include "input.h"
+#include "Utilities/error.h"
 #include "Utilities/defs.h"
 #include "Agents/ai.h"
 
 using namespace std;
 
 Scheduler Scheduler::_instance;
-
-ComponentEvent::ComponentEvent(double when, Component_t which)
-{
-    at = when;
-    component = which;
-}
-
-bool ComponentEvent::operator< (const ComponentEvent &evt) const
-{
-    return evt.at < at;
-}
 
 Scheduler::Scheduler() :
     world(&World::getInstance()),
@@ -30,14 +20,10 @@ Scheduler::Scheduler() :
     ai(&AIManager::getInstance()),
     input(&Input::getInstance()),
     client(&Client::getInstance()),
-    server(&Server::getInstance())
-
+    server(&Server::getInstance()),
+    error(&Error::getInstance()),
+    profilerclock(0)
 {
-}
-
-void Scheduler::schedule(ComponentEvent &evt)
-{
-    eventQueue.push(evt);
 }
 
 void Scheduler::soloLoopForever()
@@ -54,7 +40,6 @@ void Scheduler::soloLoopForever()
     cout << "Looping forever...(solo)" << endl;
     while (!done)
     {
-        /* Grab input from SDL loop */
         done = input->processInput();
 
         now = GetTime();
@@ -83,12 +68,10 @@ void Scheduler::soloLoopForever()
         ai->run();
         graphics->render();
         sound->render();
+        if ((profilerclock++ & 0xFF) == 0) error->pdisplay();
 
         usleep(10000);
     }
-
-    /* clean everything up */
-    /* SDL_CloseAudio(); */
 }
 
 void Scheduler::clientLoopForever(){
@@ -139,7 +122,6 @@ void Scheduler::clientLoopForever(){
     cout << "Looping forever...(client)" << endl;
     while (!done)
     {
-        /* Grab input from SDL loop */
         done = input->processInput();
         client->pushToServer();
 
@@ -157,6 +139,7 @@ void Scheduler::clientLoopForever(){
         graphics->render();
         sound->render();
 
+        if ((profilerclock++ & 0x0F) == 0) error->pdisplay();
         usleep(10000);
     }
     return;
@@ -176,6 +159,7 @@ void Scheduler::serverLoopForever(){
         last = now;
         ai->run();
         server->serverFrame();
+        if ((profilerclock++ & 0x0F) == 0) error->pdisplay();
     }
     return;
 }
