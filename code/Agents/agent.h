@@ -30,10 +30,11 @@ class SteerInfo
 };
  
 class WorldObject;
+struct RPAgent;
 
 class Agent
 {
-    static unsigned int maxId; /* !<highest id number we've reached */
+    static uint32_t maxId; /* !<highest id number we've reached */
 
   public:
     SteerInfo steerInfo;   /* !<car's steering info, set by AI/human */
@@ -52,6 +53,9 @@ class Agent
     Agent(Vec3f, float); /* Constructor; Initial position and orientation */
 
     float getMaxAccel(); /* Calculate the current max acceleration */
+
+    void hton(RPAgent *payload);
+    void ntoh(RPAgent *payload);
 
     /* The below method is the interface between the generic agent
      * implemented in agent.c and the two types of agent controllers - AI

@@ -86,6 +86,60 @@ int Server::attachPGeom(GeomInfo *info, netObjID_t ID){
     return 0;
 }
 
+int Server::attachPMoveable(Kinematic *kine, float mass, GeomInfo *info,
+                            netObjID_t ID){
+    WorldObject *obj = getNetObject(ID);
+    if (obj == NULL)
+        {
+            cout << "No net object to attach to!" << endl;
+            return -1;
+        }
+    //Attach the PMoveable locally
+    PMoveable *pmoveable = new PMoveable(kine, mass, info, 
+                                         Physics::getInstance().getOdeSpace());
+    obj->pobject = pmoveable;
+    pmoveable->worldObject = obj;
+
+    //Tell networked agents to attach the PMoveable
+    struct RPAttachPMoveable toSend;
+    toSend.ID = RP_ATTACH_PMOVEABLE;
+    info->hton(&(toSend.info));
+    kine->hton(&(toSend.kine));
+    toSend.mass = htonf(mass);
+    
+    ENetPacket *packet = makeRacerPacket(RP_ATTACH_PMOVEABLE, &toSend,
+                                         sizeof(RPAttachPMoveable));
+    enet_host_broadcast(enetServer, 0, packet);
+    return 0;
+}
+/*
+int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
+                         float mass, GeomInfo *geomInfo, netObjID_t ID){
+    WorldObject *obj = getNetObject(ID);
+    if (obj == NULL)
+        {
+            cout << "No net object to attach to!" << endl;
+            return -1;
+        }
+    //Attach the PAgent locally
+    PMoveable *pmoveable = new PMoveable(kine, mass, info, 
+                                         Physics::getInstance().getOdeSpace());
+    obj->pobject = pmoveable;
+    pmoveable->worldObject = obj;
+
+    //Tell networked agents to attach the PAgent
+    struct RPAttachPMoveable toSend;
+    toSend.ID = RP_ATTACH_PMOVEABLE;
+    info->hton(&(toSend.info));
+    kine->hton(&(toSend.kine));
+    toSend.mass = htonf(mass);
+    
+    ENetPacket *packet = makeRacerPacket(RP_ATTACH_PMOVEABLE, &toSend,
+                                         sizeof(RPAttachPMoveable));
+    enet_host_broadcast(enetServer, 0, packet);
+    return 0;
+}
+*/
 Server &Server::getInstance()
 {
     return _instance;

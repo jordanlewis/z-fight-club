@@ -59,6 +59,31 @@ const Kinematic &Agent::getKinematic () const
     return kinematic;
 }
 
+/* \brief Package an agent for network transfer
+ */
+void Agent::hton(RPAgent *payload){
+    //payload->agentID = htonl(maxId);
+    payload->mass = htonf(mass);
+    payload->power = htonf(power);
+    payload->maxRotate = htonf(maxRotate);
+    payload->height = htonf(height);
+    payload->width = htonf(width);
+    payload->depth = htonf(depth);
+    kinematic.hton(&(payload->kinematic));
+    steerInfo.hton(&(payload->steerInfo));
+    return; 
+}
+
+
+/* \brief Unpackage an agent from network transfer
+ */
+void Agent::ntoh(RPAgent *payload){
+    //maxId = payload->ntohl(payload->agentID);
+    kinematic.ntoh(&(payload->kinematic));
+    //steerInfo.ntoh(&(payload->steerInfo));
+    return;
+}
+
 /* \brief set kinematic for agent
  * \param kinematic a Kinematic object with the desired new parameters
  */
@@ -99,3 +124,4 @@ std::ostream &operator<<(std::ostream &os, const Agent &agent)
     os << agent.kinematic << std::endl;
     return os;
 }
+

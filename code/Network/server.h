@@ -5,6 +5,7 @@
 #include "Engine/world.h"
 
 class GeomInfo;
+class Kinematic;
 
 //Store a client's connection info
 class ClientInfo {
@@ -40,7 +41,11 @@ class Server {
 				       * in the ID argument. */
     WorldObject *getNetObject(netObjID_t ID);
     int attachPGeom(GeomInfo *info, netObjID_t ID); 
-
+    int attachPMoveable(Kinematic *kine, float mass, GeomInfo *info,
+                        netObjID_t ID);
+    /*int attachAgent(Kinematic *kine, SteerInfo *steerInfo, 
+                     float mass, GeomInfo *geomInfo, netObjID_t ID);
+    */
     void updateFromClient(uint8_t clientId); //NYI (call within serverFrame)
 
     /* Member Functions */
