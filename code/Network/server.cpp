@@ -1,6 +1,7 @@
 #include "server.h"
 #include "racerpacket.h"
 #include "Engine/world.h"
+#include "Engine/geominfo.h"
 #include "Agents/agent.h"
 #include "Utilities/error.h"
 #include "Physics/pobject.h"
@@ -11,7 +12,7 @@ Server Server::_instance;
 void populateSteerInfo(SteerInfo *, const RPUpdateAgent *);
 
 Server::Server()
-    : maxConns(DEFAULT_MAX_SERVER_CONNECTIONS)
+    : maxConns(DEFAULT_MAX_SERVER_CONNECTIONS), pingclock(0)
 {
     enetAddress.host = htonl(ENET_HOST_ANY);
     enetAddress.port = DEFAULT_NETWORK_PORT;
@@ -50,15 +51,39 @@ int Server::createNetObj(netObjID_t &ID) {
     }
     else  
     {
-	cerr << "Cannot accomodate more clients" << endl;
-	return -1;
+        Error error = Error::getInstance();
+        error.log(NETWORK, IMPORTANT, "Cannot accomodate more clients\n");
+        return -1;
     }
     
     return 0;
 }
 
+//should return NULL if unable to find an object with the given ID...
 WorldObject *Server::getNetObject(netObjID_t ID) {
     return netobjs[ID];
+}
+
+int Server::attachPGeom(GeomInfo *info, netObjID_t ID){
+    WorldObject *obj = getNetObject(ID);
+    if (obj == NULL)
+        {
+            cout << "No net object to attach to!" << endl;
+            return -1;
+        }
+    //Attach the PGeom locally
+    PGeom *pgeom = new PGeom(info, Physics::getInstance().getOdeSpace());
+    obj->pobject = pgeom;
+    pgeom->worldObject = obj;
+
+    //Tell networked agents to attach the PGeom
+    struct RPAttachPGeom toSend;
+    toSend.ID = RP_ATTACH_PGEOM;
+    info->hton(&toSend);
+    ENetPacket *packet = makeRacerPacket(RP_ATTACH_PGEOM, &toSend,
+                                         sizeof(RPAttachPGeom));
+    enet_host_broadcast(enetServer, 0, packet);
+    return 0;
 }
 
 Server &Server::getInstance()
@@ -72,7 +97,8 @@ int Server::createHost()
 
     if (enetServer == NULL)
         {
-            cerr << "ENet could not initialize server" << endl;
+            Error error = Error::getInstance();
+            error.log(NETWORK, IMPORTANT, "ENet could not initialize server\n");
             return -1;
         }
     return 0;
@@ -141,7 +167,7 @@ void Server::gatherPlayers()
                     break;
                   }
                 case ENET_EVENT_TYPE_DISCONNECT:  //NYI
-                    error.log(NETWORK, IMPORTANT, "Client disconnecting");
+                    error.log(NETWORK, IMPORTANT, "Client disconnecting during startup");
                     break;
             } // end switch
         } // end if
@@ -189,6 +215,13 @@ void Server::serverFrame(){
     usleep(10000);
     racerPacketType_t type;
     void * payload;
+    if (pingclock++ == 0)
+    {
+        // keep the client from disconnecting
+        ENetPacket *packet = makeRacerPacket(RP_PING, NULL, 0);
+        enet_host_broadcast(enetServer, 0, packet);
+    }
+
     while (enet_host_service(enetServer, &event, 0) > 0)
     {
         switch (event.type)
@@ -210,7 +243,6 @@ void Server::serverFrame(){
                                 RPUpdateAgent info = *(RPUpdateAgent *)payload;
                                 WorldObject *wo = netobjs[info.ID];
                                 SteerInfo steerInfo;
-                                printf("%d\n", info.a);
                                 populateSteerInfo(&steerInfo, &info);
                                 printf("acc[%lu]: %9.1f rot[%lu]: %5.1f "
                                        "weapon[%lu]: %d fire[%lu]: %d\n",
@@ -240,6 +272,7 @@ void Server::serverFrame(){
                 // for now, they'll just slow down and become an obstacle
                 // and we'll continue trying to send them updates, unless
                 // updates are "multicast" and the disconnect pulls them from that list
+                event.peer->data = NULL;
                 break;
         }
     }

@@ -18,7 +18,8 @@ typedef enum {
     RP_ATTACH_PMOVEABLE,
     RP_UPDATE_PMOVEABLE,
     RP_ATTACH_PAGENT,
-    RP_UPDATE_PAGENT
+    RP_UPDATE_PAGENT,
+    RP_PING
 } racerPacketType_t;
 
 /* makeRacerPacket:  Creates a RacerPacket.  RacerPackets begin with a
@@ -51,7 +52,9 @@ struct RPCreateNetObj {
 
 struct RPAttachPGeom {
     netObjID_t ID;
-    PGeom pgeom;
+    uint32_t radius;
+    uint32_t lx, ly, lz; 
+    uint32_t a, b, c, d;
 };
 
 struct RPAttachPMoveable{

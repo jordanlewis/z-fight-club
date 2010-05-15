@@ -9,16 +9,16 @@ Client::Client()
     enetClient = enet_host_create(NULL, 1, 0, 0);
 
     if (enetClient == NULL)
-	{
-	    cerr << "Could not initialize client" << endl;
-	}
+        {
+            cerr << "Could not initialize client" << endl;
+        }
     
 }
 
 Client::~Client()
 {
     if (enetClient != NULL) {
-	enet_host_destroy(enetClient);
+        enet_host_destroy(enetClient);
     }
 }
 
@@ -44,12 +44,12 @@ int Client::connectToServer()
     ENetEvent event;
 
     if (serverPort == 0){
-	cerr << "No server port specificied" << endl;
-	return -1;
+        cerr << "No server port specificied" << endl;
+        return -1;
     }
     if (serverAddr == 0) {
-	cerr << "No server address specified" << endl;
-	return -1;
+        cerr << "No server address specified" << endl;
+        return -1;
     }
 
     enetAddress.host = serverAddr;
@@ -58,22 +58,22 @@ int Client::connectToServer()
     peer = enet_host_connect(enetClient, &enetAddress, 1);
 
     if (peer == NULL)
-	{
-	    cerr << "No available peers to connect upon" << endl;
-	    return -1;
-	}
+    {
+        cerr << "No available peers to connect upon" << endl;
+        return -1;
+    }
 
     //Wait up to 5 seconds to connect
     if (enet_host_service(enetClient, &event, 5000) > 0 &&
 	event.type == ENET_EVENT_TYPE_CONNECT)
-	{
-	    cout << "Client reports successful connection" << endl;
-	}
+    {
+            cout << "Client reports successful connection" << endl;
+    }
     else 
-	{
-	    enet_peer_reset(peer);
-	    cout << "Connection failed." << endl;
-	    return -1;
+    {
+            enet_peer_reset(peer);
+            cout << "Connection failed." << endl;
+            return -1;
     }
 
     return 0;
@@ -87,33 +87,37 @@ void Client::updateFromServer() {
     void * payload;
 
     while(enet_host_service(enetClient, &event, 0) > 0) {
-	switch (event.type) 
-	{
-	case ENET_EVENT_TYPE_CONNECT:
-	    cerr << "Connection event?  How did that happen?" << endl;
-	    break;
-	case ENET_EVENT_TYPE_RECEIVE:
-	    type = getRacerPacketType(event.packet);
-	    payload = event.packet->data+sizeof(racerPacketType_t);
-	    switch(type)
-	    {
-	    case RP_CREATE_NET_OBJ:
-	    {
-		RPCreateNetObj info = *(RPCreateNetObj *)payload;
-		WorldObject *wobject = new WorldObject(NULL, NULL, NULL, NULL);
-		netobjs[ntohl(info.ID)] = wobject;
-		cout << "Created netobj # " << htonl(info.ID) << endl;
-	    } 
-	    default: break;
-	    }
-	    break;
-	case ENET_EVENT_TYPE_DISCONNECT:
-	    break;
-	case ENET_EVENT_TYPE_NONE:
-	    assert(0);
-	    break;
-	default: break;
-	}
+        switch (event.type) 
+        {
+        case ENET_EVENT_TYPE_CONNECT:
+            cerr << "Connection event?  How did that happen?" << endl;
+            break;
+        case ENET_EVENT_TYPE_RECEIVE:
+            type = getRacerPacketType(event.packet);
+            payload = event.packet->data+sizeof(racerPacketType_t);
+            switch(type)
+            {
+                case RP_PING:
+                    cerr << "pong" << endl;
+                    break;
+                case RP_CREATE_NET_OBJ:
+                    {
+                        RPCreateNetObj info = *(RPCreateNetObj *)payload;
+                        WorldObject *wobject = new WorldObject(NULL, NULL, NULL, NULL);
+                        netobjs[ntohl(info.ID)] = wobject;
+                        cout << "Created netobj # " << htonl(info.ID) << endl;
+                        break;
+                    } 
+                default: break;
+            }
+            break;
+        case ENET_EVENT_TYPE_DISCONNECT:
+            break;
+        case ENET_EVENT_TYPE_NONE:
+            assert(0);
+            break;
+        default: break;
+        }
     }
 
 }
@@ -144,10 +148,7 @@ void Client::pushToServer(){
             RPUpdateAgent payload;
             payload.ID = 0xdeadbeef; /* iter->first */
             SteerInfo steerInfo = wo->agent->getSteering();
-            payload.a = htonf(steerInfo.acceleration);
-            payload.r = htonf(steerInfo.rotation);
-            payload.w = htonl(steerInfo.weapon);
-            payload.f = htonl(steerInfo.fire);
+            steerInfo.hton(&payload);
             ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
                                                  &payload, sizeof(payload));
             enet_peer_send(peer, 0, packet);

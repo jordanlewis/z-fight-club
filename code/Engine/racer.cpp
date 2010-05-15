@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
         {
             world.PlayerQty = 1;
         }
-        if (vm.count("ai-players") && world.runType == SOLO)
+        if (vm.count("ai-players") && (world.runType == SOLO || world.runType == CLIENT))
         {
             world.AIQty = vm["ai-players"].as<int>();
         }
@@ -125,6 +125,7 @@ int main(int argc, char *argv[])
     {
         graphics.initGraphics();
         sound.initSound();
+        world.makeAgents();
         testSetup();
         if (client.connectToServer() < 0)
         {

@@ -126,6 +126,7 @@ void Scheduler::clientLoopForever(){
         {
             cout << "ah, a message from the server" << endl
                  << "must be time to play" << endl;
+            raceState = RACE;
             break;
         }
         usleep(10000);
@@ -142,7 +143,7 @@ void Scheduler::clientLoopForever(){
         done = input->processInput();
         client->pushToServer();
 
-        // client->updateFromServer();
+        client->updateFromServer();
         // physics will operate on latest data from server, right?
         now = GetTime();
         if (now - last > 0)

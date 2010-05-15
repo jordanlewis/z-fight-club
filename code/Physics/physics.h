@@ -20,7 +20,6 @@ class PAgent;
 
 class Physics
 {
-    __gnu_cxx::hash_map<int, PAgent *> pagents;
     dWorldID odeWorld;
     dSpaceID odeSpace;
     dJointGroupID odeContacts;
@@ -36,7 +35,6 @@ class Physics
     const dSpaceID & getOdeSpace() { return odeSpace; };
     const dJointGroupID & getOdeContacts() { return odeContacts; };
     void simulate(float dt); /* step the world forward by dt. */
-    __gnu_cxx::hash_map<int, PAgent *> &getAgentMap();
 
     static Physics &getInstance();
 };

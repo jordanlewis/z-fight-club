@@ -4,6 +4,7 @@
 #include "Utilities/vec3f.h"
 #include "kinematic.h"
 #include "constants.h"
+struct RPUpdateAgent;
 #include <vector>
 #include <list>
 #include <iostream>
@@ -25,15 +26,18 @@ class SteerInfo
     Weapon_t weapon;
     int fire;
     SteerInfo();
+    void hton(RPUpdateAgent*);
 };
  
+class WorldObject;
+
 class Agent
 {
     static unsigned int maxId; /* !<highest id number we've reached */
 
   public:
     SteerInfo steerInfo;   /* !<car's steering info, set by AI/human */
-    unsigned int id;       /* !<internal id number */
+    WorldObject *worldObject; /* !<back pointer to world object */
     static float mass;     /* must be nonzero! */
     static float power;     /* p = m*v*a.  This and mass control accel rate  */
     static float maxRotate;    /* !<how fast we're allowed to rotate */

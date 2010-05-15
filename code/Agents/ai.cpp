@@ -359,7 +359,7 @@ void AIManager::release(Agent *agent)
     {
         /* Look through our controller array, and remove the controller that
          * has the agent with the ID of the input agent */
-        if ((*it)->agent->id == agent->id)
+        if ((*it)->agent == agent)
         {
             controllers.erase(it);
             return;

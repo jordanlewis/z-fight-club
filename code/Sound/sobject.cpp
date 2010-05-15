@@ -1,4 +1,6 @@
 #include "sobject.h"
+#include "Utilities/error.h"
+#include <boost/lexical_cast.hpp>
 
 SObject::SObject(string soundName, double startTime, bool loop) : startTime(startTime), loop(loop)
 {
@@ -18,11 +20,31 @@ SObject::SObject(string soundName, double startTime, bool loop) : startTime(star
         alGetBufferi(sr->buffer, AL_SIZE, &size);
         duration = (float) size * sizeof(char) / bits / frequency / channels;
     }
+
+    Error &error = Error::getInstance();
+    string msg = "created sobject(";
+    msg += boost::lexical_cast<string>(sr) + ") for " + soundName + "\n";
+    error.log(SOUND, TRIVIAL, msg);
+}
+
+SObject::~SObject()
+{
+    Error &error = Error::getInstance();
+    error.on(SOUND);
+    string msg = "destroying sobject using sound resource ";
+    msg += boost::lexical_cast<string>(sr) + "\n";
+    error.log(SOUND, TRIVIAL, msg);
+    
 }
 
 void SObject::update(WorldObject *host)
 {
-    if (!duration || !sr) return;
+    if (!duration || !sr)
+    {
+        host->sobject = NULL;
+        this->~SObject();
+        return;
+    }
     double now = GetTime();
 
     // if it should be done, stop it
@@ -32,6 +54,8 @@ void SObject::update(WorldObject *host)
         alSourceUnqueueBuffers(source, 1, &sr->buffer);
         alDeleteSources(1, &source);
         playing = false;
+        host->sobject = NULL;
+        this->~SObject();
         return;
     }
 

@@ -1,4 +1,5 @@
 #include "agent.h"
+#include "Network/racerpacket.h"
 #include "Utilities/vec3f.h"
 
 unsigned int Agent::maxId = 0;    /* !<highest id number we've reached */
@@ -22,7 +23,7 @@ SteerInfo::SteerInfo() : acceleration(0), rotation(0), weapon(NONE), fire(0)
 /* \brief initialize an agent class
  * \param position the agent's initial position
  */
-Agent::Agent(Vec3f position) : steerInfo(), id(maxId++), kinematic(position)
+Agent::Agent(Vec3f position) : steerInfo(), kinematic(position)
 {
 }
 
@@ -31,8 +32,7 @@ Agent::Agent(Vec3f position) : steerInfo(), id(maxId++), kinematic(position)
  * \param orientation the agent's initial orientation
  */
 Agent::Agent(Vec3f position, float orientation)
-            : steerInfo(), id(maxId++), kinematic(position, Vec3f(0,0,0),
-                                                  orientation)
+            : steerInfo(), kinematic(position, Vec3f(0,0,0), orientation)
 {
 }
 
@@ -72,6 +72,18 @@ void Agent::setKinematic (const Kinematic &kinematic)
 SteerInfo &Agent::getSteering ()
 {
     return steerInfo;
+}
+
+/* \brief serialize steering information for sending over the network
+ * \param payload a place to write out the network-ready data
+ */
+void SteerInfo::hton(RPUpdateAgent *payload)
+{
+    payload->a = htonf(acceleration);
+    payload->r = htonf(rotation);
+    payload->w = htonl(weapon);
+    payload->f = htonl(fire);
+    return;
 }
 
 /* \brief set desired steering information for agent
