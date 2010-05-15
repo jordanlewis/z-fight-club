@@ -8,12 +8,22 @@
 #endif
 
 #include "Engine/geominfo.h"
+#include "Engine/world.h"
 #include "Utilities/error.h"
 #include "Utilities/vector.h"
+#include <string>
 extern "C" {
     #include "Parser/obj-reader.h"
+    #include "shader.h"
+    #include "Utilities/load-png.h"
 }
 
+typedef enum {
+    COLOR_TEX = 0, 
+    BUMP_TEX,
+    SPEC_TEX,
+    NUM_TEXS
+} Texids_t;
 
 /* Credit to ODE's drawstuff library */
 void BoxInfo::draw()
@@ -61,6 +71,54 @@ void BoxInfo::draw()
 
 void ObjMeshInfo::draw()
 {
+    GLuint texIDs[NUM_TEXS];
+
+    /* setup shaders */
+
+    World &world = World::getInstance();
+    VertexShader_t *vshader = LoadVertexShader((world.assetsDir + std::string("shaders/obj.vert")).c_str());
+    FragmentShader_t *fshader = LoadFragmentShader((world.assetsDir + std::string("shaders/obj.frag")).c_str());
+    ShaderProgram_t *obj_shader = CreateShaderProgram(vshader, fshader);
+
+    UseProgram(obj_shader);
+
+    /* Initialize the textures */
+    /* glGenTextures(3, texIDs);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, texIDs[COLOR_TEX]);
+    GLint color_tex = UniformLocation(obj_shader, "color_tex");
+    glUniform1i(color_tex, texIDs[COLOR_TEX]);
+    Image2D_t *color = LoadImage(DATA_WALL_COLOR, false, RGB_IMAGE);
+    TexImage(color);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, texIDs[SPEC_TEX]);
+    GLint spec_tex = UniformLocation(wall_shader, "spec_tex");
+    glUniform1i(spec_tex, texIDs[SPEC_TEX]);
+    Image2D_t *spec = LoadImage(DATA_WALL_SPEC, false, RGBA_IMAGE);
+    TexImage(spec);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, texIDs[NORM_TEX]);
+    GLint bump_tex = UniformLocation(wall_shader, "bump_tex");
+    glUniform1i(bump_tex, texIDs[NORM_TEX]);
+    Image2D_t *bump = LoadImage(DATA_WALL_BUMP, false, RGB_IMAGE);
+    TexImage(bump);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); */
+
+    /* draw the mesh */
     static uint32_t i;
     static OBJgroup* group;
     static OBJtriangle* triangle;
