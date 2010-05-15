@@ -266,20 +266,19 @@ void World::makeAgents()
 
 void World::setRunType(const string str){
     Error& error = Error::getInstance();
-	
     if ( (str == "server") || (str == "Server") ){
-	runType = SERVER;
+        runType = SERVER;
     }
     else if ( (str =="client") || (str == "Client") ) {
-	runType = CLIENT;
+        runType = CLIENT;
     }
     else if ( (str == "solo") || (str == "Solo") ) {
-	runType = SOLO;
+        runType = SOLO;
     }
     else {
-	error.log(NETWORK, IMPORTANT,
-		  "Unrecognized netmode. Defaulting to solo\n.");
-	runType = SOLO;
+        error.log(NETWORK, IMPORTANT,
+                  "Unrecognized netmode. Defaulting to solo\n.");
+        runType = SOLO;
     }
     return;
 }

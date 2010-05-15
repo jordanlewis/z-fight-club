@@ -37,26 +37,26 @@ typedef enum {
 
 class Error
 {
-    private:
-	static Error _instance;
-        double last_start[NUM_PROFILE];
-        double accumulated[NUM_PROFILE];
+  private:
+    static Error _instance;
+    double last_start[NUM_PROFILE];
+    double accumulated[NUM_PROFILE];
 
-    public:
-	bool 			module[NUM_MODULE];	/* !< which errors are we reporting */
-	ErrorVerbosity_t 	verbosity;		/* !< how trivial of an error do we print */
-	Error();
-	~Error();
-	static Error &getInstance();
-	void on(ErrorModule_t);
-	void off(ErrorModule_t);
-	void setVerbosity(ErrorVerbosity_t);
-	void log(ErrorModule_t, ErrorVerbosity_t, const string);
-	void log(ErrorModule_t, ErrorVerbosity_t, const char *);
-	void log(ErrorModule_t, ErrorVerbosity_t, const int);
-	void log(ErrorModule_t, ErrorVerbosity_t, const float);
-	void pin(Profile_t);
-	void pout(Profile_t);
-	void pdisplay();
+  public:
+    bool                module[NUM_MODULE];  /* !< which errors are we reporting */
+    ErrorVerbosity_t    verbosity;           /* !< how trivial of an error do we print */
+    Error();
+    ~Error();
+    static Error &getInstance();
+    void on(ErrorModule_t);
+    void off(ErrorModule_t);
+    void setVerbosity(ErrorVerbosity_t);
+    void log(ErrorModule_t, ErrorVerbosity_t, const string);
+    void log(ErrorModule_t, ErrorVerbosity_t, const char *);
+    void log(ErrorModule_t, ErrorVerbosity_t, const int);
+    void log(ErrorModule_t, ErrorVerbosity_t, const float);
+    void pin(Profile_t);
+    void pout(Profile_t);
+    void pdisplay();
 };
 #endif

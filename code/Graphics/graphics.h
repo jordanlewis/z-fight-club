@@ -34,11 +34,11 @@ class Graphics
         
   public:
     void initGraphics();
-    void render();	
+    void render();
     void render(Agent * agent);
     void render(TrackData_t *track);
     void render(AIController *);
-		void render(Hud *);
+    void render(Hud *);
     void renderBoxPGeoms();
     void render(std::deque<Vec3f>);
     void render(std::vector<Vec3f>);

@@ -64,7 +64,7 @@ class PMoveable: public PGeom
     PMoveable(const Kinematic *kinematic, float mass,
               GeomInfo *info, dSpaceID space=NULL);
     const Kinematic &odeToKinematic(); /* writes (syncs) the body coords into
-					* the kinematic */
+                                        * the kinematic */
     const dBodyID &getBody();
     void kinematicToOde(); //writes (syncs) the kinematic coords into the body
 };

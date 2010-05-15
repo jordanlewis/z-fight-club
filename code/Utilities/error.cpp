@@ -22,7 +22,7 @@ Error::Error()
 {
     int i;
     for (i = 0; i < NUM_MODULE; i++)
-	module[i] = false;
+        module[i] = false;
 
     verbosity = CRITICAL;
 }
@@ -54,25 +54,25 @@ void Error::setVerbosity(ErrorVerbosity_t verbosity)
 void Error::log(ErrorModule_t error, ErrorVerbosity_t verbosity, const string msg)
 {
     if (module[error] || verbosity >= this->verbosity)
-	std::cerr << msg;
+        std::cerr << msg;
 }
 
 void Error::log(ErrorModule_t error, ErrorVerbosity_t verbosity, const char * msg)
 {
     if (module[error] || verbosity >= this->verbosity)
-	std::cerr << msg;
+        std::cerr << msg;
 }
 
 void Error::log(ErrorModule_t error, ErrorVerbosity_t verbosity, const int msg)
 {
     if (module[error] || verbosity >= this->verbosity)
-	std::cerr << msg;
+        std::cerr << msg;
 }
 
 void Error::log(ErrorModule_t error, ErrorVerbosity_t verbosity, const float msg)
 {
     if (module[error] || verbosity >= this->verbosity)
-	std::cerr << msg;
+        std::cerr << msg;
 }
 
 void Error::pin(Profile_t p)

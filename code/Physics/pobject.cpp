@@ -137,17 +137,17 @@ const Kinematic &PMoveable::odeToKinematic(){
       calculate rotation around the Y axis*/
     norm = sqrt(q_result[1]*q_result[1] + q_result[3]*q_result[3]);
     if (norm == 0) {
-	cerr << "Error:  Agent facing directly upwards.  Setting kinematic" 
-	     << "theta to 0." << endl;
-	k.orientation = 0;
+        cerr << "Error:  Agent facing directly upwards.  Setting kinematic" 
+             << "theta to 0." << endl;
+        k.orientation = 0;
     }
     else {
-	//Normalize vectors  
-	q_result[1] = q_result[1]/norm;
-	q_result[3] = q_result[3]/norm;
-	//Calculate theta
-	k.orientation = atan2(q_result[1], q_result[3]);
-	//cout << "Calculated orientation as " << k.orientation << endl;
+        //Normalize vectors  
+        q_result[1] = q_result[1]/norm;
+        q_result[3] = q_result[3]/norm;
+        //Calculate theta
+        k.orientation = atan2(q_result[1], q_result[3]);
+        //cout << "Calculated orientation as " << k.orientation << endl;
     }
 
     //Fill in kinematic position and velocty
@@ -227,6 +227,6 @@ void PAgent::resetOdeAngularVelocity(int nSteps)
     const dReal* angVel = dBodyGetAngularVel(body);
     //cout << "Modding by rotation: " << steering->rotation << endl;
     dBodySetAngularVel(body, angVel[0], 
-		       angVel[1]-steering->rotation*pow(1-PH_ANGDAMP, nSteps),
-		       angVel[2]);
+                       angVel[1]-steering->rotation*pow(1-PH_ANGDAMP, nSteps),
+                       angVel[2]);
 }

@@ -12,10 +12,10 @@
 #ifndef _COLOR_H_
 #define _COLOR_H_
 
-typedef float		Color3_t[4];	//!< floating-point RGB colors
-typedef float		Color4_t[4];	//!< floating-point RGBA colors
-typedef unsigned char	RGB_t[3];	//!< Byte RGB colors
-typedef unsigned char	RGBA_t[4];	//!< Byte RGBA colors
+typedef float           Color3_t[4];    //!< floating-point RGB colors
+typedef float           Color4_t[4];    //!< floating-point RGBA colors
+typedef unsigned char   RGB_t[3];       //!< Byte RGB colors
+typedef unsigned char   RGBA_t[4];      //!< Byte RGBA colors
 
 //! \brief copy a color
 //! \param src the source color

@@ -34,10 +34,12 @@ class Server {
 
     static Server _instance;
 
-    int createNetObj(netObjID_t &ID); /* attempts to create a netobj.  
-				       * Returns 0 on success, -1 otherwise.
-				       * Stores the id of the generated netobj
-				       * in the ID argument. */
+    /* attempts to create a netobj.  
+    * Returns 0 on success, -1 otherwise.
+    * Stores the id of the generated netobj
+    * in the ID argument. */
+    int createNetObj(netObjID_t &ID);
+
     WorldObject *getNetObject(netObjID_t ID);
     int attachPGeom(GeomInfo *info, netObjID_t ID); 
 

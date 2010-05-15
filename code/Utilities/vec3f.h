@@ -9,8 +9,8 @@
 class Vec3f {
     /*! \brief Checks if the vector is very small, and, if so, sets it to 0
                This corrects for floating point errors and makes sure that
-	       when someone uses a zero-vector inappropriately, the compiler
-	       will complain
+               when someone uses a zero-vector inappropriately, the compiler
+               will complain
     */
     void flatten();
   public:
@@ -127,11 +127,11 @@ std::ostream &operator<<(std::ostream&, const Vec3f&);
 
 // ---------- Vertex Array ---------
 //! \brief Create an array of floats usable by opengl
-// 	out of an array of Vec3fs
+//         out of an array of Vec3fs
 float *makeArray(const std::vector<Vec3f>);
 
 //! \brief create an array of floats usable by opengle
-//	out of a deque of Vec3fs
+//         out of a deque of Vec3fs
 float *makeArray(std::deque<Vec3f>);
 
 //! \brief create an array of floats usable by opengl out of an array of Vec3fs

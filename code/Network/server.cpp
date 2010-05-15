@@ -29,23 +29,23 @@ int Server::createNetObj(netObjID_t &ID) {
     //Find smallest unused identifier
     for (; i < NETOBJID_MAX; i++)
     {
-	if (netobjs.find(i) == netobjs.end())
+        if (netobjs.find(i) == netobjs.end())
         {
-	    WorldObject *wobject = new WorldObject(NULL, NULL, NULL, NULL);
-	    netobjs[i] = wobject;
-	    ID = i;
-	    successFlag = 1;
-	    break;
-	}	    
+            WorldObject *wobject = new WorldObject(NULL, NULL, NULL, NULL);
+            netobjs[i] = wobject;
+            ID = i;
+            successFlag = 1;
+            break;
+        }            
     }
     
     if (successFlag)
     {
-	struct RPCreateNetObj toSend;
-	toSend.ID = htonl(i);
-	ENetPacket *packet = makeRacerPacket(RP_CREATE_NET_OBJ, &toSend,
-					     sizeof(RPCreateNetObj));
-	enet_host_broadcast(enetServer, 0, packet);
+        struct RPCreateNetObj toSend;
+        toSend.ID = htonl(i);
+        ENetPacket *packet = makeRacerPacket(RP_CREATE_NET_OBJ, &toSend,
+                                             sizeof(RPCreateNetObj));
+        enet_host_broadcast(enetServer, 0, packet);
     }
     else  
     {
@@ -182,26 +182,26 @@ ENetPacket *Server::packageObject(netObjID_t objID){
 
     if (wobject->pobject != NULL)
     {
-	//Eeeeewww... dynamic_cast...
-	moveable = dynamic_cast<PMoveable *>(wobject->pobject);
-	if (moveable != NULL) {
-	    agent = dynamic_cast<PAgent *>(wobject->pobject);
-	    if (agent != NULL) 
-	    {
-		return makeRacerPacket(RP_UPDATE_PMOVEABLE, moveable, 
-				       sizeof(PMoveable));
-	    }
-	    else 
-	    {
-		return makeRacerPacket(RP_UPDATE_PAGENT, agent, 
-				       sizeof(PAgent));
-	    }
-	}
-	else 
-	{
-	    return makeRacerPacket(RP_UPDATE_PGEOM, wobject->pobject,
-				   sizeof(PGeom));
-	}
+        //Eeeeewww... dynamic_cast...
+        moveable = dynamic_cast<PMoveable *>(wobject->pobject);
+        if (moveable != NULL) {
+            agent = dynamic_cast<PAgent *>(wobject->pobject);
+            if (agent != NULL) 
+            {
+                return makeRacerPacket(RP_UPDATE_PMOVEABLE, moveable, 
+                                       sizeof(PMoveable));
+            }
+            else 
+            {
+                return makeRacerPacket(RP_UPDATE_PAGENT, agent, 
+                                       sizeof(PAgent));
+            }
+        }
+        else 
+        {
+            return makeRacerPacket(RP_UPDATE_PGEOM, wobject->pobject,
+                                   sizeof(PGeom));
+        }
     }
     return NULL;
 }

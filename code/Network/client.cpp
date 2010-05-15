@@ -66,7 +66,7 @@ int Client::connectToServer()
 
     //Wait up to 5 seconds to connect
     if (enet_host_service(enetClient, &event, 5000) > 0 &&
-	event.type == ENET_EVENT_TYPE_CONNECT)
+        event.type == ENET_EVENT_TYPE_CONNECT)
     {
             cout << "Client reports successful connection" << endl;
     }

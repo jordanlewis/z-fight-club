@@ -60,12 +60,12 @@ void PlayerController::updateAgent()
         case FIRE: steerInfo.fire = 1; weaponState = HOLD; break;
         case HOLD: steerInfo.fire = 0; break;
         case CHANGE: 
-	    steerInfo.weapon = (Weapon_t)((int)steerInfo.weapon + 1);
-	    if (steerInfo.weapon == NWEAPONS){
-		steerInfo.weapon = (Weapon_t)0;
-	    }
-	    weaponState = HOLD;
-	    break;
+            steerInfo.weapon = (Weapon_t)((int)steerInfo.weapon + 1);
+            if (steerInfo.weapon == NWEAPONS){
+                steerInfo.weapon = (Weapon_t)0;
+            }
+            weaponState = HOLD;
+            break;
         default: break;
     }
 

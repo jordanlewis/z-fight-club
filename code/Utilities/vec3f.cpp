@@ -97,8 +97,8 @@ Vec3f Vec3f::operator*(const Vec3f &o) const
 {
     return Vec3f( (y*o.z) - (z*o.y),
                   (z*o.x) - (x*o.z),
-		  (x*o.y) - (y*o.x)
-		);
+                  (x*o.y) - (y*o.x)
+                );
 }
 
 void Vec3f::operator*=(const Vec3f &o)
@@ -125,10 +125,10 @@ void Vec3f::operator*=(const float &o)
         x = y = z = 0;
     } else {
         x *= o;
-	y *= o;
-	z *= o;
+        y *= o;
+        z *= o;
 
-	flatten();
+        flatten();
     }
 }
 
@@ -237,7 +237,7 @@ Vec3f Vec3f::perp() const
     /* check to see if this vector lies in the X-axis*/
     if (((*this) * u).length() < EPSILON)
     {
-	    return Vec3f(0.0, 1.0, 0.0);
+        return Vec3f(0.0, 1.0, 0.0);
     }
     
     u -= u.project_onto(*this);
@@ -286,8 +286,8 @@ float *makeArray(const std::vector<Vec3f> array)
     float *verts = new float[3 * array.size()];
 
     for (i = 0; i < array.size(); i++)
-	for (j = 0; j < 3; j++)
-	    verts[i*3 + j] = array[i][j];
+        for (j = 0; j < 3; j++)
+            verts[i*3 + j] = array[i][j];
 
     return verts;
 }
@@ -299,8 +299,8 @@ float *makeArray(std::deque<Vec3f> array)
     float *verts = new float[3 * array.size()];
 
     for(deque<Vec3f>::iterator i = array.begin(); i != array.end(); i++)
-	for (j = 0; j < 3; j++)
-	    verts[distance(array.begin(), i) * 3 + j] = (*i)[j];
+        for (j = 0; j < 3; j++)
+            verts[distance(array.begin(), i) * 3 + j] = (*i)[j];
 
     return verts;
 }
