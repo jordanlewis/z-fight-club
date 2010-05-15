@@ -12,7 +12,7 @@ Server Server::_instance;
 void populateSteerInfo(SteerInfo *, const RPUpdateAgent *);
 
 Server::Server()
-    : maxConns(DEFAULT_MAX_SERVER_CONNECTIONS)
+    : maxConns(DEFAULT_MAX_SERVER_CONNECTIONS), pingclock(0)
 {
     enetAddress.host = htonl(ENET_HOST_ANY);
     enetAddress.port = DEFAULT_NETWORK_PORT;
@@ -167,7 +167,7 @@ void Server::gatherPlayers()
                     break;
                   }
                 case ENET_EVENT_TYPE_DISCONNECT:  //NYI
-                    error.log(NETWORK, IMPORTANT, "Client disconnecting");
+                    error.log(NETWORK, IMPORTANT, "Client disconnecting during startup");
                     break;
             } // end switch
         } // end if
@@ -215,6 +215,13 @@ void Server::serverFrame(){
     usleep(10000);
     racerPacketType_t type;
     void * payload;
+    if (pingclock++ == 0)
+    {
+        // keep the client from disconnecting
+        ENetPacket *packet = makeRacerPacket(RP_PING, NULL, 0);
+        enet_host_broadcast(enetServer, 0, packet);
+    }
+
     while (enet_host_service(enetServer, &event, 0) > 0)
     {
         switch (event.type)
@@ -265,6 +272,7 @@ void Server::serverFrame(){
                 // for now, they'll just slow down and become an obstacle
                 // and we'll continue trying to send them updates, unless
                 // updates are "multicast" and the disconnect pulls them from that list
+                event.peer->data = NULL;
                 break;
         }
     }

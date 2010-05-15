@@ -26,6 +26,7 @@ class Server {
     ENetHost *enetServer;
     int maxConns;
     float dt;
+    unsigned char pingclock;
 
  public:
     Server();

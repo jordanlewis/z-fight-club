@@ -18,7 +18,8 @@ typedef enum {
     RP_ATTACH_PMOVEABLE,
     RP_UPDATE_PMOVEABLE,
     RP_ATTACH_PAGENT,
-    RP_UPDATE_PAGENT
+    RP_UPDATE_PAGENT,
+    RP_PING
 } racerPacketType_t;
 
 /* makeRacerPacket:  Creates a RacerPacket.  RacerPackets begin with a

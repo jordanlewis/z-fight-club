@@ -143,7 +143,7 @@ void Scheduler::clientLoopForever(){
         done = input->processInput();
         client->pushToServer();
 
-        // client->updateFromServer();
+        client->updateFromServer();
         // physics will operate on latest data from server, right?
         now = GetTime();
         if (now - last > 0)
