@@ -111,6 +111,17 @@ void SteerInfo::hton(RPSteerInfo *payload)
     return;
 }
 
+/* \brief unserialize steering information received over the network
+ * \param payload a place to read in data 
+ */
+void SteerInfo::ntoh(const RPSteerInfo *payload)
+{   
+    acceleration = ntohf(payload->a);
+    rotation = ntohf(payload->r);
+    weapon = static_cast<Weapon_t>(ntohl(payload->w));
+    fire = ntohl(payload->f);
+}
+
 /* \brief set desired steering information for agent
  * \param steerInfo a SteerInfo object with the desired new parameters
  */

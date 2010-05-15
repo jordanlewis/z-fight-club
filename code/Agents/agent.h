@@ -27,6 +27,7 @@ class SteerInfo
     int fire;
     SteerInfo();
     void hton(RPSteerInfo *);
+    void ntoh(const RPSteerInfo *);
 };
  
 class WorldObject;
