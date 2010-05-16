@@ -29,6 +29,11 @@ Client &Client::getInstance()
     return _instance;
 }
 
+//Should return null if no such element exists in our map.  Does not yet do so.
+WorldObject *Client::getNetObj(netObjID_t ID){
+    return netobjs[ID];
+}
+
 void Client::setServerAddr(uint32_t addr){
     serverAddr = addr;
     return;
@@ -113,6 +118,39 @@ void Client::updateFromServer()
 
                         break;
                     }
+                case RP_ATTACH_PGEOM:
+                    {
+                        RPAttachPGeom info = *(RPAttachPGeom *)payload;
+                        
+                        GeomInfo *geomInfo;
+                        
+                        //Only one of these will actually be used.
+                        SphereInfo sphereInfo;
+                        BoxInfo boxInfo;
+                        PlaneInfo planeInfo;
+                        
+                        switch (info.info.type) {
+                        case SPHERE: 
+                            sphereInfo.ntoh(&(info.info));
+                            geomInfo = &sphereInfo;
+                            break;
+                        case BOX:
+                            boxInfo.ntoh(&(info.info));
+                            geomInfo = &boxInfo;
+                            break;
+                        case PLANE:
+                            planeInfo.ntoh(&(info.info));
+                            geomInfo = &planeInfo;
+                            break;
+                        default: break;
+                        }
+
+                        WorldObject *wobject = getNetObj(info.ID);
+                        PGeom *geom = new PGeom(geomInfo, Physics::getInstance().getOdeSpace());
+                        wobject->pobject = geom;
+                        geom->worldObject = wobject;
+                    }
+
                 default: break;
             }
             break;

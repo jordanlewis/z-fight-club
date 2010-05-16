@@ -38,6 +38,7 @@ racerPacketType_t getRacerPacketType(ENetPacket *packet);
 
 
 struct RPGeomInfo{
+    uint32_t type;
     uint32_t radius;
     uint32_t lx, ly, lz;
     uint32_t a, b, c, d;

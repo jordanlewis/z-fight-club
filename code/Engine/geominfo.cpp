@@ -7,11 +7,20 @@ extern "C" {
     #include "Parser/obj-reader.h"
 }
 
+BoxInfo::BoxInfo()
+    : GeomInfo()
+{}
 BoxInfo::BoxInfo(float lx, float ly, float lz)
     : GeomInfo(), lx(lx), ly(ly), lz(lz)
 {}
+SphereInfo::SphereInfo()
+    : GeomInfo()
+{}
 SphereInfo::SphereInfo(float radius)
     : GeomInfo(), radius(radius)
+{}
+PlaneInfo::PlaneInfo()
+    : GeomInfo()
 {}
 PlaneInfo::PlaneInfo(float a, float b, float c, float d)
     : GeomInfo(), a(a), b(b), c(c), d(d)
@@ -67,6 +76,7 @@ void SphereInfo::hton(RPGeomInfo *payload) {
         return;
     }
     payload->radius = htonf(radius);
+    payload->type = htonl(SPHERE);
 }
 
 void BoxInfo::hton(RPGeomInfo *payload) {
@@ -77,6 +87,7 @@ void BoxInfo::hton(RPGeomInfo *payload) {
     payload->lx = htonf(lx);
     payload->ly = htonf(ly);
     payload->lz = htonf(lz);
+    payload->type = htonl(BOX);
 }
 
 void PlaneInfo::hton(RPGeomInfo *payload) {
@@ -88,6 +99,7 @@ void PlaneInfo::hton(RPGeomInfo *payload) {
     payload->b = htonf(b);
     payload->c = htonf(c);
     payload->d = htonf(d);
+    payload->type = htonf(PLANE);
 }
 
 void SphereInfo::ntoh(RPGeomInfo *payload) {

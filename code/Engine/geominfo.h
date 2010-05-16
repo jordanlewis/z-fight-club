@@ -11,6 +11,16 @@ extern "C" {
 
 struct RPGeomInfo;
 
+//Used in network transfer.
+typedef enum {
+    SPHERE,
+    BOX,
+    PLANE,
+    RAY,
+    TRIMESH,
+    OBJMESH
+} GeomInfoType_t;
+
 /* Stores info common to all geoms.  Cannot be constructed directly -- must be
    constructed by a child class */
 class GeomInfo
@@ -30,6 +40,7 @@ class SphereInfo : public GeomInfo
 {
  public:
     float radius;
+    SphereInfo(); //needed for networking
     SphereInfo(float radius);
     dGeomID createGeom(dSpaceID space);
     void createMass(dMass *, float);
@@ -43,6 +54,7 @@ class BoxInfo : public GeomInfo
 {
  public:
     float lx, ly, lz;
+    BoxInfo(); //needed for networking
     BoxInfo(float lx, float ly, float lz);
     dGeomID createGeom(dSpaceID space);
     void createMass(dMass *, float);
@@ -57,6 +69,7 @@ class PlaneInfo : public GeomInfo
 {
  public:
     float a, b, c, d;
+    PlaneInfo(); //needed for networking
     PlaneInfo(float a, float b, float c, float d);
     dGeomID createGeom(dSpaceID space);
     void ntoh(RPGeomInfo *payload);
