@@ -8,6 +8,7 @@ struct RPSteerInfo;
 #include <vector>
 #include <list>
 #include <iostream>
+#include <stdint.h>
 
 using namespace std;
 
