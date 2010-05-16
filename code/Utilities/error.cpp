@@ -1,6 +1,7 @@
 #include "error.h"
 #include "defs.h"
 #include <iostream>
+#include <iomanip>
 #include <ostream>
 
 #define STR( foo ) # foo
@@ -92,14 +93,14 @@ void Error::pdisplay()
     {
         for (int i=0; i < NUM_PROFILE; i++)
         {
-            printf("%11s", ProfileNames[i]);
+            std::cerr << std::fixed << std::setw(11) << ProfileNames[i];
         }
-        printf("\n");
+        std::cerr << endl;
     }
 
     for (int i=0; i < NUM_PROFILE; i++)
     {
-        printf("%11.4f", accumulated[i]);
+        std::cerr << std::fixed << std::setw(11) << std::setprecision(4) << accumulated[i];
     }
-    printf("\n");
+    std::cerr << endl;
 }

@@ -1,6 +1,7 @@
 #include "agent.h"
 #include "Network/racerpacket.h"
 #include "Utilities/vec3f.h"
+#include <iomanip>
 
 unsigned int Agent::maxId = 0;    /* !<highest id number we've reached */
 float        Agent::mass = AG_DEFAULT_MASS;
@@ -113,11 +114,11 @@ std::ostream &operator<<(std::ostream &os, const Agent &agent)
 
 std::ostream &operator<<(std::ostream &os, const SteerInfo &steerInfo)
 {
-    // *pretending* to dump to the output stream, but not actually doing it
-    printf("acc: %9.1f rot: %5.1f weapon: %d fire: %d",
-        steerInfo.acceleration,
-        steerInfo.rotation,
-        steerInfo.weapon,
-        steerInfo.fire);
+    // acc:      10.4 rot:  -1.0 weapon: 0 fire: 0
+    os << std::setprecision(1) << std::fixed
+       << "acc: " << std::setw(6) << steerInfo.acceleration << " "
+       << "rot: " << std::setw(4) << steerInfo.rotation << " "
+       << "weapon: " << steerInfo.weapon << " "
+       << "fire: " << steerInfo.fire;
     return os;
 }
