@@ -1,10 +1,12 @@
 #include "client.h"
 #include "racerpacket.h"
 #include <cassert>
+#include <boost/lexical_cast.hpp>
 
 Client Client::_instance;
 
-Client::Client() 
+Client::Client() :
+    error(&Error::getInstance())
 {
     enetClient = enet_host_create(NULL, 1, 0, 0);
 
@@ -12,7 +14,7 @@ Client::Client()
         {
             cerr << "Could not initialize client" << endl;
         }
-    
+
 }
 
 Client::~Client()
@@ -54,7 +56,7 @@ int Client::connectToServer()
 
     enetAddress.host = serverAddr;
     enetAddress.port = serverPort;
-    
+
     peer = enet_host_connect(enetClient, &enetAddress, 1);
 
     if (peer == NULL)
@@ -65,11 +67,11 @@ int Client::connectToServer()
 
     //Wait up to 5 seconds to connect
     if (enet_host_service(enetClient, &event, 5000) > 0 &&
-	event.type == ENET_EVENT_TYPE_CONNECT)
+        event.type == ENET_EVENT_TYPE_CONNECT)
     {
             cout << "Client reports successful connection" << endl;
     }
-    else 
+    else
     {
             enet_peer_reset(peer);
             cout << "Connection failed." << endl;
@@ -80,14 +82,15 @@ int Client::connectToServer()
 
 }
 
-void Client::updateFromServer() {
-    
+void Client::updateFromServer()
+{
+    error->pin(P_CLIENT);
     ENetEvent event;
     racerPacketType_t type;
     void * payload;
 
     while(enet_host_service(enetClient, &event, 0) > 0) {
-        switch (event.type) 
+        switch (event.type)
         {
         case ENET_EVENT_TYPE_CONNECT:
             cerr << "Connection event?  How did that happen?" << endl;
@@ -98,16 +101,18 @@ void Client::updateFromServer() {
             switch(type)
             {
                 case RP_PING:
-                    cerr << "pong" << endl;
                     break;
                 case RP_CREATE_NET_OBJ:
                     {
                         RPCreateNetObj info = *(RPCreateNetObj *)payload;
                         WorldObject *wobject = new WorldObject(NULL, NULL, NULL, NULL);
                         netobjs[ntohl(info.ID)] = wobject;
-                        cout << "Created netobj # " << htonl(info.ID) << endl;
+                        string msg = "Created netobj # ";
+                        msg += boost::lexical_cast<string>(htonl(info.ID)) + "\n";
+                        error->log(NETWORK, TRIVIAL, msg);
+
                         break;
-                    } 
+                    }
                 default: break;
             }
             break;
@@ -119,7 +124,7 @@ void Client::updateFromServer() {
         default: break;
         }
     }
-
+    error->pout(P_CLIENT);
 }
 
 void Client::sendStartRequest()

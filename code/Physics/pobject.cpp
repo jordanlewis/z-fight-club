@@ -117,7 +117,7 @@ const Kinematic &PMoveable::odeToKinematic(){
     const dReal *b_info;
     //this const dReal* is actually a quaternion
     const dReal* q_current = dBodyGetQuaternion(body);
-    
+
     //Fill in kinematic angle
     q_base[0]=0; q_base[1] = 0; q_base[2] = 0; q_base[3]=1;
     //Want: q_result = q_current*q_base*q_current^{-1}, so...
@@ -133,21 +133,21 @@ const Kinematic &PMoveable::odeToKinematic(){
 
     //Calculate and write the orientation projected onto the X-Z plane
 
-    /*Project to X-Z plane (Ignore the Y component), renormalize, and 
+    /*Project to X-Z plane (Ignore the Y component), renormalize, and
       calculate rotation around the Y axis*/
     norm = sqrt(q_result[1]*q_result[1] + q_result[3]*q_result[3]);
     if (norm == 0) {
-	cerr << "Error:  Agent facing directly upwards.  Setting kinematic" 
-	     << "theta to 0." << endl;
-	k.orientation = 0;
+        cerr << "Error:  Agent facing directly upwards.  Setting kinematic"
+             << "theta to 0." << endl;
+        k.orientation = 0;
     }
     else {
-	//Normalize vectors  
-	q_result[1] = q_result[1]/norm;
-	q_result[3] = q_result[3]/norm;
-	//Calculate theta
-	k.orientation = atan2(q_result[1], q_result[3]);
-	//cout << "Calculated orientation as " << k.orientation << endl;
+        //Normalize vectors
+        q_result[1] = q_result[1]/norm;
+        q_result[3] = q_result[3]/norm;
+        //Calculate theta
+        k.orientation = atan2(q_result[1], q_result[3]);
+        //cout << "Calculated orientation as " << k.orientation << endl;
     }
 
     //Fill in kinematic position and velocty
@@ -226,7 +226,7 @@ void PAgent::resetOdeAngularVelocity(int nSteps)
 
     const dReal* angVel = dBodyGetAngularVel(body);
     //cout << "Modding by rotation: " << steering->rotation << endl;
-    dBodySetAngularVel(body, angVel[0], 
-		       angVel[1]-steering->rotation*pow(1-PH_ANGDAMP, nSteps),
-		       angVel[2]);
+    dBodySetAngularVel(body, angVel[0],
+                       angVel[1]-steering->rotation*pow(1-PH_ANGDAMP, nSteps),
+                       angVel[2]);
 }

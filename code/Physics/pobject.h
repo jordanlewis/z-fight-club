@@ -26,10 +26,10 @@ typedef enum {
 class PGeom
 {
  protected:
-    dGeomID geom;    
+    dGeomID geom;
 
     //Defining this function gives us a vtable.  The function does nothing.
-    virtual void forceVtableCreation(); 
+    virtual void forceVtableCreation();
 
  public:
     dSpaceID space;
@@ -37,7 +37,7 @@ class PGeom
     float mu1, mu2;
     CollType_t collType;
     WorldObject *worldObject;
-    
+
     bool isPlaceable();
     Vec3f getPos();
     void setPos(Vec3f position);
@@ -64,7 +64,7 @@ class PMoveable: public PGeom
     PMoveable(const Kinematic *kinematic, float mass,
               GeomInfo *info, dSpaceID space=NULL);
     const Kinematic &odeToKinematic(); /* writes (syncs) the body coords into
-					* the kinematic */
+                                        * the kinematic */
     const dBodyID &getBody();
     void kinematicToOde(); //writes (syncs) the kinematic coords into the body
 };

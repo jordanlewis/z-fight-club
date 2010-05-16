@@ -1,16 +1,17 @@
 #include "agent.h"
 #include "Network/racerpacket.h"
 #include "Utilities/vec3f.h"
+#include <iomanip>
 
 unsigned int Agent::maxId = 0;    /* !<highest id number we've reached */
-float        Agent::mass = AG_DEFAULT_MASS;   
-float        Agent::power = AG_DEFAULT_POWER;  
-float        Agent::maxRotate = AG_DEFAULT_MAX_ROTATE; 
+float        Agent::mass = AG_DEFAULT_MASS;
+float        Agent::power = AG_DEFAULT_POWER;
+float        Agent::maxRotate = AG_DEFAULT_MAX_ROTATE;
 float        Agent::height = AG_DEFAULT_HEIGHT;
 float        Agent::width = AG_DEFAULT_WIDTH;
 float        Agent::depth = AG_DEFAULT_DEPTH;
 
-Agent::Agent() 
+Agent::Agent()
 {
 }
 
@@ -112,10 +113,10 @@ void SteerInfo::hton(RPSteerInfo *payload)
 }
 
 /* \brief unserialize steering information received over the network
- * \param payload a place to read in data 
+ * \param payload a place to read in data
  */
 void SteerInfo::ntoh(const RPSteerInfo *payload)
-{   
+{
     acceleration = ntohf(payload->a);
     rotation = ntohf(payload->r);
     weapon = static_cast<Weapon_t>(ntohl(payload->w));
@@ -136,3 +137,13 @@ std::ostream &operator<<(std::ostream &os, const Agent &agent)
     return os;
 }
 
+std::ostream &operator<<(std::ostream &os, const SteerInfo &steerInfo)
+{
+    // acc:      10.4 rot:  -1.0 weapon: 0 fire: 0
+    os << std::setprecision(1) << std::fixed
+       << "acc: " << std::setw(6) << steerInfo.acceleration << " "
+       << "rot: " << std::setw(4) << steerInfo.rotation << " "
+       << "weapon: " << steerInfo.weapon << " "
+       << "fire: " << steerInfo.fire;
+    return os;
+}

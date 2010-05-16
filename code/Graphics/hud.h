@@ -8,17 +8,17 @@
 class Widget
 {
   public:
-      Vec3f	pos;	/* !< ofcourse we'll only be using x and y */
+      Vec3f    pos;     /* !< ofcourse we'll only be using x and y */
       virtual void draw() {return;}
 };
 
 class Speedometer : public Widget
 {
-		public:
-				Agent *agent;
-				Speedometer(Vec3f, Agent *);
-				~Speedometer();
-				void draw();
+  public:
+    Agent *agent;
+    Speedometer(Vec3f, Agent *);
+    ~Speedometer();
+    void draw();
 };
 
 /* \brief Hud, heads up display class, this includes 2d graphics
@@ -26,13 +26,11 @@ class Speedometer : public Widget
  */
 class Hud
 {
-		public:
-				vector<Widget>	widget;		/* !< array of widgets */
-				Hud();
-				~Hud();
-
-				static Hud _instance;
-
-				static Hud &getInstance();
+  public:
+    vector<Widget>    widget;     /* !< array of widgets */
+    Hud();
+    ~Hud();
+    static Hud _instance;
+    static Hud &getInstance();
 };
 #endif

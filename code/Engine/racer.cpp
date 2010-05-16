@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 
         if (vm.count("network"))
         {
-            world.setRunType(vm["network"].as<string>().c_str()); 
+            world.setRunType(vm["network"].as<string>().c_str());
         }
         else
         {
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
     }
     srand(time(NULL));
 
-    if (world.runType == SOLO) 
+    if (world.runType == SOLO)
     {
         graphics.initGraphics();
         sound.initSound();
@@ -134,10 +134,10 @@ int main(int argc, char *argv[])
         }
         scheduler.clientLoopForever();
     }
-    if (world.runType == SERVER) 
+    if (world.runType == SERVER)
     {
         testSetup();
-        if (server.createHost() < 0) 
+        if (server.createHost() < 0)
         {
             cerr << "Fatal error:  Server could not be established" << endl;
             return -1;

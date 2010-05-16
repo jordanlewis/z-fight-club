@@ -66,7 +66,7 @@ class PlaneInfo : public GeomInfo
 //Packages info for a ray of length len
 class RayInfo : public GeomInfo
 {
- public: 
+ public:
     float len;
     RayInfo(float len);
     dGeomID createGeom(dSpaceID space);
@@ -90,13 +90,13 @@ class TriMeshInfo : public GeomInfo
 
 class ObjMeshInfo : public GeomInfo
 {
-    public:
-	OBJmodel	*model;		/* !< pointer to obj model */
-	ObjMeshInfo(std::string);
-	~ObjMeshInfo();
-	void load(char *filename);
-	dGeomID createGeom(dSpaceID space);
-	void createMass(dMass *, float);
-	void draw();
+  public:
+    OBJmodel    *model;
+    ObjMeshInfo(std::string);
+    ~ObjMeshInfo();
+    void load(char *filename);
+    dGeomID createGeom(dSpaceID space);
+    void createMass(dMass *, float);
+    void draw();
 };
 #endif

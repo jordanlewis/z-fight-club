@@ -7,6 +7,7 @@ Input Input::_instance;
 
 int Input::processInput()
 {
+    error->pin(P_INPUT);
     SDL_Event SDLevt;
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
@@ -16,6 +17,7 @@ int Input::processInput()
             case SDL_KEYDOWN:
                 switch (SDLevt.key.keysym.sym) {
                     case SDLK_q:
+                        error->pout(P_INPUT);
                         return 1;
                     case SDLK_LEFT:
                         player->setTurnState(LEFT); break;
@@ -25,10 +27,10 @@ int Input::processInput()
                         player->setEngineState(ACCELERATE); break;
                     case SDLK_DOWN:
                         player->setEngineState(REVERSE); break;
-		    case SDLK_TAB:
-			player->setWeaponState(CHANGE); break;
-		    case SDLK_f:
-			player->setWeaponState(FIRE); break;
+                    case SDLK_TAB:
+                        player->setWeaponState(CHANGE); break;
+                    case SDLK_f:
+                        player->setWeaponState(FIRE); break;
                     case SDLK_c:
                         World::getInstance().camera.cycleView(); break;
                     default: break;
@@ -36,39 +38,41 @@ int Input::processInput()
             case SDL_KEYUP:
                 switch (SDLevt.key.keysym.sym) {
                     case SDLK_LEFT:
-			if (keystate[SDLK_RIGHT]) {
-			    player->setTurnState(RIGHT);
-			    break;
-			}
+                        if (keystate[SDLK_RIGHT]) {
+                            player->setTurnState(RIGHT);
+                            break;
+                        }
                     case SDLK_RIGHT:
-			if (keystate[SDLK_LEFT]) {
-			    player->setTurnState(LEFT);
-			    break;
-			}
-			player->setTurnState(STRAIGHT);
-			break;
-		    case SDLK_UP:
-			if (keystate[SDLK_DOWN]) {
-			    player->setEngineState(REVERSE);
-			    break;
-			}
+                        if (keystate[SDLK_LEFT]) {
+                            player->setTurnState(LEFT);
+                            break;
+                        }
+                        player->setTurnState(STRAIGHT);
+                        break;
+                    case SDLK_UP:
+                        if (keystate[SDLK_DOWN]) {
+                            player->setEngineState(REVERSE);
+                            break;
+                        }
                     case SDLK_DOWN:
-			if (keystate[SDLK_UP]) {
-			    player->setEngineState(ACCELERATE); 
-			    break;
-			}
-			player->setEngineState(NEUTRAL);
-			break;
+                        if (keystate[SDLK_UP]) {
+                            player->setEngineState(ACCELERATE);
+                            break;
+                        }
+                        player->setEngineState(NEUTRAL);
+                        break;
                     default: break;
                 } break;
             case SDL_QUIT:
+                error->pout(P_INPUT);
                 return 1;
             default:
                 break;
         }
     }
     if (player)
-	player->updateAgent();
+        player->updateAgent();
+    error->pout(P_INPUT);
     return 0;
 }
 
@@ -87,7 +91,8 @@ Input &Input::getInstance()
     return _instance;
 }
 
-Input::Input()
+Input::Input() :
+    error(&Error::getInstance())
 {
     player = new PlayerController();
 }

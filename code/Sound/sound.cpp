@@ -1,34 +1,6 @@
 #include "sound.h"
-#include "Utilities/error.h"
 #include <boost/lexical_cast.hpp>
 #include <dirent.h>
-
-typedef struct {
-    char  riff[4]; // 'RIFF'
-    uint32_t riffSize;      // little
-    char  wave[4]; // 'WAVE'
-
-    char  fmt[4];  // 'fmt '
-    uint32_t fmtSize;       // little
-    uint16_t format;        // little
-    uint16_t channels;      // little
-    uint32_t samplesPerSec; // little
-    uint32_t bytesPerSec;   // little
-    uint16_t blockAlign;    // little
-    uint16_t bitsPerSample; // little
-
-    char  data[4]; // 'data'
-    uint32_t dataSize;      // little
-} BasicWAVEHeader;
-
-char* fileToData(FILE*, BasicWAVEHeader*);
-uint16_t swapends(uint16_t);
-uint32_t swapends(uint32_t);
-void DisplayALError(string, ALuint);
-int am_big_endian();
-int ends_with(string, string);
-ALuint dataToBuffer(char*, BasicWAVEHeader);
-ALuint filenameToBuffer(const string);
 
 sound_resource::sound_resource(ALuint buffer) : buffer(buffer)
 {
@@ -36,9 +8,10 @@ sound_resource::sound_resource(ALuint buffer) : buffer(buffer)
 
 Sound Sound::_instance;
 
-Sound::Sound()
+Sound::Sound() :
+    initialized(false),
+    error(&Error::getInstance())
 {
-    initialized = false;
 }
 
 Sound::~Sound()
@@ -57,8 +30,6 @@ void Sound::setDir(string dirname)
 
 void Sound::initSound()
 {
-    Error &error = Error::getInstance();
-
     if (base_sound_directory.empty())
     {
         return;
@@ -80,7 +51,7 @@ void Sound::initSound()
         ALuint buf = filenameToBuffer(base_sound_directory + *it);
         sound_resource *a = new sound_resource(buf);
         sound_library.insert(std::pair<const string, sound_resource*>(*it, a));
-        error.log(SOUND, TRIVIAL, "loaded sound from " + *it + " into buffer #" + boost::lexical_cast<string>(buf) + "\n");
+        error->log(SOUND, TRIVIAL, "loaded sound from " + *it + " into buffer #" + boost::lexical_cast<string>(buf) + "\n");
     }
     delete wav_filenames;
 
@@ -95,15 +66,14 @@ void Sound::registerListener(const Camera *c)
 
 void Sound::updateListener()
 {
-    Error &error = Error::getInstance();
     if (!initialized)
     {
-        error.log(SOUND, IMPORTANT, "Can't update listener, sound is not initialized\n");
+        error->log(SOUND, IMPORTANT, "Can't update listener, sound is not initialized\n");
         return;
     }
     if(!camera)
     {
-        error.log(SOUND, IMPORTANT, "Can't update listener, no listener is registered\n");
+        error->log(SOUND, IMPORTANT, "Can't update listener, no listener is registered\n");
         return;
     }
 
@@ -126,46 +96,45 @@ void Sound::updateListener()
 
 void Sound::render()
 {
-    Error &error = Error::getInstance();
+    error->pin(P_SOUND);
     if (!initialized)
     {
-        error.log(SOUND, IMPORTANT, "Can't render sounds, sound not initialized\n");
+        error->log(SOUND, IMPORTANT, "Can't render sounds, sound not initialized\n");
         return;
     }
 
     World *world = &World::getInstance();
 
     for (vector<WorldObject *>::iterator i = world->wobjects.begin();
-	 i != world->wobjects.end(); i++)
+         i != world->wobjects.end(); i++)
     {
         if (!(*i)->sobject) continue;
         (*i)->sobject->update(&(**i));
     }
 
     updateListener();
+    error->pout(P_SOUND);
 }
 
 void Sound::registerSource(WorldObject *w, SObject *s)
 {
-    Error &error = Error::getInstance();
-    error.log(SOUND, TRIVIAL, "registered source\n");
+    error->log(SOUND, TRIVIAL, "registered source\n");
     w->sobject = s;
 }
 
 vector<string> *Sound::get_wav_filenames()
 {
-    Error &error = Error::getInstance();
     vector<string> *wav_filenames = new vector<string>;
     struct dirent *dirent;
     DIR *dir;
     if (base_sound_directory.empty())
     {
-        error.log(SOUND, IMPORTANT, "No sound directory specified\n");
+        error->log(SOUND, IMPORTANT, "No sound directory specified\n");
         return NULL;
     }
     if ((dir = opendir(base_sound_directory.c_str())) == NULL)
     {
-        error.log(SOUND, CRITICAL, "Can't open " + base_sound_directory + "\n");
+        error->log(SOUND, CRITICAL, "Can't open " + base_sound_directory + "\n");
         return NULL;
     }
     while ((dirent = readdir(dir)))
@@ -177,7 +146,7 @@ vector<string> *Sound::get_wav_filenames()
     }
     if (closedir(dir) != 0)
     {
-        error.log(SOUND, CRITICAL, "Trouble closing " + base_sound_directory + "\n");
+        error->log(SOUND, CRITICAL, "Trouble closing " + base_sound_directory + "\n");
         return NULL;
     }
 
@@ -189,19 +158,17 @@ sound_resource *Sound::lookup(const string name)
     return sound_library[name];
 }
 
-ALuint filenameToBuffer(const string filename)
+ALuint Sound::filenameToBuffer(const string filename)
 {
-    Error &error = Error::getInstance();
-
-    if (filename.empty()) 
+    if (filename.empty())
     {
-        error.log(SOUND, CRITICAL, "Not passed a valid filename.\n");
+        error->log(SOUND, CRITICAL, "Not passed a valid filename.\n");
         exit(0);
     }
     FILE* file = fopen(filename.c_str(), "rb");
     if (!file)
     {
-        error.log(SOUND, CRITICAL, "Failed to open file: " + filename + ".\n");
+        error->log(SOUND, CRITICAL, "Failed to open file: " + filename + ".\n");
         exit(0);
     }
 
@@ -210,23 +177,23 @@ ALuint filenameToBuffer(const string filename)
     fclose(file);
     if (!data)
     {
-        error.log(SOUND, CRITICAL, "Failed to read file.\n");
+        error->log(SOUND, CRITICAL, "Failed to read file.\n");
         exit(0);
     }
     ALuint buffer = dataToBuffer(data, header);
     free(data);
     if (!buffer)
     {
-        error.log(SOUND, CRITICAL, "Failed to create buffer.\n");
+        error->log(SOUND, CRITICAL, "Failed to create buffer.\n");
         exit(0);
     }
     return buffer;
 }
 
-char* fileToData(FILE *file, BasicWAVEHeader* header)
+char* Sound::fileToData(FILE *file, BasicWAVEHeader* header)
 {
     char* buffer = NULL;
-  
+
     if (fread(header, sizeof(BasicWAVEHeader), 1, file))
     {
         header->riffSize = swapends(header->riffSize);
@@ -258,11 +225,11 @@ char* fileToData(FILE *file, BasicWAVEHeader* header)
     return NULL;
 }
 
-ALuint dataToBuffer(char* data, BasicWAVEHeader header)
+ALuint Sound::dataToBuffer(char* data, BasicWAVEHeader header)
 {
     int errno;
     ALuint buffer = 0;
-  
+
     ALuint format = 0;
     switch (header.bitsPerSample){
       case 8:
@@ -274,7 +241,7 @@ ALuint dataToBuffer(char* data, BasicWAVEHeader header)
       default:
         return 0;
     }
-  
+
     alGetError();
     alGenBuffers(1, &buffer);
     if ((errno = alGetError()) != AL_NO_ERROR)
@@ -295,7 +262,7 @@ ALuint dataToBuffer(char* data, BasicWAVEHeader header)
     return buffer;
 }
 
-uint16_t swapends(uint16_t u)
+uint16_t Sound::swapends(uint16_t u)
 {
     if (!am_big_endian()) return u;
     uint16_t v;
@@ -303,7 +270,7 @@ uint16_t swapends(uint16_t u)
     return v;
 }
 
-uint32_t swapends(uint32_t u)
+uint32_t Sound::swapends(uint32_t u)
 {
     if (!am_big_endian()) return u;
     unsigned char byte[4];
@@ -314,13 +281,12 @@ uint32_t swapends(uint32_t u)
     return (byte[0]<<24)+(byte[1]<<16)+(byte[2]<<8)+byte[3];
 }
 
-void DisplayALError(string msg, ALuint errno)
+void Sound::DisplayALError(string msg, ALuint errno)
 {
-    Error &error = Error::getInstance();
     const char *errMsg = NULL;
     switch (errno)
     {
-        case AL_NO_ERROR:     errMsg = "None"; 
+        case AL_NO_ERROR:     errMsg = "None";
                               break;
         case AL_INVALID_NAME: errMsg = "Invalid name.";
                               break;
@@ -334,16 +300,16 @@ void DisplayALError(string msg, ALuint errno)
         default:              errMsg = "Unknown error.";
                               break;
     }
-    error.log(SOUND, CRITICAL, msg + errMsg);
-} 
+    error->log(SOUND, CRITICAL, msg + errMsg);
+}
 
-int am_big_endian()
+int Sound::am_big_endian()
 {
     long one= 1;
     return !(*((char *)(&one)));
 }
 
-int ends_with(string a, string b)
+int Sound::ends_with(string a, string b)
 {
     int spot = a.rfind(b);
     return (spot+b.size() == a.size());

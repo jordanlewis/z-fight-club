@@ -5,7 +5,7 @@
 
 //#define EPSILON 2e-6 this gets defined in vector.h now
 
-// --------- Constructors --------- 
+// --------- Constructors ---------
 
 Vec3f::Vec3f()
 {
@@ -25,7 +25,7 @@ Vec3f::Vec3f(float x, float y, float z)
 
     if(abs(y) < EPSILON) this->y = 0;
     else this->y = y;
-    
+
     if(abs(z) < EPSILON) this->z = 0;
     else this->z = z;
 
@@ -41,7 +41,7 @@ Vec3f::Vec3f(const Vec3f_t &v)
 
     if(abs(v[1]) < EPSILON) this->y = 0;
     else this->y = v[1];
-    
+
     if(abs(v[2]) < EPSILON) this->z = 0;
     else this->z = v[2];
 }
@@ -54,12 +54,12 @@ void Vec3f::flatten()
 
     if(abs(y) < EPSILON) this->y = 0;
     else this->y = y;
-    
+
     if(abs(z) < EPSILON) this->z = 0;
     else this->z = z;
 }
 
-// --------- Addition --------- 
+// --------- Addition ---------
 
 Vec3f Vec3f::operator+(const Vec3f &o) const
 {
@@ -75,7 +75,7 @@ void Vec3f::operator+=(const Vec3f &o)
     flatten();
 }
 
-// --------- Subtraction --------- 
+// --------- Subtraction ---------
 
 Vec3f Vec3f::operator-(const Vec3f &o) const
 {
@@ -91,14 +91,14 @@ void Vec3f::operator-=(const Vec3f &o)
     flatten();
 }
 
-// --------- Cross Product --------- 
+// --------- Cross Product ---------
 
 Vec3f Vec3f::operator*(const Vec3f &o) const
 {
     return Vec3f( (y*o.z) - (z*o.y),
                   (z*o.x) - (x*o.z),
-		  (x*o.y) - (y*o.x)
-		);
+                  (x*o.y) - (y*o.x)
+                );
 }
 
 void Vec3f::operator*=(const Vec3f &o)
@@ -112,7 +112,7 @@ void Vec3f::operator*=(const Vec3f &o)
 
 }
 
-// --------- Scalar Multiplication --------- 
+// --------- Scalar Multiplication ---------
 
 Vec3f Vec3f::operator*(const float &o) const
 {
@@ -125,14 +125,14 @@ void Vec3f::operator*=(const float &o)
         x = y = z = 0;
     } else {
         x *= o;
-	y *= o;
-	z *= o;
+        y *= o;
+        z *= o;
 
-	flatten();
+        flatten();
     }
 }
 
-// --------- Scalar Division --------- 
+// --------- Scalar Division ---------
 
 Vec3f Vec3f::operator/(const float &o) const
 {
@@ -150,19 +150,19 @@ void Vec3f::operator/=(const float &o)
     x /= o;
     y /= o;
     z /= o;
-    
+
     flatten();
 }
 
-// --------- Negation --------- 
+// --------- Negation ---------
 
 Vec3f Vec3f::operator-() const
 {
     return Vec3f(-x,-y,-z);
 }
 
-// --------- Element Access --------- 
-    
+// --------- Element Access ---------
+
 float &Vec3f::operator[](int index)
 {
     switch(index%3) {
@@ -187,7 +187,7 @@ float Vec3f::operator[](int index) const
     }
 }
 
-// --------- Equality --------- 
+// --------- Equality ---------
 
 bool Vec3f::operator==(const Vec3f &o) const
 {
@@ -196,7 +196,7 @@ bool Vec3f::operator==(const Vec3f &o) const
             abs(z - o.z) < EPSILON);
 }
 
-// --------- Normalization --------- 
+// --------- Normalization ---------
 Vec3f Vec3f::unit() const
 {
     float len = length();
@@ -211,7 +211,7 @@ void Vec3f::normalize()
     z /= len;
 }
 
-// --------- Additional Functions --------- 
+// --------- Additional Functions ---------
 
 float Vec3f::length() const
 {
@@ -237,9 +237,9 @@ Vec3f Vec3f::perp() const
     /* check to see if this vector lies in the X-axis*/
     if (((*this) * u).length() < EPSILON)
     {
-	    return Vec3f(0.0, 1.0, 0.0);
+        return Vec3f(0.0, 1.0, 0.0);
     }
-    
+
     u -= u.project_onto(*this);
     u.normalize();
     return u;
@@ -264,7 +264,7 @@ Vec3f slerp(const Vec3f &v0, const Vec3f &v1, const float &t) {
     return (sin((1.0f - t) * theta) / sin(theta)) * v0 + (sin(t * theta) / sin(theta)) * v1;
 }
 
-// --------- Stream Output --------- 
+// --------- Stream Output ---------
 
 std::ostream &operator<<(std::ostream &os, const Vec3f &o)
 {
@@ -272,7 +272,7 @@ std::ostream &operator<<(std::ostream &os, const Vec3f &o)
     return os;
 }
 
-// --------- Scalar Multiplication --------- 
+// --------- Scalar Multiplication ---------
 
 Vec3f operator*(const float &s, const Vec3f &v)
 {
@@ -286,8 +286,8 @@ float *makeArray(const std::vector<Vec3f> array)
     float *verts = new float[3 * array.size()];
 
     for (i = 0; i < array.size(); i++)
-	for (j = 0; j < 3; j++)
-	    verts[i*3 + j] = array[i][j];
+        for (j = 0; j < 3; j++)
+            verts[i*3 + j] = array[i][j];
 
     return verts;
 }
@@ -299,8 +299,8 @@ float *makeArray(std::deque<Vec3f> array)
     float *verts = new float[3 * array.size()];
 
     for(deque<Vec3f>::iterator i = array.begin(); i != array.end(); i++)
-	for (j = 0; j < 3; j++)
-	    verts[distance(array.begin(), i) * 3 + j] = (*i)[j];
+        for (j = 0; j < 3; j++)
+            verts[distance(array.begin(), i) * 3 + j] = (*i)[j];
 
     return verts;
 }

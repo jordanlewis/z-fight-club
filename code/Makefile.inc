@@ -17,7 +17,7 @@ ifeq ($(OS),Darwin)
 
   # Gets libraries downloaded by MacPorts
   CFLAGS   += -I/opt/local/include
-  CXXFLAGS += -I/opt/local/include
+  CXXFLAGS += -I/opt/local/include -Wno-non-virtual-dtor
   LDFLAGS  += -L/opt/local/lib
 
 else

@@ -13,52 +13,55 @@ Physics Physics::_instance;
 
 void Physics::simulate(float dt)
 {
-    static float dtRemainder;
+    error->pin(P_PHYSICS);
+    static float timeStepRemainder;
     World &world = World::getInstance();
     vector<WorldObject *>::iterator iter;
     PAgent *p;
     Agent *a;
     int nSteps, i;
-    float nTimeSteps;
+    float desiredTimeSteps;
 
-    dt += dtRemainder * PH_TIMESTEP;
 
-    for (iter = world.wobjects.begin(); iter != world.wobjects.end(); iter++)
-    {
-        if (!(*iter)->agent)
-            continue;
-        a = (*iter)->agent;
-        p = dynamic_cast<PAgent *>(a->worldObject->pobject);
-        p->kinematicToOde();
-        p->steeringToOde();
-        useWeapons(a);
-    }
-    nTimeSteps = dt / PH_TIMESTEP;
-    nSteps = floorf(nTimeSteps);
-    dtRemainder = nTimeSteps - nSteps;
+    dt += timeStepRemainder * PH_TIMESTEP;
+
+    desiredTimeSteps = dt / PH_TIMESTEP;
+    nSteps = floorf(desiredTimeSteps);
+    timeStepRemainder = desiredTimeSteps - nSteps;
 
     for (i = 0; i < nSteps; i++)
     {
+        for (iter = world.wobjects.begin(); iter != world.wobjects.end();iter++)
+        {
+            if (!(*iter)->agent)
+                continue;
+            a = (*iter)->agent;
+            p = dynamic_cast<PAgent *>(a->worldObject->pobject);
+            p->kinematicToOde();
+            p->steeringToOde();
+            useWeapons(a);
+        }
+
         dSpaceCollide(odeSpace, this, &nearCallback);
         dWorldStep(odeWorld, PH_TIMESTEP);
         dJointGroupEmpty(odeContacts);
+
+        for (iter = world.wobjects.begin(); iter != world.wobjects.end();iter++)
+        {
+            if (!(*iter)->agent)
+                continue;
+            a = (*iter)->agent;
+            p = dynamic_cast<PAgent *>(a->worldObject->pobject);
+            const Kinematic &k = p->odeToKinematic();
+            a->setKinematic(k);
+            p->resetOdeAngularVelocity(nSteps);
+        }
     }
-
-
-    for (iter = world.wobjects.begin(); iter != world.wobjects.end(); iter++)
-    {
-        if (!(*iter)->agent)
-            continue;
-        a = (*iter)->agent;
-        p = dynamic_cast<PAgent *>(a->worldObject->pobject);
-        const Kinematic &k = p->odeToKinematic();
-        a->setKinematic(k);
-        p->resetOdeAngularVelocity(nSteps);
-    }
-
+    error->pout(P_PHYSICS);
 }
 
-Physics::Physics()
+Physics::Physics() :
+    error(&Error::getInstance())
 {
     dInitODE();
     odeWorld = dWorldCreate();
