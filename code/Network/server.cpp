@@ -111,7 +111,13 @@ int Server::attachPMoveable(Kinematic *kine, float mass, GeomInfo *info,
     enet_host_broadcast(enetServer, 0, packet);
     return 0;
 }
-/*
+
+/* Attaches an agent and corresponding pagent to netObj ID. 
+ * Assumes that all agents also want PAgents.  We'll modify this later if
+ * that turns out to be a bad assumption.  The mass argument is currently
+ * unused, as agents do not currently set their mass.  This can be patched in
+ * as needed.
+ */
 int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
                          float mass, GeomInfo *geomInfo, netObjID_t ID){
     WorldObject *obj = getNetObject(ID);
@@ -120,25 +126,35 @@ int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
             cout << "No net object to attach to!" << endl;
             return -1;
         }
-    //Attach the PAgent locally
-    PMoveable *pmoveable = new PMoveable(kine, mass, info, 
-                                         Physics::getInstance().getOdeSpace());
-    obj->pobject = pmoveable;
-    pmoveable->worldObject = obj;
+    //Attach the Agent locally
+    Agent *agent = new Agent();
+    agent->setSteering(*steerInfo);
+    agent->setKinematic(*kine);
 
-    //Tell networked agents to attach the PAgent
-    struct RPAttachPMoveable toSend;
-    toSend.ID = RP_ATTACH_PMOVEABLE;
-    info->hton(&(toSend.info));
-    kine->hton(&(toSend.kine));
-    toSend.mass = htonf(mass);
+    obj->agent = agent;
+
+    PAgent *pagent = new PAgent(&(agent->getKinematic()),
+                                &(agent->getSteering()), mass, geomInfo,
+                                Physics::getInstance().getOdeSpace());
+
+    obj->pobject = pagent;
+    pagent->worldObject = obj;
     
-    ENetPacket *packet = makeRacerPacket(RP_ATTACH_PMOVEABLE, &toSend,
-                                         sizeof(RPAttachPMoveable));
+    //Tell networked agents to attach the PAgent
+    struct RPAttachAgent toSend;
+    toSend.ID = RP_ATTACH_AGENT;
+
+    geomInfo->hton(&(toSend.info));
+    agent->hton(&(toSend.agent));
+    
+    ENetPacket *packet = makeRacerPacket(RP_ATTACH_AGENT, &toSend,
+                                         sizeof(RPAttachAgent));
     enet_host_broadcast(enetServer, 0, packet);
+    
     return 0;
 }
-*/
+
+
 Server &Server::getInstance()
 {
     return _instance;

@@ -57,6 +57,13 @@ struct RPKinematic{
     uint32_t orientation;
 };
 
+struct RPAgent{
+    //uint32_t agentID;
+    uint32_t mass, power, maxRotate, height, width, depth;
+    RPSteerInfo steerInfo;
+    RPKinematic kinematic;
+};
+
 struct RPUpdateAgent {
     netObjID_t ID;
     RPSteerInfo info;
@@ -79,14 +86,9 @@ struct RPAttachPMoveable{
 };
 
 struct RPAttachAgent {
-
-};
-
-struct RPAgent{
-    //uint32_t agentID;
-    uint32_t mass, power, maxRotate, height, width, depth;
-    RPSteerInfo steerInfo;
-    RPKinematic kinematic;
+    netObjID_t ID;
+    RPGeomInfo info;
+    RPAgent agent;
 };
 
 /*

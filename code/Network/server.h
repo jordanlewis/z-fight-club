@@ -47,11 +47,13 @@ class Server {
     int attachPGeom(GeomInfo *info, netObjID_t ID); 
     int attachPMoveable(Kinematic *kine, float mass, GeomInfo *info,
                         netObjID_t ID);
-    /*int attachAgent(Kinematic *kine, SteerInfo *steerInfo, 
-                     float mass, GeomInfo *geomInfo, netObjID_t ID);
-    */
+    
+    /* attachAgent:  Assumes all Agents also want a PAgent.  Currently 
+     * ignores mass argument.  See server.cpp for more details */ 
+    int attachAgent(Kinematic *kine, SteerInfo *steerInfo, 
+                    float mass, GeomInfo *geomInfo, netObjID_t ID); 
+    
 
-    int attachPGeom(GeomInfo *info, netObjID_t ID);
     void updateFromClient(uint8_t clientId); //NYI (call within serverFrame)
 
     /* Member Functions */
