@@ -1,5 +1,6 @@
 #include "error.h"
 #include "defs.h"
+#include "stdio.h"
 #include <iostream>
 #include <ostream>
 
