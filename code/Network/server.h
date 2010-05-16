@@ -28,6 +28,7 @@ class Server {
     int maxConns;
     float dt;
     unsigned char pingclock;
+    World *world;
     Error *error;
 
  public:

@@ -12,6 +12,7 @@ Server Server::_instance;
 Server::Server() :
     maxConns(DEFAULT_MAX_SERVER_CONNECTIONS),
     pingclock(0),
+    world(&World::getInstance()),
     error(&Error::getInstance())
 {
     enetAddress.host = htonl(ENET_HOST_ANY);
@@ -201,6 +202,15 @@ void Server::gatherPlayers()
                     enet_packet_destroy(event.packet);
                     if (pt == RP_START)
                     {
+                        netObjID_t netID;
+                        if (createNetObj(netID) != 0)
+                        {
+                            error->log(NETWORK, CRITICAL, "failed to create network object\n");
+                        }
+                        Agent *agent = world->placeAgent(world->numAgents());
+                        BoxInfo box = BoxInfo(agent->width, agent->height, agent->depth);
+                        attachAgent(&agent->getKinematic(), &agent->getSteering(), agent->mass, &box, netID);
+                        delete agent;
                         return;
                     }
                   }
@@ -227,10 +237,6 @@ void Server::gatherPlayers()
                     else {
                         error->log(NETWORK, IMPORTANT, "Cannot accomodate more clients");
                     }
-                    //Place client's agent;
-                    Vec3f pos = Vec3f(82,5,28);
-                    Agent *agent = new Agent(pos,M_PI/2);
-                    World::getInstance().addAgent(agent);
                     break;
                   }
                 case ENET_EVENT_TYPE_DISCONNECT:  //NYI
