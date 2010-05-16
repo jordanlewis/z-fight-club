@@ -3,11 +3,18 @@
 
 #include <ode/ode.h>
 #include "Utilities/vector.h"
-#include "Utilities/load-png.h"
 #include <string>
 extern "C" {
     #include "Parser/obj-reader.h"
+    #include "Utilities/load-png.h"
 }
+
+typedef enum {
+    COLOR_TEX = 0, 
+    BUMP_TEX,
+    SPEC_TEX,
+    NUM_TEXS
+} Texids_t;
 
 struct RPAttachPGeom;
 
@@ -91,7 +98,10 @@ class TriMeshInfo : public GeomInfo
 class ObjMeshInfo : public GeomInfo
 {
     public:
-	OBJmodel	*model;		/* !< pointer to obj model */
+	OBJmodel	*model;			/* !< pointer to obj model */
+	std::string		path;			/* !< path to model folder */
+	GLuint		texIDs[NUM_TEXS];	/* !< texture identifiers */
+	Image2D_t	*texs[NUM_TEXS];	/* image maps */
 	ObjMeshInfo(std::string);
 	~ObjMeshInfo();
 	void load(char *filename);

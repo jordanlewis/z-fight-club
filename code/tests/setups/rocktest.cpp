@@ -14,7 +14,7 @@ void testSetup()
 
     Vec3f pos = Vec3f(40.0, 10.0, 8.0);
 
-    ObjMeshInfo *mesh = new ObjMeshInfo("rock/rock.obj");
+    ObjMeshInfo *mesh = new ObjMeshInfo("rock/");
     Kinematic *k = new Kinematic(pos, Vec3f(0,0,0), M_PI/2);
     PMoveable *geom = new PMoveable(k, 10, mesh);
     GObject *gobj = new GObject(mesh);
