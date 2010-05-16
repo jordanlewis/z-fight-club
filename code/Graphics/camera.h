@@ -2,6 +2,7 @@
 #define CAMERA_H
 
 #include "Utilities/vec3f.h"
+#include "Utilities/error.h"
 #include "Agents/agent.h"
 
 typedef enum {
@@ -31,6 +32,7 @@ class Camera {
 
     float zNear,
           zFar;
+    Error *error;
   public:
     Camera();
     Camera(CameraMode_t, Agent *);

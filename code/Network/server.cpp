@@ -9,8 +9,10 @@
 
 Server Server::_instance;
 
-Server::Server()
-    : maxConns(DEFAULT_MAX_SERVER_CONNECTIONS), pingclock(0)
+Server::Server() :
+    maxConns(DEFAULT_MAX_SERVER_CONNECTIONS),
+    pingclock(0),
+    error(&Error::getInstance())
 {
     enetAddress.host = htonl(ENET_HOST_ANY);
     enetAddress.port = DEFAULT_NETWORK_PORT;
@@ -49,8 +51,7 @@ int Server::createNetObj(netObjID_t &ID) {
     }
     else
     {
-        Error& error = Error::getInstance();
-        error.log(NETWORK, IMPORTANT, "Cannot accomodate more clients\n");
+        error->log(NETWORK, IMPORTANT, "Cannot accomodate more clients\n");
         return -1;
     }
 
@@ -95,8 +96,7 @@ int Server::createHost()
 
     if (enetServer == NULL)
         {
-            Error& error = Error::getInstance();
-            error.log(NETWORK, IMPORTANT, "ENet could not initialize server\n");
+            error->log(NETWORK, IMPORTANT, "ENet could not initialize server\n");
             return -1;
         }
     return 0;
@@ -114,7 +114,6 @@ void Server::setServerPort(uint16_t port){
 
 void Server::gatherPlayers()
 {
-    Error& error = Error::getInstance();
     while(1)
     {
         ENetEvent event;
@@ -127,7 +126,7 @@ void Server::gatherPlayers()
                     break;
                 case ENET_EVENT_TYPE_RECEIVE:
                   {
-                    error.log(NETWORK, IMPORTANT, "Packet Received\n");
+                    error->log(NETWORK, IMPORTANT, "Packet Received\n");
                     racerPacketType_t pt = getRacerPacketType(event.packet);
                     enet_packet_destroy(event.packet);
                     if (pt == RP_START)
@@ -138,7 +137,7 @@ void Server::gatherPlayers()
                     break;
                 case ENET_EVENT_TYPE_CONNECT:
                   {
-                    error.log(NETWORK, IMPORTANT, "New client connected!");
+                    error->log(NETWORK, IMPORTANT, "New client connected!");
                     ClientInfo client;
                     int successFlag = 0;
                     client.ipAddr = event.peer->address.host;
@@ -156,7 +155,7 @@ void Server::gatherPlayers()
                         clients[client.identifier] = client;
                     }
                     else {
-                        error.log(NETWORK, IMPORTANT, "Cannot accomodate more clients");
+                        error->log(NETWORK, IMPORTANT, "Cannot accomodate more clients");
                     }
                     //Place client's agent;
                     Vec3f pos = Vec3f(82,5,28);
@@ -165,7 +164,7 @@ void Server::gatherPlayers()
                     break;
                   }
                 case ENET_EVENT_TYPE_DISCONNECT:  //NYI
-                    error.log(NETWORK, IMPORTANT, "Client disconnecting during startup");
+                    error->log(NETWORK, IMPORTANT, "Client disconnecting during startup");
                     break;
             } // end switch
         } // end if
@@ -208,8 +207,7 @@ ENetPacket *Server::packageObject(netObjID_t objID){
 
 //General loop structure taken from the tutorial on enet.bespin.org
 void Server::serverFrame(){
-    Error& error = Error::getInstance();
-    error.pin(P_SERVER);
+    error->pin(P_SERVER);
     ENetEvent event;
     usleep(10000);
     racerPacketType_t type;
@@ -257,7 +255,7 @@ void Server::serverFrame(){
                 }
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:  //NYI
-                error.log(NETWORK, IMPORTANT, "Client disconnecting");
+                error->log(NETWORK, IMPORTANT, "Client disconnecting");
                 // we should figure out who, and do something about their agent?
                 // for now, they'll just slow down and become an obstacle
                 // and we'll continue trying to send them updates, unless
@@ -266,5 +264,5 @@ void Server::serverFrame(){
                 break;
         }
     }
-    error.pout(P_SERVER);
+    error->pout(P_SERVER);
 }

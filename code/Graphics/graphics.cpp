@@ -2,7 +2,6 @@
 #include "Engine/world.h"
 #include "Physics/physics.h"
 #include "Utilities/vector.h"
-#include "Utilities/error.h"
 #include "Agents/ai.h"
 #include "hud.h"
 #include <SDL/SDL.h>
@@ -24,7 +23,8 @@ extern "C" {
 
 Graphics Graphics::_instance;
 
-Graphics::Graphics()
+Graphics::Graphics() :
+    error(&Error::getInstance())
 {
     initialized = false;
 }
@@ -88,11 +88,9 @@ void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
 
 void Graphics::render()
 {
-    Error& error = Error::getInstance();
-    error.pin(P_GRAPHICS);
+    error->pin(P_GRAPHICS);
     if (!initialized) {
-        Error& error = Error::getInstance();
-        error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+        error->log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
         exit(0);
     }
 
@@ -169,14 +167,13 @@ void Graphics::render()
     render(&hud);
 
     glPopMatrix();
-    error.pout(P_GRAPHICS);
+    error->pout(P_GRAPHICS);
 }
 
 void Graphics::render(Agent * agent)
 {
     if (!initialized) {
-        Error& error = Error::getInstance();
-        error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+        error->log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
         exit(0);
     }
 
@@ -201,8 +198,7 @@ void Graphics::render(Agent * agent)
 void Graphics::render(AIController *aiController)
 {
     if (!initialized) {
-        Error& error = Error::getInstance();
-        error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+        error->log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
         exit(0);
     }
 
@@ -215,8 +211,7 @@ void Graphics::render(AIController *aiController)
 void Graphics::render(TrackData_t *track)
 {
     if (!initialized) {
-        Error& error = Error::getInstance();
-        error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+        error->log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
         exit(0);
     }
 
@@ -292,8 +287,7 @@ void Graphics::render(Hud *hud)
 void Graphics::render(std::vector<Vec3f> path)
 {
     if (!initialized) {
-        Error& error = Error::getInstance();
-        error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+        error->log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
         exit(0);
     }
 
@@ -310,8 +304,7 @@ void Graphics::render(std::vector<Vec3f> path)
 void Graphics::render(std::deque<Vec3f> path)
 {
     if (!initialized) {
-        Error& error = Error::getInstance();
-        error.log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
+        error->log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
         exit(0);
     }
 

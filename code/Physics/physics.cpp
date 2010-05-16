@@ -13,8 +13,7 @@ Physics Physics::_instance;
 
 void Physics::simulate(float dt)
 {
-    Error& error = Error::getInstance();
-    error.pin(P_PHYSICS);
+    error->pin(P_PHYSICS);
     static float timeStepRemainder;
     World &world = World::getInstance();
     vector<WorldObject *>::iterator iter;
@@ -58,12 +57,11 @@ void Physics::simulate(float dt)
             p->resetOdeAngularVelocity(nSteps);
         }
     }
-
-
-    error.pout(P_PHYSICS);
+    error->pout(P_PHYSICS);
 }
 
-Physics::Physics()
+Physics::Physics() :
+    error(&Error::getInstance())
 {
     dInitODE();
     odeWorld = dWorldCreate();

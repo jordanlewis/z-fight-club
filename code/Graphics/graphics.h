@@ -4,6 +4,7 @@
 #include "Agents/agent.h"
 #include "Agents/ai.h"
 #include "Utilities/vec3f.h"
+#include "Utilities/error.h"
 #include "hud.h"
 #include "color.h"
 #include <vector>
@@ -31,6 +32,7 @@ class Graphics
      *         This exists for debugging purposes, particularly problems with matrix transformations
      */
     void DrawCube(Vec3f);
+    Error *error;
 
   public:
     void initGraphics();

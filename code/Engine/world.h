@@ -14,6 +14,7 @@ using namespace std;
 #include "Graphics/polygon.h"
 #include "Sound/sobject.h"
 #include "Parser/track-parser.h"
+#include "Utilities/error.h"
 
 class PGeom;
 class SObject;
@@ -61,6 +62,7 @@ class World
     World& operator=(const World&);
 
     static World _instance;
+    Error *error;
   public:
     int PlayerQty;
     int AIQty;

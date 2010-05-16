@@ -5,7 +5,8 @@
 
 Client Client::_instance;
 
-Client::Client()
+Client::Client() :
+    error(&Error::getInstance())
 {
     enetClient = enet_host_create(NULL, 1, 0, 0);
 
@@ -83,8 +84,7 @@ int Client::connectToServer()
 
 void Client::updateFromServer()
 {
-    Error& error = Error::getInstance();
-    error.pin(P_CLIENT);
+    error->pin(P_CLIENT);
     ENetEvent event;
     racerPacketType_t type;
     void * payload;
@@ -109,7 +109,7 @@ void Client::updateFromServer()
                         netobjs[ntohl(info.ID)] = wobject;
                         string msg = "Created netobj # ";
                         msg += boost::lexical_cast<string>(htonl(info.ID)) + "\n";
-                        error.log(NETWORK, TRIVIAL, msg);
+                        error->log(NETWORK, TRIVIAL, msg);
 
                         break;
                     }
@@ -124,7 +124,7 @@ void Client::updateFromServer()
         default: break;
         }
     }
-    error.pout(P_CLIENT);
+    error->pout(P_CLIENT);
 }
 
 void Client::sendStartRequest()

@@ -4,7 +4,6 @@
 #include "scheduler.h"
 #include "world.h"
 #include "input.h"
-#include "Utilities/error.h"
 #include "Utilities/defs.h"
 #include "Agents/ai.h"
 

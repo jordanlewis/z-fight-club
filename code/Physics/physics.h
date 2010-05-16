@@ -7,6 +7,7 @@
 #include <cmath>
 #include <iostream>
 #include "Utilities/vector.h"
+#include "Utilities/error.h"
 #include "Engine/world.h"
 #include "Agents/agent.h"
 #include "pobject.h"
@@ -30,6 +31,7 @@ class Physics
     Physics(const Physics&);
     Physics &operator=(const Physics&);
     inline void simulateStep();
+    Error *error;
   public:
     const dWorldID & getOdeWorld() { return odeWorld; };
     const dSpaceID & getOdeSpace() { return odeSpace; };

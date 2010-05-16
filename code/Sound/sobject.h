@@ -3,6 +3,7 @@
 
 #include "sound.h"
 #include "Engine/world.h"
+#include "Utilities/error.h"
 #include <iostream>
 #include <string>
 using namespace std;
@@ -32,6 +33,7 @@ class SObject
     ALint loop;         // whether to loop or not
     bool playing;       // whether it's playing right now
     ALfloat duration;
+    Error *error;
     // could have lots of other data, like whether to fade in, out, etc.
     ~SObject();
   public:

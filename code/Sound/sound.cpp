@@ -1,5 +1,4 @@
 #include "sound.h"
-#include "Utilities/error.h"
 #include <boost/lexical_cast.hpp>
 #include <dirent.h>
 

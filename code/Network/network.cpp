@@ -17,7 +17,7 @@ int networkInit()
 }
 
 int setPort(int port){
-    Error &error = Error::getInstance();
+    static Error &error = Error::getInstance();
 
     if (port <= 0)
         {
@@ -51,7 +51,7 @@ int setPort(int port){
 }
 
 int setAddr(const char *addr) {
-    Error &error = Error::getInstance();
+    static Error &error = Error::getInstance();
     in_addr address;
 
     //Convert our address into an integer

@@ -7,7 +7,6 @@
 #include "Engine/input.h"
 #include "agent.h"
 #include "Engine/world.h"
-#include "Utilities/error.h"
 #include "Parser/track-parser.h"
 #include "Utilities/defs.h"
 
@@ -146,7 +145,6 @@ void AIController::smartGo(const Vec3f target)
 {
     Vec3f dir;
     SteerInfo s;
-    Error& error = Error::getInstance();
 
     Kinematic k = agent->getKinematic();
     dir = target - agent->kinematic.pos;
@@ -169,17 +167,17 @@ void AIController::smartGo(const Vec3f target)
     {
         if (angle < M_PI / 10)
         {
-            error.log(AI, TRIVIAL, "AI: basic forward movement\n");
+            error->log(AI, TRIVIAL, "AI: basic forward movement\n");
             go = 1;
         }
         else if (angle < 7 * M_PI / 8)
         {
-            error.log(AI, TRIVIAL, "AI: sharp turn\n");
+            error->log(AI, TRIVIAL, "AI: sharp turn\n");
             go = -1;
         }
         else
         {
-            error.log(AI, TRIVIAL, "AI: reverse movement\n");
+            error->log(AI, TRIVIAL, "AI: reverse movement\n");
             align(atan2(dir[0], dir[2]) + M_PI);
             s = agent->getSteering();
             go = -1;
@@ -191,7 +189,7 @@ void AIController::smartGo(const Vec3f target)
         {
             if (distance < 5)
             {
-                error.log(AI, TRIVIAL, "AI: backing in\n");
+                error->log(AI, TRIVIAL, "AI: backing in\n");
                 align(atan2(dir[0], dir[2]) + M_PI);
                 s = agent->getSteering();
                 go = -1;
@@ -199,12 +197,12 @@ void AIController::smartGo(const Vec3f target)
             else
             {
                 go = 1;
-                error.log(AI, TRIVIAL, "AI: turning around\n");
+                error->log(AI, TRIVIAL, "AI: turning around\n");
             }
         }
         else
         {
-            error.log(AI, TRIVIAL, "AI: speed up\n");
+            error->log(AI, TRIVIAL, "AI: speed up\n");
             go = 1;
         }
     }
@@ -212,7 +210,8 @@ void AIController::smartGo(const Vec3f target)
     agent->setSteering(s);
 }
 
-AIController::AIController(Agent *agent)
+AIController::AIController(Agent *agent) :
+    error(&Error::getInstance())
 {
     path = Path();
     obstacles = std::deque<Avoid>();
@@ -222,12 +221,11 @@ AIController::AIController(Agent *agent)
 void AIController::lane(int laneIndex)
 {
     int i, j;
-    Error& error = Error::getInstance();
     World &world = World::getInstance();
 
     /* check if this is a valid lane */
     if (laneIndex >= world.track->nLanes) {
-        error.log(AI, IMPORTANT, "AI: asked to join a lane index out of range\n");
+        error->log(AI, IMPORTANT, "AI: asked to join a lane index out of range\n");
         return;
     }
 
@@ -341,7 +339,9 @@ void AIController::run()
     seek(tgt, 20, 2); */
 }
 
-AIManager::AIManager() {}
+AIManager::AIManager() :
+    error(&Error::getInstance())
+{}
 
 AIManager::~AIManager() {}
 
@@ -369,13 +369,12 @@ void AIManager::release(Agent *agent)
 
 void AIManager::run()
 {
-    Error& error = Error::getInstance();
-    error.pin(P_AI);
+    error->pin(P_AI);
     for (unsigned int i = 0; i < controllers.size(); i++)
     {
         controllers[i]->run();
     }
-    error.pout(P_AI);
+    error->pout(P_AI);
 }
 
 AIManager &AIManager::getInstance()

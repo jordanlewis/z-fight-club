@@ -1,6 +1,4 @@
 #include "camera.h"
-#include "Utilities/vec3f.h"
-#include "Utilities/error.h"
 #include <SDL/SDL.h>
 
 #if defined (__APPLE__) && defined (__MACH__)
@@ -11,7 +9,8 @@
 #  include <GL/glu.h>
 #endif
 
-Camera::Camera()
+Camera::Camera() :
+    error(&Error::getInstance())
 {
     agent = NULL;
     mode = OVERHEAD;
@@ -66,7 +65,6 @@ void Camera::cycleView()
 
 void Camera::setProjectionMatrix()
 {
-    Error& error = Error::getInstance();
     SteerInfo s;
     float minfovy = 55.0;
     float maxfovy = 90;
@@ -98,7 +96,7 @@ void Camera::setProjectionMatrix()
             break;
         case FIRSTPERSON:
             if (agent == NULL) {
-                error.log(GRAPHICS, CRITICAL, "Agent in camera not set, but agent specific mode selected\n");
+                error->log(GRAPHICS, CRITICAL, "Agent in camera not set, but agent specific mode selected\n");
                 exit(0);
             }
             pos = agent->kinematic.pos;
@@ -107,7 +105,7 @@ void Camera::setProjectionMatrix()
             break;
         case THIRDPERSON:
             if (agent == NULL) {
-                error.log(GRAPHICS, CRITICAL, "Agent in camera not set, but agent specific mode selected\n");
+                error->log(GRAPHICS, CRITICAL, "Agent in camera not set, but agent specific mode selected\n");
                 exit(0);
             }
             pos = (agent->kinematic.pos - (5 * smooth_orientation) + Vec3f(0.0f, 3.0f, 0.0f));
@@ -142,7 +140,7 @@ void Camera::setProjectionMatrix()
             break;
         case BIRDSEYE:
             if (agent == NULL) {
-                error.log(GRAPHICS, CRITICAL, "Agent in camera not set, but agent specific mode selected\n");
+                error->log(GRAPHICS, CRITICAL, "Agent in camera not set, but agent specific mode selected\n");
                 exit(0);
             }
             pos = agent->kinematic.pos + Vec3f(0.0f, 30.0f, 0.0f);

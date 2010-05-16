@@ -4,6 +4,7 @@
 #include <vector>
 #include <deque>
 #include "Utilities/vec3f.h"
+#include "Utilities/error.h"
 #include "agent.h"
 
 /* \brief Class Path
@@ -54,6 +55,8 @@ class AIController
     void avoid(Vec3f&); /* !< add a new point to be avoided */
     void cruise();      /* !< follow path at maximum possible speed */
     void run();         /* !< Give new steering information to the agent we control */
+  private:
+    Error *error;
 };
 
 class AIManager
@@ -71,6 +74,8 @@ class AIManager
     void run(); /* !< Give new steering information to each agent under our control*/
 
     static AIManager &getInstance();
+  private:
+    Error *error;
 };
 
 

@@ -3,6 +3,7 @@
 
 #include "network.h"
 #include "Engine/world.h"
+#include "Utilities/error.h"
 
 //Client Class
 class Client {
@@ -21,6 +22,7 @@ class Client {
     ~Client();
 
     static Client _instance;
+    Error *error;
  public:
     /*  Member Functions  */
     static Client &getInstance();
