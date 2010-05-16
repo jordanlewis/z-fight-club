@@ -6,6 +6,7 @@
 Client Client::_instance;
 
 Client::Client() :
+    world(&World::getInstance()),
     error(&Error::getInstance())
 {
     enetClient = enet_host_create(NULL, 1, 0, 0);
@@ -115,7 +116,7 @@ void Client::updateFromServer()
                         string msg = "Created netobj # ";
                         msg += boost::lexical_cast<string>(htonl(info.ID)) + "\n";
                         error->log(NETWORK, TRIVIAL, msg);
-
+                        world->addObject(wobject);
                         break;
                     }
                 case RP_ATTACH_PGEOM:
@@ -138,6 +139,10 @@ void Client::updateFromServer()
                         agent->ntoh(&(info.agent));
                         wobject->agent = agent;
 
+                        ((BoxInfo*) geomInfo)->lx = 2;
+                        ((BoxInfo*) geomInfo)->ly = 2;
+                        ((BoxInfo*) geomInfo)->lz = 2;
+
                         PAgent *pagent = 
                             new PAgent(&(agent->getKinematic()),
                                        &(agent->getSteering()),
@@ -145,7 +150,16 @@ void Client::updateFromServer()
                                        geomInfo, 
                                        Physics::getInstance().getOdeSpace());
                         wobject->pobject = pagent;
+                        agent->worldObject = wobject;
                         pagent->worldObject = wobject;
+                        wobject->gobject = new GObject(geomInfo);
+
+                        /* if this is *our* agent
+                        camera = Camera(THIRDPERSON, agent);
+                        Sound::getInstance().registerListener(&camera);
+                        PlayerController *p = new PlayerController(agent);
+                        Input::getInstance().controlPlayer(p);
+                        */
 
                     }
                 default: break;

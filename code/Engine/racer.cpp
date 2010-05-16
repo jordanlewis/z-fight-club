@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
     {
         graphics.initGraphics();
         sound.initSound();
-        world.makeAgents();
+        // world.makeAgents();
         testSetup();
         if (client.connectToServer() < 0)
         {

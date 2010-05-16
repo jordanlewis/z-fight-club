@@ -22,6 +22,7 @@ class Client {
     ~Client();
 
     static Client _instance;
+    World *world;
     Error *error;
  public:
     /*  Member Functions  */
