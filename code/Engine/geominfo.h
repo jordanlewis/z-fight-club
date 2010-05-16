@@ -17,6 +17,17 @@ typedef enum {
 } Texids_t;
 
 struct RPAttachPGeom;
+struct RPGeomInfo;
+
+//Used in network transfer.
+typedef enum {
+    SPHERE,
+    BOX,
+    PLANE,
+    RAY,
+    TRIMESH,
+    OBJMESH
+} GeomInfoType_t;
 
 /* Stores info common to all geoms.  Cannot be constructed directly -- must be
    constructed by a child class */
@@ -28,8 +39,8 @@ class GeomInfo
     /*! \brief draw() simply render the appropriate shape for this geom type.
      * the caller will deal with position and orientation setup. */
     virtual void draw() {return;};
-    virtual void ntoh(RPAttachPGeom *payload) {return;};
-    virtual void hton(RPAttachPGeom *payload) {return;};
+    virtual void ntoh(RPGeomInfo *payload) {return;};
+    virtual void hton(RPGeomInfo *payload) {return;};
 };
 
 //Packages info for a Sphere of radius r
@@ -37,12 +48,13 @@ class SphereInfo : public GeomInfo
 {
  public:
     float radius;
+    SphereInfo(); //needed for networking
     SphereInfo(float radius);
     dGeomID createGeom(dSpaceID space);
     void createMass(dMass *, float);
     void draw();
-    void ntoh(RPAttachPGeom *payload);
-    void hton(RPAttachPGeom *payload);
+    void ntoh(RPGeomInfo *payload);
+    void hton(RPGeomInfo *payload);
 };
 
 //Packages info for a box of dimensions lx*ly*lz
@@ -50,12 +62,13 @@ class BoxInfo : public GeomInfo
 {
  public:
     float lx, ly, lz;
+    BoxInfo(); //needed for networking
     BoxInfo(float lx, float ly, float lz);
     dGeomID createGeom(dSpaceID space);
     void createMass(dMass *, float);
     void draw();
-    void ntoh(RPAttachPGeom *payload);
-    void hton(RPAttachPGeom *payload);
+    void ntoh(RPGeomInfo *payload);
+    void hton(RPGeomInfo *payload);
 };
 
 
@@ -64,16 +77,17 @@ class PlaneInfo : public GeomInfo
 {
  public:
     float a, b, c, d;
+    PlaneInfo(); //needed for networking
     PlaneInfo(float a, float b, float c, float d);
     dGeomID createGeom(dSpaceID space);
-    void ntoh(RPAttachPGeom *payload);
-    void hton(RPAttachPGeom *payload);
+    void ntoh(RPGeomInfo *payload);
+    void hton(RPGeomInfo *payload);
 };
 
 //Packages info for a ray of length len
 class RayInfo : public GeomInfo
 {
- public: 
+ public:
     float len;
     RayInfo(float len);
     dGeomID createGeom(dSpaceID space);
@@ -99,7 +113,7 @@ class ObjMeshInfo : public GeomInfo
 {
     public:
 	OBJmodel	*model;			/* !< pointer to obj model */
-	std::string		path;			/* !< path to model folder */
+	std::string	path;			/* !< path to model folder */
 	GLuint		texIDs[NUM_TEXS];	/* !< texture identifiers */
 	Image2D_t	*texs[NUM_TEXS];	/* image maps */
 	ObjMeshInfo(std::string);

@@ -2,6 +2,7 @@
 #define INPUT_H
 
 #include "Agents/player.h"
+#include "Utilities/error.h"
 
 class Input
 {
@@ -11,6 +12,7 @@ class Input
     Input(const Input&);
     Input &operator=(const Input&);
     PlayerController *player;
+    Error *error;
   public:
     static Input &getInstance();
     const PlayerController &getPlayerController() const;

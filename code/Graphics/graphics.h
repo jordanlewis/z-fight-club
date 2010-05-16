@@ -4,6 +4,7 @@
 #include "Agents/agent.h"
 #include "Agents/ai.h"
 #include "Utilities/vec3f.h"
+#include "Utilities/error.h"
 #include "hud.h"
 #include "color.h"
 #include <vector>
@@ -31,19 +32,20 @@ class Graphics
      *         This exists for debugging purposes, particularly problems with matrix transformations
      */
     void DrawCube(Vec3f);
-        
+    Error *error;
+
   public:
     void initGraphics();
-    void render();	
+    void render();
     void render(Agent * agent);
     void render(TrackData_t *track);
     void render(AIController *);
-		void render(Hud *);
+    void render(Hud *);
     void renderBoxPGeoms();
     void render(std::deque<Vec3f>);
     void render(std::vector<Vec3f>);
 
     static Graphics &getInstance();
 };
-    
+
 #endif

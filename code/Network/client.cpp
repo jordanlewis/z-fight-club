@@ -1,10 +1,12 @@
 #include "client.h"
 #include "racerpacket.h"
 #include <cassert>
+#include <boost/lexical_cast.hpp>
 
 Client Client::_instance;
 
-Client::Client() 
+Client::Client() :
+    error(&Error::getInstance())
 {
     enetClient = enet_host_create(NULL, 1, 0, 0);
 
@@ -12,7 +14,7 @@ Client::Client()
         {
             cerr << "Could not initialize client" << endl;
         }
-    
+
 }
 
 Client::~Client()
@@ -25,6 +27,11 @@ Client::~Client()
 Client &Client::getInstance()
 {
     return _instance;
+}
+
+//Should return null if no such element exists in our map.  Does not yet do so.
+WorldObject *Client::getNetObj(netObjID_t ID){
+    return netobjs[ID];
 }
 
 void Client::setServerAddr(uint32_t addr){
@@ -54,7 +61,7 @@ int Client::connectToServer()
 
     enetAddress.host = serverAddr;
     enetAddress.port = serverPort;
-    
+
     peer = enet_host_connect(enetClient, &enetAddress, 1);
 
     if (peer == NULL)
@@ -65,11 +72,11 @@ int Client::connectToServer()
 
     //Wait up to 5 seconds to connect
     if (enet_host_service(enetClient, &event, 5000) > 0 &&
-	event.type == ENET_EVENT_TYPE_CONNECT)
+        event.type == ENET_EVENT_TYPE_CONNECT)
     {
             cout << "Client reports successful connection" << endl;
     }
-    else 
+    else
     {
             enet_peer_reset(peer);
             cout << "Connection failed." << endl;
@@ -80,14 +87,15 @@ int Client::connectToServer()
 
 }
 
-void Client::updateFromServer() {
-    
+void Client::updateFromServer()
+{
+    error->pin(P_CLIENT);
     ENetEvent event;
     racerPacketType_t type;
     void * payload;
 
     while(enet_host_service(enetClient, &event, 0) > 0) {
-        switch (event.type) 
+        switch (event.type)
         {
         case ENET_EVENT_TYPE_CONNECT:
             cerr << "Connection event?  How did that happen?" << endl;
@@ -98,16 +106,51 @@ void Client::updateFromServer() {
             switch(type)
             {
                 case RP_PING:
-                    cerr << "pong" << endl;
                     break;
                 case RP_CREATE_NET_OBJ:
                     {
                         RPCreateNetObj info = *(RPCreateNetObj *)payload;
                         WorldObject *wobject = new WorldObject(NULL, NULL, NULL, NULL);
                         netobjs[ntohl(info.ID)] = wobject;
-                        cout << "Created netobj # " << htonl(info.ID) << endl;
+                        string msg = "Created netobj # ";
+                        msg += boost::lexical_cast<string>(htonl(info.ID)) + "\n";
+                        error->log(NETWORK, TRIVIAL, msg);
+
                         break;
-                    } 
+                    }
+                case RP_ATTACH_PGEOM:
+                    {
+                        RPAttachPGeom info = *(RPAttachPGeom *)payload;
+                        
+                        GeomInfo *geomInfo;
+                        
+                        //Only one of these will actually be used.
+                        SphereInfo sphereInfo;
+                        BoxInfo boxInfo;
+                        PlaneInfo planeInfo;
+                        
+                        switch (info.info.type) {
+                        case SPHERE: 
+                            sphereInfo.ntoh(&(info.info));
+                            geomInfo = &sphereInfo;
+                            break;
+                        case BOX:
+                            boxInfo.ntoh(&(info.info));
+                            geomInfo = &boxInfo;
+                            break;
+                        case PLANE:
+                            planeInfo.ntoh(&(info.info));
+                            geomInfo = &planeInfo;
+                            break;
+                        default: break;
+                        }
+
+                        WorldObject *wobject = getNetObj(info.ID);
+                        PGeom *geom = new PGeom(geomInfo, Physics::getInstance().getOdeSpace());
+                        wobject->pobject = geom;
+                        geom->worldObject = wobject;
+                    }
+
                 default: break;
             }
             break;
@@ -119,7 +162,7 @@ void Client::updateFromServer() {
         default: break;
         }
     }
-
+    error->pout(P_CLIENT);
 }
 
 void Client::sendStartRequest()
@@ -148,7 +191,7 @@ void Client::pushToServer(){
             RPUpdateAgent payload;
             payload.ID = 0xdeadbeef; /* iter->first */
             SteerInfo steerInfo = wo->agent->getSteering();
-            steerInfo.hton(&payload);
+            steerInfo.hton(&(payload.info));
             ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
                                                  &payload, sizeof(payload));
             enet_peer_send(peer, 0, packet);

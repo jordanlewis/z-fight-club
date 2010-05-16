@@ -189,7 +189,7 @@ static inline void SubV2f (const Vec2f_t u, const Vec2f_t v, Vec2f_t dst)
  *  \param s the scaling factor
  *  \param v an argument vector
  *  \param dst the result vector
- * 
+ *
  *  sets the vector \a dst to \a u + \a s * \a v
  */
 static inline void ScaledAddV2f (const Vec2f_t u, const float s, const Vec2f_t v, Vec2f_t dst)
@@ -321,7 +321,7 @@ static inline void AddV3f (Vec3f_t u, Vec3f_t v, Vec3f_t dst)
  *  \param s the scaling factor
  *  \param v an argument vector
  *  \param dst the result vector
- * 
+ *
  *  sets the vector \a dst to \a u + \a s * \a v
  */
 static inline void ScaledAddV3f (Vec3f_t u, float s, Vec3f_t v, Vec3f_t dst)
@@ -350,7 +350,7 @@ static inline void SubV3f (const Vec3f_t u, const Vec3f_t v, Vec3f_t dst)
  *  \param s the scaling factor
  *  \param v an argument vector
  *  \param dst the result vector
- * 
+ *
  *  sets the vector \a dst to (1-t)*\a u + \a t * \a v
  */
 static inline void LerpV3f (Vec3f_t u, float t, Vec3f_t v, Vec3f_t dst)
@@ -364,7 +364,7 @@ static inline void LerpV3f (Vec3f_t u, float t, Vec3f_t v, Vec3f_t dst)
  *  \param v1 an argument vector
  *  \param v2 an argument vector
  *  \param dst the result vector
- * 
+ *
  *  sets the vector \a dst to the cross product of \a v1 and \a v2.
  */
 static inline void CrossV3f (Vec3f_t v1, Vec3f_t v2, Vec3f_t dst)
@@ -442,7 +442,7 @@ static float ranf ()
 }
 
 //! \brief generate a random unit vector.
-//  \param v this output parameter will hold the random vector. 
+//  \param v this output parameter will hold the random vector.
 static inline void RandVec (Vec3f_t v)
 {
     do {

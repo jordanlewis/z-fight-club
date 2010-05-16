@@ -2,7 +2,7 @@
 
 /* Call once per physics update.  Checks to see if an agents is using weapons.
  * If so, perform the physically appropriate action.
- */ 
+ */
 void useWeapons(Agent *agent){
     SteerInfo info = agent->getSteering();
     if (info.fire == 1) {

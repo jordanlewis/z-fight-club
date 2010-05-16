@@ -4,10 +4,11 @@
 #include "Utilities/vec3f.h"
 #include "kinematic.h"
 #include "constants.h"
-struct RPUpdateAgent;
+struct RPSteerInfo;
 #include <vector>
 #include <list>
 #include <iostream>
+#include <stdint.h>
 
 using namespace std;
 
@@ -26,14 +27,20 @@ class SteerInfo
     Weapon_t weapon;
     int fire;
     SteerInfo();
-    void hton(RPUpdateAgent*);
+    void hton(RPSteerInfo *);
+    void ntoh(const RPSteerInfo *);
 };
- 
+
+//! \brief Writes this SteerInfo to the given output stream.
+//         This will be used for debugging.
+std::ostream &operator<<(std::ostream&, const SteerInfo&);
+
 class WorldObject;
+struct RPAgent;
 
 class Agent
 {
-    static unsigned int maxId; /* !<highest id number we've reached */
+    static uint32_t maxId; /* !<highest id number we've reached */
 
   public:
     SteerInfo steerInfo;   /* !<car's steering info, set by AI/human */
@@ -52,6 +59,9 @@ class Agent
     Agent(Vec3f, float); /* Constructor; Initial position and orientation */
 
     float getMaxAccel(); /* Calculate the current max acceleration */
+
+    void hton(RPAgent *payload); /* Package the agent for network transfer */
+    void ntoh(RPAgent *payload); /* Unpackage an agent from network transfer */
 
     /* The below method is the interface between the generic agent
      * implemented in agent.c and the two types of agent controllers - AI

@@ -21,10 +21,10 @@ Speedometer::~Speedometer()
 
 void Speedometer::draw()
 {
-		glBegin(GL_LINES);
-		glVertex2f(0.0f, 0.0f);
-		glVertex2f(350.0f, 350.0f);
-		glEnd();
+    glBegin(GL_LINES);
+    glVertex2f(0.0f, 0.0f);
+    glVertex2f(350.0f, 350.0f);
+    glEnd();
 }
 
 Hud Hud::_instance;
@@ -37,5 +37,5 @@ Hud::~Hud()
 
 Hud &Hud::getInstance()
 {
-		return _instance;
+    return _instance;
 }
