@@ -18,13 +18,6 @@ extern "C" {
     #include "Utilities/load-png.h"
 }
 
-typedef enum {
-    COLOR_TEX = 0,
-    BUMP_TEX,
-    SPEC_TEX,
-    NUM_TEXS
-} Texids_t;
-
 /* Credit to ODE's drawstuff library */
 void BoxInfo::draw()
 {
@@ -83,14 +76,13 @@ void ObjMeshInfo::draw()
     UseProgram(obj_shader);
 
     /* Initialize the textures */
-    /* glGenTextures(3, texIDs);
+    glGenTextures(3, texIDs);
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texIDs[COLOR_TEX]);
     GLint color_tex = UniformLocation(obj_shader, "color_tex");
     glUniform1i(color_tex, texIDs[COLOR_TEX]);
-    Image2D_t *color = LoadImage(DATA_WALL_COLOR, false, RGB_IMAGE);
-    TexImage(color);
+    TexImage(texs[COLOR_TEX]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -98,25 +90,23 @@ void ObjMeshInfo::draw()
 
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, texIDs[SPEC_TEX]);
-    GLint spec_tex = UniformLocation(wall_shader, "spec_tex");
+    GLint spec_tex = UniformLocation(obj_shader, "spec_tex");
     glUniform1i(spec_tex, texIDs[SPEC_TEX]);
-    Image2D_t *spec = LoadImage(DATA_WALL_SPEC, false, RGBA_IMAGE);
-    TexImage(spec);
+    TexImage(texs[SPEC_TEX]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D, texIDs[NORM_TEX]);
-    GLint bump_tex = UniformLocation(wall_shader, "bump_tex");
-    glUniform1i(bump_tex, texIDs[NORM_TEX]);
-    Image2D_t *bump = LoadImage(DATA_WALL_BUMP, false, RGB_IMAGE);
-    TexImage(bump);
+    glBindTexture(GL_TEXTURE_2D, texIDs[BUMP_TEX]);
+    GLint bump_tex = UniformLocation(obj_shader, "bump_tex");
+    glUniform1i(bump_tex, texIDs[BUMP_TEX]);
+    TexImage(texs[BUMP_TEX]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); */
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     /* draw the mesh */
     static uint32_t i;
