@@ -5,6 +5,7 @@
 #include "Engine/world.h"
 extern "C" {
     #include "Parser/obj-reader.h"
+    #include "Utilities/load-png.h"
 }
 
 BoxInfo::BoxInfo()
@@ -39,7 +40,11 @@ TriMeshInfo::TriMeshInfo(dTriMeshDataID meshID,
 ObjMeshInfo::ObjMeshInfo(std::string filename)
 {
     World &world = World::getInstance();
-    model = OBJReadOBJ((world.assetsDir + filename).c_str());
+    path = filename;
+    model = OBJReadOBJ((world.assetsDir + filename + std::string("model.obj")).c_str());
+    texs[COLOR_TEX] = LoadImage((world.assetsDir + filename + std::string("color.png")).c_str(), false, RGB_IMAGE);
+    texs[BUMP_TEX] = LoadImage((world.assetsDir + filename + std::string("bump.png")).c_str(), false, RGB_IMAGE);
+    texs[SPEC_TEX] = LoadImage((world.assetsDir + filename + std::string("spec.png")).c_str(), false, RGB_IMAGE);
 }
 
 dGeomID SphereInfo::createGeom(dSpaceID space)
