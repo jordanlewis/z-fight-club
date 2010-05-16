@@ -121,36 +121,33 @@ void Client::updateFromServer()
                 case RP_ATTACH_PGEOM:
                     {
                         RPAttachPGeom info = *(RPAttachPGeom *)payload;
-                        
-                        GeomInfo *geomInfo;
-                        
-                        //Only one of these will actually be used.
-                        SphereInfo sphereInfo;
-                        BoxInfo boxInfo;
-                        PlaneInfo planeInfo;
-                        
-                        switch (info.info.type) {
-                        case SPHERE: 
-                            sphereInfo.ntoh(&(info.info));
-                            geomInfo = &sphereInfo;
-                            break;
-                        case BOX:
-                            boxInfo.ntoh(&(info.info));
-                            geomInfo = &boxInfo;
-                            break;
-                        case PLANE:
-                            planeInfo.ntoh(&(info.info));
-                            geomInfo = &planeInfo;
-                            break;
-                        default: break;
-                        }
-
+                        GeomInfo *geomInfo = parseRPGeomInfo(&(info.info));
                         WorldObject *wobject = getNetObj(info.ID);
+
                         PGeom *geom = new PGeom(geomInfo, Physics::getInstance().getOdeSpace());
                         wobject->pobject = geom;
                         geom->worldObject = wobject;
                     }
+                case RP_ATTACH_AGENT: 
+                    {
+                        RPAttachAgent info = *(RPAttachAgent *)payload;
+                        GeomInfo *geomInfo = parseRPGeomInfo(&info.info);
+                        WorldObject *wobject = getNetObj(info.ID);
 
+                        Agent *agent = new Agent();
+                        agent->ntoh(&(info.agent));
+                        wobject->agent = agent;
+
+                        PAgent *pagent = 
+                            new PAgent(&(agent->getKinematic()),
+                                       &(agent->getSteering()),
+                                       agent->mass,
+                                       geomInfo, 
+                                       Physics::getInstance().getOdeSpace());
+                        wobject->pobject = pagent;
+                        pagent->worldObject = wobject;
+
+                    }
                 default: break;
             }
             break;
