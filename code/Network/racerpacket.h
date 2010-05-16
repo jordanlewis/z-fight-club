@@ -6,6 +6,8 @@
 #include "Physics/pobject.h"
 #include "network.h"
 
+class GeomInfo;
+
 typedef enum {
     RP_START = 0,
     RP_ATTACH_AGENT,
@@ -43,6 +45,10 @@ struct RPGeomInfo{
     uint32_t lx, ly, lz;
     uint32_t a, b, c, d;
 };
+
+/* Return a pointer to a new geominfo from the parameters passed over the
+ * network in netInfo */
+GeomInfo *parseRPGeomInfo(RPGeomInfo *netInfo);
 
 struct RPSteerInfo{
     uint32_t a;
