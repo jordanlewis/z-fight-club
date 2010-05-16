@@ -16,9 +16,9 @@ racerPacketType_t getRacerPacketType(ENetPacket *packet){
 
 GeomInfo *parseRPGeomInfo(RPGeomInfo *netInfo){
 
-    GeomInfo *geomInfo;
+    GeomInfo *geomInfo = NULL;
     
-    switch (netInfo->type) {
+    switch (ntohl(netInfo->type)) {
     case SPHERE:
         geomInfo = new SphereInfo();
         geomInfo->ntoh(netInfo);

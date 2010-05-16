@@ -78,7 +78,7 @@ int Server::attachPGeom(GeomInfo *info, netObjID_t ID){
 
     //Tell networked agents to attach the PGeom
     struct RPAttachPGeom toSend;
-    toSend.ID = RP_ATTACH_PGEOM;
+    toSend.ID = ID;
     info->hton(&(toSend.info));
     ENetPacket *packet = makeRacerPacket(RP_ATTACH_PGEOM, &toSend,
                                          sizeof(RPAttachPGeom));
@@ -102,7 +102,7 @@ int Server::attachPMoveable(Kinematic *kine, float mass, GeomInfo *info,
 
     //Tell networked agents to attach the PMoveable
     struct RPAttachPMoveable toSend;
-    toSend.ID = RP_ATTACH_PMOVEABLE;
+    toSend.ID = ID;
     info->hton(&(toSend.info));
     kine->hton(&(toSend.kine));
     toSend.mass = htonf(mass);
@@ -143,7 +143,7 @@ int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
     
     //Tell networked agents to attach the PAgent
     struct RPAttachAgent toSend;
-    toSend.ID = RP_ATTACH_AGENT;
+    toSend.ID = ID;
 
     geomInfo->hton(&(toSend.info));
     agent->hton(&(toSend.agent));

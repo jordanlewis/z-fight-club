@@ -111,26 +111,26 @@ void SphereInfo::ntoh(RPGeomInfo *payload) {
     if (payload == NULL) {
         cerr << "Payload is null!" << endl;
     }
-    payload->radius = radius;
+    payload->radius = ntohf(radius);
 }
 
 void BoxInfo::ntoh(RPGeomInfo *payload) {
     if (payload == NULL) {
         cerr << "Payload is null!" << endl;
     }
-    payload->lx = lx;
-    payload->ly = ly;
-    payload->lz = lz;
+    payload->lx = ntohf(lx);
+    payload->ly = ntohf(ly);
+    payload->lz = ntohf(lz);
 }
 
 void PlaneInfo::ntoh(RPGeomInfo *payload) {
     if (payload == NULL) {
         cerr << "Payload is null!" << endl;
     }
-    payload->a = a;
-    payload->b = b;
-    payload->c = c;
-    payload->d = d;
+    payload->a = ntohf(a);
+    payload->b = ntohf(b);
+    payload->c = ntohf(c);
+    payload->d = ntohf(d);
 }
 
 ObjMeshInfo::~ObjMeshInfo()
