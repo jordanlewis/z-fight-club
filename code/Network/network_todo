@@ -1,3 +1,30 @@
+===========================================================================================================
+These two for Tuesday milestone:
+
+Nick:
+include clientID in RP_ATTACH_AGENT so client knows whether it's my agent
+ associate camera and listener and control with my agent
+
+Youlian:
+send object creation packets to all players
+ cache RP_ATTACH_AGENT packet
+------------
+clean up joining/playing control flow
+ move into one while loop with states?
+
+fix geominfo lx, ly, lz values sent to or received by clients
+------------
+make a reliable racer packet function
+ separate acceleration/rotation and weapon/fire updates
+  use reliable packets for weapon/fire udpates
+
+adjust client and server command-line args
+ client shouldn't specify ai players
+ client shouldn't specify track
+ add track selection packet
+
+add sound/obj specification packets
+===========================================================================================================
     nick  0) state enum: eg. { waiting for first client to hit go, playing, showing who won, ... }
 So far this has taken the form of the loops in scheduler.cpp
           
