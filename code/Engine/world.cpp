@@ -224,7 +224,6 @@ Agent *World::placeAgent(int place)
     float orient = acos(Vec3f(0,0,1).dot(diff.unit()));
 
     Agent *agent = new Agent(pos, orient);
-    addAgent(agent);
     Sound::getInstance().registerSource(wobjects.back(), new SObject("snore.wav", GetTime(), AL_TRUE));
 
     return agent;
@@ -237,6 +236,7 @@ void World::makeAI()
     AIManager &ai = AIManager::getInstance();
     int nAgents = numAgents();
     Agent *agent = placeAgent(nAgents);
+    addAgent(agent);
     ai.control(agent);
     ai.controllers.back()->lane((nAgents + 1) % 2);
 }
@@ -248,6 +248,7 @@ void World::makePlayer()
         return;
 
     Agent *agent = placeAgent(numAgents());
+    addAgent(agent);
     camera = Camera(THIRDPERSON, agent);
     Sound::getInstance().registerListener(&camera);
     PlayerController *p = new PlayerController(agent);

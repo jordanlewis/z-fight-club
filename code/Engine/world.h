@@ -81,7 +81,7 @@ class World
     int numAgents();
 
     void addAgent(Agent *agent);
-    Agent *placeAgent(int place);
+    Agent *placeAgent(int place);/*!<return a placed agent not yet in wobjects*/
     void makeAI();
     void makePlayer();
     void makeAgents();
