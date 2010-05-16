@@ -40,7 +40,6 @@ int main(int argc, char *argv[])
         desc.add_options()
             ("help", "produce help message")
             ("track", po::value<string>(), "set track file")
-            ("sounds", po::value<string>(), "set sounds directory")
             ("assets", po::value<string>(), "set assets directory")
             ("network", po::value<string>(), "set network mode")
             ("ipaddr", po::value<string>(), "set server ip address")
@@ -65,11 +64,6 @@ int main(int argc, char *argv[])
         {
             cout << "Error:  No track file given.";
             return 0;
-        }
-
-        if (vm.count("sounds"))
-        {
-            sound.setDir(vm["sounds"].as<string>().c_str());
         }
 
         if (vm.count("assets"))

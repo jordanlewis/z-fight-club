@@ -1,4 +1,5 @@
 #include "sound.h"
+#include "Engine/world.h"
 #include <boost/lexical_cast.hpp>
 #include <dirent.h>
 
@@ -10,6 +11,7 @@ Sound Sound::_instance;
 
 Sound::Sound() :
     initialized(false),
+    world(&World::getInstance()),
     error(&Error::getInstance())
 {
 }
@@ -30,10 +32,11 @@ void Sound::setDir(string dirname)
 
 void Sound::initSound()
 {
-    if (base_sound_directory.empty())
+    if (world->assetsDir.empty())
     {
         return;
     }
+    setDir(world->assetsDir+"/sounds/");
 
     // Open device, create context
     ALCdevice *Device = alcOpenDevice(NULL);

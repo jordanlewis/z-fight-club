@@ -1,4 +1,5 @@
 #include "sobject.h"
+#include "Engine/world.h"
 #include <boost/lexical_cast.hpp>
 
 SObject::SObject(string soundName, double startTime, bool loop) :

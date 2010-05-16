@@ -1,7 +1,6 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#include "Engine/world.h"
 #include "Utilities/error.h"
 #include "Graphics/camera.h"
 #include "sobject.h"
@@ -19,6 +18,7 @@ using namespace std;
 
 class SObject;
 class WorldObject;
+class World;
 
 typedef struct {
     char  riff[4]; // 'RIFF'
@@ -61,6 +61,7 @@ class Sound
     const Camera *camera;
     vector<string> *get_wav_filenames();
     map<const string, sound_resource*> sound_library;
+    World *world;
     Error *error;
 
     ALuint dataToBuffer(char*, BasicWAVEHeader);

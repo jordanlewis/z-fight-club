@@ -2,7 +2,7 @@
 #define SOBJECT_H
 
 #include "sound.h"
-#include "Engine/world.h"
+class WorldObject;
 #include "Utilities/error.h"
 #include <iostream>
 #include <string>
