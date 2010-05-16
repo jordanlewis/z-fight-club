@@ -9,28 +9,28 @@
 class Vec3f {
     /*! \brief Checks if the vector is very small, and, if so, sets it to 0
                This corrects for floating point errors and makes sure that
-	       when someone uses a zero-vector inappropriately, the compiler
-	       will complain
+               when someone uses a zero-vector inappropriately, the compiler
+               will complain
     */
     void flatten();
   public:
     float x,y,z;
 
-    // --------- Constructors --------- 
+    // --------- Constructors ---------
     Vec3f();
     Vec3f(float, float, float);
     Vec3f(const Vec3f_t&);
     ~Vec3f();
 
-    // --------- Addition --------- 
-    
+    // --------- Addition ---------
+
     //! \brief adds two vectors and returns the result
     Vec3f operator+(const Vec3f&) const;
 
     //! \brief adds two vectors with assignment
     void operator+=(const Vec3f&);
-    
-    // --------- Subtraction --------- 
+
+    // --------- Subtraction ---------
 
     //! \brief subtracts two vectors and returns the result
     Vec3f operator-(const Vec3f&) const;
@@ -38,7 +38,7 @@ class Vec3f {
     //! \brief subtracts two vectors with assignment
     void operator-=(const Vec3f&);
 
-    // --------- Cross Product --------- 
+    // --------- Cross Product ---------
 
     //! \brief takes the cross-product of two vectors and returns the result
     Vec3f operator*(const Vec3f&) const;
@@ -47,7 +47,7 @@ class Vec3f {
     //         in the current vector
     void operator*=(const Vec3f&);
 
-    // --------- Scalar Multiplication --------- 
+    // --------- Scalar Multiplication ---------
 
     //! \brief multiplies by a scalar and returns the result
     Vec3f operator*(const float&) const;
@@ -55,7 +55,7 @@ class Vec3f {
     //! \brief multiplies by a scalar with assignment
     void operator*=(const float&);
 
-    // --------- Scalar Division --------- 
+    // --------- Scalar Division ---------
 
     //! \brief divides by a scalar and returns the result
     Vec3f operator/(const float&) const;
@@ -63,24 +63,24 @@ class Vec3f {
     //! \brief divides by a scalar with assignment
     void operator/=(const float&);
 
-    // --------- Negation --------- 
+    // --------- Negation ---------
 
     //! \brief returns the negation of this vector
     Vec3f operator-() const;
 
-    // --------- Element Access --------- 
-    
+    // --------- Element Access ---------
+
     //! \brief accesses the ith element of this vector
     float &operator[](int);
 
     //! \brief returns the ith element of this vector
     float operator[](int) const;
 
-    // --------- Equality --------- 
+    // --------- Equality ---------
 
     bool operator==(const Vec3f&) const;
 
-    // --------- Normalization --------- 
+    // --------- Normalization ---------
 
     //! \brief returns the unit vector that points in the direction of this vector
     Vec3f unit() const;
@@ -88,8 +88,8 @@ class Vec3f {
     //! \brief normalizes this vector
     void normalize();
 
-    // --------- Additional Functions --------- 
-    
+    // --------- Additional Functions ---------
+
     //! \brief returns the magnitude of this vector
     float length() const;
 
@@ -109,7 +109,7 @@ class Vec3f {
     void toArray(float *array);
 };
 
-// --------- Scalar Multiplication --------- 
+// --------- Scalar Multiplication ---------
 //! \brief Multiplies a vector by a scalar and returns the result.
 //         This allows for the more traditional notation s * v
 Vec3f operator*(const float&, const Vec3f&);
@@ -120,18 +120,18 @@ Vec3f lerp(const Vec3f&, const Vec3f&, const float&);
 //! \brief interpolate spherical between 2 vectors
 Vec3f slerp(const Vec3f&, const Vec3f&, const float&);
 
-// --------- Stream Output --------- 
+// --------- Stream Output ---------
 //! \brief Writes this vector to the given output stream.
 //         This will allow us to debug with cout << Vec3f
 std::ostream &operator<<(std::ostream&, const Vec3f&);
 
 // ---------- Vertex Array ---------
 //! \brief Create an array of floats usable by opengl
-// 	out of an array of Vec3fs
+//         out of an array of Vec3fs
 float *makeArray(const std::vector<Vec3f>);
 
 //! \brief create an array of floats usable by opengle
-//	out of a deque of Vec3fs
+//         out of a deque of Vec3fs
 float *makeArray(std::deque<Vec3f>);
 
 //! \brief create an array of floats usable by opengl out of an array of Vec3fs

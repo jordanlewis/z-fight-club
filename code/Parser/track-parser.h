@@ -54,7 +54,7 @@ struct struct_sect {
     uint16_t	id;		//!< ID of this sector
     uint16_t	nEdges;		//!< number of edges
     Edge_t	*edges;		//!< the array of edges in CCW order
-    
+
 };
 
 struct struct_edge {

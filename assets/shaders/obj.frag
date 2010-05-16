@@ -1,7 +1,6 @@
 #version 120
 
 uniform sampler2D color_tex, bump_tex, spec_tex;
-//uniform vec3 tangent, bitangent;
 varying vec3 normal;
 varying vec3 color;
 varying vec3 lightVec;

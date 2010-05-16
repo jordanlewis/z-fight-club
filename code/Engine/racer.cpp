@@ -40,7 +40,6 @@ int main(int argc, char *argv[])
         desc.add_options()
             ("help", "produce help message")
             ("track", po::value<string>(), "set track file")
-            ("sounds", po::value<string>(), "set sounds directory")
             ("assets", po::value<string>(), "set assets directory")
             ("network", po::value<string>(), "set network mode")
             ("ipaddr", po::value<string>(), "set server ip address")
@@ -67,11 +66,6 @@ int main(int argc, char *argv[])
             return 0;
         }
 
-        if (vm.count("sounds"))
-        {
-            sound.setDir(vm["sounds"].as<string>().c_str());
-        }
-
         if (vm.count("assets"))
         {
             world.setDir(vm["assets"].as<string>().c_str());
@@ -79,7 +73,7 @@ int main(int argc, char *argv[])
 
         if (vm.count("network"))
         {
-            world.setRunType(vm["network"].as<string>().c_str()); 
+            world.setRunType(vm["network"].as<string>().c_str());
         }
         else
         {
@@ -113,7 +107,7 @@ int main(int argc, char *argv[])
     }
     srand(time(NULL));
 
-    if (world.runType == SOLO) 
+    if (world.runType == SOLO)
     {
         graphics.initGraphics();
         sound.initSound();
@@ -125,7 +119,7 @@ int main(int argc, char *argv[])
     {
         graphics.initGraphics();
         sound.initSound();
-        world.makeAgents();
+        // world.makeAgents();
         testSetup();
         if (client.connectToServer() < 0)
         {
@@ -134,10 +128,10 @@ int main(int argc, char *argv[])
         }
         scheduler.clientLoopForever();
     }
-    if (world.runType == SERVER) 
+    if (world.runType == SERVER)
     {
         testSetup();
-        if (server.createHost() < 0) 
+        if (server.createHost() < 0)
         {
             cerr << "Fatal error:  Server could not be established" << endl;
             return -1;

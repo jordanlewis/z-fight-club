@@ -14,6 +14,7 @@ using namespace std;
 #include "Graphics/polygon.h"
 #include "Sound/sobject.h"
 #include "Parser/track-parser.h"
+#include "Utilities/error.h"
 
 class PGeom;
 class SObject;
@@ -59,8 +60,9 @@ class World
     ~World();
     World(const World&);
     World& operator=(const World&);
-    
+
     static World _instance;
+    Error *error;
   public:
     int PlayerQty;
     int AIQty;
@@ -79,7 +81,7 @@ class World
     int numAgents();
 
     void addAgent(Agent *agent);
-    Agent *placeAgent(int place);
+    Agent *placeAgent(int place);/*!<return a placed agent not yet in wobjects*/
     void makeAI();
     void makePlayer();
     void makeAgents();

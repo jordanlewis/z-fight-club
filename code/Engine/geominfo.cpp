@@ -5,13 +5,23 @@
 #include "Engine/world.h"
 extern "C" {
     #include "Parser/obj-reader.h"
+    #include "Utilities/load-png.h"
 }
 
+BoxInfo::BoxInfo()
+    : GeomInfo()
+{}
 BoxInfo::BoxInfo(float lx, float ly, float lz)
     : GeomInfo(), lx(lx), ly(ly), lz(lz)
 {}
+SphereInfo::SphereInfo()
+    : GeomInfo()
+{}
 SphereInfo::SphereInfo(float radius)
     : GeomInfo(), radius(radius)
+{}
+PlaneInfo::PlaneInfo()
+    : GeomInfo()
 {}
 PlaneInfo::PlaneInfo(float a, float b, float c, float d)
     : GeomInfo(), a(a), b(b), c(c), d(d)
@@ -30,7 +40,11 @@ TriMeshInfo::TriMeshInfo(dTriMeshDataID meshID,
 ObjMeshInfo::ObjMeshInfo(std::string filename)
 {
     World &world = World::getInstance();
-    model = OBJReadOBJ((world.assetsDir + filename).c_str());
+    path = filename;
+    model = OBJReadOBJ((world.assetsDir + filename + std::string("model.obj")).c_str());
+    texs[COLOR_TEX] = LoadImage((world.assetsDir + filename + std::string("color.png")).c_str(), false, RGB_IMAGE);
+    texs[BUMP_TEX] = LoadImage((world.assetsDir + filename + std::string("bump.png")).c_str(), false, RGB_IMAGE);
+    texs[SPEC_TEX] = LoadImage((world.assetsDir + filename + std::string("spec.png")).c_str(), false, RGB_IMAGE);
 }
 
 dGeomID SphereInfo::createGeom(dSpaceID space)
@@ -61,15 +75,16 @@ void ObjMeshInfo::createMass(dMass * mass, float massVal)
     dMassSetBoxTotal(mass, massVal, 1.0, 1.0, 1.0);
 }
 
-void SphereInfo::hton(RPAttachPGeom *payload) {
+void SphereInfo::hton(RPGeomInfo *payload) {
     if (payload == NULL){
         cerr << "Payload is null!" << endl;
         return;
     }
     payload->radius = htonf(radius);
+    payload->type = htonl(SPHERE);
 }
 
-void BoxInfo::hton(RPAttachPGeom *payload) {
+void BoxInfo::hton(RPGeomInfo *payload) {
     if (payload == NULL){
         cerr << "Payload is null!" << endl;
         return;
@@ -77,9 +92,10 @@ void BoxInfo::hton(RPAttachPGeom *payload) {
     payload->lx = htonf(lx);
     payload->ly = htonf(ly);
     payload->lz = htonf(lz);
+    payload->type = htonl(BOX);
 }
 
-void PlaneInfo::hton(RPAttachPGeom *payload) {
+void PlaneInfo::hton(RPGeomInfo *payload) {
     if (payload == NULL){
         cerr << "Payload is null!" << endl;
         return;
@@ -88,32 +104,33 @@ void PlaneInfo::hton(RPAttachPGeom *payload) {
     payload->b = htonf(b);
     payload->c = htonf(c);
     payload->d = htonf(d);
+    payload->type = htonf(PLANE);
 }
 
-void SphereInfo::ntoh(RPAttachPGeom *payload) {
+void SphereInfo::ntoh(RPGeomInfo *payload) {
     if (payload == NULL) {
         cerr << "Payload is null!" << endl;
     }
-    payload->radius = radius;
+    payload->radius = ntohf(radius);
 }
 
-void BoxInfo::ntoh(RPAttachPGeom *payload) {
+void BoxInfo::ntoh(RPGeomInfo *payload) {
     if (payload == NULL) {
         cerr << "Payload is null!" << endl;
     }
-    payload->lx = lx;
-    payload->ly = ly;
-    payload->lz = lz;
+    payload->lx = ntohf(lx);
+    payload->ly = ntohf(ly);
+    payload->lz = ntohf(lz);
 }
 
-void PlaneInfo::ntoh(RPAttachPGeom *payload) {
+void PlaneInfo::ntoh(RPGeomInfo *payload) {
     if (payload == NULL) {
         cerr << "Payload is null!" << endl;
     }
-    payload->a = a;
-    payload->b = b;
-    payload->c = c;
-    payload->d = d;
+    payload->a = ntohf(a);
+    payload->b = ntohf(b);
+    payload->c = ntohf(c);
+    payload->d = ntohf(d);
 }
 
 ObjMeshInfo::~ObjMeshInfo()

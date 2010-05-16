@@ -1,7 +1,7 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#include "Engine/world.h"
+#include "Utilities/error.h"
 #include "Graphics/camera.h"
 #include "sobject.h"
 #include <string>
@@ -18,6 +18,25 @@ using namespace std;
 
 class SObject;
 class WorldObject;
+class World;
+
+typedef struct {
+    char  riff[4]; // 'RIFF'
+    uint32_t riffSize;      // little
+    char  wave[4]; // 'WAVE'
+
+    char  fmt[4];  // 'fmt '
+    uint32_t fmtSize;       // little
+    uint16_t format;        // little
+    uint16_t channels;      // little
+    uint32_t samplesPerSec; // little
+    uint32_t bytesPerSec;   // little
+    uint16_t blockAlign;    // little
+    uint16_t bitsPerSample; // little
+
+    char  data[4]; // 'data'
+    uint32_t dataSize;      // little
+} BasicWAVEHeader;
 
 class sound_resource
 {
@@ -41,8 +60,18 @@ class Sound
     bool initialized;
     const Camera *camera;
     vector<string> *get_wav_filenames();
-    map<const string, sound_resource*> sound_library; 
-    // Error &error;
+    map<const string, sound_resource*> sound_library;
+    World *world;
+    Error *error;
+
+    ALuint dataToBuffer(char*, BasicWAVEHeader);
+    ALuint filenameToBuffer(const string);
+    char* fileToData(FILE*, BasicWAVEHeader*);
+    int am_big_endian();
+    int ends_with(string, string);
+    uint16_t swapends(uint16_t);
+    uint32_t swapends(uint32_t);
+    void DisplayALError(string, ALuint);
 
   public:
 

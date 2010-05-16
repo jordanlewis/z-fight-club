@@ -6,7 +6,6 @@
 #include "Agents/ai.h"
 #include "Engine/input.h"
 #include "Sound/sobject.h"
-#include "Utilities/error.h"
 #include <ode/ode.h>
 extern "C" {
     #include "Parser/track-parser.h"
@@ -60,7 +59,8 @@ void WorldObject::draw()
         gobject->draw(getPos(), quat, agent);
 }
 
-World::World()
+World::World() :
+    error(&Error::getInstance())
 {
 }
 
@@ -105,9 +105,8 @@ void World::addAgent(Agent *agent)
 void World::loadTrack(const char *file)
 {
     track = LoadTrackData(file);
-    Error error = Error::getInstance();
     if (!track) {
-        error.log(PARSER, CRITICAL, "Track load failed\n");
+        error->log(PARSER, CRITICAL, "Track load failed\n");
     }
 
     PGeom *geom;
@@ -143,7 +142,7 @@ void World::loadTrack(const char *file)
          */
         if (track->sects[i].nEdges != 4)
         {
-            error.log(ENGINE, CRITICAL, "Non-rect sectors unsupported\n");
+            error->log(ENGINE, CRITICAL, "Non-rect sectors unsupported\n");
             return;
         }
 
@@ -225,7 +224,6 @@ Agent *World::placeAgent(int place)
     float orient = acos(Vec3f(0,0,1).dot(diff.unit()));
 
     Agent *agent = new Agent(pos, orient);
-    addAgent(agent);
     Sound::getInstance().registerSource(wobjects.back(), new SObject("snore.wav", GetTime(), AL_TRUE));
 
     return agent;
@@ -238,6 +236,7 @@ void World::makeAI()
     AIManager &ai = AIManager::getInstance();
     int nAgents = numAgents();
     Agent *agent = placeAgent(nAgents);
+    addAgent(agent);
     ai.control(agent);
     ai.controllers.back()->lane((nAgents + 1) % 2);
 }
@@ -249,6 +248,7 @@ void World::makePlayer()
         return;
 
     Agent *agent = placeAgent(numAgents());
+    addAgent(agent);
     camera = Camera(THIRDPERSON, agent);
     Sound::getInstance().registerListener(&camera);
     PlayerController *p = new PlayerController(agent);
@@ -265,21 +265,19 @@ void World::makeAgents()
 }
 
 void World::setRunType(const string str){
-    Error error = Error::getInstance();
-	
     if ( (str == "server") || (str == "Server") ){
-	runType = SERVER;
+        runType = SERVER;
     }
     else if ( (str =="client") || (str == "Client") ) {
-	runType = CLIENT;
+        runType = CLIENT;
     }
     else if ( (str == "solo") || (str == "Solo") ) {
-	runType = SOLO;
+        runType = SOLO;
     }
     else {
-	error.log(NETWORK, IMPORTANT,
-		  "Unrecognized netmode. Defaulting to solo\n.");
-	runType = SOLO;
+        error->log(NETWORK, IMPORTANT,
+                  "Unrecognized netmode. Defaulting to solo\n.");
+        runType = SOLO;
     }
     return;
 }
