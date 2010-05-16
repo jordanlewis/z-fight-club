@@ -80,7 +80,7 @@ void Agent::hton(RPAgent *payload){
 void Agent::ntoh(RPAgent *payload){
     //maxId = payload->ntohl(payload->agentID);
     kinematic.ntoh(&(payload->kinematic));
-    //steerInfo.ntoh(&(payload->steerInfo));
+    steerInfo.ntoh(&(payload->steerInfo));
     return;
 }
 
