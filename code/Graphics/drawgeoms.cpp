@@ -67,43 +67,24 @@ void ObjMeshInfo::draw()
     GLuint texIDs[NUM_TEXS];
 
     /* setup shaders */
-
-
     UseProgram(shader);
 
-    /* Initialize the textures */
-    glGenTextures(3, texIDs);
-
+    /* set uniforms */
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texIDs[COLOR_TEX]);
     GLint color_tex = UniformLocation(shader, "color_tex");
     glUniform1i(color_tex, texIDs[COLOR_TEX]);
-    TexImage(texs[COLOR_TEX]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, texIDs[SPEC_TEX]);
     GLint spec_tex = UniformLocation(shader, "spec_tex");
     glUniform1i(spec_tex, texIDs[SPEC_TEX]);
-    TexImage(texs[SPEC_TEX]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, texIDs[BUMP_TEX]);
     GLint bump_tex = UniformLocation(shader, "bump_tex");
     glUniform1i(bump_tex, texIDs[BUMP_TEX]);
-    TexImage(texs[BUMP_TEX]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
+    
     /* draw the mesh */
     static uint32_t i;
     static OBJgroup* group;
