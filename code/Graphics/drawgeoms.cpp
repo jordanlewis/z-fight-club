@@ -64,26 +64,9 @@ void BoxInfo::draw()
 
 void ObjMeshInfo::draw()
 {
-    GLuint texIDs[NUM_TEXS];
-
-    /* setup shaders */
-    UseProgram(shader);
-
-    /* set uniforms */
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, texIDs[COLOR_TEX]);
-    GLint color_tex = UniformLocation(shader, "color_tex");
-    glUniform1i(color_tex, texIDs[COLOR_TEX]);
-
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, texIDs[SPEC_TEX]);
-    GLint spec_tex = UniformLocation(shader, "spec_tex");
-    glUniform1i(spec_tex, texIDs[SPEC_TEX]);
-
-    glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D, texIDs[BUMP_TEX]);
-    GLint bump_tex = UniformLocation(shader, "bump_tex");
-    glUniform1i(bump_tex, texIDs[BUMP_TEX]);
+    glBindTexture(GL_TEXTURE_2D, texid);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glEnable(GL_TEXTURE_2D);
     
     /* draw the mesh */
     static uint32_t i;
@@ -187,7 +170,8 @@ void ObjMeshInfo::draw()
         group = group->next;
     }
 
-    UseProgram(NULL);
+    glDisable(GL_TEXTURE_2D);
+    /* UseProgram(NULL); */
 }
 
 void TriMeshInfo::draw()

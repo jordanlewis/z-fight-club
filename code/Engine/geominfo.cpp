@@ -42,36 +42,13 @@ ObjMeshInfo::ObjMeshInfo(std::string filename)
     World &world = World::getInstance();
     path = filename;
     model = OBJReadOBJ((world.assetsDir + filename + std::string("model.obj")).c_str());
-    texs[COLOR_TEX] = LoadImage((world.assetsDir + filename + std::string("color.png")).c_str(), false, RGB_IMAGE);
-    texs[BUMP_TEX] = LoadImage((world.assetsDir + filename + std::string("bump.png")).c_str(), false, RGB_IMAGE);
-    texs[SPEC_TEX] = LoadImage((world.assetsDir + filename + std::string("spec.png")).c_str(), false, RGB_IMAGE);
-
-    VertexShader_t *vshader = LoadVertexShader((world.assetsDir + std::string("shaders/obj.vert")).c_str());
-    FragmentShader_t *fshader = LoadFragmentShader((world.assetsDir + std::string("shaders/obj.frag")).c_str());
-    shader = CreateShaderProgram(vshader, fshader);
+    Image2D_t *color = LoadImage((world.assetsDir + filename + std::string("color.png")).c_str(), false, RGB_IMAGE);
     
     /* Initialize the textures */
-    glGenTextures(3, texIDs);
+    glGenTextures(1, &texid);
 
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, texIDs[COLOR_TEX]);
-    TexImage(texs[COLOR_TEX]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, texIDs[SPEC_TEX]);
-    TexImage(texs[SPEC_TEX]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-    glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D, texIDs[BUMP_TEX]);
-    TexImage(texs[BUMP_TEX]);
+    glBindTexture(GL_TEXTURE_2D, texid);
+    TexImage(color);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -166,6 +143,5 @@ void PlaneInfo::ntoh(RPGeomInfo *payload) {
 
 ObjMeshInfo::~ObjMeshInfo()
 {
-    FreeShaderProgram(shader);
     OBJDelete(model);
 }

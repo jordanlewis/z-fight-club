@@ -115,9 +115,7 @@ class ObjMeshInfo : public GeomInfo
     public:
 	OBJmodel	*model;			/* !< pointer to obj model */
 	std::string	path;			/* !< path to model folder */
-        ShaderProgram_t *shader;                /* !< shader to render with */
-	GLuint		texIDs[NUM_TEXS];	/* !< texture identifiers */
-	Image2D_t	*texs[NUM_TEXS];	/* image maps */
+	GLuint		texid;	                /* !< texture identifiers */
 	ObjMeshInfo(std::string);
 	~ObjMeshInfo();
 	void load(char *filename);
