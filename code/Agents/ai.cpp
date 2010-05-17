@@ -176,47 +176,20 @@ void AIController::smartGo(const Vec3f target)
         /* We're trapped by a wall. Reverse and turn away from the wall */
         go = -1;
     }
-    else if (k.forwardSpeed() > 6)
-    {
-        if (angle < M_PI / 10)
-        {
-            error->log(AI, TRIVIAL, "AI: basic forward movement\n");
-            go = 1;
-        }
-        else if (angle < 7 * M_PI / 8)
-        {
-            error->log(AI, TRIVIAL, "AI: sharp turn\n");
-       //     go = -1;
-        }
-        else
-        {
-            error->log(AI, TRIVIAL, "AI: reverse movement\n");
-            align(atan2(dir[0], dir[2]) + M_PI);
-            s = agent->getSteering();
-            go = -1;
-        }
-    }
     else
     {
-        if (angle > 7 * M_PI / 8)
+        if (angle < M_PI / 4)
+            go = 1;
+        else if (angle < M_PI / 2)
+            go = -1;
+        else
         {
             if (distance < 5)
             {
-                error->log(AI, TRIVIAL, "AI: backing in\n");
                 align(atan2(dir[0], dir[2]) + M_PI);
                 s = agent->getSteering();
-                go = -1;
             }
-            else
-            {
-                go = 1;
-                error->log(AI, TRIVIAL, "AI: turning around\n");
-            }
-        }
-        else
-        {
-            error->log(AI, TRIVIAL, "AI: speed up\n");
-            go = 1;
+            go = -1;
         }
     }
     s.acceleration = go * agent->getMaxAccel();
