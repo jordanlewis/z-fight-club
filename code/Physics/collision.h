@@ -15,7 +15,7 @@ struct CollContact{
  public:
     //float depth; //contact distance from origin of cast -- only used in casts
     WorldObject *obj; //The object that collided
-    Vec3f_t position; //The point of contact
+    Vec3f position; //The point of contact
 };
 
 //  Space reserved for future additions to the CollQuery struct
@@ -26,7 +26,7 @@ struct CollQuery{
 
 void nearCallback(void *data, dGeomID o1, dGeomID o2);
 
-void rayCast(Rayf_t ray, CollQuery &collQuery);
+void rayCast(const Vec3f *origin, const Vec3f *dir, float len, CollQuery *collQuery);
 
 //void sphereCollide(sphere
 

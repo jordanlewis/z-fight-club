@@ -58,17 +58,18 @@ void raygun(Agent *agent, int force)
 
         if ((*iter)->agent == agent){
             Agent *a = agent;
-            Rayf_t ray;
-            ray.len = 10000;
-            ray.dir[0] = a->getKinematic().orientation_v[0];
-            ray.dir[1] = a->getKinematic().orientation_v[1];
-            ray.dir[2] = a->getKinematic().orientation_v[2];
-            NormalizeV3f(ray.dir);
-            ray.orig[0] = a->getKinematic().pos[0];
-            ray.orig[1] = a->getKinematic().pos[1];
-            ray.orig[2] = a->getKinematic().pos[2];
+            Vec3f origin;
+            Vec3f dir;
+            float len = 10000;
+            dir[0] = a->getKinematic().orientation_v[0];
+            dir[1] = a->getKinematic().orientation_v[1];
+            dir[2] = a->getKinematic().orientation_v[2];
+            dir.normalize();
+            origin[0] = a->getKinematic().pos[0];
+            origin[1] = a->getKinematic().pos[1];
+            origin[2] = a->getKinematic().pos[2];
             CollQuery query;
-            rayCast(ray, query);
+            rayCast(&origin, &dir, len, &query);
             for (citer = query.contacts.begin(); citer != query.contacts.end(); citer++)
             {
                 //Force Push!
