@@ -90,9 +90,9 @@ void Camera::setProjectionMatrix()
     glLoadIdentity();
     switch (mode) {
         case OVERHEAD:
-            pos = Vec3f(100.0f, 20.0f, 50.0f);
-            up = Vec3f(0.0f, 1.0f, 0.0f);
-            target = Vec3f(0.0f, 0.0f, 0.0f);
+            pos = Vec3f(44.0f, 70.0f, 30.0f);
+            up = Vec3f(1.0f, 0.0f, 0.0f);
+            target = Vec3f(44.0f, 0.0f, 30.0f);
             break;
         case FIRSTPERSON:
             if (agent == NULL) {
