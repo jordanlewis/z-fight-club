@@ -323,15 +323,18 @@ void AIController::detectWalls()
     if (k.vel.length() == 0)
         return;
 
-    float length = 5;
+    float length = 5; /* How far to cast rays */
     CollQuery queryl, queryr, query;
 
+    /* ray starts at the front of agent */
     const Vec3f start = k.pos + k.orientation_v.unit() * (.01 + agent->depth / 2);
 
+    /* get start points at left and right corners of agent */
     Vec3f perp = k.orientation_v.perp(Vec3f(0,1,0));
     Vec3f startl = start - perp * agent->width / 2;
     Vec3f startr = start + perp * agent->width / 2;
 
+    /* Cast rays from all three start points */
     rayCast(&startl, &k.orientation_v, length, &queryl);
     rayCast(&startr, &k.orientation_v, length, &queryr);
     rayCast(&start, &k.orientation_v, length, &query);
@@ -342,28 +345,47 @@ void AIController::detectWalls()
     Vec3f contact;
     float bestDist = 10000;
     float dist;
+    float obstAngle;
     wallTrapped = false;
 
-    /* Check for wall trapped-ness: using center ray, if distance to collision
-     * is small and the angle between orientation_v and the collision is small,
-     * then we're probably stuck against a wall.*/
-    for (iter = query.contacts.begin(); iter != query.contacts.end(); iter++)
+    /* Check for wall trapped-ness: if 2 out of 3 rays' distance to collision
+     * is close to the same small value, then we're probably directly facing
+     * and stuck against a wall.
+     */
+    float middist = -1;
+    short votes = 0;
+    CollQuery *q;
+    const Vec3f *s;
+    for (int i = 0; i < 3; i++)
     {
-        if ((*iter).obj != NULL && (*iter).obj != agent->worldObject &&
-            (*iter).obj->agent == NULL)
+        switch (i)
         {
-            dist = ((*iter).position - start).length();
-            if (dist < agent->depth *2)
-            {
-                float obstAngle = acos(k.orientation_v.perp(Vec3f(0,1,0)).unit().dot((start - (*iter).position).unit()));
-                if (abs(obstAngle - M_PI_2) < M_PI_4/4)
-                {
-                    wallTrapped = true;
-                    return;
-                }
-            }
+            case 0: q = &query;  s = &start;  break;
+            case 1: q = &queryl; s = &startl; break;
+            case 2: q = &queryr; s = &startr; break;
         }
+        if (q->contacts.size() == 0)
+            continue;
+
+        iter = q->contacts.begin();
+
+        if ((*iter).obj == NULL || (*iter).obj == agent->worldObject ||
+                                   (*iter).obj->agent != NULL)
+            continue;
+
+        dist = ((*iter).position - *s).length();
+        if (middist == -1 && dist < agent->depth * 2)
+            middist = dist;
+        /* magic number below says how much "diagonality" is permitted for the
+         * obstacle to still be a perpendicular wall. */
+        else if (abs(middist - dist) < .5)
+            votes++;
     }
+    if (votes > 0)
+    {
+        wallTrapped = true;
+    }
+
 
     std::list<CollContact>contacts;
     contacts.splice(contacts.begin(), queryl.contacts);
@@ -395,7 +417,7 @@ void AIController::detectWalls()
          * between pi/2 and pi, turn left. Else its behind us. */
         Vec3f avoidDir = k.pos - contact;
 
-        float obstAngle = acos(k.orientation_v.perp(Vec3f(0,1,0)).unit().dot(avoidDir.unit()));
+        obstAngle = acos(k.orientation_v.perp(Vec3f(0,1,0)).unit().dot(avoidDir.unit()));
         if (obstAngle > 0 && obstAngle < M_PI_2)
         {
             s.rotation = -agent->maxRotate;
