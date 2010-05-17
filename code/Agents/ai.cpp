@@ -49,6 +49,12 @@ Avoid::Avoid(Vec3f &pos, float str)
 
 Avoid::~Avoid() {}
 
+AIController::AIController(Agent *agent) :
+    seeObstacle(false), path(Path()), obstacles(std::deque<Avoid>()),
+    agent(agent), error(&Error::getInstance())
+{
+}
+
 void AIController::seek(const Vec3f target, float slowRadius, float targetRadius)
 {
     Vec3f dir;
@@ -221,14 +227,6 @@ void AIController::smartGo(const Vec3f target)
     agent->setSteering(s);
 }
 
-AIController::AIController(Agent *agent) :
-    error(&Error::getInstance())
-{
-    path = Path();
-    obstacles = std::deque<Avoid>();
-    this->agent = agent;
-}
-
 void AIController::lane(int laneIndex)
 {
     int i, j;
@@ -368,19 +366,21 @@ void AIController::detectWalls()
 
         iter = q->contacts.begin();
 
-        if ((*iter).obj == NULL || (*iter).obj == agent->worldObject ||
-                                   (*iter).obj->agent != NULL)
+        if ((*iter).obj == NULL || (*iter).obj == agent->worldObject)
             continue;
 
-        dist = ((*iter).position - *s).length();
-        /* Get middle distance if its close enough to the agent. */
-        if (middist == -1 && dist < agent->depth * 2)
-            middist = dist;
-        /* magic number below says how much "diagonality" is permitted for the
-         * obstacle to still be a perpendicular wall. Collect votes for all
-         * 3 rays.*/
-        else if (abs(middist - dist) < .5)
-            votes++;
+        if ((*iter).obj->agent == NULL)
+        {
+            dist = ((*iter).position - *s).length();
+            /* Get middle distance if its close enough to the agent. */
+            if (middist == -1 && dist < agent->depth * 2)
+                middist = dist;
+            /* magic number below says how much "diagonality" is permitted for
+             * obstacle to still be a perpendicular wall. Collect votes for all
+             * 3 rays.*/
+            else if (abs(middist - dist) < .5)
+                votes++;
+        }
 
         /* Get closest contact for non-wallstuck cases */
         if (dist < bestDist)
@@ -399,7 +399,8 @@ void AIController::detectWalls()
     if (closest != NULL)
     {
         seeObstacle = true;
-        obstacle = contact;
+        obstaclePos = contact;
+        obstacle = closest;
     }
     else
     {
@@ -412,22 +413,51 @@ void AIController::avoidObstacle()
     if (seeObstacle == false)
         return;
 
+    Vec3f q, v, avoidDir;
+    float a,b,c,discriminant,sqrtdisc,post,negt,hitTime, obstAngle;
+
     SteerInfo s = agent->getSteering();
     /* Determine angle to obstacle. If between 0 and pi/2, turn right. If
         * between pi/2 and pi, turn left. Else its behind us. */
     const Kinematic k = agent->getKinematic();
-    Vec3f avoidDir = k.pos - obstacle;
+    avoidDir = k.pos - obstaclePos;
 
-    float obstAngle = acos(k.orientation_v.perp(Vec3f(0,1,0)).unit().dot(avoidDir.unit()));
-    if (obstAngle > 0 && obstAngle < M_PI_2)
+    obstAngle = acos(k.orientation_v.perp(Vec3f(0,1,0)).unit().dot(avoidDir.unit()));
+    hitTime = 1000;
+    if (obstacle->agent)
     {
-        cout << "run left" << endl;
-        s.rotation = -agent->maxRotate;
+        /* determine next collision point given linear motion */
+        v = k.vel - obstacle->agent->getKinematic().vel;
+        q = k.pos - obstacle->agent->getKinematic().pos;
+        a = v.dot(v);
+        b = q.dot(v) * 2;
+        c = q.dot(q) - 4 * (agent->width/2) * (agent->width/2);
+        discriminant = (b * b) - (4 * a * c);
+
+        if (discriminant >= 0)
+        {
+            sqrtdisc = sqrt(discriminant);
+            post = (-b + sqrtdisc) / (2 * a);
+            negt = (-b - sqrtdisc) / (2 * a);
+
+            if (post > 0 && negt > 0)
+            {
+                hitTime = post < negt ? post : negt;
+                cout << "hit time: " << hitTime << endl;;
+            }
+        }
+
     }
-    else if (obstAngle < M_PI && obstAngle >= M_PI_2)
+    if (!obstacle->agent || hitTime < 1) /* assuming static geometry */
     {
-        cout << "run right" << endl;
-        s.rotation = agent->maxRotate;
+        if (obstAngle > 0 && obstAngle < M_PI_2)
+        {
+            s.rotation = -agent->maxRotate;
+        }
+        else if (obstAngle < M_PI && obstAngle >= M_PI_2)
+        {
+            s.rotation = agent->maxRotate;
+        }
     }
     agent->setSteering(s);
 }

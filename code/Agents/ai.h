@@ -42,9 +42,10 @@ class AIController
 {
     /* cached AI data? paths? etc */
     bool wallTrapped; /*Can we not even turn due to a wall in front of us? */
-    bool seeObstacle;
   public:
-    Vec3f obstacle;
+    bool seeObstacle;
+    WorldObject *obstacle;
+    Vec3f obstaclePos;
     Path                path;           /* !< the path we're on */
     std::deque<Avoid> obstacles;        /* !< targets to be avoided */
     Agent               *agent;
