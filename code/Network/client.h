@@ -5,9 +5,16 @@
 #include "Engine/world.h"
 #include "Utilities/error.h"
 
+typedef enum {
+    C_NOID = 0,
+    C_HAVEID,
+    C_START
+} clientState_t;
+
 //Client Class
 class Client {
  private:
+    uint8_t clientID;
     uint32_t clientAddr;
     uint16_t clientPort;
     ENetHost *enetClient;
@@ -25,6 +32,7 @@ class Client {
     World *world;
     Error *error;
  public:
+    clientState_t clientState;
     /*  Member Functions  */
     static Client &getInstance();
 
@@ -35,10 +43,12 @@ class Client {
     void setServerAddr(uint32_t addr);
     void setServerPort(uint16_t port);
     int connectToServer();
-    void pushToServer(); //NYI
-    void updateFromServer();  //NYI
+    void pushToServer();
+    void checkForAck();
+    void checkForStart();
+    void updateFromServer();
     void sendStartRequest();
-    int disconnect();  //Self-explanatory. NYI
+    int disconnect();
 };
 
 #endif

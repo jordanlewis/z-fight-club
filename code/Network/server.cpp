@@ -6,6 +6,7 @@
 #include "Utilities/error.h"
 #include "Physics/pobject.h"
 #include "racerpacket.h"
+#include <boost/lexical_cast.hpp>
 
 Server Server::_instance;
 
@@ -120,7 +121,7 @@ int Server::attachPMoveable(Kinematic *kine, float mass, GeomInfo *info,
  * as needed.
  */
 int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
-                         float mass, GeomInfo *geomInfo, netObjID_t ID){
+                         float mass, GeomInfo *geomInfo, netObjID_t ID, uint8_t clientID){
     WorldObject *obj = getNetObject(ID);
     if (obj == NULL)
         {
@@ -144,6 +145,7 @@ int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
     //Tell networked agents to attach the PAgent
     struct RPAttachAgent toSend;
     toSend.ID = ID;
+    toSend.clientID = clientID;
 
     geomInfo->hton(&(toSend.info));
     agent->hton(&(toSend.agent));
@@ -185,6 +187,10 @@ void Server::setServerPort(uint16_t port){
 
 void Server::gatherPlayers()
 {
+    cerr << "gathering players" << endl;
+    racerPacketType_t type;
+    void * payload;
+
     while(1)
     {
         ENetEvent event;
@@ -196,12 +202,15 @@ void Server::gatherPlayers()
                 case ENET_EVENT_TYPE_NONE:
                     break;
                 case ENET_EVENT_TYPE_RECEIVE:
+                  cerr << "received a packet" << endl;
                   {
-                    error->log(NETWORK, IMPORTANT, "Packet Received\n");
-                    racerPacketType_t pt = getRacerPacketType(event.packet);
-                    enet_packet_destroy(event.packet);
-                    if (pt == RP_START)
+                    type = getRacerPacketType(event.packet);
+                    payload = event.packet->data+sizeof(racerPacketType_t);
+                    if (type == RP_START)
                     {
+                        RPStart info = *(RPStart *)payload;
+                        string msg = "Client # " + boost::lexical_cast<string>((int) info.clientID) + " requested start\n";
+                        error->log(NETWORK, TRIVIAL, msg);
                         netObjID_t netID;
                         if (createNetObj(netID) != 0)
                         {
@@ -209,10 +218,20 @@ void Server::gatherPlayers()
                         }
                         Agent *agent = world->placeAgent(world->numAgents());
                         BoxInfo box = BoxInfo(agent->width, agent->height, agent->depth);
-                        attachAgent(&agent->getKinematic(), &agent->getSteering(), agent->mass, &box, netID);
+                        attachAgent(&agent->getKinematic(), &agent->getSteering(), agent->mass, &box, netID, info.clientID);
                         delete agent;
-                        return;
+                        // if number of players registered == number of players specified on server command-line
+                        if (world->numAgents() != 9999)
+                        {
+                            cerr << "broadcasting start" << endl;
+                            RPStart toSend;
+                            toSend.clientID = -1; // from the server
+                            ENetPacket *packet = makeRacerPacket(RP_START, &toSend, sizeof(RPStart));
+                            enet_host_broadcast(enetServer, 0, packet);
+                            return;
+                        }
                     }
+                    enet_packet_destroy(event.packet);
                   }
                     break;
                 case ENET_EVENT_TYPE_CONNECT:
@@ -233,6 +252,11 @@ void Server::gatherPlayers()
                     }
                     if (successFlag)  {
                         clients[client.identifier] = client;
+                        struct RPAck toSend;
+                        toSend.clientID = client.identifier; // ntonc is trivial :)
+                        ENetPacket *packet = makeRacerPacket(RP_ACK_CONNECTION, &toSend, sizeof(RPAck));
+                        enet_peer_send(event.peer, 0, packet);
+                        cerr << " (assigned client # " << (int) client.identifier << ")" << endl;
                     }
                     else {
                         error->log(NETWORK, IMPORTANT, "Cannot accomodate more clients");
@@ -290,7 +314,7 @@ void Server::serverFrame(){
     void * payload;
     if (pingclock++ == 0)
     {
-        // keep the client from disconnecting
+        // keep clients from disconnecting
         ENetPacket *packet = makeRacerPacket(RP_PING, NULL, 0);
         enet_host_broadcast(enetServer, 0, packet);
     }

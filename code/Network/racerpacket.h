@@ -21,7 +21,8 @@ typedef enum {
     RP_UPDATE_PMOVEABLE,
     RP_ATTACH_PAGENT,
     RP_UPDATE_PAGENT,
-    RP_PING
+    RP_PING,
+    RP_ACK_CONNECTION
 } racerPacketType_t;
 
 /* makeRacerPacket:  Creates a RacerPacket.  RacerPackets begin with a
@@ -38,6 +39,13 @@ ENetPacket *makeRacerPacket(racerPacketType_t type, const void *data, int size);
  * order */
 racerPacketType_t getRacerPacketType(ENetPacket *packet);
 
+struct RPAck{
+    uint8_t clientID;
+};
+
+struct RPStart{
+    uint8_t clientID;
+};
 
 struct RPGeomInfo{
     uint32_t type;
@@ -94,6 +102,7 @@ struct RPAttachPMoveable{
 
 struct RPAttachAgent {
     netObjID_t ID;
+    uint8_t clientID;
     RPGeomInfo info;
     RPAgent agent;
 };

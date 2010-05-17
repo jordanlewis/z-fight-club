@@ -27,7 +27,7 @@ class Server {
     ENetHost *enetServer;
     int maxConns;
     float dt;
-    unsigned char pingclock;
+    uint8_t pingclock;
     World *world;
     Error *error;
 
@@ -52,7 +52,7 @@ class Server {
     /* attachAgent:  Assumes all Agents also want a PAgent.  Currently 
      * ignores mass argument.  See server.cpp for more details */ 
     int attachAgent(Kinematic *kine, SteerInfo *steerInfo, 
-                    float mass, GeomInfo *geomInfo, netObjID_t ID); 
+                    float mass, GeomInfo *geomInfo, netObjID_t ID, uint8_t clientID); 
     
 
     void updateFromClient(uint8_t clientId); //NYI (call within serverFrame)

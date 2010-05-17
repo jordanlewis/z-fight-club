@@ -67,7 +67,7 @@ void Scheduler::soloLoopForever()
         ai->run();
         graphics->render();
         sound->render();
-        if ((profilerclock++ & 0xFF) == 0) error->pdisplay();
+        if ((profilerclock++ & 0x0F) == 0) error->pdisplay();
 
         usleep(10000);
     }
@@ -77,10 +77,18 @@ void Scheduler::clientLoopForever(){
     // draw_welcome_screen
     cout << "z fight club presents: Tensor Rundown" << endl << endl
          << "    up and down arrow keys accelerate forwards and backwards" << endl
-         << "       left and right rotate your vehicle" << endl
-         << "  mash the spacebar to begin" << endl;
-    cout.flush();
+         << "       left and right rotate your vehicle" << endl;
 
+    while (1)
+    {
+        client->checkForAck();
+        if (client->clientState == C_HAVEID)
+        {
+            cout << "aha, I must have heard from the server. I can send a start request now." << endl;
+            cout << "  mash the spacebar to begin" << endl;
+            break;
+        }
+    }
     // wait for space, network "go", quit, or disconnect
     // maybe processInput needs siblings appropriate for various states
     double t = GetTime();
@@ -104,14 +112,19 @@ void Scheduler::clientLoopForever(){
                     return;
             }
         }
-        if (GetTime() > t+5) // pretend there's a network "go" or disconnect message
+        client->checkForStart();
+        if (client->clientState == C_START)
         {
-            cout << "ah, a message from the server" << endl
-                 << "must be time to play" << endl;
+            cout << "aha, I must have heard from the server. starting..." << endl;
             raceState = RACE;
             break;
         }
-        usleep(10000);
+        if (GetTime() > t+5)
+        {
+            cout << "if I didn't get a start message by now, start anyway" << endl;
+            raceState = RACE;
+            break;
+        }
     }
 
     int done = 0;

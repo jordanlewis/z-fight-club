@@ -6,8 +6,10 @@
 Client Client::_instance;
 
 Client::Client() :
+    clientID(255),
     world(&World::getInstance()),
-    error(&Error::getInstance())
+    error(&Error::getInstance()),
+    clientState(C_NOID)
 {
     enetClient = enet_host_create(NULL, 1, 0, 0);
 
@@ -48,6 +50,7 @@ void Client::setServerPort(uint16_t port){
 //Taken mostly from the tutorial at enet.bespin.org
 int Client::connectToServer()
 {
+    error->pin(P_CLIENT);
     ENetAddress enetAddress;
     ENetEvent event;
 
@@ -84,8 +87,69 @@ int Client::connectToServer()
             return -1;
     }
 
+    error->pout(P_CLIENT);
     return 0;
+}
 
+void Client::checkForStart()
+{
+    error->pin(P_CLIENT);
+    ENetEvent event;
+    racerPacketType_t type;
+    void * payload;
+
+    while(enet_host_service(enetClient, &event, 100) > 0)
+    {
+        if (event.type == ENET_EVENT_TYPE_RECEIVE)
+        {
+            type = getRacerPacketType(event.packet);
+            payload = event.packet->data+sizeof(racerPacketType_t);
+            if (type == RP_START)
+            {
+                RPStart info = *(RPStart *)payload;
+                clientID = info.clientID;
+                cout << "start signal from " << (int) info.clientID << endl;
+                clientState = C_START;
+                return; // don't process any more packets than I need to.
+            } else {
+                cerr << "oops, throwing away some packet the client received before it was ready" << endl;
+            }
+        } else {
+            cerr << "oops, some unexpected network event is being ignored by the client" << endl;
+        }
+    }
+    error->pout(P_CLIENT);
+}
+
+void Client::checkForAck()
+{
+    error->pin(P_CLIENT);
+    ENetEvent event;
+    racerPacketType_t type;
+    void * payload;
+
+    while(enet_host_service(enetClient, &event, 100) > 0)
+    {
+        if (event.type == ENET_EVENT_TYPE_RECEIVE)
+        {
+            type = getRacerPacketType(event.packet);
+            payload = event.packet->data+sizeof(racerPacketType_t);
+            if (type == RP_ACK_CONNECTION)
+            {
+                // this has my clientID in it, so I'll know when an agent is created just for me
+                RPAck info = *(RPAck *)payload;
+                clientID = info.clientID;
+                cout << "I'm client # " << (unsigned int) clientID << endl;
+                clientState = C_HAVEID;
+                return; // don't process any more packets than I need to.
+            } else {
+                cerr << "oops, throwing away some packet the client received before it was ready" << endl;
+            }
+        } else {
+            cerr << "oops, some unexpected network event is being ignored by the client" << endl;
+        }
+    }
+    error->pout(P_CLIENT);
 }
 
 void Client::updateFromServer()
@@ -107,6 +171,14 @@ void Client::updateFromServer()
             switch(type)
             {
                 case RP_PING:
+                    break;
+                case RP_ACK_CONNECTION:
+                    // this has my clientID in it, so I'll know when an agent is created just for me
+                    {
+                        RPAck info = *(RPAck *)payload;
+                        clientID = info.clientID;
+                        cout << "I'm client # " << (unsigned int) clientID << endl;
+                    }
                     break;
                 case RP_CREATE_NET_OBJ:
                     {
@@ -178,12 +250,19 @@ void Client::updateFromServer()
 
 void Client::sendStartRequest()
 {
-    ENetPacket *packet = makeRacerPacket(RP_START, NULL, 0);
+    error->pin(P_CLIENT);
+    RPStart toSend;
+    cerr << "about to send start request with clientID=" << (int) clientID << endl;
+    toSend.clientID = clientID;
+    ENetPacket *packet = makeRacerPacket(RP_START, &toSend, sizeof(RPStart));
     enet_peer_send(peer, 0, packet);
     enet_host_flush(enetClient);
+    error->pout(P_CLIENT);
 }
 
-void Client::pushToServer(){
+void Client::pushToServer()
+{
+    error->pin(P_CLIENT);
     /* netobjs is empty right now, use world objects instead
     for (map<netObjID_t, WorldObject *>::iterator iter = netobjs.begin();
          iter != netobjs.end();
@@ -209,4 +288,5 @@ void Client::pushToServer(){
             enet_host_flush(enetClient);
         }
     }
+    error->pout(P_CLIENT);
 }
