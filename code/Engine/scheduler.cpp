@@ -36,7 +36,7 @@ void Scheduler::soloLoopForever()
     timeStarted = last;
     raceState = COUNTDOWN;
 
-    cout << "Looping forever...(solo)" << endl;
+    error->log(ENGINE, TRIVIAL, "Entering solo-play loop\n");
     while (!done)
     {
         done = input->processInput();
@@ -74,7 +74,6 @@ void Scheduler::soloLoopForever()
 }
 
 void Scheduler::clientLoopForever(){
-    // draw_welcome_screen
     cout << "z fight club presents: Tensor Rundown" << endl << endl
          << "    up and down arrow keys accelerate forwards and backwards" << endl
          << "       left and right rotate your vehicle" << endl;
@@ -84,44 +83,33 @@ void Scheduler::clientLoopForever(){
         client->checkForAck();
         if (client->clientState == C_HAVEID)
         {
-            cout << "aha, I must have heard from the server. I can send a start request now." << endl;
-            cout << "  mash the spacebar to begin" << endl;
+            cout << endl << "mash the spacebar to begin" << endl;
             break;
         }
     }
-    // wait for space, network "go", quit, or disconnect
-    // maybe processInput needs siblings appropriate for various states
-    double t = GetTime();
     SDL_Event SDLevt;
     while (1)
     {
+        usleep(1000);
         if (SDL_PollEvent(&SDLevt))
         {
-            switch(SDLevt.type)
+            if ((SDLevt.type == SDL_KEYDOWN) &&
+                (SDLevt.key.keysym.sym == SDLK_SPACE))
             {
-                case SDL_KEYDOWN:
-                    if (SDLevt.key.keysym.sym == SDLK_SPACE)
-                    {
-                        cout << "asking the server to start the game..." << endl;
-                        client->sendStartRequest();
-                        t = GetTime();
-                    }
-                    break;
-                case SDL_QUIT:
-                    cout << "telling the server nevermind" << endl;
+                client->sendStartRequest();
+                break;
+            }
+            else if (SDLevt.type == SDL_QUIT)
+            {
                     return;
             }
         }
+    }
+    while (1)
+    {
         client->checkForStart();
         if (client->clientState == C_START)
         {
-            cout << "aha, I must have heard from the server. starting..." << endl;
-            raceState = RACE;
-            break;
-        }
-        if (GetTime() > t+5)
-        {
-            cout << "if I didn't get a start message by now, start anyway" << endl;
             raceState = RACE;
             break;
         }
@@ -131,7 +119,7 @@ void Scheduler::clientLoopForever(){
     double now;
     double last = GetTime();
 
-    cout << "Looping forever...(client)" << endl;
+    error->log(ENGINE, TRIVIAL, "Entering client loop\n");
     while (!done)
     {
         done = input->processInput();
