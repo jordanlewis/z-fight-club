@@ -41,7 +41,9 @@ class Avoid
 class AIController
 {
     /* cached AI data? paths? etc */
+    bool wallTrapped; /*Can we not even turn due to a wall in front of us? */
   public:
+    Vec3f obstacle;
     Path                path;           /* !< the path we're on */
     std::deque<Avoid> obstacles;        /* !< targets to be avoided */
     Agent               *agent;
@@ -49,6 +51,7 @@ class AIController
     float align(float target); /*!<try to point to tgt; returns angle to tgt */
     void brake();
     void smartGo(const Vec3f target);
+    void detectWalls();
     void cruise(Path *path);
     AIController(Agent *);
     void lane(int);     /* !< load a lane as the path */

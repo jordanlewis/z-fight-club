@@ -162,8 +162,16 @@ void AIController::smartGo(const Vec3f target)
     s = agent->getSteering();
 
     short go; /* 1 = accelerate, -1 = reverse acceleration, 0 = neither*/
+    bool overrideTurn = false;
+    short turn = 0; /* 1 = left, -1 = right, 0 = neither */
 
-    if (k.forwardSpeed() > 6)
+    if (wallTrapped)
+    {
+        /* We're trapped by a wall. Reverse and turn away from the wall */
+        cout << "trapped" <<endl;
+        go = -1;
+    }
+    else if (k.forwardSpeed() > 6)
     {
         if (angle < M_PI / 10)
         {
@@ -173,7 +181,7 @@ void AIController::smartGo(const Vec3f target)
         else if (angle < 7 * M_PI / 8)
         {
             error->log(AI, TRIVIAL, "AI: sharp turn\n");
-            go = -1;
+       //     go = -1;
         }
         else
         {
@@ -207,6 +215,10 @@ void AIController::smartGo(const Vec3f target)
         }
     }
     s.acceleration = go * agent->getMaxAccel();
+    if (overrideTurn)
+    {
+        s.rotation = turn * agent->maxRotate;
+    }
     agent->setSteering(s);
 }
 
@@ -307,6 +319,97 @@ void AIController::avoid(Vec3f &pos)
     obstacles.push_back(Avoid(pos));
 }
 
+void AIController::detectWalls()
+{
+    const Kinematic k = agent->getKinematic();
+    if (k.vel.length() == 0)
+        return;
+
+    float length = 5;
+    CollQuery queryl, queryr, query;
+
+    const Vec3f start = k.pos + k.orientation_v.unit() * (.01 + agent->depth / 2);
+
+    Vec3f perp = k.orientation_v.perp(Vec3f(0,1,0));
+    Vec3f startl = start - perp * agent->width / 2;
+    Vec3f startr = start + perp * agent->width / 2;
+
+    rayCast(&startl, &k.orientation_v, length, &queryl);
+    rayCast(&startr, &k.orientation_v, length, &queryr);
+    rayCast(&start, &k.orientation_v, length, &query);
+
+    std::list<CollContact>::iterator iter;
+
+    WorldObject *closest = NULL;
+    Vec3f contact;
+    float bestDist = 10000;
+    float dist;
+    wallTrapped = false;
+
+    /* Check for wall trapped-ness: using center ray, if distance to collision
+     * is small and the angle between orientation_v and the collision is small,
+     * then we're probably stuck against a wall.*/
+    for (iter = query.contacts.begin(); iter != query.contacts.end(); iter++)
+    {
+        if ((*iter).obj != NULL && (*iter).obj != agent->worldObject &&
+            (*iter).obj->agent == NULL)
+        {
+            dist = ((*iter).position - start).length();
+            if (dist < agent->depth *2)
+            {
+                float obstAngle = acos(k.orientation_v.perp(Vec3f(0,1,0)).unit().dot((start - (*iter).position).unit()));
+                if (abs(obstAngle - M_PI_2) < M_PI_4/4)
+                {
+                    wallTrapped = true;
+                    return;
+                }
+            }
+        }
+    }
+
+    std::list<CollContact>contacts;
+    contacts.splice(contacts.begin(), queryl.contacts);
+    contacts.splice(contacts.begin(), queryr.contacts);
+    contacts.splice(contacts.begin(), query.contacts);
+
+
+    /* Get closest contact that isn't a wall trap */
+    for (iter = contacts.begin(); iter != contacts.end(); iter++)
+    {
+        if ((*iter).obj != NULL && (*iter).obj != agent->worldObject &&
+            (*iter).obj->agent == NULL)
+        {
+            dist = ((*iter).position - k.pos).length();
+            if (dist < bestDist)
+            {
+                closest = (*iter).obj;
+                contact = (*iter).position;
+            }
+        }
+    }
+
+
+    if (closest != NULL)
+    {
+        obstacle = contact;
+        SteerInfo s = agent->getSteering();
+        /* Determine angle to obstacle. If between 0 and pi/2, turn right. If
+         * between pi/2 and pi, turn left. Else its behind us. */
+        Vec3f avoidDir = k.pos - contact;
+
+        float obstAngle = acos(k.orientation_v.perp(Vec3f(0,1,0)).unit().dot(avoidDir.unit()));
+        if (obstAngle > 0 && obstAngle < M_PI_2)
+        {
+            s.rotation = -agent->maxRotate;
+        }
+        else if (obstAngle < M_PI && obstAngle >= M_PI_2)
+        {
+            s.rotation = agent->maxRotate;
+        }
+        agent->setSteering(s);
+    }
+}
+
 void AIController::cruise()
 {
     double now = GetTime();
@@ -332,6 +435,7 @@ void AIController::cruise()
 
 void AIController::run()
 {
+    detectWalls();
     cruise();
     /* Test target - we'll change this function to do more interesting things
      * once we get a better AI test architecture running. */
