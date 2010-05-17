@@ -168,7 +168,6 @@ void AIController::smartGo(const Vec3f target)
     if (wallTrapped)
     {
         /* We're trapped by a wall. Reverse and turn away from the wall */
-        cout << "trapped" <<endl;
         go = -1;
     }
     else if (k.forwardSpeed() > 6)
@@ -283,7 +282,6 @@ void AIController::lane(int laneIndex)
     }
 
     startSeg = best;
-    cout << best << endl;
 
     for (i = 0; i < lane.nSegs; i++) {
         int seg = (i + startSeg + 1) % lane.nSegs;
