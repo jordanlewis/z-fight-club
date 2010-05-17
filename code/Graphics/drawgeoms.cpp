@@ -68,19 +68,15 @@ void ObjMeshInfo::draw()
 
     /* setup shaders */
 
-    World &world = World::getInstance();
-    VertexShader_t *vshader = LoadVertexShader((world.assetsDir + std::string("shaders/obj.vert")).c_str());
-    FragmentShader_t *fshader = LoadFragmentShader((world.assetsDir + std::string("shaders/obj.frag")).c_str());
-    ShaderProgram_t *obj_shader = CreateShaderProgram(vshader, fshader);
 
-    UseProgram(obj_shader);
+    UseProgram(shader);
 
     /* Initialize the textures */
     glGenTextures(3, texIDs);
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texIDs[COLOR_TEX]);
-    GLint color_tex = UniformLocation(obj_shader, "color_tex");
+    GLint color_tex = UniformLocation(shader, "color_tex");
     glUniform1i(color_tex, texIDs[COLOR_TEX]);
     TexImage(texs[COLOR_TEX]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -90,7 +86,7 @@ void ObjMeshInfo::draw()
 
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, texIDs[SPEC_TEX]);
-    GLint spec_tex = UniformLocation(obj_shader, "spec_tex");
+    GLint spec_tex = UniformLocation(shader, "spec_tex");
     glUniform1i(spec_tex, texIDs[SPEC_TEX]);
     TexImage(texs[SPEC_TEX]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -100,7 +96,7 @@ void ObjMeshInfo::draw()
 
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, texIDs[BUMP_TEX]);
-    GLint bump_tex = UniformLocation(obj_shader, "bump_tex");
+    GLint bump_tex = UniformLocation(shader, "bump_tex");
     glUniform1i(bump_tex, texIDs[BUMP_TEX]);
     TexImage(texs[BUMP_TEX]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -209,6 +205,8 @@ void ObjMeshInfo::draw()
 
         group = group->next;
     }
+
+    UseProgram(NULL);
 }
 
 void TriMeshInfo::draw()

@@ -45,6 +45,10 @@ ObjMeshInfo::ObjMeshInfo(std::string filename)
     texs[COLOR_TEX] = LoadImage((world.assetsDir + filename + std::string("color.png")).c_str(), false, RGB_IMAGE);
     texs[BUMP_TEX] = LoadImage((world.assetsDir + filename + std::string("bump.png")).c_str(), false, RGB_IMAGE);
     texs[SPEC_TEX] = LoadImage((world.assetsDir + filename + std::string("spec.png")).c_str(), false, RGB_IMAGE);
+
+    VertexShader_t *vshader = LoadVertexShader((world.assetsDir + std::string("shaders/obj.vert")).c_str());
+    FragmentShader_t *fshader = LoadFragmentShader((world.assetsDir + std::string("shaders/obj.frag")).c_str());
+    shader = CreateShaderProgram(vshader, fshader);
 }
 
 dGeomID SphereInfo::createGeom(dSpaceID space)
@@ -135,5 +139,6 @@ void PlaneInfo::ntoh(RPGeomInfo *payload) {
 
 ObjMeshInfo::~ObjMeshInfo()
 {
+    FreeShaderProgram(shader);
     OBJDelete(model);
 }
