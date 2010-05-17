@@ -178,9 +178,9 @@ void AIController::smartGo(const Vec3f target)
     }
     else
     {
-        if (angle < M_PI / 3)
+        if (angle < M_PI / 2)
             go = 1;
-        else if (angle < M_PI / 2)
+        else if (angle < 3 * M_PI / 4)
             go = -1;
         else
         {
