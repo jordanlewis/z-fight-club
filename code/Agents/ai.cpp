@@ -178,7 +178,7 @@ void AIController::smartGo(const Vec3f target)
     }
     else
     {
-        if (angle < M_PI / 4)
+        if (angle < M_PI / 3)
             go = 1;
         else if (angle < M_PI / 2)
             go = -1;
@@ -416,7 +416,6 @@ void AIController::avoidObstacle()
             if (post > 0 && negt > 0)
             {
                 hitTime = post < negt ? post : negt;
-                cout << "hit time: " << hitTime << endl;;
             }
         }
 
