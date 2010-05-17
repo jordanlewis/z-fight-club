@@ -54,7 +54,7 @@ void Physics::simulate(float dt)
             p = dynamic_cast<PAgent *>(a->worldObject->pobject);
             const Kinematic &k = p->odeToKinematic();
             a->setKinematic(k);
-            p->resetOdeAngularVelocity(nSteps);
+            p->resetOdeAngularVelocity(1);
         }
     }
     error->pout(P_PHYSICS);
