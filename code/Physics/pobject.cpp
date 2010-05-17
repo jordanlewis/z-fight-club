@@ -179,7 +179,7 @@ void PAgent::kinematicToOde()
 
     const Kinematic *k = kinematic;
     Vec3f newvel = Vec3f(k->vel[0], 0, k->vel[2]);
-    newvel = .995 * k->vel + .005 * k->orientation_v * k->vel.length();
+    newvel = .995 * k->vel + .005 * k->orientation_v * newvel.length();
     newvel[1] = k->vel[1];
     dBodySetLinearVel(body, newvel[0], newvel[1], newvel[2]);
 }
