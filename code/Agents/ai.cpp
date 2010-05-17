@@ -345,7 +345,6 @@ void AIController::detectWalls()
     Vec3f contact;
     float bestDist = 10000;
     float dist;
-    float obstAngle;
     wallTrapped = false;
 
     /* Check for wall trapped-ness: if 2 out of 3 rays' distance to collision
@@ -374,60 +373,63 @@ void AIController::detectWalls()
             continue;
 
         dist = ((*iter).position - *s).length();
+        /* Get middle distance if its close enough to the agent. */
         if (middist == -1 && dist < agent->depth * 2)
             middist = dist;
         /* magic number below says how much "diagonality" is permitted for the
-         * obstacle to still be a perpendicular wall. */
+         * obstacle to still be a perpendicular wall. Collect votes for all
+         * 3 rays.*/
         else if (abs(middist - dist) < .5)
             votes++;
+
+        /* Get closest contact for non-wallstuck cases */
+        if (dist < bestDist)
+        {
+            closest = (*iter).obj;
+            contact = (*iter).position;
+        }
     }
     if (votes > 0)
     {
         wallTrapped = true;
-    }
-
-
-    std::list<CollContact>contacts;
-    contacts.splice(contacts.begin(), queryl.contacts);
-    contacts.splice(contacts.begin(), queryr.contacts);
-    contacts.splice(contacts.begin(), query.contacts);
-
-
-    /* Get closest contact that isn't a wall trap */
-    for (iter = contacts.begin(); iter != contacts.end(); iter++)
-    {
-        if ((*iter).obj != NULL && (*iter).obj != agent->worldObject &&
-            (*iter).obj->agent == NULL)
-        {
-            dist = ((*iter).position - k.pos).length();
-            if (dist < bestDist)
-            {
-                closest = (*iter).obj;
-                contact = (*iter).position;
-            }
-        }
+        return;
     }
 
 
     if (closest != NULL)
     {
+        seeObstacle = true;
         obstacle = contact;
-        SteerInfo s = agent->getSteering();
-        /* Determine angle to obstacle. If between 0 and pi/2, turn right. If
-         * between pi/2 and pi, turn left. Else its behind us. */
-        Vec3f avoidDir = k.pos - contact;
-
-        obstAngle = acos(k.orientation_v.perp(Vec3f(0,1,0)).unit().dot(avoidDir.unit()));
-        if (obstAngle > 0 && obstAngle < M_PI_2)
-        {
-            s.rotation = -agent->maxRotate;
-        }
-        else if (obstAngle < M_PI && obstAngle >= M_PI_2)
-        {
-            s.rotation = agent->maxRotate;
-        }
-        agent->setSteering(s);
     }
+    else
+    {
+        seeObstacle = false;
+    }
+}
+
+void AIController::avoidObstacle()
+{
+    if (seeObstacle == false)
+        return;
+
+    SteerInfo s = agent->getSteering();
+    /* Determine angle to obstacle. If between 0 and pi/2, turn right. If
+        * between pi/2 and pi, turn left. Else its behind us. */
+    const Kinematic k = agent->getKinematic();
+    Vec3f avoidDir = k.pos - obstacle;
+
+    float obstAngle = acos(k.orientation_v.perp(Vec3f(0,1,0)).unit().dot(avoidDir.unit()));
+    if (obstAngle > 0 && obstAngle < M_PI_2)
+    {
+        cout << "run left" << endl;
+        s.rotation = -agent->maxRotate;
+    }
+    else if (obstAngle < M_PI && obstAngle >= M_PI_2)
+    {
+        cout << "run right" << endl;
+        s.rotation = agent->maxRotate;
+    }
+    agent->setSteering(s);
 }
 
 void AIController::cruise()
@@ -457,6 +459,7 @@ void AIController::run()
 {
     detectWalls();
     cruise();
+    avoidObstacle();
     /* Test target - we'll change this function to do more interesting things
      * once we get a better AI test architecture running. */
     /* Vec3f tgt = Input::getInstance().getPlayerController().getAgent().kinematic.pos;

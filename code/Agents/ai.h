@@ -42,6 +42,7 @@ class AIController
 {
     /* cached AI data? paths? etc */
     bool wallTrapped; /*Can we not even turn due to a wall in front of us? */
+    bool seeObstacle;
   public:
     Vec3f obstacle;
     Path                path;           /* !< the path we're on */
@@ -56,6 +57,7 @@ class AIController
     AIController(Agent *);
     void lane(int);     /* !< load a lane as the path */
     void avoid(Vec3f&); /* !< add a new point to be avoided */
+    void avoidObstacle(); /*!< avoid obstacle detected by detectWalls() */
     void cruise();      /* !< follow path at maximum possible speed */
     void run();         /* !< Give new steering information to the agent we control */
   private:
