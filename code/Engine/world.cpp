@@ -32,7 +32,7 @@ WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject, Age
 
 Vec3f WorldObject::getPos()
 {
-    if (pobject) return pobject->getPos();
+    if (pobject && pobject->isPlaceable()) return pobject->getPos();
     return pos;
 }
 
