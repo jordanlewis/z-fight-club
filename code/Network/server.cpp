@@ -281,7 +281,7 @@ void Server::gatherPlayers()
                     break;
                 case ENET_EVENT_TYPE_CONNECT:
                   {
-                    error->log(NETWORK, IMPORTANT, "New client connected!");
+                    error->log(NETWORK, IMPORTANT, "New client connected!\n");
                     ClientInfo client;
                     int successFlag = 0;
                     client.ipAddr = event.peer->address.host;
@@ -390,18 +390,16 @@ void Server::serverFrame()
                     {
                         case RP_UPDATE_AGENT:
                             {
-                                cout << "Got update" << endl;
                                 RPUpdateAgent *P = (RPUpdateAgent *)payload;
                                 WorldObject *wo = netobjs[ntohl(P->ID)];
-                                cout << "Agent ID: " << ntohl(P->ID) << endl;
                                 SteerInfo steerInfo;
                                 steerInfo.ntoh(&P->info);
                                 stringstream msg;
-                                cout << "Steerinfo: " << steerInfo << endl;
+                                cout << "Steerinfo[" << ntohl(P->ID) << "]: "
+                                     << steerInfo << endl;
                                 error->log(NETWORK, TRIVIAL, msg.str());
                                 if (wo && wo->agent)
                                 {
-                                    cout << "test passed" << endl;
                                     // do we want to adjust gradally using 
                                     //an average?
                                     wo->agent->setSteering(steerInfo);
