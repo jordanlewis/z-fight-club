@@ -3,6 +3,7 @@
 
 #include "network.h"
 #include "Engine/world.h"
+#include <list>
 
 class GeomInfo;
 class Kinematic;
@@ -22,6 +23,7 @@ class Server {
  private:
     map<uint8_t, ClientInfo> clients; //Tracks all connected clients by id
     map<netObjID_t, WorldObject *> netobjs; //Tracks networked world objects
+    list<ENetPacket *> toCreate; //Tracks all objects we need to create
 
     ENetAddress enetAddress;
     ENetHost *enetServer;
@@ -67,6 +69,8 @@ class Server {
 
     ENetPacket *packageObject(netObjID_t ID); //NYI
     void gatherPlayers(); //Service (dis)connections and RP_START requests during setup
+    void createAll();   /*Sends out queued up pre-game packets once all clients
+                         *are connected */
     void serverFrame(); //Service incoming packets during gameplay
     int closeClient(uint8_t clientID); //NYI
 };
