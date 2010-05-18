@@ -145,11 +145,15 @@ int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
             return -1;
         }
     //Attach the Agent locally
+    cout << ((BoxInfo *)geomInfo)->lx << endl;
+
     Agent *agent = new Agent();
     agent->setSteering(*steerInfo);
     agent->setKinematic(*kine);
 
     obj->agent = agent;
+    agent->worldObject = obj;
+    BoxInfo box(1,1,1);
     obj->gobject = new GObject(geomInfo);
 
     PAgent *pagent = new PAgent(&(agent->getKinematic()),
@@ -158,7 +162,8 @@ int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
 
     obj->pobject = pagent;
     pagent->worldObject = obj;
-    
+    world->addObject(obj);    
+
     //Tell networked agents to attach the PAgent
     struct RPAttachAgent toSend;
     toSend.ID = ID;
@@ -166,7 +171,7 @@ int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
 
     geomInfo->hton(&(toSend.info));
     agent->hton(&(toSend.agent));
-    
+
     ENetPacket *packet = makeRacerPacket(RP_ATTACH_AGENT, &toSend,
                                          sizeof(RPAttachAgent),
                                          ENET_PACKET_FLAG_RELIABLE);
@@ -245,13 +250,19 @@ void Server::gatherPlayers()
                         netObjID_t netID;
                         if (createNetObj(netID) != 0)
                         {
-                            error->log(NETWORK, CRITICAL, "failed to create network object\n");
+                            error->log(NETWORK, CRITICAL,
+                                       "failed to create network object\n");
                         }
                         Agent *agent = world->placeAgent(world->numAgents());
-                        BoxInfo box = BoxInfo(agent->width, agent->height, agent->depth);
-                        attachAgent(&agent->getKinematic(), &agent->getSteering(), agent->mass, &box, netID, info.clientID);
+                        BoxInfo *box = new BoxInfo(agent->width,
+                                                   agent->height,
+                                                   agent->depth);
+                        attachAgent(&agent->getKinematic(),
+                                    &agent->getSteering(), 
+                                    agent->mass, box,netID, info.clientID);
                         delete agent;
-                        // if number of players registered == number of players specified on server command-line
+                        // if number of players registered == number of
+                        // players specified on server command-line
                         if (world->numAgents() != 9999)
                         {
                             RPStart toSend;
@@ -378,16 +389,21 @@ void Server::serverFrame()
                     {
                         case RP_UPDATE_AGENT:
                             {
+                                cout << "Got update" << endl;
                                 RPUpdateAgent *P = (RPUpdateAgent *)payload;
-                                WorldObject *wo = netobjs[P->ID];
+                                WorldObject *wo = netobjs[ntohl(P->ID)];
+                                cout << "Agent ID: " << ntohl(P->ID) << endl;
                                 SteerInfo steerInfo;
                                 steerInfo.ntoh(&P->info);
                                 stringstream msg;
+                                cout << "Steerinfo: " << steerInfo << endl;
                                 msg << steerInfo << endl;
                                 error->log(NETWORK, TRIVIAL, msg.str());
                                 if (wo && wo->agent)
                                 {
-                                    // do we want to adjust gradally using an average?
+                                    cout << "test passed" << endl;
+                                    // do we want to adjust gradally using 
+                                    //an average?
                                     wo->agent->setSteering(steerInfo);
                                 }
                                 break;
