@@ -22,12 +22,14 @@ Server::Server() :
 
 Server::~Server()
 {
-    if (enetServer != NULL) {
+    if (enetServer != NULL)
+    {
         enet_host_destroy(enetServer);
     }
 }
 
-int Server::createNetObj(netObjID_t &ID) {
+int Server::createNetObj(netObjID_t &ID)
+{
     int successFlag = 0;
     netObjID_t i = 0;
     //Find smallest unused identifier
@@ -61,15 +63,17 @@ int Server::createNetObj(netObjID_t &ID) {
 }
 
 //should return NULL if unable to find an object with the given ID...
-WorldObject *Server::getNetObject(netObjID_t ID) {
+WorldObject *Server::getNetObject(netObjID_t ID)
+{
     return netobjs[ID];
 }
 
-int Server::attachPGeom(GeomInfo *info, netObjID_t ID){
+int Server::attachPGeom(GeomInfo *info, netObjID_t ID)
+{
     WorldObject *obj = getNetObject(ID);
     if (obj == NULL)
         {
-            cout << "No net object to attach to!" << endl;
+            error->log(NETWORK, IMPORTANT, "No net object to attach to!\n");
             return -1;
         }
     //Attach the PGeom locally
@@ -88,11 +92,12 @@ int Server::attachPGeom(GeomInfo *info, netObjID_t ID){
 }
 
 int Server::attachPMoveable(Kinematic *kine, float mass, GeomInfo *info,
-                            netObjID_t ID){
+                            netObjID_t ID)
+{
     WorldObject *obj = getNetObject(ID);
     if (obj == NULL)
         {
-            cout << "No net object to attach to!" << endl;
+            error->log(NETWORK, IMPORTANT, "No net object to attach to!\n");
             return -1;
         }
     //Attach the PMoveable locally
@@ -121,11 +126,12 @@ int Server::attachPMoveable(Kinematic *kine, float mass, GeomInfo *info,
  * as needed.
  */
 int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
-                         float mass, GeomInfo *geomInfo, netObjID_t ID, uint8_t clientID){
+                         float mass, GeomInfo *geomInfo, netObjID_t ID, uint8_t clientID)
+{
     WorldObject *obj = getNetObject(ID);
     if (obj == NULL)
         {
-            cout << "No net object to attach to!" << endl;
+            error->log(NETWORK, IMPORTANT, "No net object to attach to!\n");
             return -1;
         }
     //Attach the Agent locally
@@ -175,19 +181,21 @@ int Server::createHost()
     return 0;
 }
 
-void Server::setServerAddr(uint32_t addr){
+void Server::setServerAddr(uint32_t addr)
+{
     enetAddress.host = htonl(addr);
     return;
 }
 
-void Server::setServerPort(uint16_t port){
+void Server::setServerPort(uint16_t port)
+{
     enetAddress.port = port;
     return;
 }
 
 void Server::gatherPlayers()
 {
-    cerr << "gathering players" << endl;
+    error->log(NETWORK, TRIVIAL, "gathering players\n");
     racerPacketType_t type;
     void * payload;
 
@@ -202,7 +210,6 @@ void Server::gatherPlayers()
                 case ENET_EVENT_TYPE_NONE:
                     break;
                 case ENET_EVENT_TYPE_RECEIVE:
-                  cerr << "received a packet" << endl;
                   {
                     type = getRacerPacketType(event.packet);
                     payload = event.packet->data+sizeof(racerPacketType_t);
@@ -223,7 +230,6 @@ void Server::gatherPlayers()
                         // if number of players registered == number of players specified on server command-line
                         if (world->numAgents() != 9999)
                         {
-                            cerr << "broadcasting start" << endl;
                             RPStart toSend;
                             toSend.clientID = -1; // from the server
                             ENetPacket *packet = makeRacerPacket(RP_START, &toSend, sizeof(RPStart));
@@ -243,22 +249,25 @@ void Server::gatherPlayers()
                     client.port = event.peer->address.port;
 
                     //Find smallest unused identifier
-                    for (uint8_t i = 0; i < UINT8_MAX; i++){
-                        if (clients.find(i) == clients.end()){
+                    for (uint8_t i = 0; i < UINT8_MAX; i++)
+                    {
+                        if (clients.find(i) == clients.end())
+                        {
                             client.identifier = i;
                             successFlag = 1;
                             break;
                         }
                     }
-                    if (successFlag)  {
+                    if (successFlag)
+                    {
                         clients[client.identifier] = client;
                         struct RPAck toSend;
                         toSend.clientID = client.identifier; // ntonc is trivial :)
                         ENetPacket *packet = makeRacerPacket(RP_ACK_CONNECTION, &toSend, sizeof(RPAck));
                         enet_peer_send(event.peer, 0, packet);
-                        cerr << " (assigned client # " << (int) client.identifier << ")" << endl;
                     }
-                    else {
+                    else
+                    {
                         error->log(NETWORK, IMPORTANT, "Cannot accomodate more clients");
                     }
                     break;
@@ -274,7 +283,8 @@ void Server::gatherPlayers()
 /* Packages a netobject's physics data to be sent over the network.  Returns
  * null if a netobject's worldobject has no associated physics pointer.
  */
-ENetPacket *Server::packageObject(netObjID_t objID){
+ENetPacket *Server::packageObject(netObjID_t objID)
+{
     PMoveable *moveable;
     PAgent *agent;
     WorldObject *wobject = getNetObject(objID);
@@ -283,7 +293,8 @@ ENetPacket *Server::packageObject(netObjID_t objID){
     {
         //Eeeeewww... dynamic_cast...
         moveable = dynamic_cast<PMoveable *>(wobject->pobject);
-        if (moveable != NULL) {
+        if (moveable != NULL)
+        {
             agent = dynamic_cast<PAgent *>(wobject->pobject);
             if (agent != NULL)
             {
@@ -305,8 +316,8 @@ ENetPacket *Server::packageObject(netObjID_t objID){
     return NULL;
 }
 
-//General loop structure taken from the tutorial on enet.bespin.org
-void Server::serverFrame(){
+void Server::serverFrame()
+{
     error->pin(P_SERVER);
     ENetEvent event;
     usleep(10000);
@@ -341,7 +352,9 @@ void Server::serverFrame(){
                                 WorldObject *wo = netobjs[P->ID];
                                 SteerInfo steerInfo;
                                 steerInfo.ntoh(&P->info);
-                                cerr << steerInfo << endl;
+                                stringstream msg;
+                                msg << steerInfo << endl;
+                                error->log(NETWORK, TRIVIAL, msg.str());
                                 if (wo && wo->agent)
                                 {
                                     // do we want to adjust gradally using an average?

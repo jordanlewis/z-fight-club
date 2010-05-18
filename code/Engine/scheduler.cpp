@@ -73,75 +73,60 @@ void Scheduler::soloLoopForever()
     }
 }
 
-void Scheduler::clientLoopForever()
+void Scheduler::welcomeScreen()
 {
     cout << "z fight club presents: Tensor Rundown" << endl << endl
          << "    up and down arrow keys accelerate forwards and backwards" << endl
          << "       left and right rotate your vehicle" << endl;
+}
 
-    while (1)
-    {
-        client->checkForAck();
-        if (client->clientState == C_HAVEID)
-        {
-            cout << endl << "mash the spacebar to begin" << endl;
-            break;
-        }
-    }
-    SDL_Event SDLevt;
-    while (1)
-    {
-        usleep(1000);
-        if (SDL_PollEvent(&SDLevt))
-        {
-            if ((SDLevt.type == SDL_KEYDOWN) &&
-                (SDLevt.key.keysym.sym == SDLK_SPACE))
-            {
-                client->sendStartRequest();
-                break;
-            }
-            else if (SDLevt.type == SDL_QUIT)
-            {
-                    return;
-            }
-        }
-    }
-    while (1)
-    {
-        client->checkForStart();
-        if (client->clientState == C_START)
-        {
-            raceState = RACE;
-            break;
-        }
-    }
-
-    int done = 0;
+void Scheduler::clientLoopForever()
+{
+    error->log(ENGINE, TRIVIAL, "Entering client loop\n");
     double now;
     double last = GetTime();
-
-    error->log(ENGINE, TRIVIAL, "Entering client loop\n");
-    while (!done)
+    client->clientState = C_CONNECTING;
+    while (1)
     {
-        done = input->processInput();
-        client->pushToServer();
-
-        client->updateFromServer();
-        // physics will operate on latest data from server, right?
-        now = GetTime();
-        if (now - last > 0)
+        switch (client->clientState)
         {
-            physics->simulate(now - last);
+          case C_CONNECTING:
+            client->checkForPackets(); // may transition us into C_CONNECTED
+            break;
+          case C_CONNECTED:
+            cout << endl << "mash the spacebar to begin" << endl;
+            client->clientState = C_WAITINGFORPLAYER;
+            break;
+          case C_WAITINGFORPLAYER:
+            input->processInput(); // may transition us into C_PLAYERREADYTOSTART
+            break;
+          case C_PLAYERREADYTOSTART:
+            client->sendStartRequest();
+            client->clientState = C_WAITINGFORSTART;
+            break;
+          case C_WAITINGFORSTART:
+            client->checkForPackets(); // may transition us into C_RACE
+            raceState = RACE;
+            break;
+          case C_RACE:
+            client->checkForPackets();
+            client->pushToServer();
+            now = GetTime();
+            if (now - last > 0) physics->simulate(now - last);
+            last = now;
+            graphics->render();
+            sound->render();
+            input->processInput(); // may transition us into C_DONE
+            if ((profilerclock++ & 0x0F) == 0) error->pdisplay();
+            break;
+          case C_DONE:
+            client->disconnect();
+            return;
+          default:
+            assert(0);
+            break;
         }
-        last = now;
-
-        graphics->render();
-        sound->render();
-
-        if ((profilerclock++ & 0x0F) == 0) error->pdisplay();
-        usleep(10000);
     }
-    client->disconnect();
     return;
 }
 

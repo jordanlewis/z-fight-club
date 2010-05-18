@@ -111,6 +111,7 @@ int main(int argc, char *argv[])
     {
         graphics.initGraphics();
         sound.initSound();
+        scheduler.welcomeScreen();
         world.makeAgents();
         testSetup();
         scheduler.soloLoopForever();
@@ -126,6 +127,7 @@ int main(int argc, char *argv[])
             cerr << "Fatal error:  Cannot connect to server" << endl;
             return -1;
         }
+        scheduler.welcomeScreen();
         scheduler.clientLoopForever();
     }
     if (world.runType == SERVER)

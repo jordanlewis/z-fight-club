@@ -3,12 +3,20 @@
 
 #include "network.h"
 #include "Engine/world.h"
-#include "Utilities/error.h"
+class World;
+class Input;
+class Physics;
+class Sound;
+class Error;
 
 typedef enum {
-    C_NOID = 0,
-    C_HAVEID,
-    C_START
+    C_CONNECTING = 0,
+    C_CONNECTED,
+    C_WAITINGFORPLAYER,
+    C_PLAYERREADYTOSTART,
+    C_WAITINGFORSTART,
+    C_RACE,
+    C_DONE
 } clientState_t;
 
 //Client Class
@@ -30,6 +38,9 @@ class Client {
 
     static Client _instance;
     World *world;
+    Input *input;
+    Physics *physics;
+    Sound *sound;
     Error *error;
  public:
     clientState_t clientState;
@@ -44,9 +55,7 @@ class Client {
     void setServerPort(uint16_t port);
     int connectToServer();
     void pushToServer();
-    void checkForAck();
-    void checkForStart();
-    void updateFromServer();
+    void checkForPackets();
     void sendStartRequest();
     void disconnect();
 };

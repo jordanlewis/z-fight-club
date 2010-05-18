@@ -1,6 +1,7 @@
 #include <SDL/SDL.h>
 #include "input.h"
 #include "world.h"
+#include "Network/client.h"
 #include "Agents/player.h"
 
 Input Input::_instance;
@@ -33,6 +34,10 @@ int Input::processInput()
                         player->setWeaponState(FIRE); break;
                     case SDLK_c:
                         World::getInstance().camera.cycleView(); break;
+                    case SDLK_SPACE:
+                        if (client->clientState == C_WAITINGFORPLAYER)
+                            client->clientState = C_PLAYERREADYTOSTART;
+                        break;
                     default: break;
                 } break;
             case SDL_KEYUP:
@@ -65,6 +70,7 @@ int Input::processInput()
                 } break;
             case SDL_QUIT:
                 error->pout(P_INPUT);
+                client->clientState = C_DONE;
                 return 1;
             default:
                 break;
@@ -92,6 +98,7 @@ Input &Input::getInstance()
 }
 
 Input::Input() :
+    client(&Client::getInstance()),
     error(&Error::getInstance())
 {
     player = new PlayerController();

@@ -1,4 +1,6 @@
 #include "client.h"
+#include "Physics/physics.h"
+#include "Engine/input.h"
 #include "racerpacket.h"
 #include <cassert>
 #include <boost/lexical_cast.hpp>
@@ -8,8 +10,11 @@ Client Client::_instance;
 Client::Client() :
     clientID(255),
     world(&World::getInstance()),
+    input(&Input::getInstance()),
+    physics(&Physics::getInstance()),
+    sound(&Sound::getInstance()),
     error(&Error::getInstance()),
-    clientState(C_NOID)
+    clientState(C_CONNECTING)
 {
     enetClient = enet_host_create(NULL, 1, 0, 0);
 
@@ -22,7 +27,8 @@ Client::Client() :
 
 Client::~Client()
 {
-    if (enetClient != NULL) {
+    if (enetClient != NULL)
+    {
         enet_host_destroy(enetClient);
     }
 }
@@ -33,16 +39,19 @@ Client &Client::getInstance()
 }
 
 //Should return null if no such element exists in our map.  Does not yet do so.
-WorldObject *Client::getNetObj(netObjID_t ID){
+WorldObject *Client::getNetObj(netObjID_t ID)
+{
     return netobjs[ID];
 }
 
-void Client::setServerAddr(uint32_t addr){
+void Client::setServerAddr(uint32_t addr)
+{
     serverAddr = addr;
     return;
 }
 
-void Client::setServerPort(uint16_t port){
+void Client::setServerPort(uint16_t port)
+{
     serverPort = port;
     return;
 }
@@ -54,11 +63,13 @@ int Client::connectToServer()
     ENetAddress enetAddress;
     ENetEvent event;
 
-    if (serverPort == 0){
+    if (serverPort == 0)
+    {
         error->log(NETWORK, CRITICAL, "No server port specified.\n");
         return -1;
     }
-    if (serverAddr == 0) {
+    if (serverAddr == 0)
+    {
         error->log(NETWORK, CRITICAL, "No server address specified.\n");
         return -1;
     }
@@ -91,106 +102,62 @@ int Client::connectToServer()
     return 0;
 }
 
-void Client::checkForStart()
+void Client::checkForPackets()
 {
     error->pin(P_CLIENT);
     ENetEvent event;
     racerPacketType_t type;
     void * payload;
 
-    while(enet_host_service(enetClient, &event, 100) > 0)
+    while(enet_host_service(enetClient, &event, 0) > 0)
     {
-        if (event.type == ENET_EVENT_TYPE_RECEIVE)
-        {
-            type = getRacerPacketType(event.packet);
-            payload = event.packet->data+sizeof(racerPacketType_t);
-            if (type == RP_START)
-            {
-                error->log(NETWORK, TRIVIAL, "RP_START\n");
-                RPStart info = *(RPStart *)payload;
-                string msg = "received start signal from ";
-                msg += boost::lexical_cast<string>((int) info.clientID) + "\n";
-                error->log(NETWORK, TRIVIAL, msg);
-                clientState = C_START;
-                return; // don't process any more packets than I need to.
-            } else {
-                error->log(NETWORK, TRIVIAL, "client throwing away unexpected packet\n");
-            }
-        } else {
-            error->log(NETWORK, TRIVIAL, "client ignoring unexpected network event\n");
-        }
-    }
-    error->pout(P_CLIENT);
-}
-
-void Client::checkForAck()
-{
-    error->pin(P_CLIENT);
-    ENetEvent event;
-    racerPacketType_t type;
-    void * payload;
-
-    while(enet_host_service(enetClient, &event, 100) > 0)
-    {
-        if (event.type == ENET_EVENT_TYPE_RECEIVE)
-        {
-            type = getRacerPacketType(event.packet);
-            payload = event.packet->data+sizeof(racerPacketType_t);
-            if (type == RP_ACK_CONNECTION)
-            {
-                error->log(NETWORK, TRIVIAL, "RP_ACK_CONNECTION\n");
-                // this has my clientID in it, so I'll know when an agent is created just for me
-                RPAck info = *(RPAck *)payload;
-                clientID = info.clientID;
-                string msg = "I'm client # ";
-                msg += boost::lexical_cast<string>((int) clientID) + "\n";
-                error->log(NETWORK, TRIVIAL, msg);
-                clientState = C_HAVEID;
-                return; // don't process any more packets than I need to.
-            } else {
-                error->log(NETWORK, TRIVIAL, "client throwing away unexpected packet\n");
-            }
-        } else {
-            error->log(NETWORK, TRIVIAL, "client ignoring unexpected network event\n");
-        }
-    }
-    error->pout(P_CLIENT);
-}
-
-void Client::updateFromServer()
-{
-    error->pin(P_CLIENT);
-    ENetEvent event;
-    racerPacketType_t type;
-    void * payload;
-
-    while(enet_host_service(enetClient, &event, 0) > 0) {
         switch (event.type)
         {
-        case ENET_EVENT_TYPE_CONNECT:
-            error->log(NETWORK, TRIVIAL, "Connection event?  How did that happen?");
-            break;
-        case ENET_EVENT_TYPE_RECEIVE:
-            type = getRacerPacketType(event.packet);
-            payload = event.packet->data+sizeof(racerPacketType_t);
-            switch(type)
-            {
-                case RP_PING:
-                    error->log(NETWORK, TRIVIAL, "RP_PING\n");
-                    break;
-                case RP_ACK_CONNECTION:
-                    error->log(NETWORK, TRIVIAL, "RP_ACK_CONNECTION\n");
-                    // this has my clientID in it, so I'll know when an agent is created just for me
-                    {
+            case ENET_EVENT_TYPE_NONE:
+                error->log(NETWORK, TRIVIAL, "EVENT NONE\n");
+                assert(0);
+                break;
+            case ENET_EVENT_TYPE_CONNECT:
+                error->log(NETWORK, TRIVIAL, "EVENT CONNECT (to client?!)\n");
+                break;
+            case ENET_EVENT_TYPE_DISCONNECT:
+                error->log(NETWORK, TRIVIAL, "EVENT DISCONNECT\n");
+                break;
+            case ENET_EVENT_TYPE_RECEIVE:
+              {
+                error->log(NETWORK, TRIVIAL, "EVENT RECEIVE: ");
+                type = getRacerPacketType(event.packet);
+                payload = event.packet->data+sizeof(racerPacketType_t);
+                switch(type)
+                {
+                    case RP_PING:
+                        error->log(NETWORK, TRIVIAL, "RP_PING\n");
+                        break;
+                    case RP_START:
+                      {
+                        error->log(NETWORK, TRIVIAL, "RP_START\n");
+                        RPStart info = *(RPStart *)payload;
+                        clientState = C_RACE;
+                        break;
+                      }
+                    case RP_ACK_CONNECTION:
+                      {
+                        error->log(NETWORK, TRIVIAL, "RP_ACK_CONNECTION\n");
+                        // this has my clientID in it, so I'll know when an agent is created just for me
                         RPAck info = *(RPAck *)payload;
                         clientID = info.clientID;
-                        string msg = "I'm client # " + boost::lexical_cast<string>((unsigned int) clientID) + "\n";
+                        string msg = "I'm client # ";
+                        msg += boost::lexical_cast<string>((int) clientID) + "\n";
                         error->log(NETWORK, TRIVIAL, msg);
-                    }
-                    break;
-                case RP_CREATE_NET_OBJ:
-                    error->log(NETWORK, TRIVIAL, "RP_CREATE_NET_OBJ\n");
-                    {
+                        clientState = C_CONNECTED;
+                        break;
+                      }
+                    case RP_UPDATE_AGENT:
+                        error->log(NETWORK, TRIVIAL, "RP_UPDATE_AGENT\n");
+                        break;
+                    case RP_CREATE_NET_OBJ:
+                      {
+                        error->log(NETWORK, TRIVIAL, "RP_CREATE_NET_OBJ\n");
                         RPCreateNetObj info = *(RPCreateNetObj *)payload;
                         WorldObject *wobject = new WorldObject(NULL, NULL, NULL, NULL);
                         netobjs[ntohl(info.ID)] = wobject;
@@ -199,33 +166,23 @@ void Client::updateFromServer()
                         error->log(NETWORK, TRIVIAL, msg);
                         world->addObject(wobject);
                         break;
-                    }
-                case RP_ATTACH_PGEOM:
-                    error->log(NETWORK, TRIVIAL, "RP_ATTACH_PGEOM\n");
-                    {
+                      }
+                    case RP_ATTACH_PGEOM:
+                      {
+                        error->log(NETWORK, TRIVIAL, "RP_ATTACH_PGEOM\n");
                         RPAttachPGeom info = *(RPAttachPGeom *)payload;
                         GeomInfo *geomInfo = parseRPGeomInfo(&(info.info));
                         WorldObject *wobject = getNetObj(info.ID);
-
-                        PGeom *geom = new PGeom(geomInfo, Physics::getInstance().getOdeSpace());
+                        PGeom *geom = new PGeom(geomInfo, physics->getOdeSpace());
                         wobject->pobject = geom;
                         geom->worldObject = wobject;
-                    }
-                case RP_ATTACH_AGENT:
-                    error->log(NETWORK, TRIVIAL, "RP_ATTACH_AGENT\n");
-                    {
+                      }
+                    case RP_ATTACH_AGENT:
+                      {
+                        error->log(NETWORK, TRIVIAL, "RP_ATTACH_AGENT\n");
                         RPAttachAgent info = *(RPAttachAgent *)payload;
                         GeomInfo *geomInfo = parseRPGeomInfo(&info.info);
                         WorldObject *wobject = getNetObj(info.ID);
-                        if (info.clientID == clientID)
-                        {
-                            error->log(NETWORK, TRIVIAL, " my agent\n");
-                        }
-                        else
-                        {
-                            error->log(NETWORK, TRIVIAL, " not my agent\n");
-                        }
-
                         Agent *agent = new Agent();
                         agent->ntoh(&(info.agent));
                         wobject->agent = agent;
@@ -239,32 +196,34 @@ void Client::updateFromServer()
                                        &(agent->getSteering()),
                                        agent->mass,
                                        geomInfo,
-                                       Physics::getInstance().getOdeSpace());
+                                       physics->getOdeSpace());
                         wobject->pobject = pagent;
                         agent->worldObject = wobject;
                         pagent->worldObject = wobject;
                         wobject->gobject = new GObject(geomInfo);
 
-                        /* if this is *our* agent
-                        camera = Camera(THIRDPERSON, agent);
-                        Sound::getInstance().registerListener(&camera);
-                        PlayerController *p = new PlayerController(agent);
-                        Input::getInstance().controlPlayer(p);
-                        */
-
-                    }
-                default: break;
-            }
-            break;
-        case ENET_EVENT_TYPE_DISCONNECT:
-            break;
-        case ENET_EVENT_TYPE_NONE:
-            assert(0);
-            break;
-        default: break;
+                        if (info.clientID == clientID)
+                        {
+                            error->log(NETWORK, TRIVIAL, " my agent\n");
+                            world->camera = Camera(THIRDPERSON, agent);
+                            sound->registerListener(&world->camera);
+                            PlayerController *p = new PlayerController(agent);
+                            input->controlPlayer(p);
+                        }
+                        else
+                        {
+                            error->log(NETWORK, TRIVIAL, " not my agent\n");
+                        }
+                      }
+                    default:
+                        break;
+                }
+              }
+            default: break;
         }
     }
     error->pout(P_CLIENT);
+    return;
 }
 
 void Client::sendStartRequest()
@@ -288,9 +247,8 @@ void Client::pushToServer()
     {
         WorldObject *wo = iter->second;
      */
-    World &world = World::getInstance();
-    for (vector<WorldObject *>::iterator iter = world.wobjects.begin();
-         iter != world.wobjects.end();
+    for (vector<WorldObject *>::iterator iter = world->wobjects.begin();
+         iter != world->wobjects.end();
          iter++)
     {
         WorldObject *wo = *iter;
