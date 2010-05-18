@@ -106,6 +106,7 @@ void Client::checkForStart()
             payload = event.packet->data+sizeof(racerPacketType_t);
             if (type == RP_START)
             {
+                error->log(NETWORK, TRIVIAL, "RP_START\n");
                 RPStart info = *(RPStart *)payload;
                 string msg = "received start signal from ";
                 msg += boost::lexical_cast<string>((int) info.clientID) + "\n";
@@ -137,6 +138,7 @@ void Client::checkForAck()
             payload = event.packet->data+sizeof(racerPacketType_t);
             if (type == RP_ACK_CONNECTION)
             {
+                error->log(NETWORK, TRIVIAL, "RP_ACK_CONNECTION\n");
                 // this has my clientID in it, so I'll know when an agent is created just for me
                 RPAck info = *(RPAck *)payload;
                 clientID = info.clientID;
@@ -174,8 +176,10 @@ void Client::updateFromServer()
             switch(type)
             {
                 case RP_PING:
+                    error->log(NETWORK, TRIVIAL, "RP_PING\n");
                     break;
                 case RP_ACK_CONNECTION:
+                    error->log(NETWORK, TRIVIAL, "RP_ACK_CONNECTION\n");
                     // this has my clientID in it, so I'll know when an agent is created just for me
                     {
                         RPAck info = *(RPAck *)payload;
@@ -185,6 +189,7 @@ void Client::updateFromServer()
                     }
                     break;
                 case RP_CREATE_NET_OBJ:
+                    error->log(NETWORK, TRIVIAL, "RP_CREATE_NET_OBJ\n");
                     {
                         RPCreateNetObj info = *(RPCreateNetObj *)payload;
                         WorldObject *wobject = new WorldObject(NULL, NULL, NULL, NULL);
@@ -196,6 +201,7 @@ void Client::updateFromServer()
                         break;
                     }
                 case RP_ATTACH_PGEOM:
+                    error->log(NETWORK, TRIVIAL, "RP_ATTACH_PGEOM\n");
                     {
                         RPAttachPGeom info = *(RPAttachPGeom *)payload;
                         GeomInfo *geomInfo = parseRPGeomInfo(&(info.info));
@@ -205,11 +211,20 @@ void Client::updateFromServer()
                         wobject->pobject = geom;
                         geom->worldObject = wobject;
                     }
-                case RP_ATTACH_AGENT: 
+                case RP_ATTACH_AGENT:
+                    error->log(NETWORK, TRIVIAL, "RP_ATTACH_AGENT\n");
                     {
                         RPAttachAgent info = *(RPAttachAgent *)payload;
                         GeomInfo *geomInfo = parseRPGeomInfo(&info.info);
                         WorldObject *wobject = getNetObj(info.ID);
+                        if (info.clientID == clientID)
+                        {
+                            error->log(NETWORK, TRIVIAL, " my agent\n");
+                        }
+                        else
+                        {
+                            error->log(NETWORK, TRIVIAL, " not my agent\n");
+                        }
 
                         Agent *agent = new Agent();
                         agent->ntoh(&(info.agent));
@@ -219,11 +234,11 @@ void Client::updateFromServer()
                         ((BoxInfo*) geomInfo)->ly = 2;
                         ((BoxInfo*) geomInfo)->lz = 2;
 
-                        PAgent *pagent = 
+                        PAgent *pagent =
                             new PAgent(&(agent->getKinematic()),
                                        &(agent->getSteering()),
                                        agent->mass,
-                                       geomInfo, 
+                                       geomInfo,
                                        Physics::getInstance().getOdeSpace());
                         wobject->pobject = pagent;
                         agent->worldObject = wobject;
@@ -292,4 +307,25 @@ void Client::pushToServer()
         }
     }
     error->pout(P_CLIENT);
+}
+
+void Client::disconnect()
+{
+    ENetEvent event;
+    enet_peer_disconnect (peer, 0);
+    while (enet_host_service (enetClient, &event, 3000) > 0)
+    {
+        switch (event.type)
+        {
+        case ENET_EVENT_TYPE_RECEIVE:
+            enet_packet_destroy(event.packet);
+            break;
+        case ENET_EVENT_TYPE_DISCONNECT:
+            error->log(NETWORK, TRIVIAL, "Disconnection succeeded.\n");
+            return;
+        default:
+            break;
+        }
+    }
+    enet_peer_reset(peer);
 }

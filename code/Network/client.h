@@ -48,7 +48,7 @@ class Client {
     void checkForStart();
     void updateFromServer();
     void sendStartRequest();
-    int disconnect();
+    void disconnect();
 };
 
 #endif

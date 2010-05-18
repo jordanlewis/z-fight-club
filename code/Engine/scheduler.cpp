@@ -73,7 +73,8 @@ void Scheduler::soloLoopForever()
     }
 }
 
-void Scheduler::clientLoopForever(){
+void Scheduler::clientLoopForever()
+{
     cout << "z fight club presents: Tensor Rundown" << endl << endl
          << "    up and down arrow keys accelerate forwards and backwards" << endl
          << "       left and right rotate your vehicle" << endl;
@@ -133,8 +134,6 @@ void Scheduler::clientLoopForever(){
             physics->simulate(now - last);
         }
         last = now;
-        // ai will be replaced by server info, right?
-        ai->run();
 
         graphics->render();
         sound->render();
@@ -142,10 +141,12 @@ void Scheduler::clientLoopForever(){
         if ((profilerclock++ & 0x0F) == 0) error->pdisplay();
         usleep(10000);
     }
+    client->disconnect();
     return;
 }
 
-void Scheduler::serverLoopForever(){
+void Scheduler::serverLoopForever()
+{
     server->gatherPlayers();
     double now;
     double last = GetTime();
