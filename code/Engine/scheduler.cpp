@@ -144,6 +144,7 @@ void Scheduler::serverLoopForever()
         }
         last = now;
         ai->run();
+        graphics->render();
         server->serverFrame();
         if ((profilerclock++ & 0x0F) == 0) error->pdisplay();
     }

@@ -120,7 +120,6 @@ int main(int argc, char *argv[])
     {
         graphics.initGraphics();
         sound.initSound();
-        // world.makeAgents();
         testSetup();
         if (client.connectToServer() < 0)
         {
@@ -132,6 +131,8 @@ int main(int argc, char *argv[])
     }
     if (world.runType == SERVER)
     {
+        graphics.initGraphics();
+        sound.initSound();
         testSetup();
         if (server.createHost() < 0)
         {
