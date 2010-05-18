@@ -133,6 +133,7 @@ void Scheduler::clientLoopForever()
 void Scheduler::serverLoopForever()
 {
     server->gatherPlayers();
+    server->createAll();
     double now;
     double last = GetTime();
     while (1)

@@ -51,7 +51,8 @@ int Server::createNetObj(netObjID_t &ID)
         toSend.ID = htonl(i);
         ENetPacket *packet = makeRacerPacket(RP_CREATE_NET_OBJ, &toSend,
                                              sizeof(RPCreateNetObj));
-        enet_host_broadcast(enetServer, 0, packet);
+        toCreate.push_back(packet);
+        //enet_host_broadcast(enetServer, 0, packet);
     }
     else
     {
@@ -87,7 +88,9 @@ int Server::attachPGeom(GeomInfo *info, netObjID_t ID)
     info->hton(&(toSend.info));
     ENetPacket *packet = makeRacerPacket(RP_ATTACH_PGEOM, &toSend,
                                          sizeof(RPAttachPGeom));
-    enet_host_broadcast(enetServer, 0, packet);
+    
+    toCreate.push_back(packet);
+    //enet_host_broadcast(enetServer, 0, packet);
     return 0;
 }
 
@@ -115,7 +118,9 @@ int Server::attachPMoveable(Kinematic *kine, float mass, GeomInfo *info,
     
     ENetPacket *packet = makeRacerPacket(RP_ATTACH_PMOVEABLE, &toSend,
                                          sizeof(RPAttachPMoveable));
-    enet_host_broadcast(enetServer, 0, packet);
+    
+    toCreate.push_back(packet);
+    //enet_host_broadcast(enetServer, 0, packet);
     return 0;
 }
 
@@ -158,9 +163,21 @@ int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
     
     ENetPacket *packet = makeRacerPacket(RP_ATTACH_AGENT, &toSend,
                                          sizeof(RPAttachAgent));
-    enet_host_broadcast(enetServer, 0, packet);
+    
+    toCreate.push_back(packet);
+    //enet_host_broadcast(enetServer, 0, packet);
     
     return 0;
+}
+
+void Server::createAll(){
+    for (list<ENetPacket *>::iterator iter = toCreate.begin();
+         iter != toCreate.end();
+         iter++)
+        {
+            enet_host_broadcast(enetServer, 0, *iter);
+        }
+    return;
 }
 
 
