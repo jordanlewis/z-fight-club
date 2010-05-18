@@ -205,6 +205,7 @@ void Client::checkForPackets()
                         if (info.clientID == clientID)
                         {
                             error->log(NETWORK, TRIVIAL, " my agent\n");
+                            netID = info.ID;
                             world->camera = Camera(THIRDPERSON, agent);
                             sound->registerListener(&world->camera);
                             PlayerController *p = new PlayerController(agent);
@@ -241,31 +242,16 @@ void Client::sendStartRequest()
 void Client::pushToServer()
 {
     error->pin(P_CLIENT);
-    /* netobjs is empty right now, use world objects instead
-    for (map<netObjID_t, WorldObject *>::iterator iter = netobjs.begin();
-         iter != netobjs.end();
-         iter++)
-    {
-        WorldObject *wo = iter->second;
-     */
-    for (vector<WorldObject *>::iterator iter = world->wobjects.begin();
-         iter != world->wobjects.end();
-         iter++)
-    {
-        WorldObject *wo = *iter;
-        if (wo->agent != NULL)
-        {
-            RPUpdateAgent payload;
-            payload.ID = 0xdeadbeef; /* iter->first */
-            SteerInfo steerInfo = wo->agent->getSteering();
-            steerInfo.hton(&(payload.info));
-            ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
-                                                 &payload, sizeof(payload),
-                                                 0);
-            enet_peer_send(peer, 0, packet);
-            enet_host_flush(enetClient);
-        }
-    }
+    RPUpdateAgent payload;
+    payload.ID = netID;
+    WorldObject *wo = getNetObj(netID);
+    SteerInfo steerInfo = wo->agent->getSteering();
+    steerInfo.hton(&(payload.info));
+    ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
+                                         &payload, sizeof(payload),
+                                         0);
+    enet_peer_send(peer, 0, packet);
+    enet_host_flush(enetClient);
     error->pout(P_CLIENT);
 }
 

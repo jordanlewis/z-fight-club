@@ -32,6 +32,7 @@ class Client {
     ENetPeer *peer;
 
     map<netObjID_t, WorldObject *> netobjs; //Tracks networked world objects.
+    netObjID_t netID; // id for our agent
 
     Client();
     ~Client();
