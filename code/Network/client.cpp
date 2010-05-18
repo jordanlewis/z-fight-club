@@ -15,7 +15,7 @@ Client::Client() :
 
     if (enetClient == NULL)
         {
-            cerr << "Could not initialize client" << endl;
+            error->log(NETWORK, CRITICAL, "Could not initialize client.\n");
         }
 
 }
@@ -55,11 +55,11 @@ int Client::connectToServer()
     ENetEvent event;
 
     if (serverPort == 0){
-        cerr << "No server port specificied" << endl;
+        error->log(NETWORK, CRITICAL, "No server port specified.\n");
         return -1;
     }
     if (serverAddr == 0) {
-        cerr << "No server address specified" << endl;
+        error->log(NETWORK, CRITICAL, "No server address specified.\n");
         return -1;
     }
 
@@ -70,7 +70,7 @@ int Client::connectToServer()
 
     if (peer == NULL)
     {
-        cerr << "No available peers to connect upon" << endl;
+        error->log(NETWORK, CRITICAL, "No available peers to connect to.\n");
         return -1;
     }
 
@@ -78,13 +78,13 @@ int Client::connectToServer()
     if (enet_host_service(enetClient, &event, 5000) > 0 &&
         event.type == ENET_EVENT_TYPE_CONNECT)
     {
-            cout << "Client reports successful connection" << endl;
+        error->log(NETWORK, TRIVIAL, "Client reports successful connection.\n");
     }
     else
     {
-            enet_peer_reset(peer);
-            cout << "Connection failed." << endl;
-            return -1;
+        enet_peer_reset(peer);
+        error->log(NETWORK, CRITICAL, "Connection failed.\n");
+        return -1;
     }
 
     error->pout(P_CLIENT);
@@ -107,15 +107,16 @@ void Client::checkForStart()
             if (type == RP_START)
             {
                 RPStart info = *(RPStart *)payload;
-                clientID = info.clientID;
-                cout << "start signal from " << (int) info.clientID << endl;
+                string msg = "received start signal from ";
+                msg += boost::lexical_cast<string>((int) info.clientID) + "\n";
+                error->log(NETWORK, TRIVIAL, msg);
                 clientState = C_START;
                 return; // don't process any more packets than I need to.
             } else {
-                cerr << "oops, throwing away some packet the client received before it was ready" << endl;
+                error->log(NETWORK, TRIVIAL, "client throwing away unexpected packet\n");
             }
         } else {
-            cerr << "oops, some unexpected network event is being ignored by the client" << endl;
+            error->log(NETWORK, TRIVIAL, "client ignoring unexpected network event\n");
         }
     }
     error->pout(P_CLIENT);
@@ -139,14 +140,16 @@ void Client::checkForAck()
                 // this has my clientID in it, so I'll know when an agent is created just for me
                 RPAck info = *(RPAck *)payload;
                 clientID = info.clientID;
-                cout << "I'm client # " << (unsigned int) clientID << endl;
+                string msg = "I'm client # ";
+                msg += boost::lexical_cast<string>((int) clientID) + "\n";
+                error->log(NETWORK, TRIVIAL, msg);
                 clientState = C_HAVEID;
                 return; // don't process any more packets than I need to.
             } else {
-                cerr << "oops, throwing away some packet the client received before it was ready" << endl;
+                error->log(NETWORK, TRIVIAL, "client throwing away unexpected packet\n");
             }
         } else {
-            cerr << "oops, some unexpected network event is being ignored by the client" << endl;
+            error->log(NETWORK, TRIVIAL, "client ignoring unexpected network event\n");
         }
     }
     error->pout(P_CLIENT);
@@ -163,7 +166,7 @@ void Client::updateFromServer()
         switch (event.type)
         {
         case ENET_EVENT_TYPE_CONNECT:
-            cerr << "Connection event?  How did that happen?" << endl;
+            error->log(NETWORK, TRIVIAL, "Connection event?  How did that happen?");
             break;
         case ENET_EVENT_TYPE_RECEIVE:
             type = getRacerPacketType(event.packet);
@@ -177,7 +180,8 @@ void Client::updateFromServer()
                     {
                         RPAck info = *(RPAck *)payload;
                         clientID = info.clientID;
-                        cout << "I'm client # " << (unsigned int) clientID << endl;
+                        string msg = "I'm client # " + boost::lexical_cast<string>((unsigned int) clientID) + "\n";
+                        error->log(NETWORK, TRIVIAL, msg);
                     }
                     break;
                 case RP_CREATE_NET_OBJ:
@@ -252,7 +256,6 @@ void Client::sendStartRequest()
 {
     error->pin(P_CLIENT);
     RPStart toSend;
-    cerr << "about to send start request with clientID=" << (int) clientID << endl;
     toSend.clientID = clientID;
     ENetPacket *packet = makeRacerPacket(RP_START, &toSend, sizeof(RPStart));
     enet_peer_send(peer, 0, packet);

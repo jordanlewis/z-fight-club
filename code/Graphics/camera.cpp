@@ -112,7 +112,8 @@ void Camera::setProjectionMatrix()
             up = Vec3f(0.0f, 1.0f, 0.0f);
             target = (agent->kinematic.pos + (5 * smooth_orientation));
             s = agent->getSteering();
-            if (s.acceleration > 0 && FOVY < maxfovy)
+            if (s.acceleration > 0 && agent->kinematic.forwardSpeed() > 0 &&
+                FOVY < maxfovy)
             {
                 FOVY += ((maxfovy - FOVY)/(maxfovy - minfovy))/2;
             }
