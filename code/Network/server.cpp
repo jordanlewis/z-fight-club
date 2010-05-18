@@ -155,6 +155,7 @@ int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
     agent->worldObject = obj;
     BoxInfo box(1,1,1);
     obj->gobject = new GObject(geomInfo);
+    obj->sobject = new SObject("snore.wav", GetTime(), AL_TRUE);
 
     PAgent *pagent = new PAgent(&(agent->getKinematic()),
                                 &(agent->getSteering()), mass, geomInfo,
@@ -397,7 +398,6 @@ void Server::serverFrame()
                                 steerInfo.ntoh(&P->info);
                                 stringstream msg;
                                 cout << "Steerinfo: " << steerInfo << endl;
-                                msg << steerInfo << endl;
                                 error->log(NETWORK, TRIVIAL, msg.str());
                                 if (wo && wo->agent)
                                 {

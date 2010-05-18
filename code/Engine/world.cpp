@@ -93,7 +93,7 @@ void World::addAgent(Agent *agent)
                               agent->mass, box);
     pobj->bounce = 1;
     GObject *gobj = new GObject(box);
-    SObject *sobj = NULL;
+    SObject *sobj = new SObject("snore.wav", GetTime(), AL_TRUE);
 
     WorldObject *wobject = new WorldObject(pobj, gobj, sobj, agent);
 
@@ -224,7 +224,6 @@ Agent *World::placeAgent(int place)
     float orient = acos(Vec3f(0,0,1).dot(diff.unit()));
 
     Agent *agent = new Agent(pos, orient);
-    Sound::getInstance().registerSource(wobjects.back(), new SObject("snore.wav", GetTime(), AL_TRUE));
 
     return agent;
 }
@@ -295,4 +294,14 @@ World &World::getInstance()
 void World::setDir(const string dirname)
 {
     assetsDir = dirname;
+}
+
+std::ostream &operator<<(std::ostream &os, const WorldObject &wo)
+{
+    os << "pos: " << ((WorldObject) wo).getPos() << " "
+       << "pobject: " << wo.pobject << " "
+       << "gobject: " << wo.gobject << " "
+       << "sobject: " << wo.sobject << " "
+       << "agent: " << wo.agent << endl;
+    return os;
 }

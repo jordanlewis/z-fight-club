@@ -94,4 +94,6 @@ class World
     friend class Graphics;
 };
 
+std::ostream &operator<<(std::ostream &, const WorldObject &);
+
 #endif
