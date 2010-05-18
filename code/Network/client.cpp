@@ -243,7 +243,7 @@ void Client::pushToServer()
 {
     error->pin(P_CLIENT);
     RPUpdateAgent payload;
-    payload.ID = netID;
+    payload.ID = htonl(netID);
     WorldObject *wo = getNetObj(netID);
     SteerInfo steerInfo = wo->agent->getSteering();
     steerInfo.hton(&(payload.info));

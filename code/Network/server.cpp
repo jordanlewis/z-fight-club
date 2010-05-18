@@ -395,8 +395,8 @@ void Server::serverFrame()
                                 SteerInfo steerInfo;
                                 steerInfo.ntoh(&P->info);
                                 stringstream msg;
-                                cout << "Steerinfo[" << ntohl(P->ID) << "]: "
-                                     << steerInfo << endl;
+                                /*cout << "Steerinfo[" << ntohl(P->ID) << "]: "
+                                  << steerInfo << endl; */
                                 error->log(NETWORK, TRIVIAL, msg.str());
                                 if (wo && wo->agent)
                                 {
