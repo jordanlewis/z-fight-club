@@ -264,7 +264,7 @@ void Server::gatherPlayers()
                         delete agent;
                         // if number of players registered == number of
                         // players specified on server command-line
-                        if (world->numAgents() != 9999)
+                        if (world->numAgents() == 2)
                         {
                             RPStart toSend;
                             toSend.clientID = -1; // from the server
