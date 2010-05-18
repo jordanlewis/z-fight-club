@@ -33,7 +33,8 @@ typedef enum {
  * arg2:  pointer to packet payload (not counting the type)
  * arg3:  size of packet payload (not counting the type)
  */
-ENetPacket *makeRacerPacket(racerPacketType_t type, const void *data, int size);
+ENetPacket *makeRacerPacket(racerPacketType_t type, const void *data, int size,
+                            int flags);
 
 /* getRacerPacketType:  Given a packet, returns the packet type in host byte
  * order */

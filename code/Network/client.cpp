@@ -187,9 +187,9 @@ void Client::checkForPackets()
                         agent->ntoh(&(info.agent));
                         wobject->agent = agent;
 
-                        ((BoxInfo*) geomInfo)->lx = 2;
-                        ((BoxInfo*) geomInfo)->ly = 2;
-                        ((BoxInfo*) geomInfo)->lz = 2;
+                        ((BoxInfo*) geomInfo)->lx = 1;
+                        ((BoxInfo*) geomInfo)->ly = 1;
+                        ((BoxInfo*) geomInfo)->lz = 1;
 
                         PAgent *pagent =
                             new PAgent(&(agent->getKinematic()),
@@ -231,7 +231,8 @@ void Client::sendStartRequest()
     error->pin(P_CLIENT);
     RPStart toSend;
     toSend.clientID = clientID;
-    ENetPacket *packet = makeRacerPacket(RP_START, &toSend, sizeof(RPStart));
+    ENetPacket *packet = makeRacerPacket(RP_START, &toSend, sizeof(RPStart),
+                                         ENET_PACKET_FLAG_RELIABLE);
     enet_peer_send(peer, 0, packet);
     enet_host_flush(enetClient);
     error->pout(P_CLIENT);
@@ -259,7 +260,8 @@ void Client::pushToServer()
             SteerInfo steerInfo = wo->agent->getSteering();
             steerInfo.hton(&(payload.info));
             ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
-                                                 &payload, sizeof(payload));
+                                                 &payload, sizeof(payload),
+                                                 0);
             enet_peer_send(peer, 0, packet);
             enet_host_flush(enetClient);
         }

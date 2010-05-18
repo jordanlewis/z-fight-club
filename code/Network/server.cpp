@@ -50,7 +50,8 @@ int Server::createNetObj(netObjID_t &ID)
         struct RPCreateNetObj toSend;
         toSend.ID = htonl(i);
         ENetPacket *packet = makeRacerPacket(RP_CREATE_NET_OBJ, &toSend,
-                                             sizeof(RPCreateNetObj));
+                                             sizeof(RPCreateNetObj),
+                                             ENET_PACKET_FLAG_RELIABLE);
         toCreate.push_back(packet);
         //enet_host_broadcast(enetServer, 0, packet);
     }
@@ -81,13 +82,15 @@ int Server::attachPGeom(GeomInfo *info, netObjID_t ID)
     PGeom *pgeom = new PGeom(info, Physics::getInstance().getOdeSpace());
     obj->pobject = pgeom;
     pgeom->worldObject = obj;
+    obj->gobject = new GObject(info);
 
     //Tell networked agents to attach the PGeom
     struct RPAttachPGeom toSend;
     toSend.ID = ID;
     info->hton(&(toSend.info));
     ENetPacket *packet = makeRacerPacket(RP_ATTACH_PGEOM, &toSend,
-                                         sizeof(RPAttachPGeom));
+                                         sizeof(RPAttachPGeom),
+                                         ENET_PACKET_FLAG_RELIABLE);
     
     toCreate.push_back(packet);
     //enet_host_broadcast(enetServer, 0, packet);
@@ -108,6 +111,7 @@ int Server::attachPMoveable(Kinematic *kine, float mass, GeomInfo *info,
                                          Physics::getInstance().getOdeSpace());
     obj->pobject = pmoveable;
     pmoveable->worldObject = obj;
+    obj->gobject = new GObject(info);
 
     //Tell networked agents to attach the PMoveable
     struct RPAttachPMoveable toSend;
@@ -117,7 +121,8 @@ int Server::attachPMoveable(Kinematic *kine, float mass, GeomInfo *info,
     toSend.mass = htonf(mass);
     
     ENetPacket *packet = makeRacerPacket(RP_ATTACH_PMOVEABLE, &toSend,
-                                         sizeof(RPAttachPMoveable));
+                                         sizeof(RPAttachPMoveable),
+                                         ENET_PACKET_FLAG_RELIABLE);
     
     toCreate.push_back(packet);
     //enet_host_broadcast(enetServer, 0, packet);
@@ -145,6 +150,7 @@ int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
     agent->setKinematic(*kine);
 
     obj->agent = agent;
+    obj->gobject = new GObject(geomInfo);
 
     PAgent *pagent = new PAgent(&(agent->getKinematic()),
                                 &(agent->getSteering()), mass, geomInfo,
@@ -162,7 +168,8 @@ int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
     agent->hton(&(toSend.agent));
     
     ENetPacket *packet = makeRacerPacket(RP_ATTACH_AGENT, &toSend,
-                                         sizeof(RPAttachAgent));
+                                         sizeof(RPAttachAgent),
+                                         ENET_PACKET_FLAG_RELIABLE);
     
     toCreate.push_back(packet);
     //enet_host_broadcast(enetServer, 0, packet);
@@ -249,7 +256,10 @@ void Server::gatherPlayers()
                         {
                             RPStart toSend;
                             toSend.clientID = -1; // from the server
-                            ENetPacket *packet = makeRacerPacket(RP_START, &toSend, sizeof(RPStart));
+                            ENetPacket *packet=makeRacerPacket(RP_START,
+                                                               &toSend,
+                                                               sizeof(RPStart),
+                                                               ENET_PACKET_FLAG_RELIABLE);
                             enet_host_broadcast(enetServer, 0, packet);
                             return;
                         }
@@ -280,7 +290,10 @@ void Server::gatherPlayers()
                         clients[client.identifier] = client;
                         struct RPAck toSend;
                         toSend.clientID = client.identifier; // ntonc is trivial :)
-                        ENetPacket *packet = makeRacerPacket(RP_ACK_CONNECTION, &toSend, sizeof(RPAck));
+                        ENetPacket *packet = makeRacerPacket(RP_ACK_CONNECTION,
+                                                             &toSend,
+                                                             sizeof(RPAck),
+                                                             ENET_PACKET_FLAG_RELIABLE);
                         enet_peer_send(event.peer, 0, packet);
                     }
                     else
@@ -316,18 +329,18 @@ ENetPacket *Server::packageObject(netObjID_t objID)
             if (agent != NULL)
             {
                 return makeRacerPacket(RP_UPDATE_PMOVEABLE, moveable,
-                                       sizeof(PMoveable));
+                                       sizeof(PMoveable), 0);
             }
             else
             {
                 return makeRacerPacket(RP_UPDATE_PAGENT, agent,
-                                       sizeof(PAgent));
+                                       sizeof(PAgent), 0);
             }
         }
         else
         {
             return makeRacerPacket(RP_UPDATE_PGEOM, wobject->pobject,
-                                   sizeof(PGeom));
+                                   sizeof(PGeom), 0);
         }
     }
     return NULL;
@@ -343,7 +356,7 @@ void Server::serverFrame()
     if (pingclock++ == 0)
     {
         // keep clients from disconnecting
-        ENetPacket *packet = makeRacerPacket(RP_PING, NULL, 0);
+        ENetPacket *packet = makeRacerPacket(RP_PING, NULL, 0, 0);
         enet_host_broadcast(enetServer, 0, packet);
     }
 

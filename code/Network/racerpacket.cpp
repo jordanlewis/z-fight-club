@@ -1,7 +1,8 @@
 #include "racerpacket.h"
 #include "Engine/geominfo.h"
 
-ENetPacket *makeRacerPacket(racerPacketType_t type, const void *data, int size){
+ENetPacket *makeRacerPacket(racerPacketType_t type, const void *data, int size,
+                            int flags){
     type = (racerPacketType_t) htonl(type);
     ENetPacket *packet = enet_packet_create(&type,
                                             sizeof(racerPacketType_t) + size,
