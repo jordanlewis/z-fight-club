@@ -17,6 +17,16 @@ typedef enum {
     NUM_TEXS
 } Texids_t;
 
+typedef enum {
+    NORTH = 0,          /* !< +Z */
+    EAST,               /* !< +X */
+    SOUTH,              /* !< -Z */
+    WEST,               /* !< -X */
+    UP,                 /* !< +Y */
+    DOWN,               /* !< -Y */
+    NUM_DIR
+} Direction_t;
+
 struct RPAttachPGeom;
 struct RPGeomInfo;
 
@@ -120,6 +130,17 @@ class ObjMeshInfo : public GeomInfo
 	~ObjMeshInfo();
 	void load(char *filename);
 	dGeomID createGeom(dSpaceID space);
+	void createMass(dMass *, float);
+	void draw();
+};
+
+class SkyBoxInfo : public GeomInfo
+{
+    public:
+        GLuint          texID[NUM_DIR];         /* !< ids for tex maps */
+        SkyBoxInfo(std::string);
+        ~SkyBoxInfo();
+        dGeomID createGeom(dSpaceID space);
 	void createMass(dMass *, float);
 	void draw();
 };

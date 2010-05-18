@@ -171,7 +171,80 @@ void ObjMeshInfo::draw()
     }
 
     glDisable(GL_TEXTURE_2D);
-    /* UseProgram(NULL); */
+}
+
+void SkyBoxInfo::draw()
+{
+
+    glEnable(GL_TEXTURE_2D);
+
+    glColor4f(1.0, 1.0, 1.0,1.0f);
+
+    // Save Current Matrix
+    /* glPushMatrix(); */
+
+    /* glScalef(100.0f, 100.0f, 100.0f); */
+
+    float r = 500.0;
+
+		/* Up (from racer start position) */
+    glBindTexture(GL_TEXTURE_2D,texID[UP]);
+    glBegin(GL_QUADS);	
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(r, r, -r);
+    glTexCoord2f(0.0f,  1.0f); glVertex3f(r, r, r); 
+    glTexCoord2f(1.0f,  1.0f); glVertex3f(-r, r, r);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(-r, r, -r);
+    glEnd();
+
+		/* Down (from racer start position) */
+    glBindTexture(GL_TEXTURE_2D,texID[DOWN]);
+    glBegin(GL_QUADS);		
+    glTexCoord2f(1.0f,0.0f);  glVertex3f(-r, -r, -r);
+    glTexCoord2f(1.0f,1.0f);  glVertex3f(-r, -r, r);
+    glTexCoord2f(0.0f,1.0f);  glVertex3f( r, -r, r); 
+    glTexCoord2f(0.0f,0.0f);  glVertex3f( r, -r, -r);
+    glEnd();
+
+		/* Right (from racer start position) */
+    glBindTexture(GL_TEXTURE_2D,texID[WEST]);
+    glBegin(GL_QUADS);		
+    glTexCoord2f(0.0f,0.0f); glVertex3f(-r, -r,-r);		
+    glTexCoord2f(0.0f,1.0f); glVertex3f(-r, r, -r);
+    glTexCoord2f(1.0f,1.0f); glVertex3f(-r, r, r); 
+    glTexCoord2f(1.0f,0.0f); glVertex3f(-r, -r, r);	
+    glEnd();
+
+		/* Left (from racer start position) */
+    glBindTexture(GL_TEXTURE_2D,texID[EAST]);
+    glBegin(GL_QUADS);		
+    glTexCoord2f(0.0f,0.0f); glVertex3f(r, -r, r);	
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(r, r, r); 
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(r, r, -r);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(r, -r, -r);
+    glEnd();
+
+		/* Front (from racer start position) */
+    glBindTexture(GL_TEXTURE_2D,texID[NORTH]);
+    glBegin(GL_QUADS);		
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-r, -r, r);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-r, r, r);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f( r, r, r); 
+    glTexCoord2f(1.0f, 0.0f); glVertex3f( r, -r, r);
+    glEnd();
+
+		/* Back (from racer start position) */
+    glBindTexture(GL_TEXTURE_2D,texID[SOUTH]);
+    glBegin(GL_QUADS);		
+    glTexCoord2f(0.0f,0.0f);  glVertex3f( r, -r, -r);
+    glTexCoord2f(0.0f,1.0f); glVertex3f( r, r, -r); 
+    glTexCoord2f(1.0f,1.0f); glVertex3f(-r, r, -r);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(-r, -r, -r);
+    glEnd();
+
+    // Load Saved Matrix
+    /* glPopMatrix(); */
+
+    glDisable(GL_TEXTURE_2D);
 }
 
 void TriMeshInfo::draw()

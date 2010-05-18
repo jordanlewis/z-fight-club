@@ -53,7 +53,56 @@ ObjMeshInfo::ObjMeshInfo(std::string filename)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    FreeImage(color);
 }
+
+SkyBoxInfo::SkyBoxInfo(std::string filename)
+{
+    int i;
+
+    World &world = World::getInstance();
+    glGenTextures(NUM_DIR, texID);
+
+    Image2D_t *image;
+    for (i = 0; i < NUM_DIR; i++) {
+        switch(i) {
+            case(NORTH):
+                image = LoadImage((world.assetsDir + filename + std::string("north.png")).c_str(), false, RGB_IMAGE);
+                break;
+
+            case(EAST):
+                image = LoadImage((world.assetsDir + filename + std::string("east.png")).c_str(), false, RGB_IMAGE);
+                break;
+
+            case(SOUTH):
+                image = LoadImage((world.assetsDir + filename + std::string("south.png")).c_str(), false, RGB_IMAGE);
+                break;
+
+            case(WEST):
+                image = LoadImage((world.assetsDir + filename + std::string("west.png")).c_str(), false, RGB_IMAGE);
+                break;
+
+            case(UP):
+                image = LoadImage((world.assetsDir + filename + std::string("up.png")).c_str(), false, RGB_IMAGE);
+                break;
+
+            case(DOWN):
+                image = LoadImage((world.assetsDir + filename + std::string("down.png")).c_str(), false, RGB_IMAGE);
+                break;
+        }
+
+        glBindTexture(GL_TEXTURE_2D, texID[i]);
+        TexImage(image);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+        FreeImage(image);
+    }
+}
+
+
 
 dGeomID SphereInfo::createGeom(dSpaceID space)
 { return dCreateSphere (space, radius); }
@@ -66,6 +115,8 @@ dGeomID RayInfo::createGeom(dSpaceID space)
 dGeomID TriMeshInfo::createGeom(dSpaceID space)
 { return dCreateTriMesh(space, meshID, NULL, NULL, NULL); }
 dGeomID ObjMeshInfo::createGeom(dSpaceID space)
+{ return dCreateSphere (space, 1.0); }
+dGeomID SkyBoxInfo::createGeom(dSpaceID space)
 { return dCreateSphere (space, 1.0); }
 
 void SphereInfo::createMass(dMass * mass, float massVal)
@@ -82,6 +133,12 @@ void ObjMeshInfo::createMass(dMass * mass, float massVal)
 {
     dMassSetBoxTotal(mass, massVal, 1.0, 1.0, 1.0);
 }
+
+void SkyBoxInfo::createMass(dMass * mass, float massVal)
+{
+    dMassSetBoxTotal(mass, massVal, 1.0, 1.0, 1.0);
+}
+
 
 void SphereInfo::hton(RPGeomInfo *payload) {
     if (payload == NULL){
