@@ -57,6 +57,12 @@ void Camera::setTarget(Vec3f target)
 
 void Camera::cycleView()
 {
+    if (agent == NULL)
+    {
+        mode = OVERHEAD;
+        return;
+    }
+        
     if (mode < nModes - 1)
         mode = static_cast<CameraMode_t>(static_cast<int>(mode) + 1);
     else
