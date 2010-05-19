@@ -204,9 +204,9 @@ void Client::checkForPackets()
                         agent->ntoh(&(info.agent));
                         wobject->agent = agent;
 
-                        ((BoxInfo*) geomInfo)->lx = 1;
-                        ((BoxInfo*) geomInfo)->ly = 1;
-                        ((BoxInfo*) geomInfo)->lz = 1;
+                        ((BoxInfo*) geomInfo)->lx = agent->width;
+                        ((BoxInfo*) geomInfo)->ly = agent->height;
+                        ((BoxInfo*) geomInfo)->lz = agent->depth;
 
                         PAgent *pagent =
                             new PAgent(&(agent->getKinematic()),
