@@ -17,7 +17,7 @@ class Input
     Error *error;
   public:
     static Input &getInstance();
-    const PlayerController &getPlayerController() const;
+    PlayerController &getPlayerController();
     int processInput();
     void controlPlayer(PlayerController *p);
 };

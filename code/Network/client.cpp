@@ -9,6 +9,7 @@ Client Client::_instance;
 
 Client::Client() :
     clientID(255),
+    player(NULL),
     world(&World::getInstance()),
     input(&Input::getInstance()),
     physics(&Physics::getInstance()),
@@ -22,7 +23,6 @@ Client::Client() :
         {
             error->log(NETWORK, CRITICAL, "Could not initialize client.\n");
         }
-
 }
 
 Client::~Client()
@@ -138,6 +138,7 @@ void Client::checkForPackets()
                         error->log(NETWORK, TRIVIAL, "RP_START\n");
                         RPStart info = *(RPStart *)payload;
                         clientState = C_RACE;
+                        Scheduler::getInstance().raceState = RACE;
                         break;
                       }
                     case RP_ACK_CONNECTION:
@@ -153,9 +154,24 @@ void Client::checkForPackets()
                         clientState = C_CONNECTED;
                         break;
                       }
-                    case RP_UPDATE_AGENT:
+                    case RP_UPDATE_AGENT: 
+                        {
+                            
                         error->log(NETWORK, TRIVIAL, "RP_UPDATE_AGENT\n");
+                        RPUpdateAgent *P = (RPUpdateAgent *)payload;
+                        WorldObject *wo = netobjs[ntohl(P->ID)];
+                        if (wo && wo->agent && wo->player)
+                            {
+                                wo->player->ntoh(&P->info);
+                                cout << "PlayerController["
+                                     << ntohl(P->ID) << "]: "
+                                     << *(wo->player) << endl;
+                                wo->player->updateAgent();
+                                wo->agent->kinematic.ntoh(&(P->kine));
+                            }
+                            
                         break;
+                        }
                     case RP_CREATE_NET_OBJ:
                       {
                         error->log(NETWORK, TRIVIAL, "RP_CREATE_NET_OBJ\n");
@@ -202,6 +218,7 @@ void Client::checkForPackets()
                         agent->worldObject = wobject;
                         pagent->worldObject = wobject;
                         wobject->gobject = new GObject(geomInfo);
+                        wobject->player = new PlayerController(agent);
 
                         if (info.clientID == clientID)
                         {
@@ -209,8 +226,7 @@ void Client::checkForPackets()
                             netID = info.ID;
                             world->camera = Camera(THIRDPERSON, agent);
                             sound->registerListener(&world->camera);
-                            PlayerController *p = new PlayerController(agent);
-                            input->controlPlayer(p);
+                            player = &input->getPlayerController();
                         }
                         else
                         {
@@ -257,10 +273,8 @@ void Client::pushToServer()
     error->log(NETWORK, TRIVIAL, "updating server\n");
     RPUpdateAgent payload;
     payload.ID = htonl(netID);
-    WorldObject *wo = getNetObj(netID);
-    if (wo == NULL) return;
-    if (wo->player == NULL) return;
-    wo->player->hton(&(payload.info));
+    if (player == NULL) return;
+    player->hton(&(payload.info));
     ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
                                          &payload, sizeof(payload),
                                          0);

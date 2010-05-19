@@ -87,7 +87,7 @@ int Input::processInput()
     return 0;
 }
 
-const PlayerController &Input::getPlayerController() const
+PlayerController &Input::getPlayerController()
 {
     return *player;
 }

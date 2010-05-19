@@ -94,6 +94,7 @@ struct RPAgent{
 struct RPUpdateAgent {
     netObjID_t ID;
     RPPlayerControl info;
+    RPKinematic kine;
 };
 
 struct RPCreateNetObj {

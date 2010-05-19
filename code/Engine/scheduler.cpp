@@ -104,7 +104,7 @@ void Scheduler::clientLoopForever()
             if (client->clientState == C_PLAYERHASJOINED) //transition inc
                 client->sendJoinRequest();
             break;
-        case C_PLAYERHASJOINED:
+          case C_PLAYERHASJOINED:
             input->processInput(); //may transition into C_PLAYERREADYTOSTART
             client->checkForPackets();
             break;
@@ -114,7 +114,6 @@ void Scheduler::clientLoopForever()
             break;
           case C_WAITINGFORSTART:
             client->checkForPackets(); // may transition us into C_RACE
-            raceState = RACE;
             break;
           case C_RACE:
             client->checkForPackets();
