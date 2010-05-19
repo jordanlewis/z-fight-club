@@ -195,7 +195,7 @@ void Server::createAll(){
     return;
 }
 
-void Server::pushEngineStates()
+void Server::pushAgents()
 {
     error->pin(P_SERVER);
     error->log(NETWORK, TRIVIAL, "updating server\n");
@@ -209,6 +209,9 @@ void Server::pushEngineStates()
             if (wo == NULL) return;
             if (wo->player == NULL) return;
             wo->player->hton(&(payload.info));
+            if (wo->agent == NULL) return;
+            wo->agent->kinematic.hton(&(payload.kine));
+            
             ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
                                                  &payload, sizeof(payload),
                                                  0);
@@ -399,7 +402,7 @@ void Server::serverFrame()
         enet_host_broadcast(enetServer, 0, packet);
     }
 
-    pushEngineStates();
+    pushAgents();
 
     while (enet_host_service(enetServer, &event, 0) > 0)
     {
