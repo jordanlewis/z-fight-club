@@ -10,6 +10,7 @@ class GeomInfo;
 
 typedef enum {
     RP_START = 0,
+    RP_JOIN, //Add a racer for my agent
     RP_ATTACH_AGENT,
     RP_UPDATE_AGENT,
     RP_KINEMATIC,
@@ -45,6 +46,10 @@ struct RPAck{
 };
 
 struct RPStart{
+    uint8_t clientID;
+};
+
+struct RPJoin{
     uint8_t clientID;
 };
 

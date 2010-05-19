@@ -13,6 +13,7 @@ typedef enum {
     C_CONNECTING = 0,
     C_CONNECTED,
     C_WAITINGFORPLAYER,
+    C_PLAYERHASJOINED,
     C_PLAYERREADYTOSTART,
     C_WAITINGFORSTART,
     C_RACE,
@@ -57,7 +58,8 @@ class Client {
     int connectToServer();
     void pushToServer();
     void checkForPackets();
-    void sendStartRequest();
+    void sendJoinRequest(); //Register yourself as a player in this game.
+    void sendStartRequest(); //Request for the game to start.
     void disconnect();
 };
 
