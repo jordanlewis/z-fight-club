@@ -1,4 +1,24 @@
 ===========================================================================================================
+Youlian:
+separate join game from start game so number of players doesn't need to be hard-coded
+
+Nick:
+send PlayerController instead of SteerInfo
+ use reliable packets as necessary?
+
+send RP_UPDATE_AGENT from server
+
+handle RP_UPDATE_AGENT at client
+
+clean up server loop
+
+fix geominfo lx, ly, lz values sent to or received by clients
+
+adjust client and server command-line args
+ client shouldn't specify ai players
+ client shouldn't specify track
+ add track selection packet
+===========================================================================================================
 These two for Tuesday milestone:
 
 Nick:
@@ -8,22 +28,14 @@ include clientID in RP_ATTACH_AGENT so client knows whether it's my agent
 Youlian:
 send object creation packets to all players
  cache RP_ATTACH_AGENT packet
-------------
+add sound/obj specification packets
+
+Nick:
 clean up joining/playing control flow
  move into one while loop with states?
 
-fix geominfo lx, ly, lz values sent to or received by clients
-------------
-make a reliable racer packet function
- separate acceleration/rotation and weapon/fire updates
-  use reliable packets for weapon/fire udpates
-
-adjust client and server command-line args
- client shouldn't specify ai players
- client shouldn't specify track
- add track selection packet
-
-add sound/obj specification packets
+Youlian:
+ make a reliable racer packet function
 ===========================================================================================================
     nick  0) state enum: eg. { waiting for first client to hit go, playing, showing who won, ... }
 So far this has taken the form of the loops in scheduler.cpp
