@@ -18,6 +18,7 @@ using namespace std;
 
 class PGeom;
 class SObject;
+class PlayerController;
 
 /*! \brief WorldObject collects all of the possible representations of an object
  * \brief in the world.
@@ -35,6 +36,7 @@ class WorldObject
     GObject *gobject;
     SObject *sobject;
     Agent *agent;
+    PlayerController *player; // for server
     WorldObject(PGeom * pobject, GObject * gobject, SObject * sobject, Agent * agent);
 
     Vec3f getPos();

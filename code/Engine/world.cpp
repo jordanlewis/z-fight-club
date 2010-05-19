@@ -17,7 +17,7 @@ float World::zMax = 1000; // XXX this too
 World World::_instance;
 
 WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject, Agent *agent)
-    : pobject(pobject), gobject(gobject), sobject(sobject), agent(agent)
+    : pobject(pobject), gobject(gobject), sobject(sobject), agent(agent), player(NULL)
 {
     pos = Vec3f(-1,-1,-1);
     if (pobject != NULL)

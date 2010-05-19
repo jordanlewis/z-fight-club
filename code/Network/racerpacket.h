@@ -59,6 +59,12 @@ struct RPGeomInfo{
  * network in netInfo */
 GeomInfo *parseRPGeomInfo(RPGeomInfo *netInfo);
 
+struct RPPlayerControl {
+    uint32_t turnState;
+    uint32_t engineState;
+    uint32_t weaponState;
+};
+
 struct RPSteerInfo{
     uint32_t a;
     uint32_t r;
@@ -82,7 +88,7 @@ struct RPAgent{
 
 struct RPUpdateAgent {
     netObjID_t ID;
-    RPSteerInfo info;
+    RPPlayerControl info;
 };
 
 struct RPCreateNetObj {

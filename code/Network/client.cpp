@@ -242,11 +242,11 @@ void Client::sendStartRequest()
 void Client::pushToServer()
 {
     error->pin(P_CLIENT);
+    error->log(NETWORK, TRIVIAL, "updating server\n");
     RPUpdateAgent payload;
     payload.ID = htonl(netID);
     WorldObject *wo = getNetObj(netID);
-    SteerInfo steerInfo = wo->agent->getSteering();
-    steerInfo.hton(&(payload.info));
+    wo->player->hton(&(payload.info));
     ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
                                          &payload, sizeof(payload),
                                          0);

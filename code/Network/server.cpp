@@ -3,6 +3,7 @@
 #include "Engine/world.h"
 #include "Engine/geominfo.h"
 #include "Agents/agent.h"
+#include "Agents/player.h"
 #include "Utilities/error.h"
 #include "Physics/pobject.h"
 #include "racerpacket.h"
@@ -161,6 +162,7 @@ int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
                                 &(agent->getSteering()), mass, geomInfo,
                                 Physics::getInstance().getOdeSpace());
 
+    obj->player = new PlayerController(agent);
     obj->pobject = pagent;
     pagent->worldObject = obj;
     world->addObject(obj);    
@@ -264,7 +266,7 @@ void Server::gatherPlayers()
                         delete agent;
                         // if number of players registered == number of
                         // players specified on server command-line
-                        if (world->numAgents() == 2)
+                        if (world->numAgents() == 1)
                         {
                             RPStart toSend;
                             toSend.clientID = -1; // from the server
@@ -392,17 +394,13 @@ void Server::serverFrame()
                             {
                                 RPUpdateAgent *P = (RPUpdateAgent *)payload;
                                 WorldObject *wo = netobjs[ntohl(P->ID)];
-                                SteerInfo steerInfo;
-                                steerInfo.ntoh(&P->info);
-                                stringstream msg;
-                                /*cout << "Steerinfo[" << ntohl(P->ID) << "]: "
-                                  << steerInfo << endl; */
-                                error->log(NETWORK, TRIVIAL, msg.str());
                                 if (wo && wo->agent)
                                 {
-                                    // do we want to adjust gradally using 
-                                    //an average?
-                                    wo->agent->setSteering(steerInfo);
+                                    wo->player->ntoh(&P->info);
+                                    cout << "PlayerController[" << ntohl(P->ID) << "]: "
+                                         << *(wo->player) << endl;
+                                    wo->player->updateAgent();
+
                                 }
                                 break;
                             }
