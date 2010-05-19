@@ -143,7 +143,8 @@ void Client::checkForPackets()
                     case RP_ACK_CONNECTION:
                       {
                         error->log(NETWORK, TRIVIAL, "RP_ACK_CONNECTION\n");
-                        // this has my clientID in it, so I'll know when an agent is created just for me
+                        // this has my clientID in it, so I'll know when an
+                        // agent is created just for me
                         RPAck info = *(RPAck *)payload;
                         clientID = info.clientID;
                         string msg = "I'm client # ";
@@ -227,6 +228,17 @@ void Client::checkForPackets()
     return;
 }
 
+void Client::sendJoinRequest(){
+    error->pin(P_CLIENT);
+    RPJoin toSend;
+    toSend.clientID = clientID;
+    ENetPacket *packet = makeRacerPacket(RP_JOIN, &toSend, sizeof(RPJoin),
+                                         ENET_PACKET_FLAG_RELIABLE);
+    enet_peer_send(peer, 0, packet);
+    enet_host_flush(enetClient);
+    error->pout(P_CLIENT);
+}
+
 void Client::sendStartRequest()
 {
     error->pin(P_CLIENT);
@@ -242,11 +254,13 @@ void Client::sendStartRequest()
 void Client::pushToServer()
 {
     error->pin(P_CLIENT);
+    error->log(NETWORK, TRIVIAL, "updating server\n");
     RPUpdateAgent payload;
     payload.ID = htonl(netID);
     WorldObject *wo = getNetObj(netID);
-    SteerInfo steerInfo = wo->agent->getSteering();
-    steerInfo.hton(&(payload.info));
+    if (wo == NULL) return;
+    if (wo->player == NULL) return;
+    wo->player->hton(&(payload.info));
     ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
                                          &payload, sizeof(payload),
                                          0);

@@ -98,7 +98,15 @@ void Scheduler::clientLoopForever()
             client->clientState = C_WAITINGFORPLAYER;
             break;
           case C_WAITINGFORPLAYER:
-            input->processInput(); // may transition us into C_PLAYERREADYTOSTART
+            input->processInput(); /* may transition into C_PLAYERREADYTOSTART
+                                    * or C_PLAYERHASJOINED */
+            client->checkForPackets();
+            if (client->clientState == C_PLAYERHASJOINED) //transition inc
+                client->sendJoinRequest();
+            break;
+        case C_PLAYERHASJOINED:
+            input->processInput(); //may transition into C_PLAYERREADYTOSTART
+            client->checkForPackets();
             break;
           case C_PLAYERREADYTOSTART:
             client->sendStartRequest();

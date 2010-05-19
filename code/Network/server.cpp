@@ -3,6 +3,7 @@
 #include "Engine/world.h"
 #include "Engine/geominfo.h"
 #include "Agents/agent.h"
+#include "Agents/player.h"
 #include "Utilities/error.h"
 #include "Physics/pobject.h"
 #include "racerpacket.h"
@@ -161,6 +162,7 @@ int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
                                 &(agent->getSteering()), mass, geomInfo,
                                 Physics::getInstance().getOdeSpace());
 
+    obj->player = new PlayerController(agent);
     obj->pobject = pagent;
     pagent->worldObject = obj;
     world->addObject(obj);    
@@ -242,11 +244,12 @@ void Server::gatherPlayers()
                 case ENET_EVENT_TYPE_RECEIVE:
                   {
                     type = getRacerPacketType(event.packet);
+                    cout << "Type is: " << type << endl;
                     payload = event.packet->data+sizeof(racerPacketType_t);
-                    if (type == RP_START)
+                    if (type == RP_JOIN)
                     {
                         RPStart info = *(RPStart *)payload;
-                        string msg = "Client # " + boost::lexical_cast<string>((int) info.clientID) + " requested start\n";
+                        string msg = "Client # " + boost::lexical_cast<string>((int) info.clientID) + " requested join\n";
                         error->log(NETWORK, TRIVIAL, msg);
                         netObjID_t netID;
                         if (createNetObj(netID) != 0)
@@ -262,9 +265,9 @@ void Server::gatherPlayers()
                                     &agent->getSteering(), 
                                     agent->mass, box,netID, info.clientID);
                         delete agent;
-                        // if number of players registered == number of
-                        // players specified on server command-line
-                        if (world->numAgents() == 2)
+                    }
+                    if (type == RP_START) {
+                        if (1)//world->numAgents() == 2)
                         {
                             RPStart toSend;
                             toSend.clientID = -1; // from the server
@@ -299,9 +302,13 @@ void Server::gatherPlayers()
                     }
                     if (successFlag)
                     {
+
                         clients[client.identifier] = client;
+                        cout << "Sending out client ID #"
+                             << (uint)client.identifier
+                             << endl;
                         struct RPAck toSend;
-                        toSend.clientID = client.identifier; // ntonc is trivial :)
+                        toSend.clientID=client.identifier; // ntonc is trivial
                         ENetPacket *packet = makeRacerPacket(RP_ACK_CONNECTION,
                                                              &toSend,
                                                              sizeof(RPAck),
@@ -392,17 +399,13 @@ void Server::serverFrame()
                             {
                                 RPUpdateAgent *P = (RPUpdateAgent *)payload;
                                 WorldObject *wo = netobjs[ntohl(P->ID)];
-                                SteerInfo steerInfo;
-                                steerInfo.ntoh(&P->info);
-                                stringstream msg;
-                                /*cout << "Steerinfo[" << ntohl(P->ID) << "]: "
-                                  << steerInfo << endl; */
-                                error->log(NETWORK, TRIVIAL, msg.str());
                                 if (wo && wo->agent)
                                 {
-                                    // do we want to adjust gradally using 
-                                    //an average?
-                                    wo->agent->setSteering(steerInfo);
+                                    wo->player->ntoh(&P->info);
+                                    cout << "PlayerController[" << ntohl(P->ID) << "]: "
+                                         << *(wo->player) << endl;
+                                    wo->player->updateAgent();
+
                                 }
                                 break;
                             }

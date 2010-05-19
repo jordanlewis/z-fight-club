@@ -34,8 +34,13 @@ int Input::processInput()
                         player->setWeaponState(FIRE); break;
                     case SDLK_c:
                         World::getInstance().camera.cycleView(); break;
-                    case SDLK_SPACE:
+                    case SDLK_RETURN:
                         if (client->clientState == C_WAITINGFORPLAYER)
+                            client->clientState = C_PLAYERHASJOINED;
+                        break;
+                    case SDLK_SPACE:
+                        if (client->clientState == C_WAITINGFORPLAYER ||
+                            client->clientState == C_PLAYERHASJOINED)
                             client->clientState = C_PLAYERREADYTOSTART;
                         break;
                     default: break;

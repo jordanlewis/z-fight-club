@@ -10,6 +10,7 @@ class GeomInfo;
 
 typedef enum {
     RP_START = 0,
+    RP_JOIN, //Add a racer for my agent
     RP_ATTACH_AGENT,
     RP_UPDATE_AGENT,
     RP_KINEMATIC,
@@ -48,6 +49,10 @@ struct RPStart{
     uint8_t clientID;
 };
 
+struct RPJoin{
+    uint8_t clientID;
+};
+
 struct RPGeomInfo{
     uint32_t type;
     uint32_t radius;
@@ -58,6 +63,12 @@ struct RPGeomInfo{
 /* Return a pointer to a new geominfo from the parameters passed over the
  * network in netInfo */
 GeomInfo *parseRPGeomInfo(RPGeomInfo *netInfo);
+
+struct RPPlayerControl {
+    uint32_t turnState;
+    uint32_t engineState;
+    uint32_t weaponState;
+};
 
 struct RPSteerInfo{
     uint32_t a;
@@ -82,7 +93,7 @@ struct RPAgent{
 
 struct RPUpdateAgent {
     netObjID_t ID;
-    RPSteerInfo info;
+    RPPlayerControl info;
 };
 
 struct RPCreateNetObj {

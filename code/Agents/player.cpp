@@ -1,5 +1,7 @@
 #include "player.h"
 #include "agent.h"
+#include "Engine/world.h"
+#include "Network/racerpacket.h"
 
 
 void PlayerController::setTurnState(TurnState_t newState)
@@ -76,9 +78,33 @@ PlayerController::PlayerController(Agent *agent)
                                   : turnState(STRAIGHT), engineState(NEUTRAL),
                                     weaponState(HOLD), agent(agent)
 {
+    agent->worldObject->player = this;
 }
 
 PlayerController::PlayerController()
                                   : turnState(STRAIGHT), engineState(NEUTRAL),
                                     agent(NULL)
 {}
+
+void PlayerController::hton(RPPlayerControl *payload)
+{
+    payload->weaponState = htonl(weaponState);
+    payload->engineState = htonl(engineState);
+    payload->turnState = htonl(turnState);
+}
+
+void PlayerController::ntoh(RPPlayerControl *payload)
+{
+    weaponState = static_cast<WeaponState_t>(ntohl(payload->weaponState));
+    engineState = static_cast<EngineState_t>(ntohl(payload->engineState));
+    turnState = static_cast<TurnState_t>(ntohl(payload->turnState));
+}
+
+std::ostream &operator<<(std::ostream& os, const PlayerController& player)
+{
+    os << "weapon: " << player.weaponState << " "
+       << "engine: " << player.engineState << " "
+       << "turn: "   << player.turnState;
+    return os;
+}
+

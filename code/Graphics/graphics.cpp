@@ -121,18 +121,7 @@ void Graphics::render()
     glClearColor(.2f, .2, .8f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glDisable(GL_LIGHTING);
-
-    // A floor is useful, but this should be cleaned up soon
-    glBegin(GL_QUADS);
-        glColor3f(0.4,0.3,0.4);
-      glVertex3f(-5,0,-5);
-      glVertex3f(-5,0,5);
-        glColor3f(0.2,0.4,0.4);
-      glVertex3f(5,0,5);
-      glVertex3f(5,0,-5);
-    glEnd();
-
+    glColor3f(0.2,0.4,0.4);
     glEnable(GL_LIGHTING);
     for (vector<WorldObject *>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
     {
@@ -153,9 +142,6 @@ void Graphics::render()
         render(*i);
     }
 
-    DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(2.0f, 0.0f, 0.0f));
-    DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(0.0f, 2.0f, 0.0f));
-    DrawArrow(Vec3f(0.0f, 0.0f, 0.0f), Vec3f(0.0f, 0.0f, 2.0f));
     SDL_GL_SwapBuffers();
     glPopMatrix();
 
@@ -187,7 +173,6 @@ void Graphics::render(Agent * agent)
 
     glTranslatef(agent->kinematic.pos.x, agent->kinematic.pos.y, agent->kinematic.pos.z);
     glColor3f(1,1,1);
-    DrawArrow(Vec3f(0.0, 0.0, 0.0), agent->kinematic.vel);
     DrawArrow(Vec3f(0.0, 0.0, 0.0), agent->kinematic.orientation_v);
 
     glPopMatrix();
@@ -203,8 +188,9 @@ void Graphics::render(AIController *aiController)
     }
 
     glColor3f(0,1,0);
-    DrawArrow(aiController->agent->getKinematic().pos,
-              aiController->path.knots.front() - aiController->agent->getKinematic().pos);
+    // Uncomment to display arrow to next knot
+    //DrawArrow(aiController->agent->getKinematic().pos,
+    //          aiController->path.knots.front() - aiController->agent->getKinematic().pos);
     render(aiController->path.knots);
 }
 
@@ -220,23 +206,14 @@ void Graphics::render(TrackData_t *track)
         /* load in the vertices */
 
         Vec3f_t vert;
-        glBegin(GL_LINE_LOOP);
-        /* draw sectors */
-        for (i = 0; i < track->nSects; i++) {
-            for (j = 0; j < track->sects[i].nEdges; j++) {
-                CopyV3f(track->verts[track->sects[i].edges[j].start], vert);
-                glVertex3f(vert[0], vert[1] + .01, vert[2]);
-            }
-        }
-        glEnd();
 
-        glColor3f(1,1,0);
         GLUquadricObj *quadobj = gluNewQuadric();
         Vec3f_t v;
         Segment_t *seg;
         int len;
         float ang;
 
+        glColor3f(1,1,0);
         glBegin(GL_LINES);
         for (i = 0; i < track->nLanes; i++)
         {

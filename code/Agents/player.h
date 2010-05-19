@@ -2,6 +2,7 @@
 #define PLAYER_H
 
 #include "agent.h"
+struct RPPlayerControl;
 #include <iostream>
 
 typedef enum {
@@ -45,6 +46,12 @@ class PlayerController
 
     PlayerController(Agent *agent);
     PlayerController();
+    void hton(RPPlayerControl *payload);
+    void ntoh(RPPlayerControl *payload);
+
+    //! \brief Writes this player controller to the given output stream.
+    //         This will be used for debugging.
+    friend std::ostream &operator<<(std::ostream&, const PlayerController&);
 };
 
 #endif
