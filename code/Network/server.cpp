@@ -195,6 +195,28 @@ void Server::createAll(){
     return;
 }
 
+void Server::pushEngineStates()
+{
+    error->pin(P_SERVER);
+    error->log(NETWORK, TRIVIAL, "updating server\n");
+    RPUpdateAgent payload;
+    for (map<netObjID_t, WorldObject *>::iterator iter = netobjs.begin();
+         iter != netobjs.end();
+         iter++)
+        {
+            payload.ID = htonl((*iter).first);
+            WorldObject *wo = (*iter).second;
+            if (wo == NULL) return;
+            if (wo->player == NULL) return;
+            wo->player->hton(&(payload.info));
+            ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
+                                                 &payload, sizeof(payload),
+                                                 0);
+            enet_host_broadcast(enetServer, 0, packet);
+            //enet_host_flush(enetServer);
+            //error->pout(P_SERVER);
+        }
+}
 
 Server &Server::getInstance()
 {
@@ -267,17 +289,15 @@ void Server::gatherPlayers()
                         delete agent;
                     }
                     if (type == RP_START) {
-                        if (1)//world->numAgents() == 2)
-                        {
-                            RPStart toSend;
-                            toSend.clientID = -1; // from the server
-                            ENetPacket *packet=makeRacerPacket(RP_START,
-                                                               &toSend,
-                                                               sizeof(RPStart),
-                                                               ENET_PACKET_FLAG_RELIABLE);
-                            enet_host_broadcast(enetServer, 0, packet);
-                            return;
-                        }
+                        RPStart toSend;
+                        toSend.clientID = -1; // from the server
+                        ENetPacket *packet=makeRacerPacket(RP_START,
+                                                           &toSend,
+                                                           sizeof(RPStart),
+                                                           ENET_PACKET_FLAG_RELIABLE);
+                        enet_host_broadcast(enetServer, 0, packet);
+                        return;
+                        
                     }
                     enet_packet_destroy(event.packet);
                   }
@@ -379,6 +399,8 @@ void Server::serverFrame()
         enet_host_broadcast(enetServer, 0, packet);
     }
 
+    pushEngineStates();
+
     while (enet_host_service(enetServer, &event, 0) > 0)
     {
         switch (event.type)
@@ -405,7 +427,7 @@ void Server::serverFrame()
                                     cout << "PlayerController[" << ntohl(P->ID) << "]: "
                                          << *(wo->player) << endl;
                                     wo->player->updateAgent();
-
+                                    
                                 }
                                 break;
                             }

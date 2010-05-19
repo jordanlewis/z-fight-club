@@ -3,6 +3,8 @@
 
 #include "network.h"
 #include "Engine/world.h"
+#include "Engine/scheduler.h"
+
 class World;
 class Input;
 class Physics;

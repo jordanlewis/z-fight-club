@@ -138,6 +138,7 @@ void Client::checkForPackets()
                         error->log(NETWORK, TRIVIAL, "RP_START\n");
                         RPStart info = *(RPStart *)payload;
                         clientState = C_RACE;
+                        Scheduler::getInstance().raceState = RACE;
                         break;
                       }
                     case RP_ACK_CONNECTION:
@@ -153,9 +154,25 @@ void Client::checkForPackets()
                         clientState = C_CONNECTED;
                         break;
                       }
-                    case RP_UPDATE_AGENT:
+                    case RP_UPDATE_AGENT: 
+                        {
+                            
                         error->log(NETWORK, TRIVIAL, "RP_UPDATE_AGENT\n");
+                        RPUpdateAgent *P = (RPUpdateAgent *)payload;
+                        WorldObject *wo = netobjs[ntohl(P->ID)];
+                        if (wo && wo->agent)
+                            {
+                                if(ntohl(P->ID) != netID) {
+                                    wo->player->ntoh(&P->info);
+                                    cout << "PlayerController["
+                                         << ntohl(P->ID) << "]: "
+                                         << *(wo->player) << endl;
+                                    wo->player->updateAgent();
+                                }
+                            }
+                            
                         break;
+                        }
                     case RP_CREATE_NET_OBJ:
                       {
                         error->log(NETWORK, TRIVIAL, "RP_CREATE_NET_OBJ\n");
@@ -202,6 +219,7 @@ void Client::checkForPackets()
                         agent->worldObject = wobject;
                         pagent->worldObject = wobject;
                         wobject->gobject = new GObject(geomInfo);
+                        wobject->player = new PlayerController(agent);
 
                         if (info.clientID == clientID)
                         {
