@@ -36,6 +36,9 @@ class Client {
 
     map<netObjID_t, WorldObject *> netobjs; //Tracks networked world objects.
     netObjID_t netID; // id for our agent
+    PlayerController *player; /* the playercontroller sent across the
+                                     * network. This does not directly
+                                     * control our player locally. */
 
     Client();
     ~Client();

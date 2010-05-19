@@ -9,6 +9,7 @@ Client Client::_instance;
 
 Client::Client() :
     clientID(255),
+    player(NULL),
     world(&World::getInstance()),
     input(&Input::getInstance()),
     physics(&Physics::getInstance()),
@@ -22,7 +23,6 @@ Client::Client() :
         {
             error->log(NETWORK, CRITICAL, "Could not initialize client.\n");
         }
-
 }
 
 Client::~Client()
@@ -162,13 +162,11 @@ void Client::checkForPackets()
                         WorldObject *wo = netobjs[ntohl(P->ID)];
                         if (wo && wo->agent)
                             {
-                                if(ntohl(P->ID) != netID) {
-                                    wo->player->ntoh(&P->info);
-                                    cout << "PlayerController["
-                                         << ntohl(P->ID) << "]: "
-                                         << *(wo->player) << endl;
-                                    wo->player->updateAgent();
-                                }
+                                wo->player->ntoh(&P->info);
+                                cout << "PlayerController["
+                                     << ntohl(P->ID) << "]: "
+                                     << *(wo->player) << endl;
+                                wo->player->updateAgent();   
                             }
                             
                         break;
@@ -227,8 +225,7 @@ void Client::checkForPackets()
                             netID = info.ID;
                             world->camera = Camera(THIRDPERSON, agent);
                             sound->registerListener(&world->camera);
-                            PlayerController *p = new PlayerController(agent);
-                            input->controlPlayer(p);
+                            player = &input->getPlayerController();
                         }
                         else
                         {
@@ -275,10 +272,8 @@ void Client::pushToServer()
     error->log(NETWORK, TRIVIAL, "updating server\n");
     RPUpdateAgent payload;
     payload.ID = htonl(netID);
-    WorldObject *wo = getNetObj(netID);
-    if (wo == NULL) return;
-    if (wo->player == NULL) return;
-    wo->player->hton(&(payload.info));
+    if (player == NULL) return;
+    player->hton(&(payload.info));
     ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
                                          &payload, sizeof(payload),
                                          0);

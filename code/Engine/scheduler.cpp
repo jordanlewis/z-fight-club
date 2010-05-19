@@ -114,7 +114,6 @@ void Scheduler::clientLoopForever()
             break;
           case C_WAITINGFORSTART:
             client->checkForPackets(); // may transition us into C_RACE
-            //raceState = RACE;
             break;
           case C_RACE:
             client->checkForPackets();
