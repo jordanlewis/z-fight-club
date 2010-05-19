@@ -88,11 +88,12 @@ int World::numAgents()
 
 void World::addAgent(Agent *agent)
 {
-    BoxInfo *box = new BoxInfo(agent->width, agent->height, agent->depth);
+    /* BoxInfo *box = new BoxInfo(agent->width, agent->height, agent->depth); */
+    ObjMeshInfo *ship = new ObjMeshInfo("ship/"); 
     PAgent *pobj = new PAgent(&(agent->getKinematic()), &(agent->getSteering()),
-                              agent->mass, box);
+                              agent->mass, ship);
     pobj->bounce = 1;
-    GObject *gobj = new GObject(box);
+    GObject *gobj = new GObject(ship);
     SObject *sobj = new SObject("snore.wav", GetTime(), AL_TRUE);
 
     WorldObject *wobject = new WorldObject(pobj, gobj, sobj, agent);

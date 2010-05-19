@@ -7,7 +7,7 @@ Kd 1.0 1.0 1.0
 Ka 1.0 1.0 1.0
 Ks 1.0 1.0 1.0
 Ke 0.0 0.0 0.0
-map_Kd cube1_auv3.png
+map_Kd cube1_auv2.png
 
 newmtl default
 Ns 100.0
