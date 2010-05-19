@@ -68,6 +68,8 @@ class World
   public:
     int PlayerQty;
     int AIQty;
+    bool nox;
+    bool nosound;
     RunType_t runType;
     Camera camera;
     TrackData_t *track;

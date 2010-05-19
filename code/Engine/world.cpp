@@ -60,7 +60,7 @@ void WorldObject::draw()
 }
 
 World::World() :
-    error(&Error::getInstance())
+    error(&Error::getInstance()), nox(false), nosound(false)
 {
 }
 

@@ -45,6 +45,8 @@ int main(int argc, char *argv[])
             ("ipaddr", po::value<string>(), "set server ip address")
             ("port", po::value<int>(), "set server port")
             ("ai-players", po::value<int>(), "set number of AI players")
+            ("nox", "disable graphics")
+            ("nosound", "disable sound")
         ;
 
         po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -116,6 +118,14 @@ int main(int argc, char *argv[])
             cout << "Using default port 6888" << endl;
             setPort(6888);
         }
+        if (vm.count("nox"))
+        {
+            world.nox = true;
+        }
+        if (vm.count("nosound"))
+        {
+            world.nosound = true;
+        }
     }
     catch(exception& e) {
         cerr << "error: " << e.what() << "\n";
@@ -127,10 +137,13 @@ int main(int argc, char *argv[])
     }
     srand(time(NULL));
 
+    if (!world.nox)
+        graphics.initGraphics();
+    if (!world.nosound)
+        sound.initSound();
+
     if (world.runType == SOLO)
     {
-        graphics.initGraphics();
-        sound.initSound();
         scheduler.welcomeScreen();
         world.makeAgents();
         testSetup();
@@ -138,8 +151,6 @@ int main(int argc, char *argv[])
     }
     if (world.runType == CLIENT)
     {
-        graphics.initGraphics();
-        sound.initSound();
         testSetup();
         if (client.connectToServer() < 0)
         {
@@ -151,8 +162,6 @@ int main(int argc, char *argv[])
     }
     if (world.runType == SERVER)
     {
-        graphics.initGraphics();
-        sound.initSound();
         testSetup();
         if (server.createHost() < 0)
         {

@@ -89,6 +89,7 @@ void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
 void Graphics::render()
 {
     error->pin(P_GRAPHICS);
+
     if (!initialized) {
         error->log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
         exit(0);
