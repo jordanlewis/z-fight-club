@@ -64,6 +64,38 @@ World::World() :
 {
 }
 
+Light::Light()
+{
+    //pos = { 10.0, 10.0, -10.0, 1.0 };
+    //lightColor = { 1.0, 1.0, 1.0, 1.0 };
+    //ambientColor = { 0.2, 0.2, 0.2, 1.0 };
+    //specColor = { .2, .2, .2, 1.0 };
+}
+
+Light::Light(GLfloat *pos, GLfloat *lightColor, GLfloat *ambientColor, GLfloat *specColor)
+{
+    int i;
+
+    for (i = 0; i < 4; i++) {
+        this->pos[i] = pos[i];
+        this->lightColor[i] = lightColor[i];
+        this->ambientColor[i] = ambientColor[i];
+        this->specColor[i] = specColor[i];
+    }
+}
+
+Light::~Light()
+{}
+
+void Light::setup(GLenum lightEnum)
+{
+    glLightfv(lightEnum, GL_POSITION, pos);
+    glLightfv(lightEnum, GL_AMBIENT, lightColor);
+    glLightfv(lightEnum, GL_SPECULAR, ambientColor);
+    glLightfv(lightEnum, GL_DIFFUSE, specColor);
+    glEnable(lightEnum);
+}
+
 World::~World()
 {
     FreeTrackData(track);
@@ -72,6 +104,11 @@ World::~World()
 void World::addObject(WorldObject *obj)
 {
     wobjects.push_back(obj);
+}
+
+void World::addLight(Light *light)
+{
+    lights.push_back(light);
 }
 
 int World::numAgents()
