@@ -13,7 +13,7 @@
 #define ARC_RESOLUTION 20
 #define DEFAULT_PRECISION 7.0f
 
-Path::Path() {}
+Path::Path() : index(0) {}
 
 AIManager AIManager::_instance;
 
@@ -23,6 +23,12 @@ void Path::clear()
 {
     knots.clear();
     precision.clear();
+}
+
+void Path::next()
+{
+    if (++index >= knots.size())
+        index = 0;
 }
 
 Avoid::Avoid()
@@ -215,7 +221,6 @@ void AIController::lane(int laneIndex)
     path.clear();
 
     Vec3f us = agent->getKinematic().pos;
-    int startSeg = -1;
     float dist;
     float bestDist = 100000;
     Vec3f bestMid, mid;
@@ -252,10 +257,10 @@ void AIController::lane(int laneIndex)
         }
     }
 
-    startSeg = best;
+    path.index = best;
 
     for (i = 0; i < lane.nSegs; i++) {
-        int seg = (i + startSeg + 1) % lane.nSegs;
+        int seg = i;
 
         path.knots.push_back(Vec3f(track->verts[lane.segs[seg].start]));
         path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
@@ -274,11 +279,6 @@ void AIController::lane(int laneIndex)
                   center);
                 path.precision.push_back(DEFAULT_PRECISION); /* XXX */
             }
-        }
-        /* if we're on the last segment we need to put the end vertex on too */
-        if (i == (lane.nSegs - 1)) {
-            path.knots.push_back(Vec3f(track->verts[lane.segs[seg].end]));
-            path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
         }
     }
 }
@@ -443,16 +443,15 @@ void AIController::cruise()
     }
 
     SteerInfo steerInfo;
-    if ((path.knots.front() - agent->kinematic.pos).length() < path.precision.front()) {
-       path.knots.push_back(path.knots.front());
-       path.knots.pop_front();
-       path.precision.push_back(path.precision.front());
-       path.precision.pop_front();
+    if ((path.knots[path.index] -
+         agent->kinematic.pos).length() < path.precision[path.index])
+    {
+        path.next();
     }
-    int tgtIdx = 0;
+    int tgtIdx = path.index;
     /* Find a better node to seek to, ignoring walls */
-    while ((path.knots.front() - path.knots[tgtIdx++]).length() <
-           1.5 * path.precision.front());
+    while ((path.knots[path.index] - path.knots[tgtIdx++]).length() <
+           1.5 * path.precision[path.index]);
 
     smartGo(path.knots[tgtIdx - 1]);
 }

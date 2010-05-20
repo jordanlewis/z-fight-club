@@ -13,13 +13,14 @@
 class Path
 {
   public:
-    int                 index;     /* !< the first knot we haven't passed */
-    std::deque<Vec3f>   knots;     /* !< knots defining the path */
-    std::deque<float>   precision; /* !< how closely we want to follow the knots */
+    unsigned int         index;     /* !< the first knot we haven't passed */
+    std::vector<Vec3f>   knots;     /* !< knots defining the path */
+    std::vector<float>   precision; /* !< how closely we want to follow the knots */
     Path ();
     Path (std::vector<Vec3f>);
     ~Path();
 
+    void next();
     Path *PathToPath(Vec3f position, float urgency);
     void clear();
 };
