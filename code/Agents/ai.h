@@ -21,6 +21,8 @@ class Path
     ~Path();
 
     void next();
+
+    Vec3f closestPoint(Vec3f point);/*!< return point on path closest to point*/
     Path *PathToPath(Vec3f position, float urgency);
     void clear();
 };

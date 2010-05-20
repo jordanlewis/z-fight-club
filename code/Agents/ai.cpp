@@ -31,6 +31,51 @@ void Path::next()
         index = 0;
 }
 
+Vec3f Path::closestPoint(Vec3f point)
+{
+    float dist, bestDist = 10000;
+    float proj;
+    Vec3f diff, perp, seg, closest, bestClosest;
+    for (vector<Vec3f>::iterator it = knots.begin(); it != knots.end(); it++)
+    {
+        /* Compute distance from point to line segment knot -> nextKnot */
+        if (it + 1 == knots.end())
+        {
+            seg = *(knots.begin()) - *it; // line segment
+
+        }
+        else
+        {
+            seg = *(it + 1) - *it; // line segment
+        }
+        diff = point - *it; // point relative to seg start
+        perp = seg / seg.length(); // segment normal
+        proj = perp.dot(diff); // projection onto normal
+        if (proj > seg.length())
+        {
+            closest = *(it + 1);
+        }
+        else if (proj < 0)
+        {
+            closest = *it;
+        }
+        else
+        {
+            closest = perp * proj + *it;
+        }
+
+
+        dist = (point - closest).length();
+
+        if (dist < bestDist)
+        {
+            bestDist = dist;
+            bestClosest = closest;
+        }
+    }
+    return bestClosest;
+}
+
 Avoid::Avoid()
 {
     time = GetTime();
