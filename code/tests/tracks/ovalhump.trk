@@ -1,0 +1,273 @@
+/* oval.trk
+ *
+ * This track is a small oval track with two lanes.
+ */
+
+{
+  "version" : "2.0",
+  "name" : "Small oval track",
+  "revision" : "4",
+  "num-vertices" : 50,
+  "vertices" : [
+    /* arc-center points */
+	    [25, 0, 25],	/* 0 */
+	    [65, 0, 25],	/* 1 */
+    /* lane vertices */
+	    [25, 0,  5],	/* 2 */
+	    [25, 0,  8],	/* 3 */
+	    [25, 0, 42],	/* 4 */
+	    [25, 0, 45],	/* 5 */
+	    [65, 0,  5],	/* 6 */
+	    [65, 0,  8],	/* 7 */
+	    [65, 0, 42],	/* 8 */
+	    [65, 0, 45],	/* 9 */
+    /* outer-wall vertices */
+	    [22, 0,  3],	/* 10 */
+	    [35, 0,  3],	/* 11 */
+	    [55, 2,  3],	/* 12 */
+	    [67, 0,  3],	/* 13 */
+	    [76, 0,  5],	/* 14 */
+	    [84, 0, 12],	/* 15 */
+	    [87, 0, 20],	/* 16 */
+	    [87, 0, 30],	/* 17 */
+	    [84, 0, 38],	/* 18 */
+	    [76, 0, 45],	/* 19 */
+	    [67, 0, 47],	/* 20 */
+	    [55, 3, 47],	/* 21 */
+	    [35, 0, 47],	/* 22 */
+	    [22, 0, 47],	/* 23 */
+	    [14, 0, 45],	/* 24 */
+	    [ 6, 0, 38],	/* 25 */
+	    [ 3, 0, 30],	/* 26 */
+	    [ 3, 0, 20],	/* 27 */
+	    [ 6, 0, 12],	/* 28 */
+	    [14, 0,  5],	/* 29 */
+    /* inner-wall vertices */
+	    [24, 0, 10],	/* 30 */
+	    [35, 0, 10],	/* 31 */
+	    [55, 2, 10],	/* 32 */
+	    [66, 0, 10],	/* 33 */
+	    [73, 0, 12],	/* 34 */
+	    [77, 0, 16],	/* 35 */
+	    [80, 0, 24],	/* 36 */
+	    [80, 0, 26],	/* 37 */
+	    [77, 0, 34],	/* 38 */
+	    [73, 0, 38],	/* 39 */
+	    [66, 0, 40],	/* 40 */
+	    [55, 3, 40],	/* 41 */
+	    [35, 0, 40],	/* 42 */
+	    [24, 0, 40],	/* 43 */
+	    [17, 0, 38],	/* 44 */
+	    [13, 0, 34],	/* 45 */
+	    [10, 0, 26],	/* 46 */
+	    [10, 0, 24],	/* 47 */
+	    [13, 0, 16],	/* 48 */
+	    [17, 0, 12]		/* 49 */
+    ],
+  "num-sectors" : 20,
+  "sectors" : [
+      { /* 0 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 31, "neighbor" : 1, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 11 },
+	    { "kind" : "entry", "start" : 10, "neighbor" : 19, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 30 }
+	  ]
+      },
+      { /* 1 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 32, "neighbor" : 2, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 12 },
+	    { "kind" : "entry", "start" : 11, "neighbor" : 0, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 31 }
+	  ]
+      },
+      { /* 2 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 33, "neighbor" : 3, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 13 },
+	    { "kind" : "entry", "start" : 12, "neighbor" : 1, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 32 }
+	  ]
+      },
+      { /* 3 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 34, "neighbor" : 4, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 14 },
+	    { "kind" : "entry", "start" : 13, "neighbor" : 2, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 33 }
+	  ]
+      },
+      { /* 4 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 35, "neighbor" : 5, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 15 },
+	    { "kind" : "entry", "start" : 14, "neighbor" : 3, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 34 }
+	  ]
+      },
+      { /* 5 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 36, "neighbor" : 6, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 16 },
+	    { "kind" : "entry", "start" : 15, "neighbor" : 4, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 35 }
+	  ]
+      },
+      { /* 6 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 37, "neighbor" : 7, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 17 },
+	    { "kind" : "entry", "start" : 16, "neighbor" : 5, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 36 }
+	  ]
+      },
+      { /* 7 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 38, "neighbor" : 8, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 18 },
+	    { "kind" : "entry", "start" : 17, "neighbor" : 6, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 37 }
+	  ]
+      },
+      { /* 8 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 39, "neighbor" : 9, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 19 },
+	    { "kind" : "entry", "start" : 18, "neighbor" : 7, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 38 }
+	  ]
+      },
+      { /* 9 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 40, "neighbor" : 10, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 20 },
+	    { "kind" : "entry", "start" : 19, "neighbor" : 8, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 39 }
+	  ]
+      },
+      { /* 10 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 41, "neighbor" : 11, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 21 },
+	    { "kind" : "entry", "start" : 20, "neighbor" : 9, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 40 }
+	  ]
+      },
+      { /* 11 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 42, "neighbor" : 12, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 22 },
+	    { "kind" : "entry", "start" : 21, "neighbor" : 10, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 41 }
+	  ]
+      },
+      { /* 12 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 43, "neighbor" : 13, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 23 },
+	    { "kind" : "entry", "start" : 22, "neighbor" : 11, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 42 }
+	  ]
+      },
+      { /* 13 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 44, "neighbor" : 14, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 24 },
+	    { "kind" : "entry", "start" : 23, "neighbor" : 12, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 43 }
+	  ]
+      },
+      { /* 14 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 45, "neighbor" : 15, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 25 },
+	    { "kind" : "entry", "start" : 24, "neighbor" : 13, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 44 }
+	  ]
+      },
+      { /* 15 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 46, "neighbor" : 16, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 26 },
+	    { "kind" : "entry", "start" : 25, "neighbor" : 14, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 45 }
+	  ]
+      },
+      { /* 16 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 47, "neighbor" : 17, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 27 },
+	    { "kind" : "entry", "start" : 26, "neighbor" : 15, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 46 }
+	  ]
+      },
+      { /* 17 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 48, "neighbor" : 18, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 28 },
+	    { "kind" : "entry", "start" : 27, "neighbor" : 16, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 47 }
+	  ]
+      },
+      { /* 18 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 49, "neighbor" : 19, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 29 },
+	    { "kind" : "entry", "start" : 28, "neighbor" : 17, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 48 }
+	  ]
+      },
+      { /* 19 */
+	"num-edges" : 4,
+	"edges" : [
+	    { "kind" : "exit", "start" : 30, "neighbor" : 0, "neighbor-edge" : 2 },
+	    { "kind" : "wall", "start" : 10 },
+	    { "kind" : "entry", "start" : 29, "neighbor" : 18, "neighbor-edge" : 0 },
+	    { "kind" : "wall", "start" : 49 }
+	  ]
+      }
+    ],
+  "num-lanes" : 2,
+  "lanes" : [
+      {
+        "num-segments" : 4,
+        "segments" : [
+            { "kind" : "line", "start" : 2, "end" : 6, "length" : 40 },
+            { "kind" : "arc", "start" : 6, "end" : 9, "length" : 62.8319, "center" : 1, "angle" : 180 },
+            { "kind" : "line", "start" : 9, "end" : 5, "length" : 40 },
+            { "kind" : "arc", "start" : 5, "end" : 2, "length" : 62.8319, "center" : 0, "angle" : 180 }
+          ]
+      },
+      {
+        "num-segments" : 4,
+        "segments" : [
+            { "kind" : "line", "start" : 3, "end" : 7, "length" : 40 },
+            { "kind" : "arc", "start" : 7, "end" : 8, "length" : 53.4071, "center" : 1, "angle" : 180 },
+            { "kind" : "line", "start" : 8, "end" : 4, "length" : 40 },
+            { "kind" : "arc", "start" : 4, "end" : 3, "length" : 53.4071, "center" : 0, "angle" : 180 }
+          ]
+      }
+    ],
+	"num-starts" : 0,
+	"starts" : []
+}
