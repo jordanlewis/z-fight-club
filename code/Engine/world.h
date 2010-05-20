@@ -89,6 +89,7 @@ class World
     void makeAI();
     void makePlayer();
     void makeAgents();
+		void makeSkybox();
     void loadTrack(const char *file);
     void setRunType(const string str);
     const TrackData_t * getTrack();

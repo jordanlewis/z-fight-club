@@ -264,6 +264,16 @@ void World::makeAgents()
     }
 }
 
+void World::makeSkybox()
+{
+		SkyBoxInfo *sbox = new SkyBoxInfo("skybox/red/");
+    Kinematic *k = new Kinematic(Vec3f(0,0,0), Vec3f(0,0,0), M_PI/2);
+    PMoveable *geom = new PMoveable(k, 10, sbox);
+    GObject *gobj = new GObject(sbox);
+    WorldObject *wobj = new WorldObject(geom, gobj, NULL, NULL);
+    addObject(wobj);
+}
+
 void World::setRunType(const string str){
     if ( (str == "server") || (str == "Server") ){
         runType = SERVER;

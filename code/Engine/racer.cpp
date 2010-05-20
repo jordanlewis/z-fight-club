@@ -146,6 +146,7 @@ int main(int argc, char *argv[])
     {
         scheduler.welcomeScreen();
         world.makeAgents();
+				world.makeSkybox();
         testSetup();
         scheduler.soloLoopForever();
     }
