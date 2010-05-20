@@ -94,7 +94,8 @@ void Scheduler::clientLoopForever()
             client->checkForPackets(); // may transition us into C_CONNECTED
             break;
           case C_CONNECTED:
-            cout << endl << "mash the spacebar to begin" << endl;
+            cout << endl << "hit enter to join" << endl;
+            cout << endl << "mash the spacebar to start the race" << endl;
             client->clientState = C_WAITINGFORPLAYER;
             break;
           case C_WAITINGFORPLAYER:

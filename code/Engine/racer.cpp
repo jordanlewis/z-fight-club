@@ -45,6 +45,8 @@ int main(int argc, char *argv[])
             ("ipaddr", po::value<string>(), "set server ip address")
             ("port", po::value<int>(), "set server port")
             ("ai-players", po::value<int>(), "set number of AI players")
+            ("nox", "disable graphics")
+            ("nosound", "disable sound")
         ;
 
         po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -62,13 +64,18 @@ int main(int argc, char *argv[])
         }
         else
         {
-            cout << "Error:  No track file given.";
-            return 0;
+            cout << "Using default track tests/tracks/oval.trk" << endl;
+            world.loadTrack("tests/tracks/oval.trk");
         }
 
         if (vm.count("assets"))
         {
             world.setDir(vm["assets"].as<string>().c_str());
+        }
+        else
+        {
+            cout << "Using default assets dir ../assets/" << endl;
+            world.setDir("../assets/");
         }
 
         if (vm.count("network"))
@@ -87,14 +94,37 @@ int main(int argc, char *argv[])
         {
             world.AIQty = vm["ai-players"].as<int>();
         }
+        else if (world.runType == SOLO)
+        {
+            cout << "Using default ai-players=3" << endl;
+            world.AIQty = 3;
+        }
 
         if (vm.count("ipaddr"))
         {
             setAddr(vm["ipaddr"].as<string>().c_str());
         }
+        else if (world.runType == CLIENT)
+        {
+            cout << "Using default ipaddr 127.0.0.1" << endl;
+            setAddr("127.0.0.1");
+        }
         if (vm.count("port"))
         {
             setPort(vm["port"].as<int>());
+        }
+        else if (world.runType == CLIENT)
+        {
+            cout << "Using default port 6888" << endl;
+            setPort(6888);
+        }
+        if (vm.count("nox"))
+        {
+            world.nox = true;
+        }
+        if (vm.count("nosound"))
+        {
+            world.nosound = true;
         }
     }
     catch(exception& e) {
@@ -107,10 +137,13 @@ int main(int argc, char *argv[])
     }
     srand(time(NULL));
 
+    if (!world.nox)
+        graphics.initGraphics();
+    if (!world.nosound)
+        sound.initSound();
+
     if (world.runType == SOLO)
     {
-        graphics.initGraphics();
-        sound.initSound();
         scheduler.welcomeScreen();
         world.makeAgents();
         testSetup();
@@ -118,8 +151,6 @@ int main(int argc, char *argv[])
     }
     if (world.runType == CLIENT)
     {
-        graphics.initGraphics();
-        sound.initSound();
         testSetup();
         if (client.connectToServer() < 0)
         {
@@ -131,8 +162,6 @@ int main(int argc, char *argv[])
     }
     if (world.runType == SERVER)
     {
-        graphics.initGraphics();
-        sound.initSound();
         testSetup();
         if (server.createHost() < 0)
         {

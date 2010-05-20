@@ -32,6 +32,7 @@ class Server {
     uint8_t pingclock;
     World *world;
     Error *error;
+    void pushAgents();
 
  public:
     Server();
@@ -58,7 +59,6 @@ class Server {
     
 
     void updateFromClient(uint8_t clientId); //NYI (call within serverFrame)
-    void pushAgents();
 
     /* Member Functions */
     static Server &getInstance();

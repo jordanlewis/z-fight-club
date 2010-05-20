@@ -163,9 +163,9 @@ void Client::checkForPackets()
                         if (wo && wo->agent && wo->player)
                             {
                                 wo->player->ntoh(&P->info);
-                                cout << "PlayerController["
+                                /*cout << "PlayerController["
                                      << ntohl(P->ID) << "]: "
-                                     << *(wo->player) << endl;
+                                     << *(wo->player) << endl;*/
                                 wo->player->updateAgent();
                                 wo->agent->kinematic.ntoh(&(P->kine));
                             }
@@ -204,9 +204,9 @@ void Client::checkForPackets()
                         agent->ntoh(&(info.agent));
                         wobject->agent = agent;
 
-                        ((BoxInfo*) geomInfo)->lx = 1;
-                        ((BoxInfo*) geomInfo)->ly = 1;
-                        ((BoxInfo*) geomInfo)->lz = 1;
+                        ((BoxInfo*) geomInfo)->lx = agent->width;
+                        ((BoxInfo*) geomInfo)->ly = agent->height;
+                        ((BoxInfo*) geomInfo)->lz = agent->depth;
 
                         PAgent *pagent =
                             new PAgent(&(agent->getKinematic()),
@@ -270,7 +270,6 @@ void Client::sendStartRequest()
 void Client::pushToServer()
 {
     error->pin(P_CLIENT);
-    error->log(NETWORK, TRIVIAL, "updating server\n");
     RPUpdateAgent payload;
     payload.ID = htonl(netID);
     if (player == NULL) return;

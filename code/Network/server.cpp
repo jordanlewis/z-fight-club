@@ -197,28 +197,25 @@ void Server::createAll(){
 
 void Server::pushAgents()
 {
-    error->pin(P_SERVER);
-    error->log(NETWORK, TRIVIAL, "updating server\n");
     RPUpdateAgent payload;
     for (map<netObjID_t, WorldObject *>::iterator iter = netobjs.begin();
          iter != netobjs.end();
          iter++)
-        {
-            payload.ID = htonl((*iter).first);
-            WorldObject *wo = (*iter).second;
-            if (wo == NULL) return;
-            if (wo->player == NULL) return;
-            wo->player->hton(&(payload.info));
-            if (wo->agent == NULL) return;
-            wo->agent->kinematic.hton(&(payload.kine));
+    {
+        payload.ID = htonl((*iter).first);
+        WorldObject *wo = (*iter).second;
+        if (wo == NULL) return;
+        if (wo->player == NULL) return;
+        wo->player->hton(&(payload.info));
+        if (wo->agent == NULL) return;
+        wo->agent->kinematic.hton(&(payload.kine));
             
-            ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
-                                                 &payload, sizeof(payload),
-                                                 0);
-            enet_host_broadcast(enetServer, 0, packet);
-            //enet_host_flush(enetServer);
-            //error->pout(P_SERVER);
-        }
+        ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
+                                             &payload, sizeof(payload),
+                                             0);
+        enet_host_broadcast(enetServer, 0, packet);
+    }
+    enet_host_flush(enetServer);
 }
 
 Server &Server::getInstance()
@@ -427,8 +424,8 @@ void Server::serverFrame()
                                 if (wo && wo->agent)
                                 {
                                     wo->player->ntoh(&P->info);
-                                    cout << "PlayerController[" << ntohl(P->ID) << "]: "
-                                         << *(wo->player) << endl;
+                                    /*cout << "PlayerController[" << ntohl(P->ID) << "]: "
+                                         << *(wo->player) << endl;*/
                                     wo->player->updateAgent();
                                     
                                 }

@@ -32,6 +32,11 @@ void Sound::setDir(string dirname)
 
 void Sound::initSound()
 {
+    if (world->nosound)
+    {
+        return;
+    }
+
     if (world->assetsDir.empty())
     {
         return;

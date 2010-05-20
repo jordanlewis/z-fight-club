@@ -58,8 +58,10 @@ void Graphics::initGraphics()
 
 void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
 {
-    if (!initialized)
-        ; /* error */
+    if (!initialized) {
+        error->log(GRAPHICS, IMPORTANT, "Render function called without graphics initialization\n");
+        return;
+    }
 
     float l = dir.length();
     /* the 6 verts we need for the arrow */
@@ -89,9 +91,10 @@ void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
 void Graphics::render()
 {
     error->pin(P_GRAPHICS);
+
     if (!initialized) {
-        error->log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
-        exit(0);
+        error->log(GRAPHICS, IMPORTANT, "Render function called without graphics initialization\n");
+        return;
     }
 
     World *world = &World::getInstance();
@@ -159,8 +162,8 @@ void Graphics::render()
 void Graphics::render(Agent * agent)
 {
     if (!initialized) {
-        error->log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
-        exit(0);
+        error->log(GRAPHICS, IMPORTANT, "Render function called without graphics initialization\n");
+        return;
     }
 
     agent->trail.push_back(agent->kinematic.pos);
@@ -183,8 +186,8 @@ void Graphics::render(Agent * agent)
 void Graphics::render(AIController *aiController)
 {
     if (!initialized) {
-        error->log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
-        exit(0);
+        error->log(GRAPHICS, IMPORTANT, "Render function called without graphics initialization\n");
+        return;
     }
 
     glColor3f(0,1,0);
@@ -197,8 +200,8 @@ void Graphics::render(AIController *aiController)
 void Graphics::render(TrackData_t *track)
 {
     if (!initialized) {
-        error->log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
-        exit(0);
+        error->log(GRAPHICS, IMPORTANT, "Render function called without graphics initialization\n");
+        return;
     }
 
     if (track) {
@@ -264,8 +267,8 @@ void Graphics::render(Hud *hud)
 void Graphics::render(std::vector<Vec3f> path)
 {
     if (!initialized) {
-        error->log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
-        exit(0);
+        error->log(GRAPHICS, IMPORTANT, "Render function called without graphics initialization\n");
+        return;
     }
 
     unsigned int i;
@@ -281,8 +284,8 @@ void Graphics::render(std::vector<Vec3f> path)
 void Graphics::render(std::deque<Vec3f> path)
 {
     if (!initialized) {
-        error->log(GRAPHICS, CRITICAL, "Render function called without graphics initialization\n");
-        exit(0);
+        error->log(GRAPHICS, IMPORTANT, "Render function called without graphics initialization\n");
+        return;
     }
 
     unsigned int i;
