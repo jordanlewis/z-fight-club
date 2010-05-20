@@ -487,18 +487,40 @@ void AIController::cruise()
             obstacles.erase(it);
     }
 
-    SteerInfo steerInfo;
     if ((path.knots[path.index] -
          agent->kinematic.pos).length() < path.precision[path.index])
     {
         path.next();
     }
+
     int tgtIdx = path.index;
     /* Find a better node to seek to, ignoring walls */
-    while ((path.knots[path.index] - path.knots[tgtIdx++]).length() <
+    while ((path.knots[path.index] -
+            path.knots[tgtIdx++ % path.knots.size()]).length() <
            1.5 * path.precision[path.index]);
 
     smartGo(path.knots[tgtIdx - 1]);
+}
+
+SteerInfo AIController::followPath(int tubeRadius)
+{
+    SteerInfo s;
+    Kinematic k = agent->getKinematic();
+    Vec3f proj = k.pos + k.vel;
+    Vec3f closest = path.closestPoint(proj);
+    float dist = (proj - closest).length();
+    s.rotation = 0;
+    s.acceleration = agent->getMaxAccel();
+    if (dist > tubeRadius)
+    {
+        //corrective steering
+        float obstAngle = acos(proj.unit().dot(closest.unit()));
+        if (obstAngle > 0 && obstAngle < M_PI_2)
+            s.rotation = -agent->maxRotate;
+        else if (obstAngle < M_PI && obstAngle >= M_PI_2)
+            s.rotation = agent->maxRotate;
+    }
+    return s;
 }
 
 void AIController::run()

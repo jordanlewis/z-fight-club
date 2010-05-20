@@ -64,6 +64,8 @@ class AIController
     void avoidObstacle(); /*!< avoid obstacle detected by detectWalls() */
     void cruise();      /* !< follow path at maximum possible speed */
     void run();         /* !< Give new steering information to the agent we control */
+    SteerInfo followPath(int tubeRadius); /*!< follow path using Reynolds
+                                               path following algo */
   private:
     Error *error;
 };
