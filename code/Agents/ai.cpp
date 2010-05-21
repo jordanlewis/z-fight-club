@@ -31,39 +31,40 @@ void Path::next()
         index = 0;
 }
 
+static Vec3f closestPointOnSegment(Vec3f point, Vec3f enda, Vec3f endb)
+{
+    float proj;
+    Vec3f diff, seg, pnorm, closest;
+
+    diff = point - enda;
+    seg = endb - enda;
+    pnorm = seg / seg.length();
+    proj = pnorm.dot(diff);
+    if (proj > seg.length())
+        closest = endb;
+    else if (proj < 0)
+        closest = enda;
+    else
+        closest = pnorm * proj + enda;
+
+    return closest;
+}
+
 Vec3f Path::closestPoint(Vec3f point)
 {
     float dist, bestDist = 10000;
-    float proj;
-    Vec3f diff, perp, seg, closest, bestClosest;
+    Vec3f closest, bestClosest;
     for (vector<Vec3f>::iterator it = knots.begin(); it != knots.end(); it++)
     {
         /* Compute distance from point to line segment knot -> nextKnot */
         if (it + 1 == knots.end())
         {
-            seg = *(knots.begin()) - *it; // line segment
-
+            closest = closestPointOnSegment(point, *it, *(knots.begin()));
         }
         else
         {
-            seg = *(it + 1) - *it; // line segment
+            closest = closestPointOnSegment(point, *it, *(knots.begin()));
         }
-        diff = point - *it; // point relative to seg start
-        perp = seg / seg.length(); // segment normal
-        proj = perp.dot(diff); // projection onto normal
-        if (proj > seg.length())
-        {
-            closest = *(it + 1);
-        }
-        else if (proj < 0)
-        {
-            closest = *it;
-        }
-        else
-        {
-            closest = perp * proj + *it;
-        }
-
 
         dist = (point - closest).length();
 
@@ -74,6 +75,57 @@ Vec3f Path::closestPoint(Vec3f point)
         }
     }
     return bestClosest;
+}
+
+float Path::pointToDist(Vec3f point)
+{
+    Vec3f closest;
+    float len, dist, minDist, pathTotal, finalDist;
+    minDist = 1000000;
+    for (vector<Vec3f>::iterator it = knots.begin(); it != knots.end(); it++)
+    {
+        len = (*(it + 1) - *it).length();
+        closest = closestPointOnSegment(point, *it, *(it + 1));
+        dist = (point - closest).length();
+
+        /* The smallest distance indicates we're on the closest segment to
+         * the point. So write the return value as the total value plus the
+         * segment-point distance here, and we'll return it if it is indeed
+         * the smallest distnace.*/
+        if (dist < minDist)
+        {
+            minDist = dist;
+            finalDist = pathTotal + (closest - *it).length();
+        }
+
+        pathTotal += len;
+    }
+
+    return finalDist;
+}
+
+Vec3f Path::distToPoint(float dist)
+{
+    dist = fmodf(dist, totalLength);
+
+    float total, len;
+    Vec3f next, point;
+    for (vector<Vec3f>::iterator it = knots.begin(); it != knots.end(); it++)
+    {
+        if (it == knots.end() - 1)
+            next = *(knots.begin());
+        else
+            next = *(it + 1);
+
+        len = (*it - next).length();
+        total += len;
+        if (total > dist)
+        {
+            point = lerp(*it, next, 1 - (total - dist) / len);
+            break;
+        }
+    }
+    return point;
 }
 
 Avoid::Avoid()
@@ -334,6 +386,14 @@ void AIController::lane(int laneIndex)
             }
         }
     }
+
+    path.totalLength = 0;
+    for (unsigned int i = 0; i < path.knots.size() - 1; i++)
+    {
+        path.totalLength += (path.knots[i] - path.knots[i + 1]).length();
+    }
+    path.totalLength += (path.knots[0] - path.knots[path.knots.size() - 1]).length();
+
 }
 
 void AIController::avoid(Vec3f &pos)

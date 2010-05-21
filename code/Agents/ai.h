@@ -13,6 +13,7 @@
 class Path
 {
   public:
+    float                totalLength; /* !< total distance along path */
     unsigned int         index;     /* !< the first knot we haven't passed */
     std::vector<Vec3f>   knots;     /* !< knots defining the path */
     std::vector<float>   precision; /* !< how closely we want to follow the knots */
@@ -23,6 +24,8 @@ class Path
     void next();
 
     Vec3f closestPoint(Vec3f point);/*!< return point on path closest to point*/
+    float pointToDist(Vec3f point);/*!<return distance on path of point */
+    Vec3f distToPoint(float dist);/*!<return point at distance along path */
     Path *PathToPath(Vec3f position, float urgency);
     void clear();
 };
