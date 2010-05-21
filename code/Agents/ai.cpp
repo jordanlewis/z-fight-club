@@ -514,21 +514,20 @@ SteerInfo AIController::followPath(int tubeRadius)
 {
     SteerInfo s;
     Kinematic k = agent->getKinematic();
-    Vec3f proj = k.pos + k.vel;
+    Vec3f proj;
+    if (k.vel.length() <= 1)
+        proj = k.pos + k.orientation_v * 5;
+    else
+        proj = k.pos + k.vel;
     Vec3f closest = path.closestPoint(proj);
     float dist = (proj - closest).length();
-    s.rotation = 0;
-    s.acceleration = agent->getMaxAccel();
     if (dist > tubeRadius)
     {
-        //corrective steering
-        float obstAngle = acos(proj.unit().dot(closest.unit()));
-        if (obstAngle > 0 && obstAngle < M_PI_2)
-            s.rotation = -agent->maxRotate;
-        else if (obstAngle < M_PI && obstAngle >= M_PI_2)
-            s.rotation = agent->maxRotate;
+        return smartGo(closest);
     }
-    return s;
+    else
+        return smartGo(proj);
+
 }
 
 void AIController::run()
