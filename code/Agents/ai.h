@@ -53,7 +53,8 @@ class AIController
     std::deque<Avoid> obstacles;        /* !< targets to be avoided */
     Agent               *agent;
     void seek(const Vec3f target, float slowRadius = 0, float targetRadius = 1);
-    float align(float target); /*!<try to point to tgt; returns angle to tgt */
+    float align(float target, float slowRadius = 0, float targetRadius = 0);
+    /*!<try to point to tgt; returns angle to tgt */
 
     SteerInfo face(Vec3f target); /*!<face target */
 
@@ -67,8 +68,8 @@ class AIController
     void avoidObstacle(); /*!< avoid obstacle detected by detectWalls() */
     void cruise();      /* !< follow path at maximum possible speed */
     void run();         /* !< Give new steering information to the agent we control */
-    SteerInfo followPath(int tubeRadius); /*!< follow path using Reynolds
-                                               path following algo */
+    void followPath(int tubeRadius); /*!< follow path using Reynolds path
+                                            following algo */
   private:
     Error *error;
 };

@@ -119,9 +119,11 @@ void AIController::seek(const Vec3f target, float slowRadius, float targetRadius
     distance = dir.length();
     dir.normalize();
 
-    align(atan2(dir[0], dir[2]));
+    s = face(target);
+    float r = s.rotation;
 
     s = agent->getSteering();
+    s.rotation = r;
     if (distance < targetRadius)
     {
         s.acceleration = 0;
@@ -147,21 +149,16 @@ void AIController::seek(const Vec3f target, float slowRadius, float targetRadius
 SteerInfo AIController::face(Vec3f target)
 {
     SteerInfo s;
-    float obstAngle = acos(agent->getKinematic().pos.unit().dot(target.unit()));
-    s.rotation = 0;
-    if (obstAngle >= 0 && obstAngle < M_PI_2)
-        s.rotation = -agent->maxRotate;
-    else if (obstAngle >= M_PI_2 && obstAngle < M_PI)
-        s.rotation = agent->maxRotate;
-
-    s.acceleration = 0;
+    Kinematic k = agent->getKinematic();
+    Vec3f dir = target - k.pos;
+    float angle = atan2(dir.x, dir.z);
+    align(angle);
+    s = agent->getSteering();
     return s;
 }
 
-float AIController::align(float target)
+float AIController::align(float target, float slowRadius, float targetRadius)
 {
-    float targetRadius = .01;
-    float slowRadius = 0;
     float diff;
     SteerInfo s;
     Kinematic k = agent->getKinematic();
@@ -178,7 +175,7 @@ float AIController::align(float target)
     float diffSize = abs(diff);
 
     /* we're already aligned. */
-    if (diffSize < targetRadius)
+    if (diffSize <= targetRadius)
     {
         s.rotation = 0;
     }
