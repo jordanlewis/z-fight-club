@@ -565,19 +565,34 @@ SteerInfo AIController::followPath(int tubeRadius)
 {
     SteerInfo s;
     Kinematic k = agent->getKinematic();
-    Vec3f proj;
+    Vec3f futureGuess, guessOnPath, curOnPath;
+    float guessError, curDist, guessDist;
+
+
     if (k.vel.length() <= 1)
-        proj = k.pos + k.orientation_v * 5;
+        futureGuess = k.pos + k.orientation_v * 5;
     else
-        proj = k.pos + k.vel;
-    Vec3f closest = path.closestPoint(proj);
-    float dist = (proj - closest).length();
-    if (dist > tubeRadius)
+        futureGuess = k.pos + k.vel;
+
+    guessOnPath = path.closestPoint(futureGuess);
+    curOnPath   = path.closestPoint(k.pos);
+    guessDist = path.pointToDist(guessOnPath);
+    curDist = fmodf(path.pointToDist(curOnPath), path.totalLength);
+
+    if (guessDist < curDist)
     {
-        return smartGo(closest);
+        // we're turned around
+        guessOnPath = path.distToPoint(curDist + 10);
     }
+
+    guessError = (guessOnPath - futureGuess).length();
+
+    if (guessError > tubeRadius)
+        target = guessOnPath;
     else
-        return smartGo(proj);
+        target = futureGuess;
+
+    return smartGo(target);
 
 }
 
