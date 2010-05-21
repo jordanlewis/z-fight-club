@@ -420,19 +420,16 @@ void AIController::detectWalls()
     rayCast(&startr, &k.orientation_v, length, &queryr);
     rayCast(&start, &k.orientation_v, length, &query);
 
-    std::list<CollContact>::iterator iter;
+    CollContact contact;
 
     WorldObject *closest = NULL;
-    Vec3f contact;
+    Vec3f pos;
     float bestDist = 10000;
-    float dist;
 
     /* Check for wall trapped-ness: if 2 out of 3 rays' distance to collision
      * is close to the same small value, then we're probably directly facing
      * and stuck against a wall.
      */
-    float middist = -1;
-    short votes = 0;
     CollQuery *q;
     const Vec3f *s;
     for (int i = 0; i < 3; i++)
@@ -446,42 +443,35 @@ void AIController::detectWalls()
         if (q->contacts.size() == 0)
             continue;
 
-        iter = q->contacts.begin();
+        contact = *(q->contacts.begin());
 
-        if ((*iter).obj == NULL || (*iter).obj == agent->worldObject)
+        if (contact.obj == NULL || contact.obj == agent->worldObject)
             continue;
 
-        if ((*iter).obj->agent == NULL)
+        if (contact.obj->agent == NULL)
         {
-            dist = ((*iter).position - *s).length();
-            /* Get middle distance if its close enough to the agent. */
-            if (middist == -1 && dist < agent->depth * 2)
-                middist = dist;
-            /* magic number below says how much "diagonality" is permitted for
-             * obstacle to still be a perpendicular wall. Collect votes for all
-             * 3 rays.*/
-            else if (abs(middist - dist) < .5)
-                votes++;
+            /* Collided with static environment. check normal and distance
+             * to see if we might be stuck. */
+            if (contact.distance < agent->depth * 2 &&
+                abs(contact.normal.unit().dot(k.orientation_v.unit())) > .9)
+            {
+                wallTrapped = true;
+                return;
+            }
         }
 
         /* Get closest contact for non-wallstuck cases */
-        if (dist < bestDist)
+        if (contact.distance < bestDist)
         {
-            closest = (*iter).obj;
-            contact = (*iter).position;
+            closest = contact.obj;
+            pos = contact.position;
         }
     }
-    if (votes > 0)
-    {
-        wallTrapped = true;
-        return;
-    }
-
 
     if (closest != NULL)
     {
         seeObstacle = true;
-        obstaclePos = contact;
+        obstaclePos = pos;
         obstacle = closest;
     }
     else
