@@ -24,6 +24,8 @@ WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject, Age
     : pobject(pobject), gobject(gobject), sobject(sobject), agent(agent), player(NULL)
 {
     pos = Vec3f(-1,-1,-1);
+    Quatf_t newquat = {0,0,0,1};
+    CopyV3f(newquat, quat);
     if (pobject != NULL)
     {
         pobject->worldObject = this;
@@ -48,7 +50,20 @@ void WorldObject::setPos(Vec3f position)
 
 void WorldObject::getQuat(Quatf_t quat)
 {
-    pobject->getQuat(quat);
+    if (pobject && pobject->isPlaceable())
+    {
+        pobject->getQuat(quat);
+    }
+    else
+    {
+        CopyQuatf(this->quat, quat);
+    }
+}
+
+void WorldObject::setQuat(Quatf_t quat)
+{
+    if (pobject) pobject->setQuat(quat);
+    CopyQuatf(quat, this->quat);
 }
 
 void WorldObject::draw()

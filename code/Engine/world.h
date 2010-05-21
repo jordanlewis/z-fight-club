@@ -27,6 +27,7 @@ class WorldObject
 {
   private:
     Vec3f pos;
+    Quatf_t quat;
   public:
     PGeom *pobject;
     GObject *gobject;
@@ -37,6 +38,7 @@ class WorldObject
 
     Vec3f getPos();
     void setPos(Vec3f position);
+    void setQuat(Quatf_t quat);
     void getRot(Mat4x4f_t);
     void getQuat(Quatf_t);
 
