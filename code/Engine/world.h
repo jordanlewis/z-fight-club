@@ -47,6 +47,21 @@ class WorldObject
     void draw();
 };
 
+/* \brief Light representation for a light in a scene
+ */
+class Light
+{
+  public:
+      GLfloat pos[4];
+      GLfloat lightColor[4];
+      GLfloat ambientColor[4];
+      GLfloat specColor[4];
+      Light();
+      Light(GLfloat *, GLfloat *, GLfloat *, GLfloat *);
+      ~Light();
+      void setup(GLenum); /* makes opengl calls to add the light */
+};
+
 //What mode are we running our game in?
 typedef enum {
     SOLO = 0,
@@ -78,6 +93,7 @@ class World
     dWorldID ode_world;
     dSpaceID ode_space;
     std::vector<WorldObject *> wobjects; /* the objects in the world */
+    std::vector<Light *> lights; /* !< the lights in the world */
     string assetsDir;   /* !< base directory for asset files */
 
     void addObject(WorldObject *obj);
@@ -85,6 +101,7 @@ class World
     int numAgents();
 
     void addAgent(Agent *agent);
+    void addLight(Light *light);
     Agent *placeAgent(int place);/*!<return a placed agent not yet in wobjects*/
     void makeAI();
     void makePlayer();

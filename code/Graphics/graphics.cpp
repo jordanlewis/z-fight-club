@@ -99,27 +99,39 @@ void Graphics::render()
 
     World *world = &World::getInstance();
 
-    GLfloat light_position[]={ 10.0, 10.0, -10.0, 1.0 };
-    GLfloat light_color[]={ 1.0, 1.0, 1.0, 1.0 };
-    GLfloat ambient_color[]={ 0.2, 0.2, 0.2, 1.0 };
-    GLfloat mat_specular[]={ .2, .2, .2, 1.0 };
-
     glPushMatrix();
     world->camera.setProjectionMatrix();
 
     /* render 3d graphics */
 
+
+    GLfloat mat_specular[]={ .2, .2, .2, 1.0 };
     glShadeModel(GL_SMOOTH);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position );
-    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_color );
-    glLightfv(GL_LIGHT0, GL_SPECULAR, light_color );
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color );
     glEnable(GL_CULL_FACE);
-    glEnable(GL_COLOR_MATERIAL);
     glCullFace(GL_BACK);
-    glEnable(GL_LIGHT0);
+    glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_DEPTH_TEST);
+
+    if(world->lights.size() > 0) {
+        for (vector<Light *>::iterator i = world->lights.begin(); i != world->lights.end() && world->lights.begin() - i < GL_MAX_LIGHTS; i++)
+        {
+
+        }
+    } else {
+        /* safety net to make sure even if there are no lights
+         * something still shows up on the screen */
+        GLfloat light_position[]={ 10.0, 10.0, -10.0, 1.0 };
+        GLfloat light_color[]={ 1.0, 1.0, 1.0, 1.0 };
+        GLfloat ambient_color[]={ 0.2, 0.2, 0.2, 1.0 };
+
+        glLightfv(GL_LIGHT0, GL_POSITION, light_position );
+        glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_color );
+        glLightfv(GL_LIGHT0, GL_SPECULAR, light_color );
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color );
+        glEnable(GL_LIGHT0);
+    }
+
 
     glClearColor(.2f, .2, .8f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
