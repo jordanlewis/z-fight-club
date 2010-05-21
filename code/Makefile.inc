@@ -1,8 +1,8 @@
 OS = $(shell uname -s)
 
 ODEFLAGS = $(shell ode-config --cflags)
-CFLAGS   = -Wall --std=gnu99 -ggdb $(ODEFLAGS) -I.
-CXXFLAGS = -Wall -Wno-long-long -Wno-deprecated -ggdb $(ODEFLAGS) -I.
+CFLAGS   = -Wall --std=gnu99 -ggdb $(ODEFLAGS) -I. -fsignaling-nans
+CXXFLAGS = -Wall -Wno-long-long -Wno-deprecated -ggdb $(ODEFLAGS) -I. -fsignaling-nans
 
 ############ GPROF PROFILING: UNCOMMENT THESE **************
 #CFLAGS   = -Wall --std=gnu99 -ggdb $(ODEFLAGS) -I. -pg
