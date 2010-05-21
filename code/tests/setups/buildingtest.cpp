@@ -18,7 +18,7 @@ void testSetup()
 
     world.addObject(wobj);
     
-    mesh = new ObjMeshInfo("building/");
+    mesh = new ObjMeshInfo("building2/");
     k = new Kinematic(Vec3f(79.0, 0.0, -17.0), Vec3f(0,0,0), M_PI/2);
     geom = new PMoveable(k, 10, mesh);
     gobj = new GObject(mesh);
@@ -34,7 +34,7 @@ void testSetup()
 
     world.addObject(wobj);
 
-    mesh = new ObjMeshInfo("building/");
+    mesh = new ObjMeshInfo("building2/");
     k = new Kinematic(Vec3f(50.0, 0.0, 25.0), Vec3f(0,0,0), M_PI/2);
     geom = new PMoveable(k, 10, mesh);
     gobj = new GObject(mesh);
