@@ -492,9 +492,16 @@ SteerInfo AIController::avoidObstacle()
     /* Determine angle to obstacle. If between 0 and pi/2, turn right. If
         * between pi/2 and pi, turn left. Else its behind us. */
     const Kinematic k = agent->getKinematic();
-    avoidDir = k.pos - obstaclePos;
 
-    obstAngle = acos(k.orientation_v.perp(Vec3f(0,1,0)).unit().dot(avoidDir.unit()));
+    avoidDir = obstaclePos - k.pos;
+    obstAngle = atan2(avoidDir.x, avoidDir.z) - k.orientation;
+
+    obstAngle = fmodf(obstAngle, 2 * M_PI);
+    if (obstAngle > M_PI)
+        obstAngle -= 2 * M_PI;
+    else if (obstAngle < -M_PI)
+        obstAngle += 2 * M_PI;
+
     hitTime = 1000;
     if (obstacle->agent)
     {
@@ -519,16 +526,14 @@ SteerInfo AIController::avoidObstacle()
         }
 
     }
+    s.rotation = 0;
     if (!obstacle->agent || hitTime < 1) /* assuming static geometry */
     {
-        if (obstAngle > 0 && obstAngle < M_PI_2)
-        {
+        antiTarget = obstacle->getPos();
+        if (obstAngle > 0)
             s.rotation = -agent->maxRotate;
-        }
-        else if (obstAngle < M_PI && obstAngle >= M_PI_2)
-        {
+        else if (obstAngle < 0)
             s.rotation = agent->maxRotate;
-        }
     }
     return s;
 }

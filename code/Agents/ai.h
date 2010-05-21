@@ -48,6 +48,8 @@ class AIController
     /* cached AI data? paths? etc */
     bool wallTrapped; /*Can we not even turn due to a wall in front of us? */
   public:
+    Vec3f target;
+    Vec3f antiTarget;
     AIController(Agent *);
 
     bool seeObstacle;
