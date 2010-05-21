@@ -284,10 +284,10 @@ SteerInfo AIController::smartGo(const Vec3f target)
     }
     else
     {
-        if (angle < M_PI / 2)
+        if (angle < M_PI / 4)
             go = 1;
         else if (angle < 3 * M_PI / 4)
-            go = -1;
+            go = .8;
         else
         {
             if (distance < 5)
@@ -404,7 +404,7 @@ void AIController::detectWalls()
     if (k.vel.length() == 0)
         return;
 
-    float length = 5; /* How far to cast rays */
+    float length = 10; /* How far to cast rays */
     CollQuery queryl, queryr, query;
 
     /* ray starts at the front of agent */
