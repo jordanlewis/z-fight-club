@@ -596,6 +596,19 @@ SteerInfo AIController::followPath(int tubeRadius)
 
 }
 
+SteerInfo AIController::followCarrot(int stickLength)
+{
+    SteerInfo s;
+    Kinematic k = agent->getKinematic();
+
+    Vec3f closest = path.closestPoint(k.pos);
+
+    target = path.distToPoint(path.pointToDist(closest) + stickLength);
+
+    return smartGo(target);
+
+}
+
 void AIController::run()
 {
     detectWalls();

@@ -74,6 +74,7 @@ class AIController
     SteerInfo cruise();      /* !< follow path at maximum possible speed */
     SteerInfo followPath(int tubeRadius); /*!< follow path using Reynolds path
                                                following algo */
+    SteerInfo followCarrot(int stickLength);
 
     void run(); /* !< Give new steering information to the agent we control */
   private:
