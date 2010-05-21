@@ -46,30 +46,32 @@ class AIController
     /* cached AI data? paths? etc */
     bool wallTrapped; /*Can we not even turn due to a wall in front of us? */
   public:
+    AIController(Agent *);
+
     bool seeObstacle;
     WorldObject *obstacle;
     Vec3f obstaclePos;
     Path                path;           /* !< the path we're on */
     std::deque<Avoid> obstacles;        /* !< targets to be avoided */
     Agent               *agent;
-    void seek(const Vec3f target, float slowRadius = 0, float targetRadius = 1);
-    float align(float target, float slowRadius = 0, float targetRadius = 0);
-    /*!<try to point to tgt; returns angle to tgt */
 
-    SteerInfo face(Vec3f target); /*!<face target */
-
-    void brake();
-    void smartGo(const Vec3f target);
     void detectWalls();
-    void cruise(Path *path);
-    AIController(Agent *);
-    void lane(int);     /* !< load a lane as the path */
     void avoid(Vec3f&); /* !< add a new point to be avoided */
-    void avoidObstacle(); /*!< avoid obstacle detected by detectWalls() */
-    void cruise();      /* !< follow path at maximum possible speed */
-    void run();         /* !< Give new steering information to the agent we control */
-    void followPath(int tubeRadius); /*!< follow path using Reynolds path
-                                            following algo */
+    void lane(int);     /* !< load a lane as the path */
+
+    SteerInfo seek(const Vec3f target, float slowRadius = 0, float targetRadius = 1);
+    SteerInfo align(float target, float slowRadius = 0, float targetRadius = 0);
+    /*!<try to point to tgt; returns angle to tgt */
+    SteerInfo face(Vec3f target); /*!<face target */
+    SteerInfo brake();
+    SteerInfo smartGo(const Vec3f target);
+    SteerInfo cruise(Path *path);
+    SteerInfo avoidObstacle(); /*!< avoid obstacle detected by detectWalls() */
+    SteerInfo cruise();      /* !< follow path at maximum possible speed */
+    SteerInfo followPath(int tubeRadius); /*!< follow path using Reynolds path
+                                               following algo */
+
+    void run(); /* !< Give new steering information to the agent we control */
   private:
     Error *error;
 };
