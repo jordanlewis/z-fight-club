@@ -38,7 +38,8 @@ Graphics::~Graphics()
 void Graphics::initGraphics()
 {
     /* set up SDL */
-    int wres = 800, hres = 640;
+    World &world = World::getInstance();
+    int wres = world.camera.wres, hres = world.camera.hres;
     int colorDepth = 32;
     SDL_Surface *screen;
 
