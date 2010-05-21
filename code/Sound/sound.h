@@ -6,6 +6,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <stdint.h>
 using namespace std;
 
 #if defined(__APPLE__) && defined(__MACH__)
