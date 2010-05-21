@@ -90,6 +90,7 @@ void Camera::setProjectionMatrix()
         smooth_orientation = smoothness * smooth_orientation +
                              (1 - smoothness) * agent->kinematic.orientation_v;
 
+    glViewport(0, 0, wres, hres);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective((GLdouble) FOVY, (GLdouble) wres / (GLdouble) hres, zNear, zFar);
@@ -116,7 +117,7 @@ void Camera::setProjectionMatrix()
                 error->log(GRAPHICS, CRITICAL, "Agent in camera not set, but agent specific mode selected\n");
                 exit(0);
             }
-            pos = (agent->kinematic.pos - (5 * smooth_orientation) + Vec3f(0.0f, 3.0f, 0.0f));
+            pos = (agent->kinematic.pos - (1 * smooth_orientation) + Vec3f(0.0f, 0.8f, 0.0f));
             up = Vec3f(0.0f, 1.0f, 0.0f);
             target = (agent->kinematic.pos + (5 * smooth_orientation));
             s = agent->getSteering();

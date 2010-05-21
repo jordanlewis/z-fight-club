@@ -38,7 +38,8 @@ Graphics::~Graphics()
 void Graphics::initGraphics()
 {
     /* set up SDL */
-    int wres = 800, hres = 640;
+    World &world = World::getInstance();
+    int wres = world.camera.wres, hres = world.camera.hres;
     int colorDepth = 32;
     SDL_Surface *screen;
 
@@ -115,6 +116,14 @@ void Graphics::render()
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_DEPTH_TEST);
 
+    /* fog */
+    /* GLfloat fog_color[] = {.5, .2, .2, 1.0};
+    glEnable(GL_FOG);
+    glFogfv(GL_FOG_COLOR, fog_color);
+    glFogf(GL_FOG_START, 5.0f);
+    glFogf(GL_FOG_END, 100.0f);
+    glFogi(GL_FOG_MODE, GL_LINEAR); */
+
     if(world->lights.size() > 0) {
         for (vector<Light *>::iterator i = world->lights.begin(); i != world->lights.end() && world->lights.begin() - i < GL_MAX_LIGHTS; i++)
         {
@@ -145,6 +154,7 @@ void Graphics::render()
         (*i)->draw();
     }
 
+
     render(world->track);
 
     for (vector<WorldObject *>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
@@ -159,17 +169,21 @@ void Graphics::render()
         render(*i);
     }
 
-    SDL_GL_SwapBuffers();
     glPopMatrix();
+    /* draw the widgets */
 
     glPushMatrix();
     world->camera.setOrthoMatrix();
 
-    /* render 2d stuff */
-    Hud hud = Hud::getInstance();
-    render(&hud);
+    for (vector<Widget *>::iterator i = world->widgets.begin(); i != world->widgets.end(); i++)
+    {
+        (*i)->draw();
+    }
 
     glPopMatrix();
+
+    SDL_GL_SwapBuffers();
+
     error->pout(P_GRAPHICS);
 }
 

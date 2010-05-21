@@ -9,6 +9,8 @@ Input Input::_instance;
 
 int Input::processInput()
 {
+    World &world = World::getInstance();
+
     error->pin(P_INPUT);
     SDL_Event SDLevt;
     Uint8 *keystate = SDL_GetKeyState(NULL);
@@ -74,6 +76,12 @@ int Input::processInput()
                         break;
                     default: break;
                 } break;
+            case SDL_VIDEORESIZE:
+                world.camera.wres = SDLevt.resize.w;
+                world.camera.hres = SDLevt.resize.h;
+
+                SDL_SetVideoMode(world.camera.wres, world.camera.hres, 32, SDL_OPENGL|SDL_RESIZABLE);
+                break;
             case SDL_QUIT:
                 error->pout(P_INPUT);
                 client->clientState = C_DONE;

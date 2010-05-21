@@ -176,7 +176,7 @@ JSON_Value_t *JSON_ParseFile (const char *file)
     config.callback               = &DoToken;
     config.callback_ctx		  = &info;
     config.allow_comments         = 1;
-    config.handle_floats_manually = 1;
+    config.handle_floats_manually = 0;
     
     jc = new_JSON_parser(&config);
     

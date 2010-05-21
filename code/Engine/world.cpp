@@ -115,6 +115,11 @@ void World::addLight(Light *light)
     lights.push_back(light);
 }
 
+void World::addWidget(Widget *widget)
+{
+    widgets.push_back(widget);
+}
+
 int World::numAgents()
 {
     int num = 0;
@@ -309,7 +314,7 @@ void World::makeAgents()
 
 void World::makeSkybox()
 {
-		SkyBoxInfo *sbox = new SkyBoxInfo("skybox/red/");
+    SkyBoxInfo *sbox = new SkyBoxInfo("skybox/red/");
     Kinematic *k = new Kinematic(Vec3f(0,0,0), Vec3f(0,0,0), M_PI/2);
     PMoveable *geom = new PMoveable(k, 10, sbox);
     GObject *gobj = new GObject(sbox);

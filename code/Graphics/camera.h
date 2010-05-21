@@ -46,6 +46,8 @@ class Camera {
     const Vec3f &getUp() const;
     const Agent *getAgent() const;
 
+    friend class Graphics;
+    friend class Input;
 };
 
 #endif
