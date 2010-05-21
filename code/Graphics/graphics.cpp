@@ -115,6 +115,14 @@ void Graphics::render()
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_DEPTH_TEST);
 
+    /* fog */
+    /* GLfloat fog_color[] = {.5, .2, .2, 1.0};
+    glEnable(GL_FOG);
+    glFogfv(GL_FOG_COLOR, fog_color);
+    glFogf(GL_FOG_START, 5.0f);
+    glFogf(GL_FOG_END, 100.0f);
+    glFogi(GL_FOG_MODE, GL_LINEAR); */
+
     if(world->lights.size() > 0) {
         for (vector<Light *>::iterator i = world->lights.begin(); i != world->lights.end() && world->lights.begin() - i < GL_MAX_LIGHTS; i++)
         {
