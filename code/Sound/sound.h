@@ -2,6 +2,7 @@
 #define SOUND_H
 
 #include "allclasses.h"
+#include <stdint.h>
 #include <string>
 #include <map>
 #include <vector>
