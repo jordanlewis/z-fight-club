@@ -54,6 +54,9 @@ class AIController
     Agent               *agent;
     void seek(const Vec3f target, float slowRadius = 0, float targetRadius = 1);
     float align(float target); /*!<try to point to tgt; returns angle to tgt */
+
+    SteerInfo face(Vec3f target); /*!<face target */
+
     void brake();
     void smartGo(const Vec3f target);
     void detectWalls();

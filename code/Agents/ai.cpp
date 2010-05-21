@@ -144,6 +144,20 @@ void AIController::seek(const Vec3f target, float slowRadius, float targetRadius
     agent->setSteering(s);
 }
 
+SteerInfo AIController::face(Vec3f target)
+{
+    SteerInfo s;
+    float obstAngle = acos(agent->getKinematic().pos.unit().dot(target.unit()));
+    s.rotation = 0;
+    if (obstAngle >= 0 && obstAngle < M_PI_2)
+        s.rotation = -agent->maxRotate;
+    else if (obstAngle >= M_PI_2 && obstAngle < M_PI)
+        s.rotation = agent->maxRotate;
+
+    s.acceleration = 0;
+    return s;
+}
+
 float AIController::align(float target)
 {
     float targetRadius = .01;
