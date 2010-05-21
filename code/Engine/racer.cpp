@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
             ("ipaddr", po::value<string>(), "set server ip address")
             ("port", po::value<int>(), "set server port")
             ("ai-players", po::value<int>(), "set number of AI players")
+            ("nohuman", "disable human")
             ("nox", "disable graphics")
             ("nosound", "disable sound")
         ;
@@ -86,7 +87,7 @@ int main(int argc, char *argv[])
         {
             world.setRunType("Solo");
         }
-        if (!vm.count("no-human"))
+        if (!vm.count("nohuman"))
         {
             world.PlayerQty = 1;
         }
