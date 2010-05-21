@@ -13,6 +13,7 @@ using namespace std;
 
 class Physics;
 class WorldObject;
+struct RPQuat;
 
 //How our objects will interact with the collision simulation
 typedef enum {
@@ -43,6 +44,8 @@ class PGeom
     void setPos(Vec3f position);
     void getQuat(Quatf_t quat);
     void setQuat(const dQuaternion rotation);
+    void ntohQuat(RPQuat *payload);
+    void htonQuat(RPQuat *payload);
 
     const dGeomID &getGeom();
     PGeom(GeomInfo *info, dSpaceID space=NULL);

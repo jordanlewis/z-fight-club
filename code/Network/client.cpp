@@ -160,7 +160,7 @@ void Client::checkForPackets()
                         error->log(NETWORK, TRIVIAL, "RP_UPDATE_AGENT\n");
                         RPUpdateAgent *P = (RPUpdateAgent *)payload;
                         WorldObject *wo = netobjs[ntohl(P->ID)];
-                        if (wo && wo->agent && wo->player)
+                        if (wo && wo->agent && wo->player && wo->pobject)
                             {
                                 wo->player->ntoh(&P->info);
                                 /*cout << "PlayerController["
@@ -168,6 +168,7 @@ void Client::checkForPackets()
                                      << *(wo->player) << endl;*/
                                 wo->player->updateAgent();
                                 wo->agent->kinematic.ntoh(&(P->kine));
+                                wo->pobject->ntohQuat(&(P->quat));
                             }
                             
                         break;

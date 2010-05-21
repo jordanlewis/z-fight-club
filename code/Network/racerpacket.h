@@ -64,6 +64,10 @@ struct RPGeomInfo{
  * network in netInfo */
 GeomInfo *parseRPGeomInfo(RPGeomInfo *netInfo);
 
+struct RPQuat{
+    uint32_t x, y, z, w;
+};
+
 struct RPPlayerControl {
     uint32_t turnState;
     uint32_t engineState;
@@ -95,6 +99,7 @@ struct RPUpdateAgent {
     netObjID_t ID;
     RPPlayerControl info;
     RPKinematic kine;
+    RPQuat quat;
 };
 
 struct RPCreateNetObj {

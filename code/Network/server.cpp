@@ -209,7 +209,8 @@ void Server::pushAgents()
         wo->player->hton(&(payload.info));
         if (wo->agent == NULL) return;
         wo->agent->kinematic.hton(&(payload.kine));
-            
+        if (wo->pobject == NULL) return;
+        wo->pobject->htonQuat(&(payload.quat));
         ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
                                              &payload, sizeof(payload),
                                              0);

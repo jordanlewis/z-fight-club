@@ -1,5 +1,7 @@
 #include "pobject.h"
 #include "Engine/scheduler.h"
+#include "Network/network.h"
+#include "Network/racerpacket.h"
 #include <ode/ode.h>
 
 #define DEBUG
@@ -85,6 +87,26 @@ void PGeom::getQuat(Quatf_t quat)
 void PGeom::setQuat(const dQuaternion rotation)
 {
     dGeomSetQuaternion(geom, rotation);
+}
+
+void PGeom::htonQuat(RPQuat *payload){
+    Quatf_t quat;
+    getQuat(quat);
+    payload->x = htonf(quat[0]);
+    payload->y = htonf(quat[1]);
+    payload->z = htonf(quat[2]);
+    payload->w = htonf(quat[3]);
+    return;
+}
+
+void PGeom::ntohQuat(RPQuat *payload){
+    Quatf_t quat;
+    quat[0] = ntohf(payload->x);
+    quat[1] = ntohf(payload->y);
+    quat[2] = ntohf(payload->z);
+    quat[3] = ntohf(payload->w);
+    setQuat(quat);
+    return;
 }
 
 const dGeomID &PGeom::getGeom()
