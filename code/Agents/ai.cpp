@@ -4,11 +4,13 @@
 #include <stdlib.h>
 #include "ai.h"
 #include "Utilities/vec3f.h"
+#include "Utilities/error.h"
 #include "Engine/input.h"
 #include "agent.h"
 #include "Engine/world.h"
 #include "Parser/track-parser.h"
 #include "Utilities/defs.h"
+#include "Physics/collision.h"
 
 #define ARC_RESOLUTION 20
 #define DEFAULT_PRECISION 7.0f

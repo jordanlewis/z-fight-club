@@ -6,6 +6,12 @@
 #include "input.h"
 #include "Utilities/defs.h"
 #include "Agents/ai.h"
+#include "Network/server.h"
+#include "Network/client.h"
+#include "Graphics/graphics.h"
+#include "Physics/physics.h"
+#include "Sound/sound.h"
+#include "Utilities/error.h"
 
 using namespace std;
 

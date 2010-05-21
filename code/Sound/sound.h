@@ -1,11 +1,10 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#include "Utilities/error.h"
-#include "Graphics/camera.h"
-#include "sobject.h"
+#include "allclasses.h"
 #include <string>
 #include <map>
+#include <vector>
 using namespace std;
 
 #if defined(__APPLE__) && defined(__MACH__)
@@ -15,10 +14,6 @@ using namespace std;
 #  include <AL/al.h>
 #  include <AL/alc.h>
 #endif
-
-class SObject;
-class WorldObject;
-class World;
 
 typedef struct {
     char  riff[4]; // 'RIFF'

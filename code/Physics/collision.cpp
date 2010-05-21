@@ -1,6 +1,9 @@
 #include "collision.h"
+#include "Physics/pobject.h"
 #include "Sound/sound.h"
-
+#include "Sound/sobject.h"
+#include "Engine/world.h"
+#include "Engine/geominfo.h"
 
 /* Collides real objects o1 and o2.  Ignores collisions between real o1 and
  * phantom o2.  Stores collision data in the data pointer for phantom 01 and

@@ -1,9 +1,12 @@
 #include "network.h"
 #include "Utilities/error.h"
+#include "Engine/world.h"
 #include "client.h"
 #include "server.h"
 #include <assert.h>
 #include <arpa/inet.h>
+#include "iostream"
+using namespace std;
 
 int networkInit()
 {

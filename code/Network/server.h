@@ -1,12 +1,10 @@
 #ifndef SERVER_H
 #define SERVER_H
 
+#include "allclasses.h"
 #include "network.h"
-#include "Engine/world.h"
+#include <stdint.h>
 #include <list>
-
-class GeomInfo;
-class Kinematic;
 
 //Store a client's connection info
 class ClientInfo {

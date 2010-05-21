@@ -1,15 +1,8 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
+#include "allclasses.h"
 #include "network.h"
-#include "Engine/world.h"
-#include "Engine/scheduler.h"
-
-class World;
-class Input;
-class Physics;
-class Sound;
-class Error;
 
 typedef enum {
     C_CONNECTING = 0,

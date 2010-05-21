@@ -1,8 +1,8 @@
 #ifndef GEOMINFO_H
 #define GEOMINFO_H
 
+#include "allclasses.h"
 #include <ode/ode.h>
-#include "Utilities/vector.h"
 #include <string>
 extern "C" {
     #include "Parser/obj-reader.h"

@@ -12,7 +12,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include "Engine/world.h"
+#include "allclasses.h"
 #include "constants.h"
 
 #define NETOBJID_MAX UINT32_MAX

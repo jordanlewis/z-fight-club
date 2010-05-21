@@ -1,11 +1,8 @@
 #ifndef PWEAPON_H
 #define PWEAPON_H
 
-#include "physics.h"
+#include "allclasses.h"
 #include "constants.h"
-#include "Agents/agent.h"
-#include "collision.h"
-
 #include <iostream>
 
 void useWeapons(Agent *agent);

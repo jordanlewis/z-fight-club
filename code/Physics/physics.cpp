@@ -1,9 +1,12 @@
 #include <math.h>
 #include <ode/ode.h>
-
 #include "physics.h"
+#include "pweapon.h"
+#include "pobject.h"
+#include "collision.h"
 #include "Utilities/vector.h"
 #include "Engine/world.h"
+#include "Utilities/error.h"
 #include "Agents/agent.h"
 #include "Utilities/vec3f.h"
 #include "Utilities/quat.h"

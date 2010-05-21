@@ -3,10 +3,8 @@
 
 #include <enet/enet.h>
 #include <cstring>
-#include "Physics/pobject.h"
+#include "allclasses.h"
 #include "network.h"
-
-class GeomInfo;
 
 typedef enum {
     RP_START = 0,

@@ -14,6 +14,7 @@
 #include "Network/network.h"
 #include "Network/client.h"
 #include "Network/server.h"
+#include "world.h"
 #include "input.h"
 #include "setup.h"
 

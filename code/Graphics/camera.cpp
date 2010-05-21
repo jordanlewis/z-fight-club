@@ -1,4 +1,6 @@
 #include "camera.h"
+#include "Utilities/error.h"
+#include "Agents/agent.h"
 #include <SDL/SDL.h>
 
 #if defined (__APPLE__) && defined (__MACH__)

@@ -1,10 +1,9 @@
 #ifndef GOBJECT_H
 #define GOBJECT_H
-#include "Engine/geominfo.h"
-#include "Utilities/vec3f.h"
+
+#include "allclasses.h"
 #include "Utilities/quat.h"
-#include "Utilities/matrix.h"
-#include "Agents/agent.h"
+#include "Utilities/vec3f.h"
 
 class GObject
 {

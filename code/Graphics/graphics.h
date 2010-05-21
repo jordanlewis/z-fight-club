@@ -1,14 +1,12 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
-#include "Engine/world.h"
-#include "Agents/agent.h"
-#include "Agents/ai.h"
-#include "Utilities/vec3f.h"
-#include "Utilities/error.h"
-#include "hud.h"
+
+#include "allclasses.h"
+class Hud;
 #include "color.h"
 #include <vector>
 #include <deque>
+
 extern "C" {
 #include "Parser/track-parser.h"
 }

@@ -1,9 +1,10 @@
 #ifndef HUD_H
 #define HUD_H
 
+#include "allclasses.h"
 #include "Utilities/vec3f.h"
-#include "Agents/agent.h"
 #include <vector>
+using namespace std;
 
 class Widget
 {
@@ -33,4 +34,5 @@ class Hud
     static Hud _instance;
     static Hud &getInstance();
 };
+
 #endif

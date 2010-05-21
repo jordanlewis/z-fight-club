@@ -1,24 +1,20 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include "allclasses.h"
+#include "Utilities/vec3f.h"
+#include "Utilities/matrix.h"
+#include "Utilities/quat.h"
+#include "Graphics/camera.h"
+#include "Physics/physics.h"
+extern "C" {
+#include "Parser/track-parser.h"
+}
+#include <GL/gl.h>
 #include <ode/ode.h>
-
 #include <vector>
 #include <string>
 using namespace std;
-
-#include "Agents/agent.h"
-#include "Physics/pobject.h"
-#include "Graphics/gobject.h"
-#include "Graphics/camera.h"
-#include "Graphics/polygon.h"
-#include "Sound/sobject.h"
-#include "Parser/track-parser.h"
-#include "Utilities/error.h"
-
-class PGeom;
-class SObject;
-class PlayerController;
 
 /*! \brief WorldObject collects all of the possible representations of an object
  * \brief in the world.

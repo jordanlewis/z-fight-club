@@ -2,15 +2,7 @@
 #define SCHEDULER_H
 
 #include <queue>
-#include "world.h"
-#include "input.h"
-#include "Graphics/graphics.h"
-#include "Physics/physics.h"
-#include "Sound/sound.h"
-#include "Agents/ai.h"
-#include "Network/client.h"
-#include "Network/server.h"
-#include "Utilities/error.h"
+#include "allclasses.h"
 
 typedef enum
 {

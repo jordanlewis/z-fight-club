@@ -1,5 +1,8 @@
 #include "sound.h"
+#include "sobject.h"
 #include "Engine/world.h"
+#include "Agents/agent.h"
+#include "Utilities/error.h"
 #include <boost/lexical_cast.hpp>
 #include <dirent.h>
 

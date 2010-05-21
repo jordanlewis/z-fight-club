@@ -1,10 +1,9 @@
 #ifndef AGENT_H
 #define AGENT_H
 
-#include "Utilities/vec3f.h"
+#include "allclasses.h"
 #include "kinematic.h"
 #include "constants.h"
-struct RPSteerInfo;
 #include <vector>
 #include <list>
 #include <iostream>

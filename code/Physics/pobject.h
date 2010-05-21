@@ -1,19 +1,14 @@
 #ifndef POBJECT_H
 #define POBJECT_H
 
-#include "physics.h"
-#include "Engine/geominfo.h"
-#include "Engine/world.h"
+#include "allclasses.h"
+#include "Agents/kinematic.h"
 #include "Utilities/quat.h"
 #include "constants.h"
 #include <ode/ode.h>
 #include <iostream>
 
 using namespace std;
-
-class Physics;
-class WorldObject;
-struct RPQuat;
 
 //How our objects will interact with the collision simulation
 typedef enum {
