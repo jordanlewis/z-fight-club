@@ -3,9 +3,8 @@
 
 #include <vector>
 #include <deque>
+#include "allclasses.h"
 #include "Utilities/vec3f.h"
-#include "Utilities/error.h"
-#include "agent.h"
 
 /* \brief Class Path
  * \brief a path for an agent to follow

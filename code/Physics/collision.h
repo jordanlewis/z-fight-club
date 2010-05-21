@@ -1,15 +1,11 @@
 #ifndef COLLISION_H
 #define COLLISION_H
 
+#include "allclasses.h"
+#include "physics.h"
+#include "Utilities/vec3f.h"
 #include <list>
 #include <cassert>
-
-#include "physics.h"
-#include "Engine/geominfo.h"
-#include "Utilities/vector.h"
-#include "Engine/world.h"
-
-class WorldObject;
 
 struct CollContact{
  public:

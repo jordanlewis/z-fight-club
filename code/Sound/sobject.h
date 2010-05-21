@@ -1,9 +1,7 @@
 #ifndef SOBJECT_H
 #define SOBJECT_H
 
-#include "sound.h"
-class WorldObject;
-#include "Utilities/error.h"
+#include "allclasses.h"
 #include <iostream>
 #include <string>
 using namespace std;
@@ -15,9 +13,6 @@ using namespace std;
 #  include <AL/al.h>
 #  include <AL/alc.h>
 #endif
-
-class sound_resource;
-// class PObject;
 
 class SObject
 {

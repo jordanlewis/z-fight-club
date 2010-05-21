@@ -1,9 +1,7 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include "Agents/player.h"
-class Error;
-class Client;
+#include "allclasses.h"
 
 class Input
 {

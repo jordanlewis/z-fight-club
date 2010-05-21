@@ -1,8 +1,9 @@
 #ifndef POLYGON_H
 #define POLYGON_H
 
+#include "allclasses.h"
+#include "Utilities/vec3f.h"
 #include <vector>
-#include "Utilities/vector.h"
 
 class Polygon {
     //std::vector<Vec3f_t> vertices; /* Can't have a vector of arrays */

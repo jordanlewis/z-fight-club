@@ -9,7 +9,6 @@
 
 #include "Engine/geominfo.h"
 #include "Engine/world.h"
-#include "Utilities/error.h"
 #include "Utilities/vector.h"
 #include <string>
 extern "C" {

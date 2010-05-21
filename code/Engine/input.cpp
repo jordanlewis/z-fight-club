@@ -3,6 +3,7 @@
 #include "world.h"
 #include "Network/client.h"
 #include "Agents/player.h"
+#include "Utilities/error.h"
 
 Input Input::_instance;
 

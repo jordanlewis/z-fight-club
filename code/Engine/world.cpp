@@ -3,8 +3,12 @@
 #include "Graphics/gobject.h"
 #include "Physics/pobject.h"
 #include "Agents/player.h"
+#include "Agents/agent.h"
 #include "Agents/ai.h"
 #include "Engine/input.h"
+#include "Sound/sound.h"
+#include "Utilities/error.h"
+#include "Engine/geominfo.h"
 #include "Sound/sobject.h"
 #include <ode/ode.h>
 extern "C" {

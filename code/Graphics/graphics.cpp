@@ -2,7 +2,9 @@
 #include "Engine/world.h"
 #include "Physics/physics.h"
 #include "Utilities/vector.h"
+#include "Utilities/error.h"
 #include "Agents/ai.h"
+#include "Agents/agent.h"
 #include "hud.h"
 #include <SDL/SDL.h>
 

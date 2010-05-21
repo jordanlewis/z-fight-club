@@ -7,6 +7,8 @@
 #include "Utilities/error.h"
 #include "Physics/pobject.h"
 #include "racerpacket.h"
+#include "Graphics/gobject.h"
+#include "Sound/sobject.h"
 #include <boost/lexical_cast.hpp>
 
 Server Server::_instance;

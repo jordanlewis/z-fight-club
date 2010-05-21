@@ -1,9 +1,8 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include "allclasses.h"
 #include "Utilities/vec3f.h"
-#include "Utilities/error.h"
-#include "Agents/agent.h"
 
 typedef enum {
     OVERHEAD = 0,       /* !< overhead view on the world */

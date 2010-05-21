@@ -1,4 +1,8 @@
 #include "pweapon.h"
+#include "pobject.h"
+#include "collision.h"
+#include "Agents/agent.h"
+#include "Engine/world.h"
 
 /* Call once per physics update.  Checks to see if an agents is using weapons.
  * If so, perform the physically appropriate action.

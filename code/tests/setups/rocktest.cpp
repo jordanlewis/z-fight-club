@@ -1,16 +1,14 @@
 #include "Engine/setup.h"
-#include "Physics/physics.h"
-#include "Agents/player.h"
-#include "Engine/input.h"
 #include "Engine/world.h"
+#include "Engine/geominfo.h"
 #include "Utilities/vec3f.h"
-#include "Graphics/camera.h"
+#include "Physics/pobject.h"
+#include "Graphics/gobject.h"
+#include "Agents/kinematic.h"
 
 void testSetup()
 {
     World &world = World::getInstance();
-    Physics &physics  = Physics::getInstance();
-    Input &input = Input::getInstance();
 
     Vec3f pos = Vec3f(40.0, 10.0, 8.0);
 

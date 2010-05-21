@@ -1,6 +1,15 @@
 #include "client.h"
 #include "Physics/physics.h"
+#include "Physics/pobject.h"
+#include "Utilities/error.h"
 #include "Engine/input.h"
+#include "Engine/world.h"
+#include "Engine/scheduler.h"
+#include "Engine/geominfo.h"
+#include "Agents/player.h"
+#include "Agents/agent.h"
+#include "Sound/sound.h"
+#include "Graphics/gobject.h"
 #include "racerpacket.h"
 #include <cassert>
 #include <boost/lexical_cast.hpp>

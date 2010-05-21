@@ -1,5 +1,8 @@
 #include "pobject.h"
+#include "physics.h"
+#include "Agents/agent.h"
 #include "Engine/scheduler.h"
+#include "Engine/geominfo.h"
 #include "Network/network.h"
 #include "Network/racerpacket.h"
 #include <ode/ode.h>

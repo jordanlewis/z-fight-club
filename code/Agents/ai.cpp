@@ -4,11 +4,13 @@
 #include <stdlib.h>
 #include "ai.h"
 #include "Utilities/vec3f.h"
+#include "Utilities/error.h"
 #include "Engine/input.h"
 #include "agent.h"
 #include "Engine/world.h"
 #include "Parser/track-parser.h"
 #include "Utilities/defs.h"
+#include "Physics/collision.h"
 
 #define ARC_RESOLUTION 20
 #define DEFAULT_PRECISION 7.0f
@@ -53,18 +55,13 @@ static Vec3f closestPointOnSegment(Vec3f point, Vec3f enda, Vec3f endb)
 Vec3f Path::closestPoint(Vec3f point)
 {
     float dist, bestDist = 10000;
-    Vec3f closest, bestClosest;
-    for (vector<Vec3f>::iterator it = knots.begin(); it != knots.end(); it++)
+    Vec3f closest, bestClosest, next;
+    for (unsigned int i = 0; i < knots.size(); i++)
     {
         /* Compute distance from point to line segment knot -> nextKnot */
-        if (it + 1 == knots.end())
-        {
-            closest = closestPointOnSegment(point, *it, *(knots.begin()));
-        }
-        else
-        {
-            closest = closestPointOnSegment(point, *it, *(knots.begin()));
-        }
+        next = knots[(i + 1) % knots.size()];
+
+        closest = closestPointOnSegment(point, knots[i], next);
 
         dist = (point - closest).length();
 
@@ -79,23 +76,25 @@ Vec3f Path::closestPoint(Vec3f point)
 
 float Path::pointToDist(Vec3f point)
 {
-    Vec3f closest;
-    float len, dist, minDist, pathTotal, finalDist;
-    minDist = 1000000;
-    for (vector<Vec3f>::iterator it = knots.begin(); it != knots.end(); it++)
+    Vec3f closest, next;
+    float len, dist, bestDist, pathTotal, finalDist;
+    bestDist = 1000000;
+    for (unsigned int i = 0; i < knots.size(); i++)
     {
-        len = (*(it + 1) - *it).length();
-        closest = closestPointOnSegment(point, *it, *(it + 1));
+        next = knots[(i + 1) % knots.size()];
+
+        len = (knots[i] - next).length();
+        closest = closestPointOnSegment(point, knots[i], next);
         dist = (point - closest).length();
 
         /* The smallest distance indicates we're on the closest segment to
          * the point. So write the return value as the total value plus the
          * segment-point distance here, and we'll return it if it is indeed
          * the smallest distnace.*/
-        if (dist < minDist)
+        if (dist < bestDist)
         {
-            minDist = dist;
-            finalDist = pathTotal + (closest - *it).length();
+            bestDist = dist;
+            finalDist = pathTotal + (closest - knots[i]).length();
         }
 
         pathTotal += len;
@@ -110,18 +109,15 @@ Vec3f Path::distToPoint(float dist)
 
     float total, len;
     Vec3f next, point;
-    for (vector<Vec3f>::iterator it = knots.begin(); it != knots.end(); it++)
+    for (unsigned int i = 0; i < knots.size(); i++)
     {
-        if (it == knots.end() - 1)
-            next = *(knots.begin());
-        else
-            next = *(it + 1);
+        next = knots[(i + 1) % knots.size()];
 
-        len = (*it - next).length();
+        len = (knots[i] - next).length();
         total += len;
         if (total > dist)
         {
-            point = lerp(*it, next, 1 - (total - dist) / len);
+            point = lerp(knots[i], next, 1 - (total - dist) / len);
             break;
         }
     }

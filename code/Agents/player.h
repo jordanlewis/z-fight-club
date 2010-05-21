@@ -1,8 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "agent.h"
-struct RPPlayerControl;
+#include "allclasses.h"
 #include <iostream>
 
 typedef enum {

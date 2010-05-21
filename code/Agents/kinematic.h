@@ -1,9 +1,8 @@
 #ifndef KINEMATIC_H
 #define KINEMATIC_H
 
+#include "allclasses.h"
 #include "Utilities/vec3f.h"
-
-struct RPKinematic;
 
 class Kinematic
 {
