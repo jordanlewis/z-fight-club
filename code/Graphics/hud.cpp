@@ -21,6 +21,7 @@ Speedometer::~Speedometer()
 
 void Speedometer::draw()
 {
+    glColor3f(1.0, 0.0, 0.0);
     glBegin(GL_LINES);
     glVertex2f(0.0f, 0.0f);
     glVertex2f(350.0f, 350.0f);

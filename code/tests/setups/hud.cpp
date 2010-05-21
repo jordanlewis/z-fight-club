@@ -10,13 +10,8 @@
 void testSetup()
 {
     World &world  = World::getInstance();
-    Physics &physics  = Physics::getInstance();
-    Input &input  = Input::getInstance();
-    AIManager &ai = AIManager::getInstance();
-    Sound &sound  = Sound::getInstance();
-		Hud &hud = Hud::getInstance();
 
-		Vec3f speedometer_pos = Vec3f(0.0f, 0.0f, 0.0f);
-		Speedometer speedometer(speedometer_pos, humanagent);
-		hud.widget.push_back(speedometer);
+    Vec3f speedometer_pos = Vec3f(0.0f, 0.0f, 0.0f);
+    Speedometer *speedometer = new Speedometer(speedometer_pos, NULL);
+    world.addWidget(speedometer);
 }

@@ -143,6 +143,7 @@ void Graphics::render()
         (*i)->draw();
     }
 
+
     render(world->track);
 
     for (vector<WorldObject *>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
@@ -157,17 +158,21 @@ void Graphics::render()
         render(*i);
     }
 
-    SDL_GL_SwapBuffers();
     glPopMatrix();
+    /* draw the widgets */
 
     glPushMatrix();
     world->camera.setOrthoMatrix();
 
-    /* render 2d stuff */
-    Hud hud = Hud::getInstance();
-    render(&hud);
+    for (vector<Widget *>::iterator i = world->widgets.begin(); i != world->widgets.end(); i++)
+    {
+        (*i)->draw();
+    }
 
     glPopMatrix();
+
+    SDL_GL_SwapBuffers();
+
     error->pout(P_GRAPHICS);
 }
 

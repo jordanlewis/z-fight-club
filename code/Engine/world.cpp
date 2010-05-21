@@ -111,6 +111,11 @@ void World::addLight(Light *light)
     lights.push_back(light);
 }
 
+void World::addWidget(Widget *widget)
+{
+    widgets.push_back(widget);
+}
+
 int World::numAgents()
 {
     int num = 0;
@@ -152,10 +157,10 @@ void World::loadTrack(const char *file)
     WorldObject *wobj;
 
     /* Create bottom plane */
-    PlaneInfo info = PlaneInfo(0, 1, 0, -.1);
-    geom = new PGeom(&info);
-    wobj = new WorldObject(geom, NULL, NULL, NULL);
-    addObject(wobj);
+    //PlaneInfo info = PlaneInfo(0, 1, 0, -.1);
+    //geom = new PGeom(&info);
+    //wobj = new WorldObject(geom, NULL, NULL, NULL);
+    //addObject(wobj);
 
     /* Now create WorldObjects to represent the track */
 

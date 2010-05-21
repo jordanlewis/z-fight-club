@@ -12,6 +12,7 @@ using namespace std;
 #include "Graphics/gobject.h"
 #include "Graphics/camera.h"
 #include "Graphics/polygon.h"
+#include "Graphics/hud.h"
 #include "Sound/sobject.h"
 #include "Parser/track-parser.h"
 #include "Utilities/error.h"
@@ -94,6 +95,8 @@ class World
     dSpaceID ode_space;
     std::vector<WorldObject *> wobjects; /* the objects in the world */
     std::vector<Light *> lights; /* !< the lights in the world */
+    std::vector<Widget *> widgets; /* !< the widgets in the world */
+
     string assetsDir;   /* !< base directory for asset files */
 
     void addObject(WorldObject *obj);
@@ -102,11 +105,12 @@ class World
 
     void addAgent(Agent *agent);
     void addLight(Light *light);
+    void addWidget(Widget *widget);
     Agent *placeAgent(int place);/*!<return a placed agent not yet in wobjects*/
     void makeAI();
     void makePlayer();
     void makeAgents();
-		void makeSkybox();
+    void makeSkybox();
     void loadTrack(const char *file);
     void setRunType(const string str);
     const TrackData_t * getTrack();
