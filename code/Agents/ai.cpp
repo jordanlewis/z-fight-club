@@ -401,28 +401,33 @@ void AIController::detectWalls()
 {
     const Kinematic k = agent->getKinematic();
     wallTrapped = false;
+    seeObstacle = false;
     if (k.vel.length() == 0)
         return;
 
-    float length = 10; /* How far to cast rays */
+    float frontLength = 20; /* How far to cast rays */
+    float diagLength = 1;
     CollQuery queryl, queryr, query;
 
     /* ray starts at the front of agent */
     const Vec3f start = k.pos + k.orientation_v.unit() * (.01 + agent->depth / 2);
 
-    /* get start points at left and right corners of agent */
+    /* get start points at left and right corners of agent, going out at angle*/
     Vec3f perp = k.orientation_v.perp(Vec3f(0,1,0));
     Vec3f startl = start - perp * agent->width / 2;
     Vec3f startr = start + perp * agent->width / 2;
 
+    Vec3f langle = slerp(-perp, k.orientation_v, .75);
+    Vec3f rangle = slerp(perp, k.orientation_v, .75);
+
     /* Cast rays from all three start points */
-    rayCast(&startl, &k.orientation_v, length, &queryl);
-    rayCast(&startr, &k.orientation_v, length, &queryr);
-    rayCast(&start, &k.orientation_v, length, &query);
+    rayCast(&startl, &langle, diagLength, &queryl);
+    rayCast(&startr, &rangle, diagLength, &queryr);
+    rayCast(&start, &k.orientation_v, frontLength, &query);
 
-    CollContact contact;
+    CollContact *contact;
 
-    WorldObject *closest = NULL;
+    CollContact *closest = NULL;
     Vec3f pos;
     float bestDist = 10000;
 
@@ -443,40 +448,36 @@ void AIController::detectWalls()
         if (q->contacts.size() == 0)
             continue;
 
-        contact = *(q->contacts.begin());
+        contact = &(*(q->contacts.begin()));
 
-        if (contact.obj == NULL || contact.obj == agent->worldObject)
+        if (contact->obj == NULL || contact->obj == agent->worldObject)
             continue;
 
-        if (contact.obj->agent == NULL)
+        if (contact->obj->agent == NULL && i == 0)
         {
             /* Collided with static environment. check normal and distance
              * to see if we might be stuck. */
-            if (contact.distance < agent->depth * 2 &&
-                abs(contact.normal.unit().dot(k.orientation_v.unit())) > .9)
+            if (contact->distance < agent->depth * 2 &&
+                abs(contact->normal.unit().dot(k.orientation_v.unit())) > .9)
             {
+                antiTarget = contact->position;
+                cout << "trapped: " << abs(contact->normal.unit().dot(k.orientation_v.unit())) << endl;
                 wallTrapped = true;
                 return;
             }
         }
 
         /* Get closest contact for non-wallstuck cases */
-        if (contact.distance < bestDist)
+        if (contact->distance < bestDist)
         {
-            closest = contact.obj;
-            pos = contact.position;
+            closest = contact;
         }
     }
 
     if (closest != NULL)
     {
         seeObstacle = true;
-        obstaclePos = pos;
-        obstacle = closest;
-    }
-    else
-    {
-        seeObstacle = false;
+        obstacle = contact;
     }
 }
 
@@ -493,21 +494,14 @@ SteerInfo AIController::avoidObstacle()
         * between pi/2 and pi, turn left. Else its behind us. */
     const Kinematic k = agent->getKinematic();
 
-    avoidDir = obstaclePos - k.pos;
-    obstAngle = atan2(avoidDir.x, avoidDir.z) - k.orientation;
-
-    obstAngle = fmodf(obstAngle, 2 * M_PI);
-    if (obstAngle > M_PI)
-        obstAngle -= 2 * M_PI;
-    else if (obstAngle < -M_PI)
-        obstAngle += 2 * M_PI;
+    antiTarget = obstacle->position;
 
     hitTime = 1000;
-    if (obstacle->agent)
+    if (obstacle->obj->agent)
     {
         /* determine next collision point given linear motion */
-        v = k.vel - obstacle->agent->getKinematic().vel;
-        q = k.pos - obstacle->agent->getKinematic().pos;
+        v = k.vel - obstacle->obj->agent->getKinematic().vel;
+        q = k.pos - obstacle->obj->agent->getKinematic().pos;
         a = v.dot(v);
         b = q.dot(v) * 2;
         c = q.dot(q) - 4 * (agent->width/2) * (agent->width/2);
@@ -524,16 +518,17 @@ SteerInfo AIController::avoidObstacle()
                 hitTime = post < negt ? post : negt;
             }
         }
+        if (hitTime < 2)
+        {
+            s = face(obstacle->obj->agent->getKinematic().orientation_v.perp() +
+                     k.pos);
+        }
 
     }
-    s.rotation = 0;
-    if (!obstacle->agent || hitTime < 1) /* assuming static geometry */
+    else
     {
-        antiTarget = obstacle->getPos();
-        if (obstAngle > 0)
-            s.rotation = -agent->maxRotate;
-        else if (obstAngle < 0)
-            s.rotation = agent->maxRotate;
+        /* static geometry: try to align to the normal of the surface */
+        s = face(k.pos + obstacle->normal);
     }
     return s;
 }

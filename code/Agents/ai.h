@@ -53,8 +53,7 @@ class AIController
     AIController(Agent *);
 
     bool seeObstacle;
-    WorldObject *obstacle;
-    Vec3f obstaclePos;
+    CollContact *obstacle;
     Path                path;           /* !< the path we're on */
     std::deque<Avoid> obstacles;        /* !< targets to be avoided */
     Agent               *agent;
