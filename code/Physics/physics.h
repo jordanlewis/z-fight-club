@@ -7,6 +7,7 @@
 #include <cmath>
 #include <iostream>
 #include "Utilities/vector.h"
+#include "Utilities/quat.h"
 #include "Utilities/error.h"
 #include "Engine/world.h"
 #include "Agents/agent.h"
@@ -18,6 +19,9 @@
 class PGeom;
 class PMoveable;
 class PAgent;
+
+void QuatfToDQuat(Quatf_t quatf, dQuaternion dquat);
+void DQuatToQuatf(dQuaternion dquat, Quatf_t quatf);
 
 class Physics
 {

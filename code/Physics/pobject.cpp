@@ -78,15 +78,15 @@ void PGeom::getQuat(Quatf_t quat)
     dReal dquat[4];
     dGeomGetQuaternion(geom, dquat);
     /* Reppy's quats are x,y,z,w; ODE's are w,x,y,z */
-    quat[0] = dquat[1];
-    quat[1] = dquat[2];
-    quat[2] = dquat[3];
-    quat[3] = dquat[0];
+
+    DQuatToQuatf(dquat, quat);
 }
 
-void PGeom::setQuat(const dQuaternion rotation)
+void PGeom::setQuat(Quatf_t quat)
 {
-    dGeomSetQuaternion(geom, rotation);
+    dReal dquat[4];
+    QuatfToDQuat(quat, dquat);
+    dGeomSetQuaternion(geom, dquat);
 }
 
 void PGeom::htonQuat(RPQuat *payload){

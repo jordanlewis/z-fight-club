@@ -6,10 +6,27 @@
 #include "Engine/world.h"
 #include "Agents/agent.h"
 #include "Utilities/vec3f.h"
+#include "Utilities/quat.h"
 
 using namespace std;
 
 Physics Physics::_instance;
+
+void QuatfToDQuat(Quatf_t quatf, dQuaternion dquat)
+{
+    dquat[1] = quatf[0];
+    dquat[2] = quatf[1];
+    dquat[3] = quatf[2];
+    dquat[0] = quatf[3];
+}
+
+void DQuatToQuatf(dQuaternion dquat, Quatf_t quatf)
+{
+    quatf[0] = dquat[1];
+    quatf[1] = dquat[2];
+    quatf[2] = dquat[3];
+    quatf[3] = dquat[0];
+}
 
 void Physics::simulate(float dt)
 {

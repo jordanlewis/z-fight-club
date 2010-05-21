@@ -168,7 +168,8 @@ void World::loadTrack(const char *file)
     int i, j;
     float theta;
     Edge_t *e, *next;
-    dQuaternion quat;
+    dQuaternion dquat;
+    Quatf_t quat;
     Vec3f position, diff;
 
     int *indices = new int[track->nSects * 6];
@@ -210,7 +211,8 @@ void World::loadTrack(const char *file)
                 theta = atan2(wall[2], wall[0]);
                 geom = new PGeom(box);
                 geom->bounce = 1;
-                dQFromAxisAndAngle(quat, 0, 1, 0, -theta);
+                dQFromAxisAndAngle(dquat, 0, 1, 0, -theta);
+                DQuatToQuatf(dquat, quat);
                 geom->setQuat(quat);
                 LerpV3f(track->verts[e->start], .5, track->verts[next->start],
                         wall);

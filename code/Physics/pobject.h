@@ -43,7 +43,7 @@ class PGeom
     Vec3f getPos();
     void setPos(Vec3f position);
     void getQuat(Quatf_t quat);
-    void setQuat(const dQuaternion rotation);
+    void setQuat(Quatf_t quat);
     void ntohQuat(RPQuat *payload);
     void htonQuat(RPQuat *payload);
 
