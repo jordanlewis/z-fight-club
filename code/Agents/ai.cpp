@@ -13,7 +13,7 @@
 #define ARC_RESOLUTION 20
 #define DEFAULT_PRECISION 7.0f
 
-Path::Path() {}
+Path::Path() : index(0) {}
 
 AIManager AIManager::_instance;
 
@@ -23,6 +23,57 @@ void Path::clear()
 {
     knots.clear();
     precision.clear();
+}
+
+void Path::next()
+{
+    if (++index >= knots.size())
+        index = 0;
+}
+
+Vec3f Path::closestPoint(Vec3f point)
+{
+    float dist, bestDist = 10000;
+    float proj;
+    Vec3f diff, perp, seg, closest, bestClosest;
+    for (vector<Vec3f>::iterator it = knots.begin(); it != knots.end(); it++)
+    {
+        /* Compute distance from point to line segment knot -> nextKnot */
+        if (it + 1 == knots.end())
+        {
+            seg = *(knots.begin()) - *it; // line segment
+
+        }
+        else
+        {
+            seg = *(it + 1) - *it; // line segment
+        }
+        diff = point - *it; // point relative to seg start
+        perp = seg / seg.length(); // segment normal
+        proj = perp.dot(diff); // projection onto normal
+        if (proj > seg.length())
+        {
+            closest = *(it + 1);
+        }
+        else if (proj < 0)
+        {
+            closest = *it;
+        }
+        else
+        {
+            closest = perp * proj + *it;
+        }
+
+
+        dist = (point - closest).length();
+
+        if (dist < bestDist)
+        {
+            bestDist = dist;
+            bestClosest = closest;
+        }
+    }
+    return bestClosest;
 }
 
 Avoid::Avoid()
@@ -50,12 +101,12 @@ Avoid::Avoid(Vec3f &pos, float str)
 Avoid::~Avoid() {}
 
 AIController::AIController(Agent *agent) :
-    seeObstacle(false), path(Path()), obstacles(std::deque<Avoid>()),
-    agent(agent), error(&Error::getInstance())
+    wallTrapped(false), seeObstacle(false), path(Path()),
+    obstacles(std::deque<Avoid>()), agent(agent), error(&Error::getInstance())
 {
 }
 
-void AIController::seek(const Vec3f target, float slowRadius, float targetRadius)
+SteerInfo AIController::seek(const Vec3f target, float slowRadius, float targetRadius)
 {
     Vec3f dir;
     SteerInfo s;
@@ -68,9 +119,11 @@ void AIController::seek(const Vec3f target, float slowRadius, float targetRadius
     distance = dir.length();
     dir.normalize();
 
-    align(atan2(dir[0], dir[2]));
+    s = face(target);
+    float r = s.rotation;
 
     s = agent->getSteering();
+    s.rotation = r;
     if (distance < targetRadius)
     {
         s.acceleration = 0;
@@ -89,14 +142,19 @@ void AIController::seek(const Vec3f target, float slowRadius, float targetRadius
             s.acceleration = maxAccel;
     }
 
-
-    agent->setSteering(s);
+    return s;
 }
 
-float AIController::align(float target)
+SteerInfo AIController::face(Vec3f target)
 {
-    float targetRadius = .01;
-    float slowRadius = 0;
+    Vec3f dir = target - agent->getKinematic().pos;
+    float angle = atan2(dir.x, dir.z);
+
+    return align(angle);
+}
+
+SteerInfo AIController::align(float target, float slowRadius, float targetRadius)
+{
     float diff;
     SteerInfo s;
     Kinematic k = agent->getKinematic();
@@ -113,7 +171,7 @@ float AIController::align(float target)
     float diffSize = abs(diff);
 
     /* we're already aligned. */
-    if (diffSize < targetRadius)
+    if (diffSize <= targetRadius)
     {
         s.rotation = 0;
     }
@@ -130,12 +188,11 @@ float AIController::align(float target)
         s.rotation = agent->maxRotate * diffSize / slowRadius;
         s.rotation *= diff / diffSize;
     }
-    agent->setSteering(s);
 
-    return diff;
+    return s;
 }
 
-void AIController::brake()
+SteerInfo AIController::brake()
 {
     Kinematic k = agent->getKinematic();
     SteerInfo s;
@@ -144,28 +201,29 @@ void AIController::brake()
         s.acceleration = -agent->getMaxAccel();
     else if (speed < 0)
         s.acceleration = agent->getMaxAccel();
-    agent->setSteering(s);
+
+    return s;
 }
 
-void AIController::smartGo(const Vec3f target)
+SteerInfo AIController::smartGo(const Vec3f target)
 {
     Vec3f dir;
     SteerInfo s;
 
     Kinematic k = agent->getKinematic();
-    dir = target - agent->kinematic.pos;
+    dir = target - k.pos;
 
     for (deque<Avoid>::iterator it = obstacles.begin(); it != obstacles.end(); it++) {
         /* nudge the dir to avoid obstacles */
-        dir += (1.0f / pow((agent->kinematic.pos - it->pos).length(), 2.0f)) * it->str * (agent->kinematic.pos - it->pos);
+        dir += (1.0f / pow((k.pos - it->pos).length(), 2.0f)) * it->str * (k.pos - it->pos);
     }
 
     float distance = dir.length();
     dir.normalize();
 
-    float angle = abs(align(atan2(dir[0], dir[2])));
-    /* Angle between 0 and pi */
-    s = agent->getSteering();
+    s = align(atan2(dir[0], dir[2]));
+
+    float angle = acos(dir.dot(k.orientation_v));
 
     short go; /* 1 = accelerate, -1 = reverse acceleration, 0 = neither*/
     bool overrideTurn = false;
@@ -197,7 +255,8 @@ void AIController::smartGo(const Vec3f target)
     {
         s.rotation = turn * agent->maxRotate;
     }
-    agent->setSteering(s);
+
+    return s;
 }
 
 void AIController::lane(int laneIndex)
@@ -215,7 +274,6 @@ void AIController::lane(int laneIndex)
     path.clear();
 
     Vec3f us = agent->getKinematic().pos;
-    int startSeg = -1;
     float dist;
     float bestDist = 100000;
     Vec3f bestMid, mid;
@@ -252,10 +310,10 @@ void AIController::lane(int laneIndex)
         }
     }
 
-    startSeg = best;
+    path.index = best;
 
     for (i = 0; i < lane.nSegs; i++) {
-        int seg = (i + startSeg + 1) % lane.nSegs;
+        int seg = i;
 
         path.knots.push_back(Vec3f(track->verts[lane.segs[seg].start]));
         path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
@@ -275,11 +333,6 @@ void AIController::lane(int laneIndex)
                 path.precision.push_back(DEFAULT_PRECISION); /* XXX */
             }
         }
-        /* if we're on the last segment we need to put the end vertex on too */
-        if (i == (lane.nSegs - 1)) {
-            path.knots.push_back(Vec3f(track->verts[lane.segs[seg].end]));
-            path.precision.push_back(DEFAULT_PRECISION); /* XXX doing a default value for now */
-        }
     }
 }
 
@@ -291,6 +344,7 @@ void AIController::avoid(Vec3f &pos)
 void AIController::detectWalls()
 {
     const Kinematic k = agent->getKinematic();
+    wallTrapped = false;
     if (k.vel.length() == 0)
         return;
 
@@ -316,7 +370,6 @@ void AIController::detectWalls()
     Vec3f contact;
     float bestDist = 10000;
     float dist;
-    wallTrapped = false;
 
     /* Check for wall trapped-ness: if 2 out of 3 rays' distance to collision
      * is close to the same small value, then we're probably directly facing
@@ -381,15 +434,15 @@ void AIController::detectWalls()
     }
 }
 
-void AIController::avoidObstacle()
+SteerInfo AIController::avoidObstacle()
 {
+    SteerInfo s;
     if (seeObstacle == false)
-        return;
+        return s;
 
     Vec3f q, v, avoidDir;
     float a,b,c,discriminant,sqrtdisc,post,negt,hitTime, obstAngle;
 
-    SteerInfo s = agent->getSteering();
     /* Determine angle to obstacle. If between 0 and pi/2, turn right. If
         * between pi/2 and pi, turn left. Else its behind us. */
     const Kinematic k = agent->getKinematic();
@@ -431,10 +484,10 @@ void AIController::avoidObstacle()
             s.rotation = agent->maxRotate;
         }
     }
-    agent->setSteering(s);
+    return s;
 }
 
-void AIController::cruise()
+SteerInfo AIController::cruise()
 {
     double now = GetTime();
     for (deque<Avoid>::iterator it = obstacles.begin(); it != obstacles.end(); it++) {
@@ -442,30 +495,49 @@ void AIController::cruise()
             obstacles.erase(it);
     }
 
-    SteerInfo steerInfo;
-    if ((path.knots.front() - agent->kinematic.pos).length() < path.precision.front()) {
-       path.knots.push_back(path.knots.front());
-       path.knots.pop_front();
-       path.precision.push_back(path.precision.front());
-       path.precision.pop_front();
+    if ((path.knots[path.index] -
+         agent->kinematic.pos).length() < path.precision[path.index])
+    {
+        path.next();
     }
-    int tgtIdx = 0;
-    /* Find a better node to seek to, ignoring walls */
-    while ((path.knots.front() - path.knots[tgtIdx++]).length() <
-           1.5 * path.precision.front());
 
-    smartGo(path.knots[tgtIdx - 1]);
+    int tgtIdx = path.index;
+    /* Find a better node to seek to, ignoring walls */
+    while ((path.knots[path.index] -
+            path.knots[tgtIdx++ % path.knots.size()]).length() <
+           1.5 * path.precision[path.index]);
+
+    return smartGo(path.knots[tgtIdx]);
+}
+
+SteerInfo AIController::followPath(int tubeRadius)
+{
+    SteerInfo s;
+    Kinematic k = agent->getKinematic();
+    Vec3f proj;
+    if (k.vel.length() <= 1)
+        proj = k.pos + k.orientation_v * 5;
+    else
+        proj = k.pos + k.vel;
+    Vec3f closest = path.closestPoint(proj);
+    float dist = (proj - closest).length();
+    if (dist > tubeRadius)
+    {
+        return smartGo(closest);
+    }
+    else
+        return smartGo(proj);
+
 }
 
 void AIController::run()
 {
     detectWalls();
-    cruise();
-    avoidObstacle();
-    /* Test target - we'll change this function to do more interesting things
-     * once we get a better AI test architecture running. */
-    /* Vec3f tgt = Input::getInstance().getPlayerController().getAgent().kinematic.pos;
-    seek(tgt, 20, 2); */
+    SteerInfo s = cruise();
+    SteerInfo obst = avoidObstacle();
+    if (obst.rotation != 0)
+        s.rotation = obst.rotation;
+    agent->setSteering(s);
 }
 
 AIManager::AIManager() :

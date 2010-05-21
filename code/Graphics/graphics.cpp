@@ -203,10 +203,14 @@ void Graphics::render(AIController *aiController)
     }
 
     glColor3f(0,1,0);
-    // Uncomment to display arrow to next knot
-    //DrawArrow(aiController->agent->getKinematic().pos,
-    //          aiController->path.knots.front() - aiController->agent->getKinematic().pos);
-    render(aiController->path.knots);
+
+    // Uncomment to render AI debug info
+    //Kinematic k = aiController->agent->getKinematic();
+    //Vec3f proj = k.pos + (k.vel.length() <= 1 ? 5 * k.orientation_v : k.vel);
+    //Vec3f closest = aiController->path.closestPoint(proj);
+    //DrawArrow(k.pos, proj - k.pos);
+    //DrawArrow(proj, closest - proj);
+    //render(aiController->path.knots);
 }
 
 void Graphics::render(TrackData_t *track)
