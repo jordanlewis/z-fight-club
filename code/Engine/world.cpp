@@ -157,10 +157,10 @@ void World::loadTrack(const char *file)
     WorldObject *wobj;
 
     /* Create bottom plane */
-    //PlaneInfo info = PlaneInfo(0, 1, 0, -.1);
-    //geom = new PGeom(&info);
-    //wobj = new WorldObject(geom, NULL, NULL, NULL);
-    //addObject(wobj);
+    PlaneInfo info = PlaneInfo(0, 1, 0, -.1);
+    geom = new PGeom(&info);
+    wobj = new WorldObject(geom, NULL, NULL, NULL);
+    addObject(wobj);
 
     /* Now create WorldObjects to represent the track */
 
@@ -310,7 +310,7 @@ void World::makeAgents()
 
 void World::makeSkybox()
 {
-		SkyBoxInfo *sbox = new SkyBoxInfo("skybox/red/");
+    SkyBoxInfo *sbox = new SkyBoxInfo("skybox/red/");
     Kinematic *k = new Kinematic(Vec3f(0,0,0), Vec3f(0,0,0), M_PI/2);
     PMoveable *geom = new PMoveable(k, 10, sbox);
     GObject *gobj = new GObject(sbox);
