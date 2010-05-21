@@ -39,6 +39,10 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
         response.position[0] = contact.pos[0];
         response.position[1] = contact.pos[1];
         response.position[2] = contact.pos[2];
+        response.normal[0] = contact.normal[0];
+        response.normal[1] = contact.normal[1];
+        response.normal[2] = contact.normal[2];
+        response.distance = contact.depth;
         response.obj = g2->worldObject;
         assert(g2->worldObject != NULL);
         ((CollQuery *)data)->contacts.push_back(response);

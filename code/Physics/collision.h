@@ -10,8 +10,10 @@
 struct CollContact{
  public:
     //float depth; //contact distance from origin of cast -- only used in casts
-    WorldObject *obj; //The object that collided
-    Vec3f position; //The point of contact
+    WorldObject *obj; /*!< The object that collided */
+    float distance; /*!< the length of the ray until the contact point */
+    Vec3f position; /*!< The point of contact */
+    Vec3f normal; /*!< normal vector to point of contact */
 };
 
 //  Space reserved for future additions to the CollQuery struct
