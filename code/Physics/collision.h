@@ -14,6 +14,7 @@ struct CollContact{
     float distance; /*!< the length of the ray until the contact point */
     Vec3f position; /*!< The point of contact */
     Vec3f normal; /*!< normal vector to point of contact */
+    CollContact ();
 };
 
 //  Space reserved for future additions to the CollQuery struct

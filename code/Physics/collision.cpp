@@ -5,6 +5,10 @@
 #include "Engine/world.h"
 #include "Engine/geominfo.h"
 
+CollContact::CollContact () : obj(NULL), distance(0),
+                              position(Vec3f(0,0,0)), normal(Vec3f(0,0,0))
+{}
+
 /* Collides real objects o1 and o2.  Ignores collisions between real o1 and
  * phantom o2.  Stores collision data in the data pointer for phantom 01 and
  * real o2 */
