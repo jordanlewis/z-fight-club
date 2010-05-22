@@ -156,14 +156,14 @@ int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
 
     obj->agent = agent;
     agent->worldObject = obj;
-    BoxInfo box(1,1,1);
-    obj->gobject = new GObject(geomInfo);
+    obj->gobject = new GObject(new ObjMeshInfo("ship/"));
     obj->sobject = new SObject("snore.wav", GetTime(), AL_TRUE);
 
     PAgent *pagent = new PAgent(&(agent->getKinematic()),
                                 &(agent->getSteering()), mass, geomInfo,
                                 Physics::getInstance().getOdeSpace());
 
+    pagent->bounce = 1;
     obj->player = new PlayerController(agent);
     obj->pobject = pagent;
     pagent->worldObject = obj;
