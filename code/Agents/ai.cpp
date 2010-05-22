@@ -150,7 +150,7 @@ Avoid::Avoid(Vec3f &pos, float str)
 Avoid::~Avoid() {}
 
 AIController::AIController(Agent *agent) :
-    wallTrapped(false), seeObstacle(false), obstacle(NULL), path(Path()),
+    wallTrapped(false), seeObstacle(false), path(Path()),
     obstacles(std::deque<Avoid>()), agent(agent), error(&Error::getInstance())
 {
 }
@@ -403,7 +403,6 @@ void AIController::detectWalls()
     const Kinematic k = agent->getKinematic();
     wallTrapped = false;
     seeObstacle = false;
-    obstacle = NULL;
     if (k.vel.length() == 0)
         return;
 
@@ -428,8 +427,8 @@ void AIController::detectWalls()
     rayCast(&start, &k.orientation_v, frontLength, &query);
 
     CollContact *contact;
-
     CollContact *closest = NULL;
+
     Vec3f pos;
     float bestDist = 10000;
 
@@ -450,7 +449,7 @@ void AIController::detectWalls()
         if (q->contacts.size() == 0)
             continue;
 
-        contact = &(*(q->contacts.begin()));
+        contact = &(q->contacts.front());
 
         if (contact->obj == NULL || contact->obj == agent->worldObject ||
             contact->obj == World::getInstance().floorObj)
@@ -479,7 +478,10 @@ void AIController::detectWalls()
     if (closest != NULL)
     {
         seeObstacle = true;
-        obstacle = contact;
+        obstacle.distance = contact->distance;
+        obstacle.normal = contact->normal;
+        obstacle.position = contact->position;
+        obstacle.obj = contact->obj;
     }
 }
 
@@ -496,14 +498,14 @@ SteerInfo AIController::avoidObstacle()
         * between pi/2 and pi, turn left. Else its behind us. */
     const Kinematic k = agent->getKinematic();
 
-    antiTarget = obstacle->position;
+    antiTarget = obstacle.position;
 
     hitTime = 1000;
-    if (obstacle->obj->agent)
+    if (obstacle.obj->agent)
     {
         /* determine next collision point given linear motion */
-        v = k.vel - obstacle->obj->agent->getKinematic().vel;
-        q = k.pos - obstacle->obj->agent->getKinematic().pos;
+        v = k.vel - obstacle.obj->agent->getKinematic().vel;
+        q = k.pos - obstacle.obj->agent->getKinematic().pos;
         a = v.dot(v);
         b = q.dot(v) * 2;
         c = q.dot(q) - 4 * (agent->width/2) * (agent->width/2);
@@ -522,7 +524,7 @@ SteerInfo AIController::avoidObstacle()
         }
         if (hitTime < 2)
         {
-            s = face(obstacle->obj->agent->getKinematic().orientation_v.perp() +
+            s = face(obstacle.obj->agent->getKinematic().orientation_v.perp() +
                      k.pos);
         }
 
@@ -530,7 +532,7 @@ SteerInfo AIController::avoidObstacle()
     else
     {
         /* static geometry: try to align to the normal of the surface */
-        s = face(k.pos + obstacle->normal);
+        s = face(k.pos + obstacle.normal);
     }
     return s;
 }

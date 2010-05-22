@@ -5,6 +5,7 @@
 #include <deque>
 #include "allclasses.h"
 #include "Utilities/vec3f.h"
+#include "Physics/collision.h"
 
 /* \brief Class Path
  * \brief a path for an agent to follow
@@ -54,7 +55,7 @@ class AIController
     AIController(Agent *);
 
     bool seeObstacle;
-    CollContact *obstacle;
+    CollContact obstacle;
     Path                path;           /* !< the path we're on */
     std::deque<Avoid> obstacles;        /* !< targets to be avoided */
     Agent               *agent;
