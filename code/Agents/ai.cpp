@@ -462,7 +462,6 @@ void AIController::detectWalls()
                 abs(contact->normal.unit().dot(k.orientation_v.unit())) > .9)
             {
                 antiTarget = contact->position;
-                cout << "trapped: " << abs(contact->normal.unit().dot(k.orientation_v.unit())) << endl;
                 wallTrapped = true;
                 return;
             }
