@@ -7,13 +7,21 @@
 #include "Utilities/quat.h"
 #include "Graphics/camera.h"
 #include "Physics/physics.h"
-extern "C" {
-#include "Parser/track-parser.h"
-}
-#include <GL/gl.h>
 #include <ode/ode.h>
 #include <vector>
 #include <string>
+extern "C" {
+#include "Parser/track-parser.h"
+}
+
+#if defined(__APPLE__) && defined(__MACH__)
+#  include <OpenGL/gl.h>
+#  include <OpenGL/glu.h>
+#else
+#  define GL_GLEXT_PROTOTYPES
+#  include <GL/gl.h>
+#  include <GL/glu.h>
+#endif
 using namespace std;
 
 /*! \brief WorldObject collects all of the possible representations of an object
