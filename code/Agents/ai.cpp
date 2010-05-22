@@ -150,7 +150,7 @@ Avoid::Avoid(Vec3f &pos, float str)
 Avoid::~Avoid() {}
 
 AIController::AIController(Agent *agent) :
-    wallTrapped(false), seeObstacle(false), path(Path()),
+    wallTrapped(false), seeObstacle(false), obstacle(NULL), path(Path()),
     obstacles(std::deque<Avoid>()), agent(agent), error(&Error::getInstance())
 {
 }
@@ -403,6 +403,7 @@ void AIController::detectWalls()
     const Kinematic k = agent->getKinematic();
     wallTrapped = false;
     seeObstacle = false;
+    obstacle = NULL;
     if (k.vel.length() == 0)
         return;
 
