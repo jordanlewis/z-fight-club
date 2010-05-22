@@ -86,6 +86,7 @@ class World
     RunType_t runType;
     Camera camera;
     TrackData_t *track;
+    WorldObject *floorObj;
     static float xMax;   /* XXX what are these? */
     static float zMax;
     dWorldID ode_world;

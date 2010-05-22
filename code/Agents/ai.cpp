@@ -451,7 +451,8 @@ void AIController::detectWalls()
 
         contact = &(*(q->contacts.begin()));
 
-        if (contact->obj == NULL || contact->obj == agent->worldObject)
+        if (contact->obj == NULL || contact->obj == agent->worldObject ||
+            contact->obj == World::getInstance().floorObj)
             continue;
 
         if (contact->obj->agent == NULL && i == 0)
