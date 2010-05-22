@@ -79,6 +79,7 @@ float Path::pointToDist(Vec3f point)
     Vec3f closest, next;
     float len, dist, bestDist, pathTotal, finalDist;
     bestDist = 1000000;
+    pathTotal = 0;
     for (unsigned int i = 0; i < knots.size(); i++)
     {
         next = knots[(i + 1) % knots.size()];
@@ -288,7 +289,7 @@ SteerInfo AIController::smartGo(const Vec3f target)
             go = 1;
         else if (angle < 3 * M_PI / 4)
             go = .8;
-        else
+        else if (angle <= 2 * M_PI)
         {
             if (distance < 5)
             {
@@ -484,11 +485,11 @@ void AIController::detectWalls()
 SteerInfo AIController::avoidObstacle()
 {
     SteerInfo s;
-    if (seeObstacle == false)
+    if (seeObstacle == false || turnedAround == true)
         return s;
 
     Vec3f q, v, avoidDir;
-    float a,b,c,discriminant,sqrtdisc,post,negt,hitTime, obstAngle;
+    float a,b,c,discriminant,sqrtdisc,post,negt,hitTime;
 
     /* Determine angle to obstacle. If between 0 and pi/2, turn right. If
         * between pi/2 and pi, turn left. Else its behind us. */
@@ -563,6 +564,7 @@ SteerInfo AIController::followPath(int tubeRadius)
     Vec3f futureGuess, guessOnPath, curOnPath;
     float guessError, curDist, guessDist;
 
+    turnedAround = false;
 
     if (k.vel.length() <= 1)
         futureGuess = k.pos + k.orientation_v * 5;
@@ -574,8 +576,11 @@ SteerInfo AIController::followPath(int tubeRadius)
     guessDist = path.pointToDist(guessOnPath);
     curDist = fmodf(path.pointToDist(curOnPath), path.totalLength);
 
-    if (guessDist < curDist)
+    float forwardDist = path.pointToDist(k.pos + k.orientation_v * 4);
+    if (forwardDist <= curDist &&
+        abs(forwardDist - curDist) < (k.orientation_v * 8).length())
     {
+        turnedAround = true;
         // we're turned around
         guessOnPath = path.distToPoint(curDist + 10);
     }
@@ -583,7 +588,7 @@ SteerInfo AIController::followPath(int tubeRadius)
     guessError = (guessOnPath - futureGuess).length();
 
     if (guessError > tubeRadius)
-        target = guessOnPath;
+        target = guessOnPath + guessOnPath - futureGuess;
     else
         target = futureGuess;
 
@@ -607,7 +612,7 @@ SteerInfo AIController::followCarrot(int stickLength)
 void AIController::run()
 {
     detectWalls();
-    SteerInfo s = cruise();
+    SteerInfo s = followPath(1);
     SteerInfo obst = avoidObstacle();
     if (obst.rotation != 0)
         s.rotation = obst.rotation;

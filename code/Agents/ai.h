@@ -47,6 +47,7 @@ class AIController
 {
     /* cached AI data? paths? etc */
     bool wallTrapped; /*Can we not even turn due to a wall in front of us? */
+    bool turnedAround; /*Are we turned around? */
   public:
     Vec3f target;
     Vec3f antiTarget;
@@ -62,7 +63,7 @@ class AIController
     void avoid(Vec3f&); /* !< add a new point to be avoided */
     void lane(int);     /* !< load a lane as the path */
 
-    SteerInfo seek(const Vec3f target, float slowRadius = 0, float targetRadius = 1);
+    SteerInfo seek(const Vec3f target, float slowRadius = 0, float targetRadius = 0);
     SteerInfo align(float target, float slowRadius = 0, float targetRadius = 0);
     /*!<try to point to tgt; returns angle to tgt */
     SteerInfo face(Vec3f target); /*!<face target */
