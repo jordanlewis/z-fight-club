@@ -218,15 +218,25 @@ void Graphics::render(AIController *aiController)
         return;
     }
 
+    glDisable(GL_LIGHTING);
     glColor3f(0,1,0);
+    render(aiController->path.knots);
 
     // Uncomment to render AI debug info
     //Kinematic k = aiController->agent->getKinematic();
-    //Vec3f proj = k.pos + (k.vel.length() <= 1 ? 5 * k.orientation_v : k.vel);
-    //Vec3f closest = aiController->path.closestPoint(proj);
-    //DrawArrow(k.pos, proj - k.pos);
-    //DrawArrow(proj, closest - proj);
-    //render(aiController->path.knots);
+
+    //Vec3f closest = aiController->path.closestPoint(aiController->target);
+    //glColor3f(0,1,0);
+    //DrawArrow(k.pos, aiController->target - k.pos);
+    //DrawArrow(aiController->target, closest - aiController->target);
+    //if (aiController->seeObstacle)
+    //{
+    //    glColor3f(1,0,0);
+    //    DrawArrow(k.pos, aiController->antiTarget - k.pos);
+    //}
+
+    glEnable(GL_LIGHTING);
+
 }
 
 void Graphics::render(TrackData_t *track)
