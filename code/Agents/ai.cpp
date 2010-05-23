@@ -546,9 +546,36 @@ void AIManager::release(Agent *agent)
 void AIManager::run()
 {
     error->pin(P_AI);
+    World &world = World::getInstance();
     for (unsigned int i = 0; i < controllers.size(); i++)
     {
         controllers[i]->run();
+    }
+
+
+    /* Update agent lap count and position */
+    float agentDist, knotDist;
+    Agent *agent;
+    Path *path = &world.path;
+    for (unsigned int i = 0; i < world.wobjects.size(); i++)
+    {
+        agent = world.wobjects[i]->agent;
+        if (NULL == agent)
+            continue;
+        agentDist = path->pointToDist(agent->getKinematic().pos);
+        knotDist  = path->knotDist(agent->pathPosition);
+        if (agentDist > knotDist &&
+            agentDist < knotDist + path->precision[agent->pathPosition])
+        {
+            if (++agent->pathPosition >= path->knots.size())
+            {
+                agent->pathPosition = 0;
+            }
+            else if (agent->pathPosition == 1)
+            {
+                agent->lapCounter++;
+            }
+        }
     }
     error->pout(P_AI);
 }

@@ -5,6 +5,7 @@
 #include "Utilities/vec3f.h"
 #include "Utilities/matrix.h"
 #include "Utilities/quat.h"
+#include "Utilities/path.h"
 #include "Graphics/camera.h"
 #include "Physics/physics.h"
 #include <ode/ode.h>
@@ -94,6 +95,7 @@ class World
     RunType_t runType;
     Camera camera;
     TrackData_t *track;
+    Path path;
     WorldObject *floorObj;
     static float xMax;   /* XXX what are these? */
     static float zMax;

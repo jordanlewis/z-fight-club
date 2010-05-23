@@ -276,6 +276,18 @@ void World::loadTrack(const char *file)
     wobj = new WorldObject(geom, gobj, NULL, NULL);
     addObject(wobj);
 
+
+    /* Finally, create the lap path for the track. */
+    path.clear();
+    Vec3f midpoint;
+    for (int i = 0; i < t->nSects; i++)
+    {
+        midpoint = lerp(Vec3f(t->verts[t->sects[i].edges[0].start]),
+                        Vec3f(t->verts[t->sects[i].edges[1].start]), .5);
+        path.knots.push_back(midpoint);
+        path.precision.push_back(2);
+    }
+    path.computeDistances();
 }
 
 Agent *World::placeAgent(int place)
