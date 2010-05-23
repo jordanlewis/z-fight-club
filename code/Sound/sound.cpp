@@ -127,12 +127,6 @@ void Sound::render()
     error->pout(P_SOUND);
 }
 
-void Sound::registerSource(WorldObject *w, SObject *s)
-{
-    error->log(SOUND, TRIVIAL, "registered source\n");
-    w->sobject = s;
-}
-
 vector<string> *Sound::get_wav_filenames()
 {
     vector<string> *wav_filenames = new vector<string>;

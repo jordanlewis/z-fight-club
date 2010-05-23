@@ -95,10 +95,6 @@ class Sound
     // periodically update based on camera movement
     void updateListener();
 
-    // used by tests/setups/sound.cpp
-    // I made an object, attach this sound information to it
-    void registerSource(WorldObject*, SObject*);
-
     sound_resource *lookup(const string);
 };
 
