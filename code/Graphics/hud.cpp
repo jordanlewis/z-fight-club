@@ -1,4 +1,6 @@
 #include "hud.h"
+#include "Agents/agent.h"
+#include "Engine/world.h"
 #include <SDL/SDL.h>
 #if defined(__APPLE__) && defined(__MACH__)
 #  include <OpenGL/gl.h>
@@ -21,11 +23,19 @@ Speedometer::~Speedometer()
 
 void Speedometer::draw()
 {
-    glColor3f(1.0, 0.0, 0.0);
+    World &world = World::getInstance();
+
+    glLineWidth(5);
+    if (agent->getKinematic().forwardSpeed() > 0)
+        glColor3f(0,1,0);
+    else
+        glColor3f(1,0,0);
+
     glBegin(GL_LINES);
-    glVertex2f(0.0f, 0.0f);
-    glVertex2f(350.0f, 350.0f);
+    glVertex2f(20, world.camera.getHres() - 20);
+    glVertex2f(20, world.camera.getHres() - (20 + agent->getKinematic().vel.length() * 20));
     glEnd();
+    glLineWidth(1);
 }
 
 Hud Hud::_instance;

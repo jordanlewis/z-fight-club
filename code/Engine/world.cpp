@@ -2,6 +2,7 @@
 #include "Graphics/polygon.h"
 #include "Graphics/gobject.h"
 #include "Physics/pobject.h"
+#include "Graphics/hud.h"
 #include "Agents/player.h"
 #include "Agents/agent.h"
 #include "Agents/ai.h"
@@ -342,6 +343,10 @@ void World::makePlayer()
     Sound::getInstance().registerListener(&camera);
     PlayerController *p = new PlayerController(agent);
     Input::getInstance().controlPlayer(p);
+
+    Speedometer *s = new Speedometer(Vec3f(0,0,0), agent);
+    widgets.push_back(s);
+
 }
 
 void World::makeAgents()

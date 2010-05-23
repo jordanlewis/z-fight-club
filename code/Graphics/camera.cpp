@@ -174,6 +174,15 @@ void Camera::setOrthoMatrix()
     glLoadIdentity();
 }
 
+float Camera::getWres()
+{
+    return wres;
+}
+float Camera::getHres()
+{
+    return hres;
+}
+
 const Vec3f &Camera::getTarget() const
 {
     return target;
