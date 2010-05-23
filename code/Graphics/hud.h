@@ -30,6 +30,14 @@ class LapCounter : public Widget
     void draw();
 };
 
+class StopLight : public Widget
+{
+  public:
+    StopLight(Vec3f);
+    int nLit;
+    void draw();
+};
+
 /* \brief Hud, heads up display class, this includes 2d graphics
  * that aren't actually huds like menus displays
  */

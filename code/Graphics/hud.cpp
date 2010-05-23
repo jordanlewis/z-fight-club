@@ -56,6 +56,37 @@ void LapCounter::draw()
 
 }
 
+StopLight::StopLight(Vec3f pos) : Widget(pos), nLit(0)
+{}
+
+void StopLight::draw()
+{
+    World &world = World::getInstance();
+    float xpos = world.camera.getWres() / 2.0;
+    float ypos = world.camera.getHres() / 2.0;
+
+    glColor3f(1,0,0);
+    for (int i = 0; i < 3; i++)
+    {
+        switch (i)
+        {
+            case 0: glColor3f(1,0,0); break;
+            case 1: glColor3f(1,1,0); break;
+            case 2: glColor3f(0,1,0); break;
+        }
+        if (i >= nLit)
+            glBegin(GL_LINE_LOOP);
+        else
+            glBegin(GL_QUADS);
+
+        glVertex2f(xpos + 10, ypos + i * 25);
+        glVertex2f(xpos - 10, ypos + i * 25);
+        glVertex2f(xpos - 10, ypos + 20 + i * 25);
+        glVertex2f(xpos + 10, ypos + 20 + i * 25);
+        glEnd();
+    }
+}
+
 
 Hud Hud::_instance;
 
