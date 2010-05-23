@@ -22,12 +22,12 @@ class Camera {
     float FOVY;
     Vec3f smooth_orientation;
 
+    int wres,
+        hres;
+
     Vec3f pos,
           up,
           target;
-
-    int wres,
-        hres;
 
     float zNear,
           zFar;
@@ -49,8 +49,8 @@ class Camera {
     float getWres();
     float getHres();
 
-    friend class Graphics;
     friend class Input;
+    friend class Graphics;
 };
 
 #endif

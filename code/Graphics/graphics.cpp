@@ -103,12 +103,9 @@ void Graphics::render()
     }
 
     World *world = &World::getInstance();
-
-    glPushMatrix();
     world->camera.setProjectionMatrix();
 
     /* render 3d graphics */
-
 
     GLfloat mat_specular[]={ .2, .2, .2, 1.0 };
     glShadeModel(GL_SMOOTH);
@@ -156,25 +153,7 @@ void Graphics::render()
         (*i)->draw();
     }
 
-
     render(world->track);
-
-    for (vector<WorldObject *>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
-    {
-        if ((*i)->agent)
-            render((*i)->agent);
-    }
-
-    AIManager &aiManager = AIManager::getInstance();
-
-    for (vector<AIController *>::iterator i = aiManager.controllers.begin(); i != aiManager.controllers.end(); i++) {
-        render(*i);
-    }
-
-    glPopMatrix();
-
-
-
 
     /* draw the widgets */
 
@@ -190,54 +169,7 @@ void Graphics::render()
     glPopMatrix();
 
     SDL_GL_SwapBuffers();
-
     error->pout(P_GRAPHICS);
-}
-
-void Graphics::render(Agent * agent)
-{
-    if (!initialized) {
-        error->log(GRAPHICS, IMPORTANT, "Render function called without graphics initialization\n");
-        return;
-    }
-
-    agent->trail.push_back(agent->kinematic.pos);
-
-    if (agent->trail.size() > MAX_TRAIL_LENGTH)
-        agent->trail.erase(agent->trail.begin());
-
-
-    glColor3f(1,1,1);
-    DrawArrow(Vec3f(0.0, 0.0, 0.0), agent->kinematic.orientation_v);
-
-    glColor3f(0,0,0);
-    render(agent->trail);
-}
-
-void Graphics::render(AIController *aiController)
-{
-    if (!initialized) {
-        error->log(GRAPHICS, IMPORTANT, "Render function called without graphics initialization\n");
-        return;
-    }
-
-    glColor3f(0,1,0);
-
-    // Uncomment to render AI debug info
-    //Kinematic k = aiController->agent->getKinematic();
-    //render(aiController->path.knots);
-
-    //Vec3f closest = aiController->path.closestPoint(aiController->target);
-    //glColor3f(0,1,0);
-    //DrawArrow(k.pos, aiController->target - k.pos);
-    //DrawArrow(aiController->target, closest - aiController->target);
-    //if (aiController->seeObstacle)
-    //{
-    //    glColor3f(1,0,0);
-    //    DrawArrow(k.pos, aiController->antiTarget - k.pos);
-    //}
-
-
 }
 
 void Graphics::render(TrackData_t *track)
@@ -299,7 +231,6 @@ void Graphics::render(TrackData_t *track)
         /* draw finish line */
         glDisable(GL_LIGHTING);
         glColor3f(1,0,1);
-        glEnable(GL_LINE_STIPPLE);
         glLineStipple(1, 0x0C0F);
         glLineWidth(4);
         glBegin(GL_LINES);

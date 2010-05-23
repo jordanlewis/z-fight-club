@@ -2,6 +2,7 @@
 #include "Agents/agent.h"
 #include "Engine/world.h"
 #include <SDL/SDL.h>
+#include <cmath>
 #if defined(__APPLE__) && defined(__MACH__)
 #  include <OpenGL/gl.h>
 #  include <OpenGL/glu.h>
@@ -26,10 +27,32 @@ Speedometer::Speedometer(Vec3f pos, Agent *agent)
 
 void Speedometer::draw()
 {
-    DrawImage(background, pos[0], pos[1]);
+    glDisable(GL_DEPTH_TEST);
+    World &w = World::getInstance();
+    DrawImage(background,
+       w.camera.getWres() - background->wid - pos[0],
+       w.camera.getHres() - pos[0]);
     World &world = World::getInstance();
 
     glLineWidth(5);
+    float theta = (agent->getKinematic().vel.length()*M_PI/15)-0.75;
+    while(theta > (2*M_PI)) theta -= (2*M_PI);
+    float center[2] = {105,105};
+    
+    glColor3f(1,0,0);
+    glBegin(GL_LINES);
+      glVertex2f(
+          world.camera.getWres()-center[0],
+          world.camera.getHres()-center[1]);
+      glVertex2f(
+          world.camera.getWres()-center[0]-(100*cos(theta)),
+          world.camera.getHres()-center[1]-(100*sin(theta)));
+    glEnd();
+    glEnable(GL_DEPTH_TEST);
+
+
+    
+
     if (agent->getKinematic().forwardSpeed() > 0)
         glColor3f(0,1,0);
     else
