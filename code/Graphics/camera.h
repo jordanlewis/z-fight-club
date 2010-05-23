@@ -22,6 +22,9 @@ class Camera {
     float FOVY;
     Vec3f smooth_orientation;
 
+    int wres,
+        hres;
+
     Vec3f pos,
           up,
           target;
@@ -34,9 +37,6 @@ class Camera {
     Camera(CameraMode_t, Agent *);
     ~Camera();
 
-    int wres,
-        hres;
-
     void setTarget(Vec3f target);
     void cycleView(); /* !< cycle camera views */
     void setProjectionMatrix(); //Maybe this should be protected, and we call
@@ -48,6 +48,9 @@ class Camera {
 
     float getWres();
     float getHres();
+
+    friend class Input;
+    friend class Graphics;
 };
 
 #endif
