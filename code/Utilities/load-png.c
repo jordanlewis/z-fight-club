@@ -14,7 +14,7 @@
 #include <png.h>
 #include "defs.h"
 #include "load-png.h"
-#include "assert.h"
+#include <assert.h>
 
 /* LoadImage:
  */
