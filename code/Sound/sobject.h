@@ -24,16 +24,19 @@ class SObject
   private:
     sound_resource *sr; // pointer to a sound_resource canonically held by the sound_library
     ALuint source;
+    void setStartTime(double);
     double startTime;   // when this sound should start playing
     ALint loop;         // whether to loop or not
     bool playing;       // whether it's playing right now
     ALfloat duration;
     Error *error;
+    SObject *nextSound;
     // could have lots of other data, like whether to fade in, out, etc.
     ~SObject();
   public:
     SObject(string soundName, double startTime, bool loop);
-    void update(WorldObject*); // play, restart, stop, update kinematics, etc. as appropriate
+    void update(WorldObject*); // play, restart, stop, update noises, etc. as appropriate
+    void registerNext(SObject*); // indicate sound to start when this one stops
 };
 
 #endif

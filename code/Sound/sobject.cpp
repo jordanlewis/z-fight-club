@@ -8,7 +8,8 @@
 SObject::SObject(string soundName, double startTime, bool loop) :
     startTime(startTime),
     loop(loop),
-    error(&Error::getInstance())
+    error(&Error::getInstance()),
+    nextSound(NULL)
 {
     Sound &sound = Sound::getInstance();
     sr = sound.lookup(soundName);
@@ -24,7 +25,7 @@ SObject::SObject(string soundName, double startTime, bool loop) :
         alGetBufferi(sr->buffer, AL_BITS, &bits);
         alGetBufferi(sr->buffer, AL_CHANNELS, &channels);
         alGetBufferi(sr->buffer, AL_SIZE, &size);
-        duration = (float) size * sizeof(char) / bits / frequency / channels;
+        duration = (float) size / (float) frequency / (float) channels / (bits / 8);
     }
 
     string msg = "created sobject(";
@@ -39,11 +40,18 @@ SObject::~SObject()
     error->log(SOUND, TRIVIAL, msg);
 }
 
+void SObject::setStartTime(double newtime)
+{
+   startTime = newtime;
+}
+
 void SObject::update(WorldObject *host)
 {
+    // if this sound is broken, switch to the next one immediately
     if (!duration || !sr)
     {
-        host->sobject = NULL;
+        host->sobject = nextSound;
+        if (nextSound) host->sobject->setStartTime(GetTime());
         this->~SObject();
         return;
     }
@@ -56,7 +64,8 @@ void SObject::update(WorldObject *host)
         alSourceUnqueueBuffers(source, 1, &sr->buffer);
         alDeleteSources(1, &source);
         playing = false;
-        host->sobject = NULL;
+        host->sobject = nextSound;
+        if (nextSound) host->sobject->setStartTime(GetTime());
         this->~SObject();
         return;
     }
@@ -84,6 +93,11 @@ void SObject::update(WorldObject *host)
         alSourcePlay(source);
         playing = true;
     }
+}
+
+void SObject::registerNext(SObject* n)
+{
+    nextSound = n;
 }
 
 // alDeleteBuffers(1, &buffer);

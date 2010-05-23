@@ -146,10 +146,10 @@ int main(int argc, char *argv[])
 
     if (world.runType == SOLO)
     {
+        testSetup();
         scheduler.welcomeScreen();
         world.makeAgents();
-				world.makeSkybox();
-        testSetup();
+	world.makeSkybox();
         scheduler.soloLoopForever();
     }
     if (world.runType == CLIENT)
