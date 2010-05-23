@@ -388,6 +388,7 @@ ENetPacket *Server::packageObject(netObjID_t objID)
     return NULL;
 }
 
+//services incoming packets
 void Server::serverFrame()
 {
     error->pin(P_SERVER);
@@ -401,8 +402,6 @@ void Server::serverFrame()
         ENetPacket *packet = makeRacerPacket(RP_PING, NULL, 0, 0);
         enet_host_broadcast(enetServer, 0, packet);
     }
-
-    pushAgents();
 
     while (enet_host_service(enetServer, &event, 0) > 0)
     {
