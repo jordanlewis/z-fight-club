@@ -13,6 +13,7 @@ class Widget
 {
   public:
       Vec3f    pos;     /* !< ofcourse we'll only be using x and y */
+                        /* !< The origin is the bottom right corner*/
       virtual void draw() {return;}
       Widget(Vec3f);
 };

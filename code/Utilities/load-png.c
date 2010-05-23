@@ -223,5 +223,10 @@ extern void DrawImage(Image2D_t *img, float x, float y)
     /* we got an image we're good to go */
     glRasterPos2f(x,y);
 
+    glEnable (GL_BLEND);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     glDrawPixels(img->wid, img->ht, img->fmt, img->type, img->data);  
+
+    glDisable(GL_BLEND);
 }
