@@ -26,7 +26,8 @@ Speedometer::Speedometer(Vec3f pos, Agent *agent)
 
 void Speedometer::draw()
 {
-    DrawImage(background, pos[0], pos[1]);
+    World &w = World::getInstance();
+    DrawImage(background,w.camera.wres-325,w.camera.hres-20);
     World &world = World::getInstance();
 
     glLineWidth(5);

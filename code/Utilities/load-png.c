@@ -221,7 +221,7 @@ extern void DrawImage(Image2D_t *img, float x, float y)
 {
     assert(img);
     /* we got an image we're good to go */
-    glRasterPos2f(y, x);
+    glRasterPos2f(x,y);
 
     glDrawPixels(img->wid, img->ht, img->fmt, img->type, img->data);  
 }

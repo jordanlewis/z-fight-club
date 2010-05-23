@@ -26,9 +26,6 @@ class Camera {
           up,
           target;
 
-    int wres,
-        hres;
-
     float zNear,
           zFar;
     Error *error;
@@ -36,6 +33,9 @@ class Camera {
     Camera();
     Camera(CameraMode_t, Agent *);
     ~Camera();
+
+    int wres,
+        hres;
 
     void setTarget(Vec3f target);
     void cycleView(); /* !< cycle camera views */
@@ -48,9 +48,6 @@ class Camera {
 
     float getWres();
     float getHres();
-
-    friend class Graphics;
-    friend class Input;
 };
 
 #endif
