@@ -393,7 +393,7 @@ void Server::serverFrame()
 {
     error->pin(P_SERVER);
     ENetEvent event;
-    usleep(10000);
+    //usleep(10000);
     racerPacketType_t type;
     void * payload;
     if (pingclock++ == 0)
