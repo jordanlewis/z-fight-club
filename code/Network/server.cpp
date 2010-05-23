@@ -156,14 +156,14 @@ int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
 
     obj->agent = agent;
     agent->worldObject = obj;
-    BoxInfo box(1,1,1);
-    obj->gobject = new GObject(geomInfo);
+    obj->gobject = new GObject(new ObjMeshInfo("ship/"));
     obj->sobject = new SObject("snore.wav", GetTime(), AL_TRUE);
 
     PAgent *pagent = new PAgent(&(agent->getKinematic()),
                                 &(agent->getSteering()), mass, geomInfo,
                                 Physics::getInstance().getOdeSpace());
 
+    pagent->bounce = 1;
     obj->player = new PlayerController(agent);
     obj->pobject = pagent;
     pagent->worldObject = obj;
@@ -388,6 +388,7 @@ ENetPacket *Server::packageObject(netObjID_t objID)
     return NULL;
 }
 
+//services incoming packets
 void Server::serverFrame()
 {
     error->pin(P_SERVER);
@@ -401,8 +402,6 @@ void Server::serverFrame()
         ENetPacket *packet = makeRacerPacket(RP_PING, NULL, 0, 0);
         enet_host_broadcast(enetServer, 0, packet);
     }
-
-    pushAgents();
 
     while (enet_host_service(enetServer, &event, 0) > 0)
     {

@@ -224,10 +224,11 @@ void Client::checkForPackets()
                                        agent->mass,
                                        geomInfo,
                                        physics->getOdeSpace());
+                        pagent->bounce = 1;
                         wobject->pobject = pagent;
                         agent->worldObject = wobject;
                         pagent->worldObject = wobject;
-                        wobject->gobject = new GObject(geomInfo);
+                        wobject->gobject = new GObject(new ObjMeshInfo("ship/"));
                         wobject->player = new PlayerController(agent);
 
                         if (info.clientID == clientID)
