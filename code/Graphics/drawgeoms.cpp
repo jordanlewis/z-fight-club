@@ -279,7 +279,7 @@ void SphereInfo::draw()
     gluSphere(quad, radius, 20, 20);
 }
 
-void ParticleInfo::draw()
+void ParticleSystemInfo::draw()
 {
     glColor3f(0.0, 1.0, 0.0);
 

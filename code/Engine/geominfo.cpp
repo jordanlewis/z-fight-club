@@ -56,7 +56,15 @@ ObjMeshInfo::ObjMeshInfo(std::string filename)
     FreeImage(color);
 }
 
-ParticleInfo::ParticleInfo(std::string filename)
+Particle::Particle(Vec3f pos, Vec3f vel, float birth)
+    : pos(pos), vel(vel), birth(birth)
+{}
+
+Particle::~Particle()
+{}
+
+ParticleSystemInfo::ParticleSystemInfo(std::string filename, Vec3f area, Vec3f velocity, Vec3f velocity_pm, float ttl, float ttl_pm)
+    : GeomInfo(), area(area), velocity(velocity), velocity_pm(velocity_pm), ttl(ttl), ttl_pm(ttl_pm)
 {
     World &world = World::getInstance();
     Image2D_t *color = LoadImage((world.assetsDir + filename).c_str(), false, RGB_IMAGE);
@@ -69,6 +77,10 @@ ParticleInfo::ParticleInfo(std::string filename)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     TexImage(color);
     FreeImage(color);
+}
+
+void ParticleSystemInfo::update(float time)
+{
 }
 
 SkyBoxInfo::SkyBoxInfo(std::string filename)
@@ -140,7 +152,7 @@ dGeomID ObjMeshInfo::createGeom(dSpaceID space)
 dGeomID SkyBoxInfo::createGeom(dSpaceID space)
 { return dCreateSphere (space, 1.0); }
 
-dGeomID  ParticleInfo::createGeom(dSpaceID space)
+dGeomID  ParticleSystemInfo::createGeom(dSpaceID space)
 { return dCreateSphere (space, 1.0); }
 
 void SphereInfo::createMass(dMass * mass, float massVal)
@@ -163,7 +175,7 @@ void SkyBoxInfo::createMass(dMass * mass, float massVal)
     dMassSetBoxTotal(mass, massVal, 1.0, 1.0, 1.0);
 }
 
-void ParticleInfo::createMass(dMass * mass, float massVal)
+void ParticleSystemInfo::createMass(dMass * mass, float massVal)
 {
     dMassSetBoxTotal(mass, massVal, 1.0, 1.0, 1.0);
 }

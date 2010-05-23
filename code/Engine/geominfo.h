@@ -3,7 +3,9 @@
 
 #include "allclasses.h"
 #include <ode/ode.h>
+#include "Utilities/vec3f.h"
 #include <string>
+#include <deque>
 extern "C" {
     #include "Parser/obj-reader.h"
     #include "Utilities/load-png.h"
@@ -145,15 +147,32 @@ class SkyBoxInfo : public GeomInfo
         void draw();
 };
 
-class ParticleInfo : public GeomInfo
+class Particle
 {
     public:
-        GLuint  texid;
-        ParticleInfo(std::string);
-        ParticleInfo(GLuint);
-        ~ParticleInfo();
+        Vec3f   pos;
+        Vec3f   vel;
+        float   birth;
+        Particle(Vec3f, Vec3f, float);
+        ~Particle();
+};
+
+class ParticleSystemInfo : public GeomInfo
+{
+    public:
+        GLuint                  texid;        /* !< the texture to put on the sprite */
+        Vec3f                   area;         /* !< upper corner of the box particles can spawn in */
+        Vec3f                   velocity;     /* !< the starting velocity of the particles */
+        Vec3f                   velocity_pm;  /* !< variance in velocity */
+        float                   ttl;          /* !< lifetime of each particle */
+        float                   ttl_pm;       /* !< variance in lifetime of each particle */
+        float                   last_update;  /* !< time the Particle system was last updated */
+        std::deque<Particle>   particles;    /* !< the live particles in the system */
+        ParticleSystemInfo(std::string, Vec3f, Vec3f, Vec3f, float, float);
+        ~ParticleSystemInfo();
         dGeomID createGeom(dSpaceID space);
         void createMass(dMass *, float);
         void draw();
+        void update(float);
 };
 #endif
