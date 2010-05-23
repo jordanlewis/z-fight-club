@@ -14,6 +14,7 @@
 #include <png.h>
 #include "defs.h"
 #include "load-png.h"
+#include <assert>
 
 /* LoadImage:
  */
@@ -215,3 +216,12 @@ int TexImage (Image2D_t *img)
     return (glGetError());
 
 } /* end of TexImage */
+
+extern void DrawImage(Image2D_t *img, float x, float y)
+{
+    assert(img);
+    /* we got an image we're good to go */
+    glRasterPos2f(y, x);
+
+    glDrawPixels(img->wid, img->ht, img->fmt, img->type, img->data);  
+}

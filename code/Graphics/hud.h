@@ -3,6 +3,9 @@
 
 #include "allclasses.h"
 #include "Utilities/vec3f.h"
+extern "C" {
+        #include "Utilities/load-png.h"
+}
 #include <vector>
 using namespace std;
 
@@ -17,6 +20,7 @@ class Speedometer : public Widget
 {
   public:
     Agent *agent;
+    Image2D_t *background;
     Speedometer(Vec3f, Agent *);
     ~Speedometer();
     void draw();

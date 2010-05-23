@@ -63,4 +63,10 @@ extern void FreeImage (Image2D_t *img);
  */
 extern int TexImage (Image2D_t *img);
 
+/*! \brief draw an image directly to the screen
+ *  \param img the image to draw to the screen
+ *  \Vec3f pos the position on the screen to draw to
+ */
+extern void DrawImage(Image2D_t *img, float x, float y);
+
 #endif /* !_LOAD_PNG_H_ */

@@ -1,6 +1,7 @@
 #include "Engine/setup.h"
 #include "Utilities/vec3f.h"
 #include "Graphics/hud.h"
+#include "Engine/world.h"
 
 void testSetup()
 {
