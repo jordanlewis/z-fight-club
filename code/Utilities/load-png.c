@@ -217,11 +217,12 @@ int TexImage (Image2D_t *img)
 
 } /* end of TexImage */
 
-extern void DrawImage(Image2D_t *img, float x, float y)
+int DrawImage(Image2D_t *img, float x, float y)
 {
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
     assert(img);
     /* we got an image we're good to go */
-    glRasterPos2f(y, x);
+    glRasterPos2f(x, y);
 
     glDrawPixels(img->wid, img->ht, img->fmt, img->type, img->data);  
 }

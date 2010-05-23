@@ -141,7 +141,19 @@ class SkyBoxInfo : public GeomInfo
         SkyBoxInfo(std::string);
         ~SkyBoxInfo();
         dGeomID createGeom(dSpaceID space);
-	void createMass(dMass *, float);
-	void draw();
+        void createMass(dMass *, float);
+        void draw();
+};
+
+class ParticleInfo : public GeomInfo
+{
+    public:
+        GLuint  texid;
+        ParticleInfo(std::string);
+        ParticleInfo(GLuint);
+        ~ParticleInfo();
+        dGeomID createGeom(dSpaceID space);
+        void createMass(dMass *, float);
+        void draw();
 };
 #endif
