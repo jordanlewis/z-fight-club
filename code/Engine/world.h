@@ -5,6 +5,7 @@
 #include "Utilities/vec3f.h"
 #include "Utilities/matrix.h"
 #include "Utilities/quat.h"
+#include "Utilities/path.h"
 #include "Graphics/camera.h"
 #include "Physics/physics.h"
 #include <ode/ode.h>
@@ -42,7 +43,8 @@ class WorldObject
     SObject *sobject;
     Agent *agent;
     PlayerController *player; // for server
-    WorldObject(PGeom * pobject, GObject * gobject, SObject * sobject, Agent * agent);
+    WorldObject(PGeom * pobject, GObject * gobject, SObject * sobject,
+                Agent * agent);
 
     Vec3f getPos();
     void setPos(Vec3f position);
@@ -94,6 +96,7 @@ class World
     RunType_t runType;
     Camera camera;
     TrackData_t *track;
+    Path path;
     WorldObject *floorObj;
     static float xMax;   /* XXX what are these? */
     static float zMax;

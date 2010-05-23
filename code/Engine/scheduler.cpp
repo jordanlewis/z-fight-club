@@ -9,6 +9,7 @@
 #include "Network/server.h"
 #include "Network/client.h"
 #include "Graphics/graphics.h"
+#include "Graphics/hud.h"
 #include "Physics/physics.h"
 #include "Sound/sound.h"
 #include "Utilities/error.h"
@@ -39,11 +40,14 @@ void Scheduler::soloLoopForever()
     double now;
     double last = GetTime();
     double sinceStart;
+    bool killLight;
 
     timeStarted = last;
     raceState = COUNTDOWN;
 
     error->log(ENGINE, TRIVIAL, "Entering solo-play loop\n");
+    StopLight *sl = new StopLight(Vec3f(0,0,0));
+    world->widgets.push_back(sl);
     while (!done)
     {
         done = input->processInput();
@@ -55,14 +59,24 @@ void Scheduler::soloLoopForever()
         {
             if (sinceStart > curCount)
             {
+                sl->nLit = curCount;
                 if (curCount == 3)
                 {
                     cout << "GO!!!!!!!!" << endl;
                     raceState = RACE;
+                    killLight = true;
                 }
                 else
+                {
                     cout << 3 - curCount++ << "..." << endl;
+                }
             }
+        }
+        if (killLight && sinceStart > 5)
+        {
+            killLight = false;
+            world->widgets.pop_back();
+            delete sl;
         }
 
         if (now - last > 0)
@@ -126,6 +140,7 @@ void Scheduler::clientLoopForever()
             break;
           case C_RACE:
             client->checkForPackets();
+            client->updateAgentsLocally();
             nowNet = GetTime();
             if (nowNet - lastNet > SC_CLIENT_UPDATE_FREQ_SECONDS) 
                 {

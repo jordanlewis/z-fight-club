@@ -42,6 +42,10 @@ class Agent
     static uint32_t maxId; /* !<highest id number we've reached */
 
   public:
+    Agent();
+    Agent(Vec3f);      /* Constructor; Initial position */
+    Agent(Vec3f, float); /* Constructor; Initial position and orientation */
+
     SteerInfo steerInfo;   /* !<car's steering info, set by AI/human */
     WorldObject *worldObject; /* !<back pointer to world object */
     static float mass;     /* must be nonzero! */
@@ -53,11 +57,10 @@ class Agent
     Kinematic kinematic;   /* !<car's current kinematic */
     std::vector<Vec3f> trail;   /* !<record of where the agent has been */
 
-    Agent();
-    Agent(Vec3f);      /* Constructor; Initial position */
-    Agent(Vec3f, float); /* Constructor; Initial position and orientation */
-
     float getMaxAccel(); /* Calculate the current max acceleration */
+
+    unsigned int pathPosition; /*!< index into world path */
+    unsigned int lapCounter;   /*!< how many laps have we completed */
 
     void hton(RPAgent *payload); /* Package the agent for network transfer */
     void ntoh(RPAgent *payload); /* Unpackage an agent from network transfer */

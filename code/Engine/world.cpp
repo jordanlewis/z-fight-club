@@ -2,6 +2,7 @@
 #include "Graphics/polygon.h"
 #include "Graphics/gobject.h"
 #include "Physics/pobject.h"
+#include "Graphics/hud.h"
 #include "Agents/player.h"
 #include "Agents/agent.h"
 #include "Agents/ai.h"
@@ -276,6 +277,18 @@ void World::loadTrack(const char *file)
     wobj = new WorldObject(geom, gobj, NULL, NULL);
     addObject(wobj);
 
+
+    /* Finally, create the lap path for the track. */
+    path.clear();
+    Vec3f midpoint;
+    for (int i = 0; i < t->nSects; i++)
+    {
+        midpoint = lerp(Vec3f(t->verts[t->sects[i].edges[0].start]),
+                        Vec3f(t->verts[t->sects[i].edges[1].start]), .5);
+        path.knots.push_back(midpoint);
+        path.precision.push_back(2);
+    }
+    path.computeDistances();
 }
 
 Agent *World::placeAgent(int place)
@@ -330,6 +343,12 @@ void World::makePlayer()
     Sound::getInstance().registerListener(&camera);
     PlayerController *p = new PlayerController(agent);
     Input::getInstance().controlPlayer(p);
+
+    Speedometer *s = new Speedometer(Vec3f(0,0,0), agent);
+    widgets.push_back(s);
+    LapCounter *lc = new LapCounter(Vec3f(0,0,0), agent);
+    widgets.push_back(lc);
+
 }
 
 void World::makeAgents()
