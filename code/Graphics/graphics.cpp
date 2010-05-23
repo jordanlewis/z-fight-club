@@ -295,6 +295,20 @@ void Graphics::render(TrackData_t *track)
         glEnd();
         gluDeleteQuadric(quadobj);
 
+        /* draw finish line */
+        glDisable(GL_LIGHTING);
+        glColor3f(1,0,1);
+        glEnable(GL_LINE_STIPPLE);
+        glLineStipple(1, 0x0C0F);
+        glLineWidth(4);
+        glBegin(GL_LINES);
+        glVertex3fv(track->verts[track->sects[0].edges[0].start]);
+        glVertex3fv(track->verts[track->sects[0].edges[1].start]);
+        glEnd();
+        glLineWidth(1);
+        glDisable(GL_LINE_STIPPLE);
+        glEnable(GL_LIGHTING);
+
     }
 }
 
