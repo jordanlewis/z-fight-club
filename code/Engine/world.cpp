@@ -346,6 +346,8 @@ void World::makePlayer()
 
     Speedometer *s = new Speedometer(Vec3f(0,0,0), agent);
     widgets.push_back(s);
+    LapCounter *lc = new LapCounter(Vec3f(0,0,0), agent);
+    widgets.push_back(lc);
 
 }
 

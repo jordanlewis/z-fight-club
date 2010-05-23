@@ -11,15 +11,13 @@
 #  include <GL/glu.h>
 #endif
 
+Widget::Widget(Vec3f pos) : pos(pos)
+{}
 
 Speedometer::Speedometer(Vec3f pos, Agent *agent)
-    : Widget(), agent(agent)
+    : Widget(pos), agent(agent)
 {
-    this->pos = pos;
 }
-
-Speedometer::~Speedometer()
-{}
 
 void Speedometer::draw()
 {
@@ -37,6 +35,27 @@ void Speedometer::draw()
     glEnd();
     glLineWidth(1);
 }
+
+LapCounter::LapCounter(Vec3f pos, Agent *agent)
+    : Widget(pos), agent(agent)
+{}
+
+void LapCounter::draw()
+{
+    World &world = World::getInstance();
+    int hpos = world.camera.getHres() - 20;
+    glColor3f(0,0,1);
+    glBegin(GL_TRIANGLES);
+    for (unsigned int i = 0; i < agent->lapCounter; i++)
+    {
+        glVertex2f(50 + 30*i, hpos);
+        glVertex2f(40 + 30*i, hpos - 20);
+        glVertex2f(30 + 30*i, hpos);
+    }
+    glEnd();
+
+}
+
 
 Hud Hud::_instance;
 
