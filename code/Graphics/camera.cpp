@@ -169,8 +169,9 @@ void Camera::setOrthoMatrix()
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, (GLdouble) wres, hres, 0, zNear, zFar);
+    glOrtho(0, (GLdouble) wres, hres, 0, -1, 1);
     glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 }
 
 const Vec3f &Camera::getTarget() const

@@ -170,8 +170,13 @@ void Graphics::render()
     }
 
     glPopMatrix();
+
+
+
+
     /* draw the widgets */
 
+    glDisable(GL_LIGHTING);
     glPushMatrix();
     world->camera.setOrthoMatrix();
 
