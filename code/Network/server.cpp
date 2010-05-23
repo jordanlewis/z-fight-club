@@ -426,10 +426,6 @@ void Server::serverFrame()
                                 if (wo && wo->agent)
                                 {
                                     wo->player->ntoh(&P->info);
-                                    /*cout << "PlayerController[" << ntohl(P->ID) << "]: "
-                                         << *(wo->player) << endl;*/
-                                    wo->player->updateAgent();
-                                    
                                 }
                                 break;
                             }
@@ -448,5 +444,22 @@ void Server::serverFrame()
                 break;
         }
     }
+
+    
+    //Updates all agents based on their current steerinfo.  Should be
+    //factored out into another function, prehaps?
+    WorldObject *wo = NULL;
+    for (map<netObjID_t, WorldObject *>::iterator iter = netobjs.begin();
+         iter != netobjs.end();
+         iter++){
+        wo = iter->second;
+        if (wo) {
+            if (wo->agent && wo->player){
+                wo->player->updateAgent();
+            }
+        }
+    }        
+
+
     error->pout(P_SERVER);
 }
