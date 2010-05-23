@@ -43,7 +43,8 @@ class WorldObject
     SObject *sobject;
     Agent *agent;
     PlayerController *player; // for server
-    WorldObject(PGeom * pobject, GObject * gobject, SObject * sobject, Agent * agent);
+    WorldObject(PGeom * pobject, GObject * gobject, SObject * sobject,
+                Agent * agent);
 
     Vec3f getPos();
     void setPos(Vec3f position);

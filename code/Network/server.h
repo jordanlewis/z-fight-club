@@ -30,7 +30,6 @@ class Server {
     uint8_t pingclock;
     World *world;
     Error *error;
-    void pushAgents();
 
  public:
     Server();
@@ -57,7 +56,9 @@ class Server {
     
 
     void updateFromClient(uint8_t clientId); //NYI (call within serverFrame)
-
+    void pushAgents(); //Push updates to the client
+    void updateAgentsLocally(); //Update agent info from steerinfos
+ 
     /* Member Functions */
     static Server &getInstance();
 

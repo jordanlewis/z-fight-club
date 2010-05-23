@@ -224,10 +224,11 @@ void Client::checkForPackets()
                                        agent->mass,
                                        geomInfo,
                                        physics->getOdeSpace());
+                        pagent->bounce = 1;
                         wobject->pobject = pagent;
                         agent->worldObject = wobject;
                         pagent->worldObject = wobject;
-                        wobject->gobject = new GObject(geomInfo);
+                        wobject->gobject = new GObject(new ObjMeshInfo("ship/"));
                         wobject->player = new PlayerController(agent);
 
                         if (info.clientID == clientID)
@@ -250,8 +251,30 @@ void Client::checkForPackets()
             default: break;
         }
     }
+    
+    //Updates all agents based on their current steerinfo.  Should be
+    //factored out into another function, prehaps?
+
     error->pout(P_CLIENT);
     return;
+}
+
+void Client::updateAgentsLocally(){
+    error->pin(P_CLIENT);
+
+    WorldObject *wo = NULL;
+    for (map<netObjID_t, WorldObject *>::iterator iter = netobjs.begin();
+         iter != netobjs.end();
+         iter++){
+        wo = iter->second;
+        if (wo) {
+            if (wo->agent && wo->player){
+                wo->player->updateAgent();
+            }
+        }
+    }        
+    
+    error->pout(P_CLIENT);
 }
 
 void Client::sendJoinRequest(){

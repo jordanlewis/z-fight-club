@@ -156,14 +156,14 @@ int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
 
     obj->agent = agent;
     agent->worldObject = obj;
-    BoxInfo box(1,1,1);
-    obj->gobject = new GObject(geomInfo);
+    obj->gobject = new GObject(new ObjMeshInfo("ship/"));
     obj->sobject = new SObject("snore.wav", GetTime(), AL_TRUE);
 
     PAgent *pagent = new PAgent(&(agent->getKinematic()),
                                 &(agent->getSteering()), mass, geomInfo,
                                 Physics::getInstance().getOdeSpace());
 
+    pagent->bounce = 1;
     obj->player = new PlayerController(agent);
     obj->pobject = pagent;
     pagent->worldObject = obj;
@@ -388,11 +388,12 @@ ENetPacket *Server::packageObject(netObjID_t objID)
     return NULL;
 }
 
+//services incoming packets
 void Server::serverFrame()
 {
     error->pin(P_SERVER);
     ENetEvent event;
-    usleep(10000);
+    //usleep(10000);
     racerPacketType_t type;
     void * payload;
     if (pingclock++ == 0)
@@ -401,8 +402,6 @@ void Server::serverFrame()
         ENetPacket *packet = makeRacerPacket(RP_PING, NULL, 0, 0);
         enet_host_broadcast(enetServer, 0, packet);
     }
-
-    pushAgents();
 
     while (enet_host_service(enetServer, &event, 0) > 0)
     {
@@ -427,10 +426,6 @@ void Server::serverFrame()
                                 if (wo && wo->agent)
                                 {
                                     wo->player->ntoh(&P->info);
-                                    /*cout << "PlayerController[" << ntohl(P->ID) << "]: "
-                                         << *(wo->player) << endl;*/
-                                    wo->player->updateAgent();
-                                    
                                 }
                                 break;
                             }
@@ -449,5 +444,22 @@ void Server::serverFrame()
                 break;
         }
     }
+    updateAgentsLocally();
     error->pout(P_SERVER);
+}
+
+//Updates all agents based on their current steerinfo.
+void Server::updateAgentsLocally(){
+
+    WorldObject *wo = NULL;
+    for (map<netObjID_t, WorldObject *>::iterator iter = netobjs.begin();
+         iter != netobjs.end();
+         iter++){
+        wo = iter->second;
+        if (wo) {
+            if (wo->agent && wo->player){
+                wo->player->updateAgent();
+            }
+        }
+    }        
 }

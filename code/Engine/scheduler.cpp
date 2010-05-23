@@ -13,6 +13,7 @@
 #include "Sound/sound.h"
 #include "Utilities/error.h"
 
+
 using namespace std;
 
 Scheduler Scheduler::_instance;
@@ -89,8 +90,9 @@ void Scheduler::welcomeScreen()
 void Scheduler::clientLoopForever()
 {
     error->log(ENGINE, TRIVIAL, "Entering client loop\n");
-    double now;
-    double last = GetTime();
+    double nowPh, nowNet;
+    double lastPh = GetTime();
+    double lastNet = GetTime();
     client->clientState = C_CONNECTING;
     while (1)
     {
@@ -124,10 +126,16 @@ void Scheduler::clientLoopForever()
             break;
           case C_RACE:
             client->checkForPackets();
-            client->pushToServer();
-            now = GetTime();
-            if (now - last > 0) physics->simulate(now - last);
-            last = now;
+            client->updateAgentsLocally();
+            nowNet = GetTime();
+            if (nowNet - lastNet > SC_CLIENT_UPDATE_FREQ_SECONDS) 
+                {
+                    client->pushToServer();
+                    lastNet = nowNet;
+                }        
+            nowPh = GetTime();
+            if (nowPh - lastPh > 0) physics->simulate(nowPh - lastPh);
+            lastPh = nowPh;
             graphics->render();
             sound->render();
             input->processInput(); // may transition us into C_DONE
@@ -149,18 +157,25 @@ void Scheduler::serverLoopForever()
     server->gatherPlayers();
     raceState = RACE;
     server->createAll();
-    double now;
-    double last = GetTime();
+    double nowPh, nowNet;
+    double lastPh = GetTime();
+    double lastNet = GetTime();
     while (1)
     {
-        now = GetTime();
-        if (now - last > 0)
+        nowPh = GetTime();
+        if (nowPh - lastPh > 0)
         {
-            physics->simulate(now - last);
+            physics->simulate(nowPh - lastPh);
         }
-        last = now;
+        lastPh = nowPh;
         ai->run();
         graphics->render();
+        nowNet = GetTime();
+        if (nowNet - lastNet > SC_SERVER_UPDATE_FREQ_SECONDS)
+            {
+                server->pushAgents();
+                lastNet = nowNet;
+            } 
         server->serverFrame();
         if ((profilerclock++ & 0x0F) == 0) error->pdisplay();
     }
