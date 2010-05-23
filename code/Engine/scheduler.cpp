@@ -13,8 +13,6 @@
 #include "Sound/sound.h"
 #include "Utilities/error.h"
 
-#define SC_CLIENT_UPDATE_FREQ_SECONDS .01
-#define SC_SERVER_UPDATE_FREQ_SECONDS .01
 
 using namespace std;
 
