@@ -66,6 +66,7 @@ void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
         return;
     }
 
+    glDisable(GL_LIGHTING);
     float l = dir.length();
     /* the 6 verts we need for the arrow */
     Vec3f_t verts[6];
@@ -89,6 +90,7 @@ void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
 
     glDisableClientState(GL_VERTEX_ARRAY);
 
+    glEnable(GL_LIGHTING);
 }
 
 void Graphics::render()
@@ -204,15 +206,11 @@ void Graphics::render(Agent * agent)
     if (agent->trail.size() > MAX_TRAIL_LENGTH)
         agent->trail.erase(agent->trail.begin());
 
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
 
-    glTranslatef(agent->kinematic.pos.x, agent->kinematic.pos.y, agent->kinematic.pos.z);
     glColor3f(1,1,1);
     DrawArrow(Vec3f(0.0, 0.0, 0.0), agent->kinematic.orientation_v);
 
-    glPopMatrix();
-    glColor3f(1,0,0);
+    glColor3f(0,0,0);
     render(agent->trail);
 }
 
@@ -223,12 +221,11 @@ void Graphics::render(AIController *aiController)
         return;
     }
 
-    glDisable(GL_LIGHTING);
     glColor3f(0,1,0);
-    render(aiController->path.knots);
 
     // Uncomment to render AI debug info
     //Kinematic k = aiController->agent->getKinematic();
+    //render(aiController->path.knots);
 
     //Vec3f closest = aiController->path.closestPoint(aiController->target);
     //glColor3f(0,1,0);
@@ -240,7 +237,6 @@ void Graphics::render(AIController *aiController)
     //    DrawArrow(k.pos, aiController->antiTarget - k.pos);
     //}
 
-    glEnable(GL_LIGHTING);
 
 }
 
@@ -334,12 +330,14 @@ void Graphics::render(std::vector<Vec3f> path)
 
     unsigned int i;
 
+    glDisable(GL_LIGHTING);
     glBegin(GL_LINE_STRIP);
     for (i = 0; i < path.size(); i++)
     {
         glVertex3f(path[i].x, path[i].y, path[i].z);
     }
     glEnd();
+    glEnable(GL_LIGHTING);
 }
 
 void Graphics::render(std::deque<Vec3f> path)
@@ -350,12 +348,14 @@ void Graphics::render(std::deque<Vec3f> path)
     }
 
     unsigned int i;
+    glDisable(GL_LIGHTING);
     glBegin(GL_LINE_STRIP);
     for (i = 0; i < path.size(); i++)
     {
         glVertex3f(path[i].x, path[i].y, path[i].z);
     }
     glEnd();
+    glEnable(GL_LIGHTING);
 
 }
 
