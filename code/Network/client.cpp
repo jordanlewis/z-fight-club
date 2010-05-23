@@ -254,6 +254,14 @@ void Client::checkForPackets()
     
     //Updates all agents based on their current steerinfo.  Should be
     //factored out into another function, prehaps?
+
+    error->pout(P_CLIENT);
+    return;
+}
+
+void Client::updateAgentsLocally(){
+    error->pin(P_CLIENT);
+
     WorldObject *wo = NULL;
     for (map<netObjID_t, WorldObject *>::iterator iter = netobjs.begin();
          iter != netobjs.end();
@@ -265,9 +273,8 @@ void Client::checkForPackets()
             }
         }
     }        
-
+    
     error->pout(P_CLIENT);
-    return;
 }
 
 void Client::sendJoinRequest(){

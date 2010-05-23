@@ -444,10 +444,13 @@ void Server::serverFrame()
                 break;
         }
     }
+    updateAgentsLocally();
+    error->pout(P_SERVER);
+}
 
-    
-    //Updates all agents based on their current steerinfo.  Should be
-    //factored out into another function, prehaps?
+//Updates all agents based on their current steerinfo.
+void Server::updateAgentsLocally(){
+
     WorldObject *wo = NULL;
     for (map<netObjID_t, WorldObject *>::iterator iter = netobjs.begin();
          iter != netobjs.end();
@@ -459,7 +462,4 @@ void Server::serverFrame()
             }
         }
     }        
-
-
-    error->pout(P_SERVER);
 }

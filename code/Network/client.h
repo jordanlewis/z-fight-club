@@ -56,6 +56,7 @@ class Client {
     int connectToServer();
     void pushToServer();
     void checkForPackets();
+    void updateAgentsLocally();
     void sendJoinRequest(); //Register yourself as a player in this game.
     void sendStartRequest(); //Request for the game to start.
     void disconnect();

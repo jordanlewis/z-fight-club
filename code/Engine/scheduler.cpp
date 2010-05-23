@@ -126,6 +126,7 @@ void Scheduler::clientLoopForever()
             break;
           case C_RACE:
             client->checkForPackets();
+            client->updateAgentsLocally();
             nowNet = GetTime();
             if (nowNet - lastNet > SC_CLIENT_UPDATE_FREQ_SECONDS) 
                 {
