@@ -278,3 +278,29 @@ void SphereInfo::draw()
     GLUquadric * quad = gluNewQuadric();
     gluSphere(quad, radius, 20, 20);
 }
+
+void ParticleInfo::draw()
+{
+    glColor3f(0.0, 1.0, 0.0);
+
+    float maxSize = 0.0f;
+    glGetFloatv( GL_POINT_SIZE_MAX_ARB, &maxSize );
+
+    if( maxSize > 100.0f )
+        maxSize = 100.0f;
+
+    glPointSize(maxSize);
+    glTexEnvf( GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE );
+    glEnable( GL_POINT_SPRITE_ARB );
+
+    glBindTexture(GL_TEXTURE_2D, texid);
+
+    /* glEnable(GL_POINT_SPRITE);
+
+    glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE); */
+    glBegin(GL_POINTS);
+    glVertex3i(0.0f, 0.0f, 0.0f);
+    glEnd();
+    /* glDisable(GL_POINT_SPRITE); */
+    glDisable(GL_POINT_SPRITE_ARB);
+}

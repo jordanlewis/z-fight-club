@@ -56,6 +56,21 @@ ObjMeshInfo::ObjMeshInfo(std::string filename)
     FreeImage(color);
 }
 
+ParticleInfo::ParticleInfo(std::string filename)
+{
+    World &world = World::getInstance();
+    Image2D_t *color = LoadImage((world.assetsDir + filename).c_str(), false, RGB_IMAGE);
+    
+    /* Initialize the textures */
+    glGenTextures(1, &texid);
+
+    glBindTexture(GL_TEXTURE_2D, texid);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    TexImage(color);
+    FreeImage(color);
+}
+
 SkyBoxInfo::SkyBoxInfo(std::string filename)
 {
     int i;
@@ -106,17 +121,26 @@ SkyBoxInfo::SkyBoxInfo(std::string filename)
 
 dGeomID SphereInfo::createGeom(dSpaceID space)
 { return dCreateSphere (space, radius); }
+
 dGeomID BoxInfo::createGeom(dSpaceID space)
 { return dCreateBox(space, lx, ly, lz); }
+
 dGeomID PlaneInfo::createGeom(dSpaceID space)
 { return dCreatePlane(space, a, b, c, d); }
+
 dGeomID RayInfo::createGeom(dSpaceID space)
 { return dCreateRay(space, len); }
+
 dGeomID TriMeshInfo::createGeom(dSpaceID space)
 { return dCreateTriMesh(space, meshID, NULL, NULL, NULL); }
+
 dGeomID ObjMeshInfo::createGeom(dSpaceID space)
 { return dCreateSphere (space, 1.0); }
+
 dGeomID SkyBoxInfo::createGeom(dSpaceID space)
+{ return dCreateSphere (space, 1.0); }
+
+dGeomID  ParticleInfo::createGeom(dSpaceID space)
 { return dCreateSphere (space, 1.0); }
 
 void SphereInfo::createMass(dMass * mass, float massVal)
@@ -138,6 +162,12 @@ void SkyBoxInfo::createMass(dMass * mass, float massVal)
 {
     dMassSetBoxTotal(mass, massVal, 1.0, 1.0, 1.0);
 }
+
+void ParticleInfo::createMass(dMass * mass, float massVal)
+{
+    dMassSetBoxTotal(mass, massVal, 1.0, 1.0, 1.0);
+}
+
 
 
 void SphereInfo::hton(RPGeomInfo *payload) {
