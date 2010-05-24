@@ -75,4 +75,19 @@ class TerminalMenu : public Menu
         TerminalMenu(Vec3f, string, void (*callback)());
 };
 
+class MiniMap : public Widget
+{
+  public:
+    MiniMap(Vec3f, Path *path);
+    Path *path;
+    void draw();
+};
+
+class Places : public Widget
+{
+  public:
+    Places(Vec3f);
+    void draw();
+};
+
 #endif

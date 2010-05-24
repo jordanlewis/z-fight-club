@@ -543,6 +543,14 @@ void AIManager::release(Agent *agent)
     }
 }
 
+static bool agentCmp(Agent *a, Agent *b)
+{
+    if (a->lapCounter != b->lapCounter)
+        return b->lapCounter < a->lapCounter;
+
+    return b->pathDistance < a->pathDistance;
+}
+
 void AIManager::run()
 {
     error->pin(P_AI);
@@ -563,6 +571,7 @@ void AIManager::run()
         if (NULL == agent)
             continue;
         agentDist = path->pointToDist(agent->getKinematic().pos);
+        agent->pathDistance = agentDist;
         knotDist  = path->knotDist(agent->pathPosition);
         if (agentDist > knotDist &&
             agentDist < knotDist + path->precision[agent->pathPosition])
@@ -577,6 +586,8 @@ void AIManager::run()
             }
         }
     }
+
+    sort(agentsSorted.begin(), agentsSorted.end(), agentCmp);
     error->pout(P_AI);
 }
 

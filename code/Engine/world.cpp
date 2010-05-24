@@ -312,6 +312,11 @@ void World::loadTrack(const char *file)
         path.precision.push_back(2);
     }
     path.computeDistances();
+
+    MiniMap *mm = new MiniMap(Vec3f(0,0,0), &path);
+    addWidget(mm);
+    Places *places = new Places(Vec3f(0,0,0));
+    addWidget(places);
 }
 
 Agent *World::placeAgent(int place)
@@ -368,9 +373,9 @@ void World::makePlayer()
     Input::getInstance().controlPlayer(p);
 
     Speedometer *s = new Speedometer(Vec3f(0,0,0), agent);
-    widgets.push_back(s);
+    addWidget(s);
     LapCounter *lc = new LapCounter(Vec3f(0,0,0), agent);
-    widgets.push_back(lc);
+    addWidget(lc);
 
 }
 
@@ -380,6 +385,13 @@ void World::makeAgents()
     for (int i = 0; i < AIQty; i++)
     {
         makeAI();
+    }
+    AIManager &aim = AIManager::getInstance();
+    for (unsigned int i = 0; i < wobjects.size(); i++)
+    {
+        if (!wobjects[i]->agent)
+            continue;
+        aim.agentsSorted.push_back(wobjects[i]->agent);
     }
 }
 

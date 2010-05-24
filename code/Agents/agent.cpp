@@ -24,11 +24,13 @@ SteerInfo::SteerInfo() : acceleration(0), rotation(0), weapon(NONE), fire(0)
 
 Agent::Agent() : steerInfo(), kinematic(), pathPosition(0), lapCounter(0)
 {
+    id = maxId++;
 }
 
 Agent::Agent(Vec3f position) : steerInfo(), kinematic(position),
                                pathPosition(0), lapCounter(0)
 {
+    id = maxId++;
 }
 
 /* \brief initialize an agent class
@@ -39,6 +41,7 @@ Agent::Agent(Vec3f position, float orientation)
             : steerInfo(), kinematic(position, Vec3f(0,0,0), orientation),
               pathPosition(0), lapCounter(0)
 {
+    id = maxId++;
 }
 
 /* \brief Calculate this agent's current maximum acceleration as a function

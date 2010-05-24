@@ -1,6 +1,7 @@
 #include "hud.h"
 #include "Agents/agent.h"
 #include "Engine/world.h"
+#include "Agents/ai.h"
 #include <SDL/SDL.h>
 #include <cmath>
 #include <sstream>
@@ -21,11 +22,13 @@ extern "C" {
 Widget::Widget(Vec3f pos) : pos(pos)
 {}
 
-static void drawText(Vec3f pos, string text)
+static void drawText(Vec3f pos, string text, void *font)
 {
+    if (font == NULL)
+        font = GLUT_BITMAP_HELVETICA_18;
     glRasterPos2f(pos.x, pos.y);
     for (unsigned int i = 0; i < text.size(); i++)
-        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text[i]);
+        glutBitmapCharacter(font, text[i]);
 }
 
 Speedometer::Speedometer(Vec3f pos, Agent *agent)
@@ -61,7 +64,7 @@ void Speedometer::draw()
     glEnable(GL_DEPTH_TEST);
 
 
-    
+
 
     if (agent->getKinematic().forwardSpeed() > 0)
         glColor3f(0,1,0);
@@ -86,7 +89,7 @@ void LapCounter::draw()
     stringstream ss;
     ss << "lap " << agent->lapCounter;
     glColor3f(0,0,1);
-    drawText(Vec3f(30, ypos, 0), ss.str());
+    drawText(Vec3f(30, ypos, 0), ss.str(), NULL);
 }
 
 StopLight::StopLight(Vec3f pos) : Widget(pos), nLit(0)
@@ -150,3 +153,54 @@ SubMenu::SubMenu(Vec3f pos, string name, list<Menu *> items)
 TerminalMenu::TerminalMenu(Vec3f pos, string name, void (*callback)())
     : Menu(pos, name), callback(callback)
 {}
+
+MiniMap::MiniMap(Vec3f pos, Path *path) : Widget(pos), path(path)
+{}
+
+void MiniMap::draw()
+{
+    World &world = World::getInstance();
+    float yoff = world.camera.getHres() - 100;
+    float xoff = 20;
+    Vec3f vert;
+    stringstream ss;
+    glBegin(GL_LINE_LOOP);
+    glColor3f(1,0,1);
+    for (unsigned int i = 0; i < path->knots.size(); i++)
+    {
+        vert = path->knots[i];
+        glVertex2f(vert.x + xoff, vert.z + yoff);
+    }
+    glEnd();
+
+    glColor3f(0,0,1);
+    for (unsigned int i = 0; i < world.wobjects.size(); i++)
+    {
+        if (!world.wobjects[i]->agent)
+            continue;
+        vert = world.wobjects[i]->agent->getKinematic().pos;
+        vert.x += xoff;
+        vert.y = vert.z + yoff;
+        ss.seekp(0);
+        ss << world.wobjects[i]->agent->id;
+        drawText(vert, ss.str(), GLUT_BITMAP_HELVETICA_10);
+    }
+}
+
+Places::Places(Vec3f pos) : Widget(pos)
+{}
+
+void Places::draw()
+{
+    AIManager &aim = AIManager::getInstance();
+    World &world = World::getInstance();
+    stringstream ss;
+    ss << "places: ";
+    for (unsigned int i = 0; i < aim.agentsSorted.size(); i++)
+    {
+        ss << aim.agentsSorted[i]->id << ", ";
+    }
+    glColor3f(0,0,1);
+    drawText(Vec3f(100, world.camera.getHres() - 20, 0), ss.str(),
+             GLUT_BITMAP_HELVETICA_18);
+}

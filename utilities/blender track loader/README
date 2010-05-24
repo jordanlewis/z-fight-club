@@ -1,0 +1,4 @@
+How to use (I think):
+ -: run setup.py in the simplejson folder.
+ -: copy the simplejson subfolder into the /lib directory of your python 2.5 installation
+ -: The location of the trackfile to load is hardcoded into the script, so just change the string at the top to choose which file you want to load

@@ -48,6 +48,7 @@ class Agent
 
     SteerInfo steerInfo;   /* !<car's steering info, set by AI/human */
     WorldObject *worldObject; /* !<back pointer to world object */
+    uint32_t id;
     static float mass;     /* must be nonzero! */
     static float power;     /* p = m*v*a.  This and mass control accel rate  */
     static float maxRotate;    /* !<how fast we're allowed to rotate */
@@ -61,6 +62,7 @@ class Agent
 
     unsigned int pathPosition; /*!< index into world path */
     unsigned int lapCounter;   /*!< how many laps have we completed */
+    unsigned int pathDistance; /*!< distance around track */
 
     void hton(RPAgent *payload); /* Package the agent for network transfer */
     void ntoh(RPAgent *payload); /* Unpackage an agent from network transfer */
