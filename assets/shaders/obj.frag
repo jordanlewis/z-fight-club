@@ -26,7 +26,7 @@ void main()
 	
         gl_FragColor = 
             vec4(
-                intensity
+                intensity *
                 vec3(texture2D(color_tex, gl_TexCoord[0].st)), 1.0); 
 			//vec4(
 			//		(pow(intensity, phong_exp) * gl_LightSource[0].specular.rgb) * 

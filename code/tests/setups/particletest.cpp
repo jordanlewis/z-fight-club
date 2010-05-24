@@ -12,11 +12,11 @@ void testSetup()
 
     Vec3f position = Vec3f(40.0, 10.0, 8.0);
     Vec3f area = Vec3f(1.0, 1.0, 1.0);
-    Vec3f velocity = Vec3f(0.0, -5.0, 0.0);
-    Vec3f velocity_pm = Vec3f(1.0, 1.0, 1.0);
+    Vec3f velocity = Vec3f(-20.0, 0.0, 0.0);
+    Vec3f velocity_pm = Vec3f(0.0, 0.0, 0.0);
     float ttl = 5.0;
-    float ttl_pm = 1.0;
-    float birthRate = 5.0;
+    float ttl_pm = 0.0;
+    float birthRate = 300.0;
 
     ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/default.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate);
     Kinematic *k = new Kinematic(position, Vec3f(0,0,0), M_PI/2);

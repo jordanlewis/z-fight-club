@@ -152,9 +152,8 @@ class Particle
     public:
         Vec3f   pos;
         Vec3f   vel;
-        float   birth;
         float   ttl;
-        Particle(Vec3f, Vec3f, float, float);
+        Particle(Vec3f, Vec3f, float);
         ~Particle();
 };
 
