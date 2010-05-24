@@ -1,7 +1,7 @@
 #include "vec3f.h"
 #include <cmath>
 #include <vector>
-#include <stdlib>
+#include <stdlib.h>
 #include <deque>
 
 //#define EPSILON 2e-6 this gets defined in vector.h now

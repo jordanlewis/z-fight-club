@@ -1,5 +1,5 @@
 #include <ode/ode.h>
-#include <stdlib>
+#include <stdlib.h>
 #include "geominfo.h"
 #include <string>
 #include "Network/racerpacket.h"
@@ -82,12 +82,12 @@ ParticleSystemInfo::ParticleSystemInfo(std::string filename, Vec3f area, Vec3f v
     lastUpdate = GetTime();
 }
 
-void ParticleSystemInfo::update(float time)
+void ParticleSystemInfo::update(float dt)
 {
-    float dt = time - lastUpdate;
 
     for(std::list<Particle *>::iterator i = particles.begin(); i != particles.end(); i++) {
-        if (((*i)->birth + (*i)->ttl) > time)
+        (*i)->ttl -= dt;
+        if ((*i)->ttl < 0.0)
             i = particles.erase(i);
         else
             (*i)->pos += dt * (*i)->vel; 
@@ -107,11 +107,12 @@ void ParticleSystemInfo::update(float time)
             float p_ttl = ttl;
             p_ttl += ((float) rand() / (float) RAND_MAX - 0.5f) * 2 * ttl_pm;
 
-            Particle *particle = new Particle(p_pos, p_vel, p_ttl, time);
+            Particle *particle = new Particle(p_pos, p_vel, p_ttl, lastUpdate + dt);
 
             particles.push_back(particle);
         }
     }
+    lastUpdate += dt;
 }
 
 SkyBoxInfo::SkyBoxInfo(std::string filename)

@@ -10,6 +10,8 @@
 #include "Agents/agent.h"
 #include "Utilities/vec3f.h"
 #include "Utilities/quat.h"
+#include "Engine/geominfo.h"
+#include "Graphics/gobject.h"
 
 using namespace std;
 
@@ -53,6 +55,13 @@ void Physics::simulate(float dt)
     {
         for (iter = world.wobjects.begin(); iter != world.wobjects.end();iter++)
         {
+            if ((*iter)->gobject && (*iter)->gobject->geominfo) {
+                ParticleSystemInfo *particles = dynamic_cast<ParticleSystemInfo *>((*iter)->gobject->geominfo);
+                if (particles) {
+                    /* we have a particle system */
+                    particles->update(dt);
+                }
+            }
             if (!(*iter)->agent)
                 continue;
             a = (*iter)->agent;

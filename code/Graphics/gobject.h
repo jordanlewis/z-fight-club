@@ -12,5 +12,7 @@ class GObject
     GObject(GeomInfo *geominfo);
     void draw(Vec3f pos, Quatf_t quat);
     void draw(Vec3f pos, Quatf_t quat, Agent *agent);
+
+    friend class Physics;
 };
 #endif
