@@ -58,9 +58,14 @@ ObjMeshInfo::ObjMeshInfo(std::string filename)
     FreeImage(color);
 }
 
-Particle::Particle(Vec3f pos, Vec3f vel, float ttl, float birth)
-    : pos(pos), vel(vel), birth(birth)
+Particle::Particle(Vec3f pos, Vec3f vel, float ttl)
+    : pos(pos), vel(vel), ttl(ttl)
 {}
+
+bool isDead(Particle *p)
+{
+    return p->ttl < 0.0;
+}
 
 Particle::~Particle()
 {}
@@ -93,6 +98,8 @@ void ParticleSystemInfo::update(float dt)
             (*i)->pos += dt * (*i)->vel; 
     }
 
+    particles.remove_if(isDead);
+
     float random;
     for (int j = 0; j < birthRate; j++) {
         random = (float) rand() / (float) RAND_MAX;
@@ -107,7 +114,7 @@ void ParticleSystemInfo::update(float dt)
             float p_ttl = ttl;
             p_ttl += ((float) rand() / (float) RAND_MAX - 0.5f) * 2 * ttl_pm;
 
-            Particle *particle = new Particle(p_pos, p_vel, p_ttl, lastUpdate + dt);
+            Particle *particle = new Particle(p_pos, p_vel, p_ttl);
 
             particles.push_back(particle);
         }
