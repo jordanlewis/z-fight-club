@@ -1,6 +1,7 @@
 #include "hud.h"
 #include "Agents/agent.h"
 #include "Engine/world.h"
+#include "Agents/ai.h"
 #include <SDL/SDL.h>
 #include <cmath>
 #include <sstream>
@@ -63,7 +64,7 @@ void Speedometer::draw()
     glEnable(GL_DEPTH_TEST);
 
 
-    
+
 
     if (agent->getKinematic().forwardSpeed() > 0)
         glColor3f(0,1,0);
@@ -139,6 +140,8 @@ MiniMap::MiniMap(Vec3f pos, Path *path) : Widget(pos), path(path)
 void MiniMap::draw()
 {
     World &world = World::getInstance();
+    float yoff = world.camera.getHres() - 100;
+    float xoff = 20;
     Vec3f vert;
     stringstream ss;
     glBegin(GL_LINE_LOOP);
@@ -146,19 +149,38 @@ void MiniMap::draw()
     for (unsigned int i = 0; i < path->knots.size(); i++)
     {
         vert = path->knots[i];
-        glVertex2f(vert.x, vert.z + 10);
+        glVertex2f(vert.x + xoff, vert.z + yoff);
     }
     glEnd();
 
-    glColor3f(0,1,0);
+    glColor3f(0,0,1);
     for (unsigned int i = 0; i < world.wobjects.size(); i++)
     {
         if (!world.wobjects[i]->agent)
             continue;
         vert = world.wobjects[i]->agent->getKinematic().pos;
-        vert.y = vert.z + 10;
+        vert.x += xoff;
+        vert.y = vert.z + yoff;
         ss.seekp(0);
         ss << world.wobjects[i]->agent->id;
         drawText(vert, ss.str(), GLUT_BITMAP_HELVETICA_10);
     }
+}
+
+Places::Places(Vec3f pos) : Widget(pos)
+{}
+
+void Places::draw()
+{
+    AIManager &aim = AIManager::getInstance();
+    World &world = World::getInstance();
+    stringstream ss;
+    ss << "places: ";
+    for (unsigned int i = 0; i < aim.agentsSorted.size(); i++)
+    {
+        ss << aim.agentsSorted[i]->id << ", ";
+    }
+    glColor3f(0,0,1);
+    drawText(Vec3f(100, world.camera.getHres() - 20, 0), ss.str(),
+             GLUT_BITMAP_HELVETICA_18);
 }

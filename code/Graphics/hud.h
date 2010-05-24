@@ -58,4 +58,11 @@ class MiniMap : public Widget
     void draw();
 };
 
+class Places : public Widget
+{
+  public:
+    Places(Vec3f);
+    void draw();
+};
+
 #endif
