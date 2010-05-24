@@ -170,7 +170,7 @@ class ParticleSystemInfo : public GeomInfo
         float                   birthRate;    /* !< mean number of particle births per second */
         float                   lastUpdate;   /* !< time the Particle system was last updated */
         std::list<Particle *>     particles;    /* !< the live particles in the system */
-        ParticleSystemInfo(std::string, Vec3f, Vec3f, Vec3f, float, float);
+        ParticleSystemInfo(std::string, Vec3f, Vec3f, Vec3f, float, float, float);
         ~ParticleSystemInfo();
         dGeomID createGeom(dSpaceID space);
         void createMass(dMass *, float);

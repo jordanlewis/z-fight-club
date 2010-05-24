@@ -65,8 +65,8 @@ Particle::Particle(Vec3f pos, Vec3f vel, float ttl, float birth)
 Particle::~Particle()
 {}
 
-ParticleSystemInfo::ParticleSystemInfo(std::string filename, Vec3f area, Vec3f velocity, Vec3f velocity_pm, float ttl, float ttl_pm)
-    : GeomInfo(), area(area), velocity(velocity), velocity_pm(velocity_pm), ttl(ttl), ttl_pm(ttl_pm)
+ParticleSystemInfo::ParticleSystemInfo(std::string filename, Vec3f area, Vec3f velocity, Vec3f velocity_pm, float ttl, float ttl_pm, float birthRate)
+    : GeomInfo(), area(area), velocity(velocity), velocity_pm(velocity_pm), ttl(ttl), ttl_pm(ttl_pm), birthRate(birthRate)
 {
     World &world = World::getInstance();
     Image2D_t *color = LoadImage((world.assetsDir + filename).c_str(), false, RGB_IMAGE);

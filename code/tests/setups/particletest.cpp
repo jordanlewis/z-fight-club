@@ -16,8 +16,9 @@ void testSetup()
     Vec3f velocity_pm = Vec3f(1.0, 1.0, 1.0);
     float ttl = 5.0;
     float ttl_pm = 1.0;
+    float birthRate = 5.0;
 
-    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/default.png", area, velocity, velocity_pm, ttl, ttl_pm);
+    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/default.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate);
     Kinematic *k = new Kinematic(position, Vec3f(0,0,0), M_PI/2);
     GObject *gobj = new GObject(particleSystem);
     WorldObject *wobj = new WorldObject(NULL, gobj, NULL, NULL);

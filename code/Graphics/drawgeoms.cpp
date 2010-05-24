@@ -283,13 +283,7 @@ void ParticleSystemInfo::draw()
 {
     glColor3f(0.0, 1.0, 0.0);
 
-    float maxSize = 0.0f;
-    glGetFloatv( GL_POINT_SIZE_MAX_ARB, &maxSize );
-
-    if( maxSize > 100.0f )
-        maxSize = 100.0f;
-
-    glPointSize(maxSize);
+    glPointSize(5);
     glTexEnvf( GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE );
     glEnable( GL_POINT_SPRITE_ARB );
 
