@@ -1,4 +1,5 @@
 #include <ode/ode.h>
+#include <stdlib>
 #include "geominfo.h"
 #include <string>
 #include "Network/racerpacket.h"
@@ -6,6 +7,7 @@
 extern "C" {
     #include "Parser/obj-reader.h"
     #include "Utilities/load-png.h"
+    #include "Utilities/defs.h"
 }
 
 BoxInfo::BoxInfo()
@@ -56,7 +58,7 @@ ObjMeshInfo::ObjMeshInfo(std::string filename)
     FreeImage(color);
 }
 
-Particle::Particle(Vec3f pos, Vec3f vel, float birth)
+Particle::Particle(Vec3f pos, Vec3f vel, float ttl, float birth)
     : pos(pos), vel(vel), birth(birth)
 {}
 
@@ -77,10 +79,39 @@ ParticleSystemInfo::ParticleSystemInfo(std::string filename, Vec3f area, Vec3f v
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     TexImage(color);
     FreeImage(color);
+    lastUpdate = GetTime();
 }
 
 void ParticleSystemInfo::update(float time)
 {
+    float dt = time - lastUpdate;
+
+    for(std::list<Particle *>::iterator i = particles.begin(); i != particles.end(); i++) {
+        if (((*i)->birth + (*i)->ttl) > time)
+            i = particles.erase(i);
+        else
+            (*i)->pos += dt * (*i)->vel; 
+    }
+
+    float random;
+    for (int j = 0; j < birthRate; j++) {
+        random = (float) rand() / (float) RAND_MAX;
+        if (random < dt) {
+            /* setup the particle including randomization */
+            Vec3f p_pos = Vec3f(0.0f, 0.0f, 0.0f);
+            p_pos += randomVec3f(area);
+
+            Vec3f p_vel = velocity;
+            p_vel += randomVec3f(velocity_pm);
+
+            float p_ttl = ttl;
+            p_ttl += ((float) rand() / (float) RAND_MAX - 0.5f) * 2 * ttl_pm;
+
+            Particle *particle = new Particle(p_pos, p_vel, p_ttl, time);
+
+            particles.push_back(particle);
+        }
+    }
 }
 
 SkyBoxInfo::SkyBoxInfo(std::string filename)
@@ -128,8 +159,6 @@ SkyBoxInfo::SkyBoxInfo(std::string filename)
         FreeImage(image);
     }
 }
-
-
 
 dGeomID SphereInfo::createGeom(dSpaceID space)
 { return dCreateSphere (space, radius); }

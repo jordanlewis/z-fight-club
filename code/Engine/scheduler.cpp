@@ -12,6 +12,7 @@
 #include "Graphics/hud.h"
 #include "Physics/physics.h"
 #include "Sound/sound.h"
+#include "Sound/sobject.h"
 #include "Utilities/error.h"
 
 
@@ -59,6 +60,9 @@ void Scheduler::soloLoopForever()
         {
             if (sinceStart > curCount)
             {
+                WorldObject *w = new WorldObject(NULL, NULL, new SObject("23670.wav", GetTime(), AL_FALSE), NULL);
+                w->setPos(world->camera.getPos());
+                world->addObject(w);
                 sl->nLit = curCount;
                 if (curCount == 3)
                 {

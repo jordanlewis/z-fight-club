@@ -5,7 +5,7 @@
 #include <ode/ode.h>
 #include "Utilities/vec3f.h"
 #include <string>
-#include <deque>
+#include <list>
 extern "C" {
     #include "Parser/obj-reader.h"
     #include "Utilities/load-png.h"
@@ -153,7 +153,8 @@ class Particle
         Vec3f   pos;
         Vec3f   vel;
         float   birth;
-        Particle(Vec3f, Vec3f, float);
+        float   ttl;
+        Particle(Vec3f, Vec3f, float, float);
         ~Particle();
 };
 
@@ -166,8 +167,9 @@ class ParticleSystemInfo : public GeomInfo
         Vec3f                   velocity_pm;  /* !< variance in velocity */
         float                   ttl;          /* !< lifetime of each particle */
         float                   ttl_pm;       /* !< variance in lifetime of each particle */
-        float                   last_update;  /* !< time the Particle system was last updated */
-        std::deque<Particle>   particles;    /* !< the live particles in the system */
+        float                   birthRate;    /* !< mean number of particle births per second */
+        float                   lastUpdate;   /* !< time the Particle system was last updated */
+        std::list<Particle *>     particles;    /* !< the live particles in the system */
         ParticleSystemInfo(std::string, Vec3f, Vec3f, Vec3f, float, float);
         ~ParticleSystemInfo();
         dGeomID createGeom(dSpaceID space);
