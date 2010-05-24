@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
         testSetup();
         scheduler.welcomeScreen();
         world.makeAgents();
-	world.makeSkybox();
+        world.makeSkybox();
         scheduler.soloLoopForever();
     }
     if (world.runType == CLIENT)
@@ -164,6 +164,7 @@ int main(int argc, char *argv[])
             return -1;
         }
         scheduler.welcomeScreen();
+        world.makeSkybox();
         scheduler.clientLoopForever();
     }
     if (world.runType == SERVER)
@@ -174,6 +175,7 @@ int main(int argc, char *argv[])
             cerr << "Fatal error:  Server could not be established" << endl;
             return -1;
         }
+        world.makeSkybox();
         scheduler.serverLoopForever();
     }
 
