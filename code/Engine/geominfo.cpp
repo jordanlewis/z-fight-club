@@ -62,6 +62,11 @@ Particle::Particle(Vec3f pos, Vec3f vel, float ttl, float birth)
     : pos(pos), vel(vel), birth(birth)
 {}
 
+bool isDead(Particle *p)
+{
+    return p->ttl < 0;
+}
+
 Particle::~Particle()
 {}
 
@@ -79,19 +84,18 @@ ParticleSystemInfo::ParticleSystemInfo(std::string filename, Vec3f area, Vec3f v
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     TexImage(color);
     FreeImage(color);
-    lastUpdate = GetTime();
+    lastUpdate = 0;
 }
 
 void ParticleSystemInfo::update(float dt)
 {
-
-    for(std::list<Particle *>::iterator i = particles.begin(); i != particles.end(); i++) {
+    std::list<Particle *>::iterator i;
+    for(i = particles.begin(); i != particles.end(); i++) {
         (*i)->ttl -= dt;
-        if ((*i)->ttl < 0.0)
-            i = particles.erase(i);
-        else
-            (*i)->pos += dt * (*i)->vel; 
+        (*i)->pos += dt * (*i)->vel; 
     }
+
+//    particles.remove_if(isDead);
 
     float random;
     for (int j = 0; j < birthRate; j++) {
@@ -105,7 +109,7 @@ void ParticleSystemInfo::update(float dt)
             p_vel += randomVec3f(velocity_pm);
 
             float p_ttl = ttl;
-            p_ttl += ((float) rand() / (float) RAND_MAX - 0.5f) * 2 * ttl_pm;
+            /* p_ttl += ((float) rand() / (float) RAND_MAX - 0.5f) * 2 * ttl_pm; */
 
             Particle *particle = new Particle(p_pos, p_vel, p_ttl, lastUpdate + dt);
 

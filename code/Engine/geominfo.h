@@ -157,6 +157,7 @@ class Particle
         Particle(Vec3f, Vec3f, float, float);
         ~Particle();
 };
+bool isDead(Particle *p);
 
 class ParticleSystemInfo : public GeomInfo
 {
