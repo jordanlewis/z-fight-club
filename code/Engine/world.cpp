@@ -312,6 +312,9 @@ void World::loadTrack(const char *file)
         path.precision.push_back(2);
     }
     path.computeDistances();
+
+    MiniMap *mm = new MiniMap(Vec3f(0,0,0), &path);
+    widgets.push_back(mm);
 }
 
 Agent *World::placeAgent(int place)
