@@ -9,6 +9,7 @@ class GObject
 {
     GeomInfo *geominfo;
   public:
+    float agentBank;
     GObject(GeomInfo *geominfo);
     void draw(Vec3f pos, Quatf_t quat);
     void draw(Vec3f pos, Quatf_t quat, Agent *agent);
