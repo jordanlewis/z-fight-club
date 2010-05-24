@@ -13,6 +13,7 @@ class Input
     PlayerController *player;
     Client *client;
     Error *error;
+    Scheduler *scheduler;
   public:
     static Input &getInstance();
     PlayerController &getPlayerController();

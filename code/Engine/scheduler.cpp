@@ -178,8 +178,9 @@ void Scheduler::serverLoopForever()
     double nowPh, nowNet;
     double lastPh = GetTime();
     double lastNet = GetTime();
-    while (1)
+    while (raceState != ALL_DONE)
     {
+        input->processInput(); /* hoping to get quit */
         nowPh = GetTime();
         if (nowPh - lastPh > 0)
         {
