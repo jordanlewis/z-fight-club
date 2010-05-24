@@ -130,3 +130,23 @@ void Text::draw()
     for (unsigned int i = 0; i < text.size(); i++)
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text[i]);
 }
+
+Menu::Menu(Vec3f pos, string name)
+    : Widget(pos), name(name)
+{}
+
+void Menu::draw()
+{
+}
+
+SubMenu::SubMenu(Vec3f pos, string name)
+    : Menu(pos, name)
+{}
+
+SubMenu::SubMenu(Vec3f pos, string name, list<Menu *> items)
+    : Menu(pos, name), items(items)
+{}
+
+TerminalMenu::TerminalMenu(Vec3f pos, string name, void (*callback)())
+    : Menu(pos, name), callback(callback)
+{}
