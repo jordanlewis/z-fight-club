@@ -11,19 +11,21 @@ float        Agent::height = AG_DEFAULT_HEIGHT;
 float        Agent::width = AG_DEFAULT_WIDTH;
 float        Agent::depth = AG_DEFAULT_DEPTH;
 
-Agent::Agent()
-{
-}
-
 /* \brief initialize a SteerInfo class
  */
 SteerInfo::SteerInfo() : acceleration(0), rotation(0), weapon(NONE), fire(0)
 {
 }
 
+
 /* \brief initialize an agent class
  * \param position the agent's initial position
  */
+
+Agent::Agent() : steerInfo(), kinematic(), pathPosition(0), lapCounter(0)
+{
+}
+
 Agent::Agent(Vec3f position) : steerInfo(), kinematic(position),
                                pathPosition(0), lapCounter(0)
 {
