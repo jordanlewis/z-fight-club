@@ -59,7 +59,8 @@ void Physics::simulate(float dt)
                 ParticleSystemInfo *particles = dynamic_cast<ParticleSystemInfo *>((*iter)->gobject->geominfo);
                 if (particles) {
                     /* we have a particle system */
-                    particles->update(dt);
+                    Vec3f pos = (*iter)->getPos() + (*iter)->parent->getPos();
+                    particles->update(pos, dt);
                 }
             }
             if (!(*iter)->agent)

@@ -87,15 +87,18 @@ ParticleSystemInfo::ParticleSystemInfo(std::string filename, Vec3f area, Vec3f v
     lastUpdate = GetTime();
 }
 
-void ParticleSystemInfo::update(float dt)
+/* pos should be the position of the parent wobject */
+void ParticleSystemInfo::update(Vec3f newpos, float dt)
 {
-
+    Vec3f dpos = newpos - pos;
     for(std::list<Particle *>::iterator i = particles.begin(); i != particles.end(); i++) {
         (*i)->ttl -= dt;
         if ((*i)->ttl < 0.0)
             i = particles.erase(i);
-        else
+        else {
             (*i)->pos += dt * (*i)->vel; 
+            (*i)->pos -= dpos;
+        }
     }
 
     particles.remove_if(isDead);
@@ -120,6 +123,7 @@ void ParticleSystemInfo::update(float dt)
         }
     }
     lastUpdate += dt;
+    pos = newpos;
 }
 
 SkyBoxInfo::SkyBoxInfo(std::string filename)

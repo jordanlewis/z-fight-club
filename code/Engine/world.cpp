@@ -35,6 +35,8 @@ WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject, Age
     {
         agent->worldObject = this;
     }
+
+    parent = NULL;
 }
 
 Vec3f WorldObject::getPos()
@@ -73,9 +75,12 @@ void WorldObject::draw()
         return;
     Quatf_t quat;
     getQuat(quat);
-    if (agent == NULL)
-        gobject->draw(getPos(), quat);
-    else
+    if (agent == NULL) {
+        Vec3f pos = getPos();
+        if (parent != NULL)
+            pos += parent->getPos();
+        gobject->draw(pos, quat);
+    } else
         gobject->draw(getPos(), quat, agent);
 }
 
@@ -164,6 +169,23 @@ void World::addAgent(Agent *agent)
     addObject(wobject);
 
 
+    /* create a particle generator for the agent */
+    Vec3f position = Vec3f(0.0, .5, 0.0);
+    Vec3f area = Vec3f(.1, .1, .1);
+    Vec3f velocity = Vec3f(-1.0, 0.0, 0.0);
+    Vec3f velocity_pm = Vec3f(0.0, 0.0, 0.0);
+    float ttl = 2.0;
+    float ttl_pm = 1.0;
+    float birthRate = 200.0;
+
+    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/default.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate);
+    GObject *particle_gobj = new GObject(particleSystem);
+    WorldObject *particle_wobj = new WorldObject(NULL, particle_gobj, NULL, NULL);
+    particle_wobj->parent = wobject;
+    particle_wobj->setPos(position);
+
+
+    addObject(particle_wobj);
 }
 
 void World::loadTrack(const char *file)

@@ -163,6 +163,7 @@ class ParticleSystemInfo : public GeomInfo
 {
     public:
         GLuint                  texid;        /* !< the texture to put on the sprite */
+        Vec3f                   pos;          /* !< last position as set in update */
         Vec3f                   area;         /* !< upper corner of the box particles can spawn in */
         Vec3f                   velocity;     /* !< the starting velocity of the particles */
         Vec3f                   velocity_pm;  /* !< variance in velocity */
@@ -176,6 +177,6 @@ class ParticleSystemInfo : public GeomInfo
         dGeomID createGeom(dSpaceID space);
         void createMass(dMass *, float);
         void draw();
-        void update(float);
+        void update(Vec3f, float);
 };
 #endif
