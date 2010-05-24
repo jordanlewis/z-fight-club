@@ -17,6 +17,5 @@ void testSetup()
     PMoveable *geom = new PMoveable(k, 10, mesh);
     GObject *gobj = new GObject(mesh);
     WorldObject *wobj = new WorldObject(geom, gobj, NULL, NULL);
-
     world.addObject(wobj);
 }

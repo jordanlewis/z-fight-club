@@ -42,7 +42,6 @@ class WorldObject
     GObject *gobject;
     SObject *sobject;
     Agent *agent;
-    WorldObject *parent;
     PlayerController *player; // for server
     WorldObject(PGeom * pobject, GObject * gobject, SObject * sobject,
                 Agent * agent);

@@ -35,7 +35,6 @@ WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject, Age
     {
         agent->worldObject = this;
     }
-    parent = NULL;
 }
 
 Vec3f WorldObject::getPos()
@@ -74,14 +73,10 @@ void WorldObject::draw()
         return;
     Quatf_t quat;
     getQuat(quat);
-    if (agent == NULL) {
-        Vec3f pos = getPos();
-        if (parent != NULL)
-            pos += parent->getPos();
-        gobject->draw(pos, quat);
-    } else {
+    if (agent == NULL)
+        gobject->draw(getPos(), quat);
+    else
         gobject->draw(getPos(), quat, agent);
-    }
 }
 
 World::World() :

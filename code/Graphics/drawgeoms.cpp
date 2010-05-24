@@ -11,7 +11,6 @@
 #include "Engine/world.h"
 #include "Utilities/vector.h"
 #include <string>
-#include "Utilities/error.h"
 extern "C" {
     #include "Parser/obj-reader.h"
     #include "shader.h"
@@ -291,18 +290,12 @@ void ParticleSystemInfo::draw()
     glBindTexture(GL_TEXTURE_2D, texid);
 
     /* glEnable(GL_POINT_SPRITE);
-    glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE); */
 
-    int total_sprites = 0;
+    glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE); */
     glBegin(GL_POINTS);
     for(std::list<Particle *>::iterator i = particles.begin(); i != particles.end(); i++) {
         glVertex3f((*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
-        total_sprites++;
     }
-    Error &error = Error::getInstance();
-    error.log(GRAPHICS, TRIVIAL, "Total particles: ");
-    error.log(GRAPHICS, TRIVIAL, total_sprites);
-    error.log(GRAPHICS, TRIVIAL, "\n");
     glEnd();
     /* glDisable(GL_POINT_SPRITE); */
     glDisable(GL_POINT_SPRITE_ARB);
