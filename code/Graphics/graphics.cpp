@@ -17,10 +17,12 @@ extern "C" {
 #if defined(__APPLE__) && defined(__MACH__)
 #  include <OpenGL/gl.h>
 #  include <OpenGL/glu.h>
+#  include <GLUT/glut.h>
 #else
 #  define GL_GLEXT_PROTOTYPES
 #  include <GL/gl.h>
 #  include <GL/glu.h>
+#  include <GL/glut.h>
 #endif
 
 Graphics Graphics::_instance;
@@ -55,6 +57,8 @@ void Graphics::initGraphics()
     }
 
     SDL_WM_SetCaption("z fight club presents: Tensor Rundown", "Tensor Rundown");
+    int argc = 0;
+    glutInit(&argc, NULL);
     initialized = true;
 
 }
@@ -241,14 +245,6 @@ void Graphics::render(TrackData_t *track)
         glDisable(GL_LINE_STIPPLE);
         glEnable(GL_LIGHTING);
 
-    }
-}
-
-void Graphics::render(Hud *hud)
-{
-    for (vector<Widget>::iterator it = hud->widget.begin(); it != hud->widget.end(); it++)
-    {
-        it->draw();
     }
 }
 

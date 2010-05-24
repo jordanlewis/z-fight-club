@@ -4,6 +4,7 @@
 #include "Network/client.h"
 #include "Agents/player.h"
 #include "Utilities/error.h"
+#include "Engine/scheduler.h"
 
 Input Input::_instance;
 
@@ -15,26 +16,28 @@ int Input::processInput()
     SDL_Event SDLevt;
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
-    /* XXX little hack so that we can run without a player - jdoliner Apr 26 */
-    while (SDL_PollEvent(&SDLevt) && player) {
+    /* XXX different hack so that we can run get input without a player - nick May 24 */
+    while (SDL_PollEvent(&SDLevt)) {
         switch(SDLevt.type) {
             case SDL_KEYDOWN:
                 switch (SDLevt.key.keysym.sym) {
                     case SDLK_q:
+                        if (world.runType == CLIENT) client->clientState = C_DONE;
+                        if (world.runType == SERVER) scheduler->raceState = ALL_DONE;
                         error->pout(P_INPUT);
                         return 1;
                     case SDLK_LEFT:
-                        player->setTurnState(LEFT); break;
+                        if (player) player->setTurnState(LEFT); break;
                     case SDLK_RIGHT:
-                        player->setTurnState(RIGHT); break;
+                        if (player) player->setTurnState(RIGHT); break;
                     case SDLK_UP:
-                        player->setEngineState(ACCELERATE); break;
+                        if (player) player->setEngineState(ACCELERATE); break;
                     case SDLK_DOWN:
-                        player->setEngineState(REVERSE); break;
+                        if (player) player->setEngineState(REVERSE); break;
                     case SDLK_TAB:
-                        player->setWeaponState(CHANGE); break;
+                        if (player) player->setWeaponState(CHANGE); break;
                     case SDLK_f:
-                        player->setWeaponState(FIRE); break;
+                        if (player) player->setWeaponState(FIRE); break;
                     case SDLK_c:
                         World::getInstance().camera.cycleView(); break;
                     case SDLK_RETURN:
@@ -52,27 +55,27 @@ int Input::processInput()
                 switch (SDLevt.key.keysym.sym) {
                     case SDLK_LEFT:
                         if (keystate[SDLK_RIGHT]) {
-                            player->setTurnState(RIGHT);
+                            if (player) player->setTurnState(RIGHT);
                             break;
                         }
                     case SDLK_RIGHT:
                         if (keystate[SDLK_LEFT]) {
-                            player->setTurnState(LEFT);
+                            if (player) player->setTurnState(LEFT);
                             break;
                         }
-                        player->setTurnState(STRAIGHT);
+                        if (player) player->setTurnState(STRAIGHT);
                         break;
                     case SDLK_UP:
                         if (keystate[SDLK_DOWN]) {
-                            player->setEngineState(REVERSE);
+                            if (player) player->setEngineState(REVERSE);
                             break;
                         }
                     case SDLK_DOWN:
                         if (keystate[SDLK_UP]) {
-                            player->setEngineState(ACCELERATE);
+                            if (player) player->setEngineState(ACCELERATE);
                             break;
                         }
-                        player->setEngineState(NEUTRAL);
+                        if (player) player->setEngineState(NEUTRAL);
                         break;
                     default: break;
                 } break;
@@ -113,7 +116,8 @@ Input &Input::getInstance()
 
 Input::Input() :
     client(&Client::getInstance()),
-    error(&Error::getInstance())
+    error(&Error::getInstance()),
+    scheduler(&Scheduler::getInstance())
 {
     player = new PlayerController();
 }
