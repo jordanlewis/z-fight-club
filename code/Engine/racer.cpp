@@ -92,14 +92,17 @@ int main(int argc, char *argv[])
         {
             world.PlayerQty = 1;
         }
-        if (vm.count("ai-players") && (world.runType == SOLO || world.runType == CLIENT))
+        if (world.runType == SOLO)
         {
-            world.AIQty = vm["ai-players"].as<int>();
-        }
-        else if (world.runType == SOLO)
-        {
-            cout << "Using default ai-players=3" << endl;
-            world.AIQty = 3;
+            if (vm.count("ai-players"))
+            {
+                world.AIQty = vm["ai-players"].as<int>();
+            }
+            else
+            {
+                cout << "Using default ai-players=3" << endl;
+                world.AIQty = 3;
+            }
         }
 
         if (vm.count("ipaddr"))
