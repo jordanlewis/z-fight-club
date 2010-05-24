@@ -23,6 +23,7 @@ class SObject
     // potentially a source handling the playing of that sound_resource
   private:
     sound_resource *sr; // pointer to a sound_resource canonically held by the sound_library
+    int id; // keep track of creates and destroys
     ALuint source;
     void setStartTime(double);
     double startTime;   // when this sound should start playing
