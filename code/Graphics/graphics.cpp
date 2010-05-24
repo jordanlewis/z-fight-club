@@ -17,10 +17,12 @@ extern "C" {
 #if defined(__APPLE__) && defined(__MACH__)
 #  include <OpenGL/gl.h>
 #  include <OpenGL/glu.h>
+#  include <OpenGL/glut.h>
 #else
 #  define GL_GLEXT_PROTOTYPES
 #  include <GL/gl.h>
 #  include <GL/glu.h>
+#  include <GL/glut.h>
 #endif
 
 Graphics Graphics::_instance;
@@ -55,6 +57,8 @@ void Graphics::initGraphics()
     }
 
     SDL_WM_SetCaption("z fight club presents: Tensor Rundown", "Tensor Rundown");
+    int argc = 0;
+    glutInit(&argc, NULL);
     initialized = true;
 
 }

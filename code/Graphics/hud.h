@@ -42,4 +42,12 @@ class StopLight : public Widget
     void draw();
 };
 
+class Text : public Widget
+{
+  public:
+    Text(Vec3f, string text);
+    string text;
+    void draw();
+};
+
 #endif

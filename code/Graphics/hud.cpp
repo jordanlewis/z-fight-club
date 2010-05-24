@@ -3,13 +3,16 @@
 #include "Engine/world.h"
 #include <SDL/SDL.h>
 #include <cmath>
+#include <sstream>
 #if defined(__APPLE__) && defined(__MACH__)
 #  include <OpenGL/gl.h>
 #  include <OpenGL/glu.h>
+#  include <OpenGL/glut.h>
 #else
 #  define GL_GLEXT_PROTOTYPES
 #  include <GL/gl.h>
 #  include <GL/glu.h>
+#  include <GL/glut.h>
 #endif
 extern "C" {
         #include "Utilities/load-png.h"
@@ -17,6 +20,13 @@ extern "C" {
 
 Widget::Widget(Vec3f pos) : pos(pos)
 {}
+
+static void drawText(Vec3f pos, string text)
+{
+    glRasterPos2f(pos.x, pos.y);
+    for (unsigned int i = 0; i < text.size(); i++)
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text[i]);
+}
 
 Speedometer::Speedometer(Vec3f pos, Agent *agent)
     : Widget(pos), agent(agent)
@@ -72,17 +82,11 @@ LapCounter::LapCounter(Vec3f pos, Agent *agent)
 void LapCounter::draw()
 {
     World &world = World::getInstance();
-    int hpos = world.camera.getHres() - 20;
+    int ypos = world.camera.getHres() - 20;
+    stringstream ss;
+    ss << "lap " << agent->lapCounter;
     glColor3f(0,0,1);
-    glBegin(GL_TRIANGLES);
-    for (unsigned int i = 0; i < agent->lapCounter; i++)
-    {
-        glVertex2f(50 + 30*i, hpos);
-        glVertex2f(40 + 30*i, hpos - 20);
-        glVertex2f(30 + 30*i, hpos);
-    }
-    glEnd();
-
+    drawText(Vec3f(30, ypos, 0), ss.str());
 }
 
 StopLight::StopLight(Vec3f pos) : Widget(pos), nLit(0)
@@ -114,4 +118,15 @@ void StopLight::draw()
         glVertex2f(xpos + 10, ypos + 20 + i * 25);
         glEnd();
     }
+}
+
+Text::Text(Vec3f pos, string text) : Widget(pos), text(text)
+{
+}
+
+void Text::draw()
+{
+    glRasterPos2f(pos.x, pos.y);
+    for (unsigned int i = 0; i < text.size(); i++)
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text[i]);
 }
