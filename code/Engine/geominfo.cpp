@@ -62,6 +62,11 @@ Particle::Particle(Vec3f pos, Vec3f vel, float ttl)
     : pos(pos), vel(vel), ttl(ttl)
 {}
 
+bool isDead(Particle *p)
+{
+    return p->ttl < 0.0;
+}
+
 Particle::~Particle()
 {}
 

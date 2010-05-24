@@ -10,7 +10,7 @@ void testSetup()
 {
     World &world = World::getInstance();
 
-    Vec3f position = Vec3f(40.0, 10.0, 8.0);
+    Vec3f position = Vec3f(40.0, 2.0, 8.0);
     Vec3f area = Vec3f(1.0, 1.0, 1.0);
     Vec3f velocity = Vec3f(-20.0, 0.0, 0.0);
     Vec3f velocity_pm = Vec3f(0.0, 0.0, 0.0);
@@ -22,5 +22,7 @@ void testSetup()
     Kinematic *k = new Kinematic(position, Vec3f(0,0,0), M_PI/2);
     GObject *gobj = new GObject(particleSystem);
     WorldObject *wobj = new WorldObject(NULL, gobj, NULL, NULL);
+
+    wobj->setPos(position);
     world.addObject(wobj);
 }

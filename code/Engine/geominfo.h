@@ -157,6 +157,8 @@ class Particle
         ~Particle();
 };
 
+bool isDead(Particle *);
+
 class ParticleSystemInfo : public GeomInfo
 {
     public:
