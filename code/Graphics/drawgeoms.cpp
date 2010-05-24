@@ -299,7 +299,9 @@ void ParticleSystemInfo::draw()
 
     glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE); */
     glBegin(GL_POINTS);
-    glVertex3i(0.0f, 0.0f, 0.0f);
+    for(std::list<Particle *>::iterator i = particles.begin(); i != particles.end(); i++) {
+        glVertex3f((*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
+    }
     glEnd();
     /* glDisable(GL_POINT_SPRITE); */
     glDisable(GL_POINT_SPRITE_ARB);

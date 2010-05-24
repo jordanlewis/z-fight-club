@@ -107,7 +107,14 @@ class Vec3f {
 
     //! \brief Write out the Vec3f into a float array
     void toArray(float *array);
+
+
 };
+
+// --------- Create random vector ---------
+//! \brief create a random vector scaled by a scaling factor
+//
+Vec3f randomVec3f(Vec3f);
 
 // --------- Scalar Multiplication ---------
 //! \brief Multiplies a vector by a scalar and returns the result.

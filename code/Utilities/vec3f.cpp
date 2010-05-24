@@ -1,6 +1,7 @@
 #include "vec3f.h"
 #include <cmath>
 #include <vector>
+#include <stdlib>
 #include <deque>
 
 //#define EPSILON 2e-6 this gets defined in vector.h now
@@ -326,5 +327,24 @@ void Vec3f::toArray(float *array)
     array[2] = z;
 }
 
+Vec3f randomVec3f(Vec3f scaleFactor)
+{
+    float x = (float) rand() / (float) RAND_MAX;
+    x *= 2;
+    x -= 1;
+    x *= scaleFactor[0];
+
+    float y = (float) rand() / (float) RAND_MAX;
+    y *= 2;
+    y -= 1;
+    y *= scaleFactor[1];
+
+    float z = (float) rand() / (float) RAND_MAX;
+    z *= 2;
+    z -= 1;
+    z *= scaleFactor[2];
+
+    return Vec3f(x,y,z);
+}
 
 #undef EPSILON
