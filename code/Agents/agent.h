@@ -48,6 +48,7 @@ class Agent
 
     SteerInfo steerInfo;   /* !<car's steering info, set by AI/human */
     WorldObject *worldObject; /* !<back pointer to world object */
+    uint32_t id;
     static float mass;     /* must be nonzero! */
     static float power;     /* p = m*v*a.  This and mass control accel rate  */
     static float maxRotate;    /* !<how fast we're allowed to rotate */

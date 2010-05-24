@@ -50,4 +50,12 @@ class Text : public Widget
     void draw();
 };
 
+class MiniMap : public Widget
+{
+  public:
+    MiniMap(Vec3f, Path *path);
+    Path *path;
+    void draw();
+};
+
 #endif

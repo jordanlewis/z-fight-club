@@ -162,6 +162,7 @@ void Graphics::render()
     /* draw the widgets */
 
     glDisable(GL_LIGHTING);
+    glDisable(GL_DEPTH_TEST);
     glPushMatrix();
     world->camera.setOrthoMatrix();
 
