@@ -42,17 +42,4 @@ class StopLight : public Widget
     void draw();
 };
 
-/* \brief Hud, heads up display class, this includes 2d graphics
- * that aren't actually huds like menus displays
- */
-class Hud
-{
-  public:
-    vector<Widget>    widget;     /* !< array of widgets */
-    Hud();
-    ~Hud();
-    static Hud _instance;
-    static Hud &getInstance();
-};
-
 #endif

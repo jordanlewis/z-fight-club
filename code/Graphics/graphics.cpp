@@ -244,14 +244,6 @@ void Graphics::render(TrackData_t *track)
     }
 }
 
-void Graphics::render(Hud *hud)
-{
-    for (vector<Widget>::iterator it = hud->widget.begin(); it != hud->widget.end(); it++)
-    {
-        it->draw();
-    }
-}
-
 void Graphics::render(std::vector<Vec3f> path)
 {
     if (!initialized) {

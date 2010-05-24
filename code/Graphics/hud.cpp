@@ -115,17 +115,3 @@ void StopLight::draw()
         glEnd();
     }
 }
-
-
-Hud Hud::_instance;
-
-Hud::Hud()
-{}
-
-Hud::~Hud()
-{}
-
-Hud &Hud::getInstance()
-{
-    return _instance;
-}
