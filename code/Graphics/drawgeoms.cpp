@@ -282,6 +282,7 @@ void SphereInfo::draw()
 void ParticleSystemInfo::draw()
 {
     glColor3f(0.0, 1.0, 0.0);
+    glEnable(GL_TEXTURE_2D);
 
     glPointSize(5);
     glTexEnvf( GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE );
@@ -289,14 +290,13 @@ void ParticleSystemInfo::draw()
 
     glBindTexture(GL_TEXTURE_2D, texid);
 
-    /* glEnable(GL_POINT_SPRITE);
-
-    glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE); */
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBegin(GL_POINTS);
     for(std::list<Particle *>::iterator i = particles.begin(); i != particles.end(); i++) {
         glVertex3f((*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
     }
     glEnd();
-    /* glDisable(GL_POINT_SPRITE); */
+    glDisable(GL_BLEND);
     glDisable(GL_POINT_SPRITE_ARB);
 }
