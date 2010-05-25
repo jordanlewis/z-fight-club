@@ -297,6 +297,7 @@ void ParticleSystemInfo::draw()
         glVertex3f((*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
     }
     glEnd();
+    glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
     glDisable(GL_POINT_SPRITE_ARB);
 }

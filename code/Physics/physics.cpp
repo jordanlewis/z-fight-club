@@ -55,14 +55,6 @@ void Physics::simulate(float dt)
     {
         for (iter = world.wobjects.begin(); iter != world.wobjects.end();iter++)
         {
-            if ((*iter)->gobject && (*iter)->gobject->geominfo) {
-                ParticleSystemInfo *particles = dynamic_cast<ParticleSystemInfo *>((*iter)->gobject->geominfo);
-                if (particles) {
-                    /* we have a particle system */
-                    Vec3f pos = (*iter)->getPos() + (*iter)->parent->getPos();
-                    particles->update(pos, dt);
-                }
-            }
             if (!(*iter)->agent)
                 continue;
             a = (*iter)->agent;
@@ -70,6 +62,11 @@ void Physics::simulate(float dt)
             p->kinematicToOde();
             p->steeringToOde();
             useWeapons(a);
+        }
+        for (vector<ParticleStreamObject*>::iterator i = world.particleSystems.begin();
+            i != world.particleSystems.end(); i++) {
+            Vec3f pos = (*i)->getPos() + (*i)->parent->getPos();
+            (*i)->gobject->geominfo->update(pos, dt);
         }
 
         dSpaceCollide(odeSpace, this, &nearCallback);

@@ -16,4 +16,14 @@ class GObject
 
     friend class Physics;
 };
+
+class GParticleObject : public GObject
+{
+    ParticleSystemInfo *geominfo;
+  public:
+    GParticleObject(ParticleSystemInfo *psysteminfo);
+
+  friend class Physics;
+};
+
 #endif

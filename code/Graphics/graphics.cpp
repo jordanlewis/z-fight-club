@@ -163,6 +163,12 @@ void Graphics::render()
         (*i)->draw();
     }
 
+    for (vector<ParticleStreamObject *>::iterator i = world->particleSystems.begin();
+         i != world->particleSystems.end(); i++)
+    {
+        (*i)->draw();
+    }
+
     render(world->track);
 
     /* draw the widgets */

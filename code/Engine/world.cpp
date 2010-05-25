@@ -84,6 +84,13 @@ void WorldObject::draw()
         gobject->draw(getPos(), quat, agent);
 }
 
+ParticleStreamObject::ParticleStreamObject(PGeom *pobject, GParticleObject *gobject, SObject *sobject,
+  Agent *agent) : WorldObject(pobject,gobject,sobject,agent), gobject(gobject)
+{
+    // As with GParticleObject, we now have two pointers to the same piece of data, but the advantage
+    // of this is that we get extra type info with it (see the note under GParticleObject)
+}
+
 World::World() :
     error(&Error::getInstance()), nox(false), nosound(false)
 {
@@ -129,6 +136,11 @@ World::~World()
 void World::addObject(WorldObject *obj)
 {
     wobjects.push_back(obj);
+}
+
+void World::addObject(ParticleStreamObject *obj)
+{
+    particleSystems.push_back(obj);
 }
 
 void World::addLight(Light *light)
@@ -178,9 +190,9 @@ void World::addAgent(Agent *agent)
     float ttl_pm = 1.0;
     float birthRate = 200.0;
 
-    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/default.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate);
-    GObject *particle_gobj = new GObject(particleSystem);
-    WorldObject *particle_wobj = new WorldObject(NULL, particle_gobj, NULL, NULL);
+    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/transparent.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate);
+    GParticleObject *particle_gobj = new GParticleObject(particleSystem);
+    ParticleStreamObject *particle_wobj = new ParticleStreamObject(NULL, particle_gobj, NULL, NULL);
     particle_wobj->parent = wobject;
     particle_wobj->setPos(position);
 

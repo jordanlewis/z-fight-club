@@ -93,3 +93,10 @@ void GObject::draw(Vec3f pos, Quatf_t quat, Agent* agent)
     newquat[3] = c1 * c2 * c3 - s1 * s2 * s3; // w
     draw(pos, newquat);
 }
+
+GParticleObject::GParticleObject(ParticleSystemInfo *psysteminfo)
+    : GObject(psysteminfo), geominfo(psysteminfo) 
+{                                                    
+    // Technically we have two pointers to the same geominfo object; one here and one in the superclass.
+    // They're pointers, though, so it's not that big a deal, and this approach gives us more type info.
+}                                                    

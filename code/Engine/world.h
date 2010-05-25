@@ -56,6 +56,14 @@ class WorldObject
     void draw();
 };
 
+class ParticleStreamObject : public WorldObject
+{
+  public:
+    GParticleObject *gobject;
+    ParticleStreamObject(PGeom *pobject, GParticleObject *gobject, SObject *sobject,
+                Agent * agent);
+};
+
 /* \brief Light representation for a light in a scene
  */
 class Light
@@ -103,13 +111,19 @@ class World
     static float zMax;
     dWorldID ode_world;
     dSpaceID ode_space;
+
     std::vector<WorldObject *> wobjects; /* the objects in the world */
+    /* the particle systems in the world -- these need to be rendered after everything else
+       to avoid transparency bugs */
+    std::vector<ParticleStreamObject*> particleSystems;
+
     std::vector<Light *> lights; /* !< the lights in the world */
     std::vector<Widget *> widgets; /* !< the widgets in the world */
 
     string assetsDir;   /* !< base directory for asset files */
 
     void addObject(WorldObject *obj);
+    void addObject(ParticleStreamObject *obj);
 
     int numAgents();
 
