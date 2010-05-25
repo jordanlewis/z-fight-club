@@ -91,7 +91,7 @@ void Scheduler::soloLoopForever()
         ai->run();
         graphics->render();
         sound->render();
-        error->pdisplay();
+        if (raceState == RACE) error->pdisplay();
 
         usleep(10000);
     }

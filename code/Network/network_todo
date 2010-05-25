@@ -1,7 +1,7 @@
 ===========================================================================================================
 x (N) Client: ignore --ai-players
 x (N) Server (and client): honor 'q' for quit
-  (N) Server: different title bar
+x (N) Server: different title bar
   (Y) Server: create ai players (attach NetObj id's to normal world objects)
   (Y) Server: find out about weapon firings (client: reliably send fire info)
   (N) Server: tell client which track to use (client: ignore --track)
