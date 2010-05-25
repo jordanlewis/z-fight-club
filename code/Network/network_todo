@@ -1,4 +1,18 @@
 ===========================================================================================================
+x (N) Client: ignore --ai-players
+x (N) Server (and client): honor 'q' for quit
+  (N) Server: different title bar
+  (Y) Server: create ai players (attach NetObj id's to normal world objects)
+  (Y) Server: find out about weapon firings (client: reliably send fire info)
+  (N) Server: tell client which track to use (client: ignore --track)
+
+      Server: accept mid-game observer connections
+      Server/Client: allow observer to choose camera angle
+      Client: lerp agent kinematic updates
+      Server: reset button instead of quitting and relaunching
+
+      Move text output to hud when possible
+===========================================================================================================
 Youlian:
 separate join game from start game so number of players doesn't need to be hard-coded
 
