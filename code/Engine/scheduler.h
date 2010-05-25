@@ -32,7 +32,6 @@ class Scheduler
     ~Scheduler();
     Scheduler(const Scheduler&);
     Scheduler &operator=(const Scheduler&);
-    unsigned char profilerclock;
 
   public:
     RaceState_t raceState;

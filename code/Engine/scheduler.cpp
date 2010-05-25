@@ -29,8 +29,7 @@ Scheduler::Scheduler() :
     input(&Input::getInstance()),
     client(&Client::getInstance()),
     server(&Server::getInstance()),
-    error(&Error::getInstance()),
-    profilerclock(0)
+    error(&Error::getInstance())
 {
 }
 
@@ -92,7 +91,7 @@ void Scheduler::soloLoopForever()
         ai->run();
         graphics->render();
         sound->render();
-        if ((profilerclock++ & 0x0F) == 0) error->pdisplay();
+        error->pdisplay();
 
         usleep(10000);
     }
@@ -157,7 +156,7 @@ void Scheduler::clientLoopForever()
             graphics->render();
             sound->render();
             input->processInput(); // may transition us into C_DONE
-            if ((profilerclock++ & 0x0F) == 0) error->pdisplay();
+            error->pdisplay();
             break;
           case C_DONE:
             client->disconnect();
@@ -196,7 +195,7 @@ void Scheduler::serverLoopForever()
                 lastNet = nowNet;
             } 
         server->serverFrame();
-        if ((profilerclock++ & 0x0F) == 0) error->pdisplay();
+        error->pdisplay();
     }
     return;
 }

@@ -88,14 +88,23 @@ void Error::pout(Profile_t p)
 
 void Error::pdisplay()
 {
-    static unsigned char headerclock = 0;
-    if ((headerclock++ & 0x0F) == 0)
+    static int headerclock = 0;
+    static double profileclock = GetTime();
+    double now = GetTime();
+    if (profileclock+2 > now) return;
+    profileclock = now;
+
+    if (headerclock++ == 0)
     {
         for (int i=0; i < NUM_PROFILE; i++)
         {
             std::cerr << std::fixed << std::setw(11) << ProfileNames[i];
         }
         std::cerr << endl;
+    }
+    else if (headerclock >= 20)
+    {
+        headerclock = 0;
     }
 
     for (int i=0; i < NUM_PROFILE; i++)
