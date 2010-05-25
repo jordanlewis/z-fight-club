@@ -10,7 +10,8 @@ SETUPMAKEF = Makefile.testsetup
 
 -include $(SETUPMAKEF)
 
-BUILDDIR = build
+ARCH = $(shell uname -m|tr ' ' '_')
+BUILDDIR = build_$(ARCH)
 TARGET = $(BUILDDIR)/racer
 LIBDIRS = Agents Engine Graphics Network Physics Parser Sound Utilities
 SETUPSDIR = tests/setups
