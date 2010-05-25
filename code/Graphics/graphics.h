@@ -30,6 +30,7 @@ class Graphics
      *         This exists for debugging purposes, particularly problems with matrix transformations
      */
     void DrawCube(Vec3f);
+    World *world;
     Error *error;
 
   public:

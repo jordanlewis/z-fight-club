@@ -28,6 +28,7 @@ extern "C" {
 Graphics Graphics::_instance;
 
 Graphics::Graphics() :
+    world(&World::getInstance()),
     error(&Error::getInstance())
 {
     initialized = false;
@@ -40,8 +41,7 @@ Graphics::~Graphics()
 void Graphics::initGraphics()
 {
     /* set up SDL */
-    World &world = World::getInstance();
-    int wres = world.camera.wres, hres = world.camera.hres;
+    int wres = world->camera.wres, hres = world->camera.hres;
     int colorDepth = 32;
     SDL_Surface *screen;
 
@@ -56,7 +56,14 @@ void Graphics::initGraphics()
         exit(1);
     }
 
-    SDL_WM_SetCaption("z fight club presents: Tensor Rundown", "Tensor Rundown");
+    if (world->runType == SERVER)
+    {
+        SDL_WM_SetCaption("z fight club presents: Tensor Rundown (server)", "Tensor Rundown");
+    }
+    else
+    {
+        SDL_WM_SetCaption("z fight club presents: Tensor Rundown", "Tensor Rundown");
+    }
     int argc = 0;
     glutInit(&argc, NULL);
     initialized = true;
@@ -106,7 +113,6 @@ void Graphics::render()
         return;
     }
 
-    World *world = &World::getInstance();
     world->camera.setProjectionMatrix();
 
     /* render 3d graphics */

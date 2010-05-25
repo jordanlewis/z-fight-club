@@ -12,7 +12,7 @@ SETUPMAKEF = Makefile.testsetup
 
 ARCH = $(shell uname -m|tr ' ' '_')
 BUILDDIR = build_$(ARCH)
-TARGET = $(BUILDDIR)/racer
+TARGET = $(BUILDDIR)/Tensor\ Rundown
 LIBDIRS = Agents Engine Graphics Network Physics Parser Sound Utilities
 SETUPSDIR = tests/setups
 
@@ -45,7 +45,7 @@ $(CTAGS): $(HEADERS) $(C_SRCS) $(CPP_SRCS)
 	ctags -R --c++-kinds=+p --fields=+iaS --extra=+q
 
 $(TARGET): $(BUILDDIR) $(OBJECTBUILDS) $(SETUPOBJ)
-	g++ $(CXXFLAGS) -o $@ $(OBJECTS) $(LDFLAGS)
+	g++ $(CXXFLAGS) -o "$@" $(OBJECTS) $(LDFLAGS)
 
 .PHONY: test clean
 test: all
