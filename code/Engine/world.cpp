@@ -297,7 +297,11 @@ void World::loadTrack(const char *file)
                                        NULL);
     geom = new PGeom(tmeshinfo);
     gobj = new GObject(tmeshinfo);
-    wobj = new WorldObject(geom, gobj, NULL, NULL);
+    //with trimesh geometry
+    /* wobj = new WorldObject(geom, gobj, NULL, NULL); */
+
+    //without trimesh geometry
+    wobj = new WorldObject(geom, NULL, NULL, NULL);
     addObject(wobj);
     floorObj = wobj;
 
@@ -309,7 +313,7 @@ void World::loadTrack(const char *file)
                                wallnorms);
     geom = new PGeom(tmeshinfo);
     gobj = new GObject(tmeshinfo);
-    wobj = new WorldObject(geom, gobj, NULL, NULL);
+    wobj = new WorldObject(geom, NULL, NULL, NULL);
     addObject(wobj);
 
 
