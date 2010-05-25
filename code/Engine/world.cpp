@@ -212,7 +212,7 @@ void World::loadTrack(const char *file)
     WorldObject *wobj;
 
     /* Create bottom plane */
-    PlaneInfo info = PlaneInfo(0, 1, 0, -.1);
+    PlaneInfo info = PlaneInfo(0, 1, 0, -20);
     geom = new PGeom(&info);
     wobj = new WorldObject(geom, NULL, NULL, NULL);
     addObject(wobj);
