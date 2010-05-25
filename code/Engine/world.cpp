@@ -190,7 +190,7 @@ void World::addAgent(Agent *agent)
     float ttl_pm = 1.0;
     float birthRate = 200.0;
 
-    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/default.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate);
+    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/transparent.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate);
     GParticleObject *particle_gobj = new GParticleObject(particleSystem);
     ParticleStreamObject *particle_wobj = new ParticleStreamObject(NULL, particle_gobj, NULL, NULL);
     particle_wobj->parent = wobject;
