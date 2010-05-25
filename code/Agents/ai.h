@@ -69,6 +69,7 @@ class AIManager
     static AIManager _instance;
   public:
     std::vector<AIController *> controllers; /* !< active AI controllers */
+    std::vector<Agent *> agentsSorted; /*!< Used for computing place info */
 
     void control(Agent *); /* !< assume AI control of given agent */
     void release(Agent *); /* !< release AI control of given agent */

@@ -62,6 +62,7 @@ class Agent
 
     unsigned int pathPosition; /*!< index into world path */
     unsigned int lapCounter;   /*!< how many laps have we completed */
+    unsigned int pathDistance; /*!< distance around track */
 
     void hton(RPAgent *payload); /* Package the agent for network transfer */
     void ntoh(RPAgent *payload); /* Unpackage an agent from network transfer */

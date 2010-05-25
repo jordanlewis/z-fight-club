@@ -3,6 +3,7 @@
 
 #include "allclasses.h"
 #include "Utilities/vec3f.h"
+#include <list>
 extern "C" {
         #include "Utilities/load-png.h"
 }
@@ -50,11 +51,42 @@ class Text : public Widget
     void draw();
 };
 
+class Menu : public Widget
+{
+    public:
+        string name;
+        Menu(Vec3f, string);
+        void draw();
+};
+
+class SubMenu : public Menu
+{
+    public:
+        SubMenu         *up;        /* !< the menu above this one */
+        list<Menu *>    items;      /* !< the items in the menu */
+        SubMenu(Vec3f, string);
+        SubMenu(Vec3f, string, list<Menu *>);
+};
+
+class TerminalMenu : public Menu
+{
+    public:
+        void (*callback)();     /* !< function to call when this button is hit */
+        TerminalMenu(Vec3f, string, void (*callback)());
+};
+
 class MiniMap : public Widget
 {
   public:
     MiniMap(Vec3f, Path *path);
     Path *path;
+    void draw();
+};
+
+class Places : public Widget
+{
+  public:
+    Places(Vec3f);
     void draw();
 };
 
