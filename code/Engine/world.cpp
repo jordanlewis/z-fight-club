@@ -183,14 +183,14 @@ void World::addAgent(Agent *agent)
 
     /* create a particle generator for the agent */
     Vec3f position = Vec3f(0.0, .5, 0.0);
-    Vec3f area = Vec3f(.1, .1, .1);
+    Vec3f area = Vec3f(.01, .01, .01);
     Vec3f velocity = Vec3f(-1.0, 0.0, 0.0);
-    Vec3f velocity_pm = Vec3f(0.0, 0.0, 0.0);
+    Vec3f velocity_pm = Vec3f(0, .3, .3);
     float ttl = 2.0;
     float ttl_pm = 1.0;
     float birthRate = 200.0;
 
-    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/transparent.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate);
+    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/beam.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate);
     GParticleObject *particle_gobj = new GParticleObject(particleSystem);
     ParticleStreamObject *particle_wobj = new ParticleStreamObject(NULL, particle_gobj, NULL, NULL);
     particle_wobj->parent = wobject;
