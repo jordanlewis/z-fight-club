@@ -279,6 +279,13 @@ void SphereInfo::draw()
     gluSphere(quad, radius, 20, 20);
 }
 
+// I don't know what the best place for this is, so I'm
+// leaving it here
+bool particle_comp(Particle *p1, Particle *p2) {
+    World &world = World::getInstance();
+    return (p1->pos-world.camera.getPos()).length() < (p2->pos-world.camera.getPos()).length();
+}
+
 void ParticleSystemInfo::draw()
 {
     glColor3f(0.0, 1.0, 0.0);
@@ -288,8 +295,9 @@ void ParticleSystemInfo::draw()
     glTexEnvf( GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE );
     glEnable( GL_POINT_SPRITE_ARB );
 
-    glBindTexture(GL_TEXTURE_2D, texid);
+    particles.sort(particle_comp);
 
+    glBindTexture(GL_TEXTURE_2D, texid);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBegin(GL_POINTS);
