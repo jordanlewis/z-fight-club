@@ -113,11 +113,13 @@ Vec3f Path::distToPoint(float dist)
 void Path::computeDistances()
 {
     float dist;
+    totalLength = 0;
     distances.clear();
     for (unsigned int i = 0; i < knots.size(); i++)
     {
         dist = pointToDist(knots[i]);
         distances.push_back(dist);
+        totalLength += (knots[i] - knots[(i + 1) % knots.size()]).length();
     }
 }
 

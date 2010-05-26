@@ -277,14 +277,7 @@ void AIController::lane(int laneIndex)
             }
         }
     }
-
-    path.totalLength = 0;
-    for (unsigned int i = 0; i < path.knots.size() - 1; i++)
-    {
-        path.totalLength += (path.knots[i] - path.knots[i + 1]).length();
-    }
-    path.totalLength += (path.knots[0] - path.knots[path.knots.size() - 1]).length();
-
+    path.computeDistances();
 }
 
 void AIController::avoid(Vec3f &pos)
