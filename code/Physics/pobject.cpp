@@ -7,8 +7,6 @@
 #include "Network/racerpacket.h"
 #include <ode/ode.h>
 
-#define DEBUG
-
 PGeom::PGeom(GeomInfo *info, dSpaceID space)
     : bounce(D_BOUNCE), mu1(D_MU1), mu2(D_MU2), collType(D_COLL),
       worldObject(NULL)
@@ -196,15 +194,6 @@ const Kinematic &PMoveable::odeToKinematic(){
     k.vel[1] = b_info[1];
     k.vel[2] = b_info[2];
 
-#ifdef DEBUG
-    int prec = cout.precision(2);
-    ios::fmtflags flags = cout.setf(ios::fixed,ios::floatfield);
-    //cout << "Body " << body << ": pos" << k.pos
-    //     << " vel" << k.vel << " dir "
-    //     << k.orientation << endl;
-    cout.setf(flags,ios::floatfield);
-    cout.precision(prec);
-#endif
     return k;
 }
 
