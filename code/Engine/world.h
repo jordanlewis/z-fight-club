@@ -130,6 +130,7 @@ class World
     void addLight(Light *light);
     void addWidget(Widget *widget);
     Agent *placeAgent(int place);/*!<return a placed agent not yet in wobjects*/
+    Agent *makeCar(); //Create a car unattached to any control structures
     Agent *makeAI();
     Agent *makePlayer();
     void makeAgents();

@@ -4,6 +4,7 @@
 #include "Engine/geominfo.h"
 #include "Agents/agent.h"
 #include "Agents/player.h"
+#include "Agents/ai.h"
 #include "Utilities/error.h"
 #include "Physics/pobject.h"
 #include "racerpacket.h"
@@ -95,12 +96,13 @@ netObjID_t Server::attachNetID(WorldObject *wobject, netObjID_t ID){
 }
 
 netObjID_t Server::createHumanAgent(uint8_t clientID){
-    World &world = World::getInstance();
-    Agent *agent = world.placeAgent(world.numAgents());
-    world.addAgent(agent);
+    Agent *agent = world->placeAgent(world->numAgents());
+    world->addAgent(agent);
     new PlayerController(agent);
-    cout << "Agent's wobject is now: " << agent->worldObject << endl;
+    AIManager::getInstance().agentsSorted.push_back(agent);
+
     netObjID_t netID = attachNetID(agent->worldObject);
+    
 
     if (NETOBJID_NONE == netID) {
         error->log(NETWORK, IMPORTANT, "WARNING: ran out of netIDs\n");
@@ -119,11 +121,32 @@ netObjID_t Server::createHumanAgent(uint8_t clientID){
 }
 
 netObjID_t Server::createAIAgent(){
+    error->log(NETWORK, TRIVIAL, "Creating an AI Agent\n");
+    Agent *agent = world->makeAI();
+    netObjID_t netID = attachNetID(agent->worldObject);
 
-    //    AIManager &ai = AIManager::getInstance();
+    if (NETOBJID_NONE == netID) {
+        error->log(NETWORK, IMPORTANT, "WARNING: ran out of netIDs\n");
+        return NETOBJID_NONE;
+    }
     
-    return NETOBJID_NONE;
+    struct RPCreateAIAgent toSend;
+    toSend.netID = htonl(netID);
+    ENetPacket *packet = makeRacerPacket(RP_CREATE_AI_AGENT, &toSend,
+                                         sizeof(RPCreateAIAgent),
+                                         ENET_PACKET_FLAG_RELIABLE);
+    toCreate.push_back(packet);
+    
+    return netID;
 }
+
+void Server::createAllAIAgents(){
+    for (int i = 0; i < world->AIQty; i++)
+        {
+            createAIAgent();
+        }
+}
+
 
 //should return NULL if unable to find an object with the given ID...
 WorldObject *Server::getNetObject(netObjID_t ID)
@@ -315,6 +338,8 @@ void Server::gatherPlayers()
     racerPacketType_t type;
     void * payload;
 
+    createAllAIAgents();
+
     while(1)
     {
         ENetEvent event;
@@ -488,6 +513,8 @@ void Server::serverFrame()
                         case RP_UPDATE_AGENT:
                             {
                                 RPUpdateAgent *P = (RPUpdateAgent *)payload;
+                                cout << "updating agent " << ntohl(P->ID)
+                                     << endl;
                                 WorldObject *wo = netobjs[ntohl(P->ID)];
                                 if (wo && wo->agent && wo->player)
                                 {

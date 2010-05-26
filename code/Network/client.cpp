@@ -177,12 +177,13 @@ void Client::checkForPackets()
                       }
                     case RP_UPDATE_AGENT: 
                         {
-                            
                         error->log(NETWORK, TRIVIAL, "RP_UPDATE_AGENT\n");
                         RPUpdateAgent *P = (RPUpdateAgent *)payload;
+                        cout << "Updating agent " << ntohl(P->ID) << endl;
                         WorldObject *wo = netobjs[ntohl(P->ID)];
                         if (wo && wo->agent && wo->player && wo->pobject)
                             {
+                                cout << "entered if" << endl;
                                 wo->player->ntoh(&P->info);
                                 /*cout << "PlayerController["
                                      << ntohl(P->ID) << "]: "
@@ -211,21 +212,30 @@ void Client::checkForPackets()
                             error->log(NETWORK, TRIVIAL, "RP_CREATE_AGENT\n");
                             Agent *agent;
                             RPCreateAgent info = *(RPCreateAgent *)payload;
-
+                            player = &input->getPlayerController();
                             if (info.clientID == clientID)
                                 {
                                     error->log(NETWORK, TRIVIAL, "my ID!\n");
-                                    player = &input->getPlayerController();
                                     agent = world->makePlayer();
                                     Input::getInstance().controlPlayer(player);
+                                    netID = ntohl(info.netID);
                                 }
                             else 
                                 {
                                     error->log(NETWORK, TRIVIAL,"not my ID\n");
-                                    agent=world->placeAgent(world->numAgents());
-                                    world->addAgent(agent);
+                                    agent = world->makeCar();
+                                    new PlayerController(agent);
                                 }
                             
+                            attachNetID(agent->worldObject, ntohl(info.netID));
+                            break;
+                        }
+                    case RP_CREATE_AI_AGENT:
+                        {
+                            cout << "Server sez create AI!" << endl;
+                            error->log(NETWORK, TRIVIAL, "RP_CREATE_AGENT\n");
+                            RPCreateAIAgent info = *(RPCreateAIAgent *)payload;
+                            Agent *agent = world->makeAI();
                             attachNetID(agent->worldObject, ntohl(info.netID));
                             break;
                         }

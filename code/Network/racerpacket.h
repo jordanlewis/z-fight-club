@@ -10,6 +10,7 @@ typedef enum {
     RP_START = 0, //Begin the race
     RP_JOIN, //Add a racer for my agent
     RP_CREATE_AGENT, //Create a net object with an attached agent 
+    RP_CREATE_AI_AGENT, //Create a net object with an attached ai agent
     RP_ATTACH_AGENT, //Attach an agent to an existing netobject
     RP_UPDATE_AGENT, //Update an existing agent 
     RP_KINEMATIC, //??????? What is this ????????
@@ -83,6 +84,10 @@ struct RPSteerInfo{
 struct RPCreateAgent {
     netObjID_t netID;
     uint8_t clientID;
+};
+
+struct RPCreateAIAgent {
+    netObjID_t netID;
 };
 
 struct RPKinematic{

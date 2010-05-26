@@ -358,34 +358,9 @@ Agent *World::placeAgent(int place)
 
     return agent;
 }
-/*
-//Creates a car unattached to any control structures.  Useful for networking.
+
+//Creates a car unattached to any control structures.
 Agent *World::makeCar()
-{
-    if (!track) 
-        return NULL;
-    Agent *agent = placeAgent(numAgents());
-    addAgent(agent);
-    return agent;
-}
-*/
-Agent *World::makeAI()
-{
-    if (!track)
-        return NULL;
-    AIManager &ai = AIManager::getInstance();
-    int nAgents = numAgents();
-    Agent *agent = placeAgent(nAgents);
-    addAgent(agent);
-    ai.control(agent);
-    ai.controllers.back()->lane((nAgents + 1) % 2);
-
-    ai.agentsSorted.push_back(agent);
-    return agent;
-}
-
-
-Agent *World::makePlayer()
 {
     if (!track)
         return NULL;
@@ -393,6 +368,27 @@ Agent *World::makePlayer()
     AIManager &aim = AIManager::getInstance();
     Agent *agent = placeAgent(numAgents());
     addAgent(agent);
+    aim.agentsSorted.push_back(agent);
+    return agent;
+}
+
+Agent *World::makeAI()
+{
+    if (!track)
+        return NULL;
+    AIManager &ai = AIManager::getInstance();
+    Agent *agent = makeCar();
+    ai.control(agent);
+    ai.controllers.back()->lane((numAgents() + 1) % 2);
+    return agent;
+}
+
+Agent *World::makePlayer()
+{
+    if (!track)
+        return NULL;
+
+    Agent *agent = makeCar();
     camera = Camera(THIRDPERSON, agent);
     Sound::getInstance().registerListener(&camera);
     PlayerController *p = new PlayerController(agent);
@@ -402,8 +398,6 @@ Agent *World::makePlayer()
     addWidget(s);
     LapCounter *lc = new LapCounter(Vec3f(0,0,0), agent);
     addWidget(lc);
-
-    aim.agentsSorted.push_back(agent);
 
     return agent;
 }

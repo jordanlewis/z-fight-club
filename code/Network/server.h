@@ -62,6 +62,7 @@ class Server {
                                                                   * wobject.*/
     netObjID_t createHumanAgent(uint8_t clientID);
     netObjID_t createAIAgent();
+    void createAllAIAgents();
     
     
     void updateFromClient(uint8_t clientId); //NYI (call within serverFrame)
