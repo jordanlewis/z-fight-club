@@ -69,7 +69,7 @@ void Physics::simulate(float dt)
             (*i)->gobject->geominfo->update(pos, dt);
         }
 
-        dSpaceCollide(odeSpace, this, &nearCallback);
+        dSpaceCollide(odeSpace, NULL, &nearCallback);
         dWorldStep(odeWorld, PH_TIMESTEP);
         dJointGroupEmpty(odeContacts);
 

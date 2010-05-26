@@ -16,9 +16,9 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
 {
     dBodyID b1 = dGeomGetBody(o1);
     dBodyID b2 = dGeomGetBody(o2);
-    Physics *p = (Physics *) data;
-    dWorldID odeWorld = p->getOdeWorld();
-    dJointGroupID odeContacts = p->getOdeContacts();
+    Physics &p = Physics::getInstance();
+    dWorldID odeWorld = p.getOdeWorld();
+    dJointGroupID odeContacts = p.getOdeContacts();
 
     PGeom *g1 = (PGeom *)dGeomGetData(o1);
     PGeom *g2 = (PGeom *)dGeomGetData(o2);
