@@ -12,7 +12,8 @@ typedef enum
     COUNTDOWN,
     RACE,
     PLAYER_DONE,
-    ALL_DONE
+    ALL_DONE,
+    PAUSE
 } RaceState_t;
 
 class Scheduler

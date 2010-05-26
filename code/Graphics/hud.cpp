@@ -135,6 +135,18 @@ SubMenu::SubMenu(Vec3f pos, string name, list<Menu *> items)
     : Menu(pos, name), items(items)
 {}
 
+void SubMenu::draw()
+{
+    World &world = World::getInstance();
+
+
+    drawText(Vec3f(400, 400, 0), name, GLUT_BITMAP_HELVETICA_18);
+
+    for (list<Menu *>::iterator i = items.begin(); i != items.end(); i++) {
+        drawText(Vec3f(400, 400, 0), (*i)->name, GLUT_BITMAP_HELVETICA_18);
+    } 
+}
+
 TerminalMenu::TerminalMenu(Vec3f pos, string name, void (*callback)())
     : Menu(pos, name), callback(callback)
 {}

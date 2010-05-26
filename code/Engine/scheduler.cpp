@@ -82,16 +82,26 @@ void Scheduler::soloLoopForever()
             delete sl;
         }
 
-        if (now - last > 0)
-        {
-            physics->simulate(now - last);
-        }
-        last = now;
+        switch (raceState) {
 
-        ai->run();
-        graphics->render();
-        sound->render();
-        if (raceState == RACE) error->pdisplay();
+            case RACE:
+            case COUNTDOWN:
+                if (now - last > 0)
+                {
+                    physics->simulate(now - last);
+                }
+                last = now;
+
+                ai->run();
+                graphics->render();
+                sound->render();
+                if (raceState == RACE) error->pdisplay();
+                break;
+            case PAUSE:
+                graphics->render();
+                last = now;
+                break;
+        }
 
         usleep(10000);
     }

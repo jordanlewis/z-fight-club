@@ -56,16 +56,18 @@ class Menu : public Widget
     public:
         string name;
         Menu(Vec3f, string);
-        void draw();
+        virtual void draw();
 };
 
 class SubMenu : public Menu
 {
     public:
         SubMenu         *up;        /* !< the menu above this one */
+        int             selection;  /* !< which item is selected */
         list<Menu *>    items;      /* !< the items in the menu */
         SubMenu(Vec3f, string);
         SubMenu(Vec3f, string, list<Menu *>);
+        void draw();
 };
 
 class TerminalMenu : public Menu
