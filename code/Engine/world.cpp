@@ -20,10 +20,9 @@ World World::_instance;
 
 WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject,
                          Agent *agent)
-    : pobject(pobject), gobject(gobject), sobject(sobject), agent(agent),
-      player(NULL)
+    : pos(-1,-1,-1), pobject(pobject), gobject(gobject), sobject(sobject),
+      agent(agent), parent(NULL), player(NULL)
 {
-    pos = Vec3f(-1,-1,-1);
     Quatf_t newquat = {0,0,0,1};
     CopyV3f(newquat, quat);
     if (pobject != NULL)
@@ -34,8 +33,6 @@ WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject,
     {
         agent->worldObject = this;
     }
-
-    parent = NULL;
 }
 
 Vec3f WorldObject::getPos()
