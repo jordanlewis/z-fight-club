@@ -1,4 +1,5 @@
 #include "vec3f.h"
+#include <float.h>
 #include "path.h"
 
 Path::Path() : index(0) {}
@@ -38,7 +39,7 @@ static Vec3f closestPointOnSegment(Vec3f point, Vec3f enda, Vec3f endb)
 
 Vec3f Path::closestPoint(Vec3f point)
 {
-    float dist, bestDist = 10000;
+    float dist, bestDist = FLT_MAX;
     Vec3f closest, bestClosest, next;
     for (unsigned int i = 0; i < knots.size(); i++)
     {
@@ -62,7 +63,7 @@ float Path::pointToDist(Vec3f point)
 {
     Vec3f closest, next;
     float len, dist, bestDist, pathTotal, finalDist;
-    bestDist = 1000000;
+    bestDist = FLT_MAX;
     pathTotal = 0;
     for (unsigned int i = 0; i < knots.size(); i++)
     {
