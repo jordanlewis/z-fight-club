@@ -9,5 +9,6 @@ void useWeapons(Agent *agent);
 void smackAll(Agent *agent, int force);
 void smack(Agent *agent, int force);
 void raygun(Agent *agent, int force);
+void launchBox(Agent *agent);
 
 #endif

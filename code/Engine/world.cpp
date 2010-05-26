@@ -16,15 +16,13 @@ extern "C" {
     #include "Parser/track-parser.h"
 }
 
-float World::xMax = 1000; // XXX this probably will depend on tracks
-float World::zMax = 1000; // XXX this too
-
 World World::_instance;
 
-WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject, Agent *agent)
-    : pobject(pobject), gobject(gobject), sobject(sobject), agent(agent), player(NULL)
+WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject,
+                         Agent *agent)
+    : pos(-1,-1,-1), pobject(pobject), gobject(gobject), sobject(sobject),
+      agent(agent), parent(NULL), player(NULL)
 {
-    pos = Vec3f(-1,-1,-1);
     Quatf_t newquat = {0,0,0,1};
     CopyV3f(newquat, quat);
     if (pobject != NULL)
@@ -35,8 +33,6 @@ WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject, Age
     {
         agent->worldObject = this;
     }
-
-    parent = NULL;
 }
 
 Vec3f WorldObject::getPos()
@@ -177,9 +173,8 @@ void World::addAgent(Agent *agent)
     sobj->registerNext(new SObject("18303_run.wav", 0, AL_TRUE));
 
     WorldObject *wobject = new WorldObject(pobj, gobj, sobj, agent);
-
+    cout << "Agent's wobject pointer is: " << agent->worldObject << endl;
     addObject(wobject);
-
 
     /* create a particle generator for the agent */
     Vec3f position = Vec3f(0.0, .5, 0.0);
@@ -215,6 +210,7 @@ void World::loadTrack(const char *file)
     PlaneInfo info = PlaneInfo(0, 1, 0, -20);
     geom = new PGeom(&info);
     wobj = new WorldObject(geom, NULL, NULL, NULL);
+    botPlaneObj = wobj;
     addObject(wobj);
 
 
@@ -363,26 +359,36 @@ Agent *World::placeAgent(int place)
     return agent;
 }
 
-void World::makeAI()
+//Creates a car unattached to any control structures.
+Agent *World::makeCar()
 {
     if (!track)
-        return;
-    AIManager &ai = AIManager::getInstance();
-    int nAgents = numAgents();
-    Agent *agent = placeAgent(nAgents);
-    addAgent(agent);
-    ai.control(agent);
-    ai.controllers.back()->lane((nAgents + 1) % 2);
-}
+        return NULL;
 
-
-void World::makePlayer()
-{
-    if (!track)
-        return;
-
+    AIManager &aim = AIManager::getInstance();
     Agent *agent = placeAgent(numAgents());
     addAgent(agent);
+    aim.agentsSorted.push_back(agent);
+    return agent;
+}
+
+Agent *World::makeAI()
+{
+    if (!track)
+        return NULL;
+    AIManager &ai = AIManager::getInstance();
+    Agent *agent = makeCar();
+    ai.control(agent);
+    ai.controllers.back()->lane((numAgents() + 1) % 2);
+    return agent;
+}
+
+Agent *World::makePlayer()
+{
+    if (!track)
+        return NULL;
+
+    Agent *agent = makeCar();
     camera = Camera(THIRDPERSON, agent);
     Sound::getInstance().registerListener(&camera);
     PlayerController *p = new PlayerController(agent);
@@ -393,6 +399,7 @@ void World::makePlayer()
     LapCounter *lc = new LapCounter(Vec3f(0,0,0), agent);
     addWidget(lc);
 
+    return agent;
 }
 
 void World::makeAgents()
@@ -401,13 +408,6 @@ void World::makeAgents()
     for (int i = 0; i < AIQty; i++)
     {
         makeAI();
-    }
-    AIManager &aim = AIManager::getInstance();
-    for (unsigned int i = 0; i < wobjects.size(); i++)
-    {
-        if (!wobjects[i]->agent)
-            continue;
-        aim.agentsSorted.push_back(wobjects[i]->agent);
     }
 }
 

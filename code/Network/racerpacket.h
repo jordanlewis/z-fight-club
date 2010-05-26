@@ -7,21 +7,23 @@
 #include "network.h"
 
 typedef enum {
-    RP_START = 0,
+    RP_START = 0, //Begin the race
     RP_JOIN, //Add a racer for my agent
-    RP_ATTACH_AGENT,
-    RP_UPDATE_AGENT,
-    RP_KINEMATIC,
-    RP_PMOVEABLE,
-    RP_CREATE_NET_OBJ,
-    RP_ATTACH_PGEOM,
-    RP_UPDATE_PGEOM,
-    RP_ATTACH_PMOVEABLE,
-    RP_UPDATE_PMOVEABLE,
-    RP_ATTACH_PAGENT,
-    RP_UPDATE_PAGENT,
-    RP_PING,
-    RP_ACK_CONNECTION
+    RP_CREATE_AGENT, //Create a net object with an attached agent 
+    RP_CREATE_AI_AGENT, //Create a net object with an attached ai agent
+    RP_ATTACH_AGENT, //Attach an agent to an existing netobject
+    RP_UPDATE_AGENT, //Update an existing agent 
+    RP_KINEMATIC, //??????? What is this ????????
+    RP_PMOVEABLE, //??????? What is this ????????
+    RP_CREATE_NET_OBJ, //Create a new netobject and associated worldobject 
+    RP_ATTACH_PGEOM, //Attach a pgeom to an existing netobject
+    RP_UPDATE_PGEOM, //Update an existing pgeom
+    RP_ATTACH_PMOVEABLE, //Attach a pmoveable to an existing netobject
+    RP_UPDATE_PMOVEABLE, //Update an existing pmoveable
+    RP_ATTACH_PAGENT, //Attach a pagent to an existing netobject
+    RP_UPDATE_PAGENT, //Update an existing pagent
+    RP_PING, //Keep a connection alive
+    RP_ACK_CONNECTION //Acknowledge successful connection
 } racerPacketType_t;
 
 /* makeRacerPacket:  Creates a RacerPacket.  RacerPackets begin with a
@@ -77,6 +79,15 @@ struct RPSteerInfo{
     uint32_t r;
     uint32_t w;
     uint32_t f;
+};
+
+struct RPCreateAgent {
+    netObjID_t netID;
+    uint8_t clientID;
+};
+
+struct RPCreateAIAgent {
+    netObjID_t netID;
 };
 
 struct RPKinematic{

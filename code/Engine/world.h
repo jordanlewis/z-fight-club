@@ -107,8 +107,7 @@ class World
     TrackData_t *track;
     Path path;
     WorldObject *floorObj;
-    static float xMax;   /* XXX what are these? */
-    static float zMax;
+    WorldObject *botPlaneObj;
     dWorldID ode_world;
     dSpaceID ode_space;
 
@@ -131,8 +130,9 @@ class World
     void addLight(Light *light);
     void addWidget(Widget *widget);
     Agent *placeAgent(int place);/*!<return a placed agent not yet in wobjects*/
-    void makeAI();
-    void makePlayer();
+    Agent *makeCar(); //Create a car unattached to any control structures
+    Agent *makeAI();
+    Agent *makePlayer();
     void makeAgents();
     void makeSkybox();
     void loadTrack(const char *file);

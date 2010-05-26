@@ -1,6 +1,7 @@
 #include <vector>
 #include <queue>
 #include <math.h>
+#include <float.h>
 #include <stdlib.h>
 #include "ai.h"
 #include "Utilities/vec3f.h"
@@ -217,7 +218,7 @@ void AIController::lane(int laneIndex)
 
     Vec3f us = agent->getKinematic().pos;
     float dist;
-    float bestDist = 100000;
+    float bestDist = FLT_MAX;
     Vec3f bestMid, mid;
     int best = -1;
     TrackData_t *track = world.track;
@@ -239,7 +240,7 @@ void AIController::lane(int laneIndex)
     }
     /* now find the closest segment to that section */
 
-    bestDist = 100000;
+    bestDist = FLT_MAX;
     best = -1;
     Lane_t lane = track->lanes[laneIndex];
     for (i = 0; i < lane.nSegs; i++)
@@ -276,14 +277,7 @@ void AIController::lane(int laneIndex)
             }
         }
     }
-
-    path.totalLength = 0;
-    for (unsigned int i = 0; i < path.knots.size() - 1; i++)
-    {
-        path.totalLength += (path.knots[i] - path.knots[i + 1]).length();
-    }
-    path.totalLength += (path.knots[0] - path.knots[path.knots.size() - 1]).length();
-
+    path.computeDistances();
 }
 
 void AIController::avoid(Vec3f &pos)
@@ -323,7 +317,7 @@ void AIController::detectWalls()
     CollContact *closest = NULL;
 
     Vec3f pos;
-    float bestDist = 10000;
+    float bestDist = FLT_MAX;
 
     /* Check for wall trapped-ness: if 2 out of 3 rays' distance to collision
      * is close to the same small value, then we're probably directly facing
@@ -393,7 +387,7 @@ SteerInfo AIController::avoidObstacle()
 
     antiTarget = obstacle.position;
 
-    hitTime = 1000;
+    hitTime = FLT_MAX;
     if (obstacle.obj->agent)
     {
         /* determine next collision point given linear motion */

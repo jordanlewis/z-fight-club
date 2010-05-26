@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
         {
             world.PlayerQty = 1;
         }
-        if (world.runType == SOLO)
+        if (world.runType == SOLO || world.runType == SERVER)
         {
             if (vm.count("ai-players"))
             {

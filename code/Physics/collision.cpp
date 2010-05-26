@@ -4,6 +4,7 @@
 #include "Sound/sobject.h"
 #include "Engine/world.h"
 #include "Engine/geominfo.h"
+#include "Agents/agent.h"
 
 CollContact::CollContact () : obj(NULL), distance(0),
                               position(Vec3f(0,0,0)), normal(Vec3f(0,0,0))
@@ -16,9 +17,10 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
 {
     dBodyID b1 = dGeomGetBody(o1);
     dBodyID b2 = dGeomGetBody(o2);
-    Physics *p = (Physics *) data;
-    dWorldID odeWorld = p->getOdeWorld();
-    dJointGroupID odeContacts = p->getOdeContacts();
+    Physics &p = Physics::getInstance();
+    World &world = World::getInstance();
+    dWorldID odeWorld = p.getOdeWorld();
+    dJointGroupID odeContacts = p.getOdeContacts();
 
     PGeom *g1 = (PGeom *)dGeomGetData(o1);
     PGeom *g2 = (PGeom *)dGeomGetData(o2);
@@ -119,8 +121,17 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
                             contact[0].geom.pos[1],
                             contact[0].geom.pos[2]);
             w->setPos(p);
-            World &world = World::getInstance();
             world.addObject(w);
+        }
+
+        Agent *agent;
+        if ((g1->worldObject == world.botPlaneObj &&
+             (agent = g2->worldObject->agent)) ||
+            (g2->worldObject == world.botPlaneObj &&
+             (agent = g1->worldObject->agent)))
+        {
+            /* Agent has fallen off track. Reset it. */
+            agent->needsReset = true;
         }
 
         for (int i = 0; i < numCollisions; i++)

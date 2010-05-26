@@ -38,10 +38,9 @@ void Physics::simulate(float dt)
     error->pin(P_PHYSICS);
     static float timeStepRemainder;
     World &world = World::getInstance();
-    vector<WorldObject *>::iterator iter;
     PAgent *p;
     Agent *a;
-    int nSteps, i;
+    unsigned int nSteps, i, j;
     float desiredTimeSteps;
 
 
@@ -53,32 +52,37 @@ void Physics::simulate(float dt)
 
     for (i = 0; i < nSteps; i++)
     {
-        for (iter = world.wobjects.begin(); iter != world.wobjects.end();iter++)
+        for (j = 0; j < world.wobjects.size(); j++)
         {
-            if (!(*iter)->agent)
+            if (! (a = world.wobjects[j]->agent))
                 continue;
-            a = (*iter)->agent;
-            p = dynamic_cast<PAgent *>(a->worldObject->pobject);
+            p = static_cast<PAgent *>(a->worldObject->pobject);
             p->kinematicToOde();
             p->steeringToOde();
             useWeapons(a);
         }
-        for (vector<ParticleStreamObject*>::iterator i = world.particleSystems.begin();
-            i != world.particleSystems.end(); i++) {
-            Vec3f pos = (*i)->getPos() + (*i)->parent->getPos();
-            (*i)->gobject->geominfo->update(pos, dt);
+        for (j = 0; j < world.particleSystems.size(); j++)
+        {
+            ParticleStreamObject * p = world.particleSystems[j];
+            Vec3f pos = p->getPos() + p->parent->getPos();
+            p->gobject->geominfo->update(pos, dt);
         }
 
-        dSpaceCollide(odeSpace, this, &nearCallback);
+        dSpaceCollide(odeSpace, NULL, &nearCallback);
         dWorldStep(odeWorld, PH_TIMESTEP);
         dJointGroupEmpty(odeContacts);
 
-        for (iter = world.wobjects.begin(); iter != world.wobjects.end();iter++)
+        for (j = 0; j < world.wobjects.size(); j++)
         {
-            if (!(*iter)->agent)
+            if (! (a = world.wobjects[j]->agent))
                 continue;
-            a = (*iter)->agent;
-            p = dynamic_cast<PAgent *>((*iter)->pobject);
+            p = static_cast<PAgent *>(a->worldObject->pobject);
+            /* Do reset operation on ODE structs before syncing kinematic */
+            if (a->needsReset)
+            {
+                a->resetToTrack();
+                a->needsReset = false;
+            }
             const Kinematic &k = p->odeToKinematic();
             a->setKinematic(k);
             p->resetOdeAngularVelocity(1);

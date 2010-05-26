@@ -61,6 +61,9 @@ class PMoveable: public PGeom
  public:
     PMoveable(const Kinematic *kinematic, float mass,
               GeomInfo *info, dSpaceID space=NULL);
+    void resetToStopped(Vec3f pos, Quatf_t quat); /* Set pmoveable's ODE data
+                                                     and stop its motion */
+
     const Kinematic &odeToKinematic(); /* writes (syncs) the body coords into
                                         * the kinematic */
     const dBodyID &getBody();

@@ -1,6 +1,8 @@
 #include "agent.h"
 #include "Network/racerpacket.h"
 #include "Utilities/vec3f.h"
+#include "Engine/world.h"
+#include "Physics/pobject.h"
 #include <iomanip>
 
 unsigned int Agent::maxId = 0;    /* !<highest id number we've reached */
@@ -22,13 +24,14 @@ SteerInfo::SteerInfo() : acceleration(0), rotation(0), weapon(NONE), fire(0)
  * \param position the agent's initial position
  */
 
-Agent::Agent() : steerInfo(), kinematic(), pathPosition(0), lapCounter(0)
+Agent::Agent() : steerInfo(), kinematic(), pathPosition(0), lapCounter(0),
+                 needsReset(false)
 {
     id = maxId++;
 }
 
 Agent::Agent(Vec3f position) : steerInfo(), kinematic(position),
-                               pathPosition(0), lapCounter(0)
+                               pathPosition(0), lapCounter(0), needsReset(false)
 {
     id = maxId++;
 }
@@ -39,7 +42,7 @@ Agent::Agent(Vec3f position) : steerInfo(), kinematic(position),
  */
 Agent::Agent(Vec3f position, float orientation)
             : steerInfo(), kinematic(position, Vec3f(0,0,0), orientation),
-              pathPosition(0), lapCounter(0)
+              pathPosition(0), lapCounter(0), needsReset(false)
 {
     id = maxId++;
 }
@@ -90,6 +93,26 @@ void Agent::ntoh(RPAgent *payload){
     kinematic.ntoh(&(payload->kinematic));
     steerInfo.ntoh(&(payload->steerInfo));
     return;
+}
+
+void Agent::resetToTrack()
+{
+    World &world = World::getInstance();
+
+    Vec3f pos = world.path.distToPoint(pathDistance);
+    pos.y += 5;
+
+    unsigned int nextKnot = world.path.closestKnotAhead(kinematic.pos);
+    Vec3f toNext = world.path.knots[nextKnot] -
+                   world.path.knots[(nextKnot-1) % world.path.knots.size()];
+
+    Vec3f_t axis = {0, 1, 0};
+    Quatf_t orient;
+    float theta = atan2(toNext.x, toNext.z);
+    FromAxisAngle(axis, theta, orient);
+
+    static_cast<PMoveable *>(worldObject->pobject)->resetToStopped(pos,orient);
+
 }
 
 /* \brief set kinematic for agent

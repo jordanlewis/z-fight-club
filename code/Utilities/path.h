@@ -21,10 +21,11 @@ class Path
     void next();
 
     Vec3f closestPoint(Vec3f point);/*!< return point on path closest to point*/
+    unsigned int closestKnotAhead(Vec3f point); /* return next knot from point*/
     float pointToDist(Vec3f point);/*!<return distance on path of point */
     Vec3f distToPoint(float dist);/*!<return point at distance along path */
 
-    void computeDistances(); /*!< populate distances vector */
+    void computeDistances(); /*!< populate distances vector; totalLength */
 
     float knotDist(unsigned int knot);
 
