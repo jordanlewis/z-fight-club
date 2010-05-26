@@ -379,6 +379,8 @@ Agent *World::makeAI()
     addAgent(agent);
     ai.control(agent);
     ai.controllers.back()->lane((nAgents + 1) % 2);
+
+    ai.agentsSorted.push_back(agent);
     return agent;
 }
 
@@ -388,6 +390,7 @@ Agent *World::makePlayer()
     if (!track)
         return NULL;
 
+    AIManager &aim = AIManager::getInstance();
     Agent *agent = placeAgent(numAgents());
     addAgent(agent);
     camera = Camera(THIRDPERSON, agent);
@@ -399,7 +402,9 @@ Agent *World::makePlayer()
     addWidget(s);
     LapCounter *lc = new LapCounter(Vec3f(0,0,0), agent);
     addWidget(lc);
-    
+
+    aim.agentsSorted.push_back(agent);
+
     return agent;
 }
 
@@ -409,13 +414,6 @@ void World::makeAgents()
     for (int i = 0; i < AIQty; i++)
     {
         makeAI();
-    }
-    AIManager &aim = AIManager::getInstance();
-    for (unsigned int i = 0; i < wobjects.size(); i++)
-    {
-        if (!wobjects[i]->agent)
-            continue;
-        aim.agentsSorted.push_back(wobjects[i]->agent);
     }
 }
 
