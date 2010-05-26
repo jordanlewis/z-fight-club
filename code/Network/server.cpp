@@ -87,11 +87,42 @@ netObjID_t Server::attachNetID(WorldObject *wobject, netObjID_t ID){
 
     if (NULL != getNetObject(ID))
         {
-            error->log(NETWORK, IMPORTANT, "Warning: Overwriting old netobj");
+            error->log(NETWORK, IMPORTANT, "WARNING: Overwrote old netobj\n");
         }
 
     netobjs[ID] = wobject; 
     return ID;
+}
+
+netObjID_t Server::createHumanAgent(uint8_t clientID){
+    World &world = World::getInstance();
+    Agent *agent = world.placeAgent(world.numAgents());
+    world.addAgent(agent);
+    new PlayerController(agent);
+    cout << "Agent's wobject is now: " << agent->worldObject << endl;
+    netObjID_t netID = attachNetID(agent->worldObject);
+
+    if (NETOBJID_NONE == netID) {
+        error->log(NETWORK, IMPORTANT, "WARNING: ran out of netIDs\n");
+        return NETOBJID_NONE;
+    } 
+
+    struct RPCreateAgent toSend;
+    toSend.netID = htonl(netID);
+    toSend.clientID = clientID;
+    ENetPacket *packet = makeRacerPacket(RP_CREATE_AGENT, &toSend,
+                                         sizeof(RPCreateAgent),
+                                         ENET_PACKET_FLAG_RELIABLE);
+    toCreate.push_back(packet);
+
+    return netID;
+}
+
+netObjID_t Server::createAIAgent(){
+
+    //    AIManager &ai = AIManager::getInstance();
+    
+    return NETOBJID_NONE;
 }
 
 //should return NULL if unable to find an object with the given ID...
@@ -166,7 +197,8 @@ int Server::attachPMoveable(Kinematic *kine, float mass, GeomInfo *info,
  * as needed.
  */
 int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
-                         float mass, GeomInfo *geomInfo, netObjID_t ID, uint8_t clientID)
+                         float mass, GeomInfo *geomInfo, netObjID_t ID,
+                        uint8_t clientID)
 {
     WorldObject *obj = getNetObject(ID);
     if (obj == NULL)
@@ -300,9 +332,15 @@ void Server::gatherPlayers()
                     payload = event.packet->data+sizeof(racerPacketType_t);
                     if (type == RP_JOIN)
                     {
-                        RPStart info = *(RPStart *)payload;
+                        
+                        RPJoin info = *(RPJoin *)payload;
+                        createHumanAgent(info.clientID);
+
                         string msg = "Client # " + boost::lexical_cast<string>((int) info.clientID) + " requested join\n";
                         error->log(NETWORK, TRIVIAL, msg);
+                        
+                        /*
+                        RPJoin info = *(RPJoin *)payload;
                         netObjID_t netID;
                         if (createNetObj(netID) != 0)
                         {
@@ -317,6 +355,7 @@ void Server::gatherPlayers()
                                     &agent->getSteering(), 
                                     agent->mass, box,netID, info.clientID);
                         delete agent;
+                        */
                     }
                     if (type == RP_START) {
                         RPStart toSend;
@@ -450,7 +489,7 @@ void Server::serverFrame()
                             {
                                 RPUpdateAgent *P = (RPUpdateAgent *)payload;
                                 WorldObject *wo = netobjs[ntohl(P->ID)];
-                                if (wo && wo->agent)
+                                if (wo && wo->agent && wo->player)
                                 {
                                     wo->player->ntoh(&P->info);
                                 }

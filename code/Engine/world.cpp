@@ -18,8 +18,10 @@ extern "C" {
 
 World World::_instance;
 
-WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject, Agent *agent)
-    : pobject(pobject), gobject(gobject), sobject(sobject), agent(agent), player(NULL)
+WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject,
+                         Agent *agent)
+    : pobject(pobject), gobject(gobject), sobject(sobject), agent(agent),
+      player(NULL)
 {
     pos = Vec3f(-1,-1,-1);
     Quatf_t newquat = {0,0,0,1};
@@ -174,9 +176,8 @@ void World::addAgent(Agent *agent)
     sobj->registerNext(new SObject("18303_run.wav", 0, AL_TRUE));
 
     WorldObject *wobject = new WorldObject(pobj, gobj, sobj, agent);
-
+    cout << "Agent's wobject pointer is: " << agent->worldObject << endl;
     addObject(wobject);
-
 
     /* create a particle generator for the agent */
     Vec3f position = Vec3f(0.0, .5, 0.0);
@@ -360,24 +361,35 @@ Agent *World::placeAgent(int place)
 
     return agent;
 }
-
-void World::makeAI()
+/*
+//Creates a car unattached to any control structures.  Useful for networking.
+Agent *World::makeCar()
+{
+    if (!track) 
+        return NULL;
+    Agent *agent = placeAgent(numAgents());
+    addAgent(agent);
+    return agent;
+}
+*/
+Agent *World::makeAI()
 {
     if (!track)
-        return;
+        return NULL;
     AIManager &ai = AIManager::getInstance();
     int nAgents = numAgents();
     Agent *agent = placeAgent(nAgents);
     addAgent(agent);
     ai.control(agent);
     ai.controllers.back()->lane((nAgents + 1) % 2);
+    return agent;
 }
 
 
-void World::makePlayer()
+Agent *World::makePlayer()
 {
     if (!track)
-        return;
+        return NULL;
 
     Agent *agent = placeAgent(numAgents());
     addAgent(agent);
@@ -390,7 +402,8 @@ void World::makePlayer()
     addWidget(s);
     LapCounter *lc = new LapCounter(Vec3f(0,0,0), agent);
     addWidget(lc);
-
+    
+    return agent;
 }
 
 void World::makeAgents()

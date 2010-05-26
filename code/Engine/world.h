@@ -130,8 +130,8 @@ class World
     void addLight(Light *light);
     void addWidget(Widget *widget);
     Agent *placeAgent(int place);/*!<return a placed agent not yet in wobjects*/
-    void makeAI();
-    void makePlayer();
+    Agent *makeAI();
+    Agent *makePlayer();
     void makeAgents();
     void makeSkybox();
     void loadTrack(const char *file);

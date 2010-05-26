@@ -60,6 +60,8 @@ class Server {
     netObjID_t attachNetID(WorldObject *wobject, netObjID_t ID); /* Associate 
                                                                   * ID with
                                                                   * wobject.*/
+    netObjID_t createHumanAgent(uint8_t clientID);
+    netObjID_t createAIAgent();
     
     
     void updateFromClient(uint8_t clientId); //NYI (call within serverFrame)

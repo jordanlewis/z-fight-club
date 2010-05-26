@@ -206,6 +206,29 @@ void Client::checkForPackets()
                         world->addObject(wobject);
                         break;
                       }
+                    case RP_CREATE_AGENT:
+                        {
+                            error->log(NETWORK, TRIVIAL, "RP_CREATE_AGENT\n");
+                            Agent *agent;
+                            RPCreateAgent info = *(RPCreateAgent *)payload;
+
+                            if (info.clientID == clientID)
+                                {
+                                    error->log(NETWORK, TRIVIAL, "my ID!\n");
+                                    player = &input->getPlayerController();
+                                    agent = world->makePlayer();
+                                    Input::getInstance().controlPlayer(player);
+                                }
+                            else 
+                                {
+                                    error->log(NETWORK, TRIVIAL,"not my ID\n");
+                                    agent=world->placeAgent(world->numAgents());
+                                    world->addAgent(agent);
+                                }
+                            
+                            attachNetID(agent->worldObject, ntohl(info.netID));
+                            break;
+                        }
                     case RP_ATTACH_PGEOM:
                       {
                         error->log(NETWORK, TRIVIAL, "RP_ATTACH_PGEOM\n");
