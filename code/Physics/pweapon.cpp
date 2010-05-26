@@ -3,6 +3,8 @@
 #include "collision.h"
 #include "Agents/agent.h"
 #include "Engine/world.h"
+#include "Engine/geominfo.h"
+#include "Graphics/gobject.h"
 
 /* Call once per physics update.  Checks to see if an agents is using weapons.
  * If so, perform the physically appropriate action.
@@ -15,6 +17,7 @@ void useWeapons(Agent *agent){
             case NONE: break;
             case SMACK: smackAll(agent, PH_SMACKFORCE); break;
             case RAYGUN:  raygun(agent, PH_SMACKFORCE); break;
+            case BOXBOMB: launchBox(agent); break;
             default: break;
         }
     }
@@ -88,4 +91,18 @@ void raygun(Agent *agent, int force)
             }
         }
     }
+}
+
+void launchBox(Agent *agent)
+{
+    BoxInfo *box = new BoxInfo(.2,.2,.2);
+    Kinematic &ak = agent->getKinematic();
+    Kinematic *k = new Kinematic(ak.pos,
+                                 ak.orientation_v * 25 );
+    k->pos += ak.orientation_v;
+    k->vel.y += 3;
+    PMoveable *pobj = new PMoveable(k, 100, box);
+    GObject *gobj = new GObject(box);
+    WorldObject *wobj = new WorldObject(pobj, gobj, NULL, NULL);
+    World::getInstance().addObject(wobj);
 }

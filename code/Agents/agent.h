@@ -15,6 +15,7 @@ typedef enum {
     NONE = 0,
     SMACK,
     RAYGUN,
+    BOXBOMB,
     NWEAPONS
 } Weapon_t;
 
