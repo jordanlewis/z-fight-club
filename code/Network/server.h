@@ -52,9 +52,16 @@ class Server {
     /* attachAgent:  Assumes all Agents also want a PAgent.  Currently 
      * ignores mass argument.  See server.cpp for more details */ 
     int attachAgent(Kinematic *kine, SteerInfo *steerInfo, 
-                    float mass, GeomInfo *geomInfo, netObjID_t ID, uint8_t clientID); 
+                    float mass, GeomInfo *geomInfo, netObjID_t ID, 
+                    uint8_t clientID); 
+    netObjID_t attachNetID(WorldObject *wobject);  /* Associate first
+                                                    * available net ID
+                                                    * with wobject */
+    netObjID_t attachNetID(WorldObject *wobject, netObjID_t ID); /* Associate 
+                                                                  * ID with
+                                                                  * wobject.*/
     
-
+    
     void updateFromClient(uint8_t clientId); //NYI (call within serverFrame)
     void pushAgents(); //Push updates to the client
     void updateAgentsLocally(); //Update agent info from steerinfos
