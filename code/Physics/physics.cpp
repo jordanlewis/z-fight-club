@@ -77,7 +77,11 @@ void Physics::simulate(float dt)
             if (world.wobjects[j]->pobject &&
                 world.wobjects[j]->pobject->destroy)
             {
-                delete world.wobjects[j];
+                PMoveable *pm = dynamic_cast<PMoveable *>(world.wobjects[j]->pobject);
+                if (pm)
+                    delete pm;
+                else
+                    delete world.wobjects[j];
                 world.wobjects.erase(world.wobjects.begin() + j);
                 j--;
                 continue;

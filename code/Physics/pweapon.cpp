@@ -100,7 +100,7 @@ void launchBox(Agent *agent)
     Kinematic *k = new Kinematic(ak.pos,
                                  ak.orientation_v * 25 );
     k->pos += ak.orientation_v;
-    k->vel.y += 3;
+    k->vel.y += 2;
     PMoveable *pobj = new PMoveable(k, 100, box);
     pobj->bounce = 1;
     pobj->ephemeral = true;
