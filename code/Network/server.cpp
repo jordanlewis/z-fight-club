@@ -31,40 +31,67 @@ Server::~Server()
     }
 }
 
+/* Creates a world object and attaches a netID to that object.  Tells all 
+ * connected clients to also create this object. */
 int Server::createNetObj(netObjID_t &ID)
 {
-    int successFlag = 0;
-    netObjID_t i = 0;
-    //Find smallest unused identifier
-    for (; i < NETOBJID_MAX; i++)
-    {
-        if (netobjs.find(i) == netobjs.end())
+    netObjID_t i;
+    WorldObject *wobject = new WorldObject(NULL, NULL, NULL, NULL);
+    if ((i = attachNetID(wobject)) != NETOBJID_NONE)
         {
-            WorldObject *wobject = new WorldObject(NULL, NULL, NULL, NULL);
-            netobjs[i] = wobject;
-            ID = i;
-            successFlag = 1;
-            break;
+            struct RPCreateNetObj toSend;
+            toSend.ID = htonl(i);
+            ENetPacket *packet = makeRacerPacket(RP_CREATE_NET_OBJ, &toSend,
+                                                 sizeof(RPCreateNetObj),
+                                                 ENET_PACKET_FLAG_RELIABLE);
+            toCreate.push_back(packet);
+            //enet_host_broadcast(enetServer, 0, packet);
         }
-    }
-
-    if (successFlag)
-    {
-        struct RPCreateNetObj toSend;
-        toSend.ID = htonl(i);
-        ENetPacket *packet = makeRacerPacket(RP_CREATE_NET_OBJ, &toSend,
-                                             sizeof(RPCreateNetObj),
-                                             ENET_PACKET_FLAG_RELIABLE);
-        toCreate.push_back(packet);
-        //enet_host_broadcast(enetServer, 0, packet);
-    }
     else
-    {
+        {
         error->log(NETWORK, IMPORTANT, "Cannot accomodate more clients\n");
         return -1;
     }
 
     return 0;
+}
+
+/* Associate first available net ID with wobject.  Returns the associated ID
+ * on success.  Returns NETOBJID_NONE on failure */
+netObjID_t Server::attachNetID(WorldObject *wobject)
+{
+    int successFlag = 0;
+    netObjID_t i = 0;
+    //Find smallest unused identifier
+    for (; i < NETOBJID_MAX; i++)
+        {
+            if (netobjs.find(i) == netobjs.end())
+                {
+                    netobjs[i] = wobject;
+                    successFlag = 1;
+                    break;
+                }
+        }
+    
+    if (!successFlag)
+        {
+            error->log(NETWORK, IMPORTANT, "Cannot accomodate more clients\n");
+            return NETOBJID_NONE;
+        }
+    
+    return i;
+}
+
+/* Associate ID with wobject */
+netObjID_t Server::attachNetID(WorldObject *wobject, netObjID_t ID){
+
+    if (NULL != getNetObject(ID))
+        {
+            error->log(NETWORK, IMPORTANT, "Warning: Overwriting old netobj");
+        }
+
+    netobjs[ID] = wobject; 
+    return ID;
 }
 
 //should return NULL if unable to find an object with the given ID...

@@ -53,6 +53,18 @@ WorldObject *Client::getNetObj(netObjID_t ID)
     return netobjs[ID];
 }
 
+/* Associate ID with wobject */
+netObjID_t Client::attachNetID(WorldObject *wobject, netObjID_t ID){
+
+    if (NULL != getNetObj(ID))
+        {
+            error->log(NETWORK, IMPORTANT, "Warning: Overwriting old netobj");
+        }
+
+    netobjs[ID] = wobject; 
+    return ID;
+}
+
 void Client::setServerAddr(uint32_t addr)
 {
     serverAddr = addr;
@@ -187,7 +199,7 @@ void Client::checkForPackets()
                         error->log(NETWORK, TRIVIAL, "RP_CREATE_NET_OBJ\n");
                         RPCreateNetObj info = *(RPCreateNetObj *)payload;
                         WorldObject *wobject = new WorldObject(NULL, NULL, NULL, NULL);
-                        netobjs[ntohl(info.ID)] = wobject;
+                        attachNetID(wobject, ntohl(info.ID));
                         string msg = "Created netobj # ";
                         msg += boost::lexical_cast<string>(htonl(info.ID)) + "\n";
                         error->log(NETWORK, TRIVIAL, msg);

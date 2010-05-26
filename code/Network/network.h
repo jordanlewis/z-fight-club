@@ -15,7 +15,8 @@
 #include "allclasses.h"
 #include "constants.h"
 
-#define NETOBJID_MAX UINT32_MAX
+#define NETOBJID_MAX (UINT32_MAX -1)
+#define NETOBJID_NONE UINT32_MAX
 
 using namespace std;
 

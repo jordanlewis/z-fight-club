@@ -49,7 +49,7 @@ class Client {
 
     int createNetObj(netObjID_t ID);
     WorldObject *getNetObj(netObjID_t ID);
-
+    netObjID_t attachNetID(WorldObject *wobject, netObjID_t ID);
 
     void setServerAddr(uint32_t addr);
     void setServerPort(uint16_t port);
