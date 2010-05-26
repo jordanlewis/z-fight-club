@@ -102,6 +102,8 @@ void launchBox(Agent *agent)
     k->pos += ak.orientation_v;
     k->vel.y += 3;
     PMoveable *pobj = new PMoveable(k, 100, box);
+    pobj->bounce = 1;
+    pobj->ephemeral = true;
     GObject *gobj = new GObject(box);
     WorldObject *wobj = new WorldObject(pobj, gobj, NULL, NULL);
     World::getInstance().addObject(wobj);

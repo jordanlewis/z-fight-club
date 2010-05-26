@@ -134,6 +134,13 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
             agent->needsReset = true;
         }
 
+        if (g1->worldObject->agent && g2->ephemeral)
+            g2->destroy = true;
+        if (g2->worldObject->agent && g1->ephemeral)
+            g1->destroy = true;
+
+
+
         for (int i = 0; i < numCollisions; i++)
         {
             contact[i].surface.mode = mode;
