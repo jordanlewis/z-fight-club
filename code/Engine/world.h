@@ -107,6 +107,7 @@ class World
     TrackData_t *track;
     Path path;
     WorldObject *floorObj;
+    WorldObject *botPlaneObj;
     dWorldID ode_world;
     dSpaceID ode_space;
 

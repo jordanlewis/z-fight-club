@@ -212,6 +212,7 @@ void World::loadTrack(const char *file)
     PlaneInfo info = PlaneInfo(0, 1, 0, -20);
     geom = new PGeom(&info);
     wobj = new WorldObject(geom, NULL, NULL, NULL);
+    botPlaneObj = wobj;
     addObject(wobj);
 
 

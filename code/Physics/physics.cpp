@@ -58,7 +58,7 @@ void Physics::simulate(float dt)
             if (!(*iter)->agent)
                 continue;
             a = (*iter)->agent;
-            p = dynamic_cast<PAgent *>(a->worldObject->pobject);
+            p = static_cast<PAgent *>(a->worldObject->pobject);
             p->kinematicToOde();
             p->steeringToOde();
             useWeapons(a);
@@ -78,7 +78,13 @@ void Physics::simulate(float dt)
             if (!(*iter)->agent)
                 continue;
             a = (*iter)->agent;
-            p = dynamic_cast<PAgent *>((*iter)->pobject);
+            p = static_cast<PAgent *>((*iter)->pobject);
+            /* Do reset operation on ODE structs before syncing kinematic */
+            if (a->needsReset)
+            {
+                a->resetToTrack();
+                a->needsReset = false;
+            }
             const Kinematic &k = p->odeToKinematic();
             a->setKinematic(k);
             p->resetOdeAngularVelocity(1);

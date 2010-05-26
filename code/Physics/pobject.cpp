@@ -122,6 +122,17 @@ const dBodyID &PMoveable::getBody()
     return body;
 }
 
+void PMoveable::resetToStopped(Vec3f pos, Quatf_t quat)
+{
+    dQuaternion dquat;
+    QuatfToDQuat(quat, dquat);
+
+    dBodySetPosition(body, pos.x, pos.y, pos.z);
+    dBodySetLinearVel(body, 0, 0, 0);
+    dBodySetQuaternion(body, dquat);
+    dBodySetAngularVel(body, 0, 0, 0);
+}
+
 /* \brief Copys the kinematic info into ODE's representation
  */
 void PMoveable::kinematicToOde()

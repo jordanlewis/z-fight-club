@@ -37,6 +37,26 @@ static Vec3f closestPointOnSegment(Vec3f point, Vec3f enda, Vec3f endb)
     return closest;
 }
 
+unsigned int Path::closestKnotAhead(Vec3f point)
+{
+    float dist, bestDist = FLT_MAX;
+    unsigned int next, bestKnot;
+    Vec3f closest;
+    for (unsigned int i = 0; i < knots.size(); i++)
+    {
+        next = (i+1) % knots.size();
+
+        closest = closestPointOnSegment(point, knots[i], knots[next]);
+        dist = (point - closest).length();
+        if (dist < bestDist)
+        {
+            bestDist = dist;
+            bestKnot = next;
+        }
+    }
+    return bestKnot;
+}
+
 Vec3f Path::closestPoint(Vec3f point)
 {
     float dist, bestDist = FLT_MAX;
