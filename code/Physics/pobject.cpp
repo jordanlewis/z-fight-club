@@ -8,8 +8,8 @@
 #include <ode/ode.h>
 
 PGeom::PGeom(GeomInfo *info, dSpaceID space)
-    : bounce(D_BOUNCE), mu1(D_MU1), mu2(D_MU2), collType(D_COLL),
-      worldObject(NULL)
+    : ephemeral(false), destroy(false), bounce(D_BOUNCE), mu1(D_MU1),
+      mu2(D_MU2), collType(D_COLL), worldObject(NULL)
 {
     if (space == NULL)
         space = Physics::getInstance().getOdeSpace();
@@ -42,6 +42,11 @@ PMoveable::PMoveable(const Kinematic *kinematic, float mass,
     // get orientation as angle around y axis; give that quat to the body
     dQFromAxisAndAngle(q, 0, 1, 0, kinematic->orientation);
     dBodySetQuaternion(body, q);
+}
+
+PMoveable::~PMoveable()
+{
+    dBodyDestroy(body);
 }
 
 PAgent::PAgent(const Kinematic *kinematic, const SteerInfo *steering,

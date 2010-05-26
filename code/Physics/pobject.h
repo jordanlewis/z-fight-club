@@ -29,6 +29,8 @@ class PGeom
 
  public:
     dSpaceID space;
+    bool ephemeral;
+    bool destroy;
     float bounce;
     float mu1, mu2;
     CollType_t collType;
@@ -61,6 +63,7 @@ class PMoveable: public PGeom
  public:
     PMoveable(const Kinematic *kinematic, float mass,
               GeomInfo *info, dSpaceID space=NULL);
+    ~PMoveable();
     void resetToStopped(Vec3f pos, Quatf_t quat); /* Set pmoveable's ODE data
                                                      and stop its motion */
 
