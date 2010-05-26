@@ -16,9 +16,6 @@ extern "C" {
     #include "Parser/track-parser.h"
 }
 
-float World::xMax = 1000; // XXX this probably will depend on tracks
-float World::zMax = 1000; // XXX this too
-
 World World::_instance;
 
 WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject, Agent *agent)
