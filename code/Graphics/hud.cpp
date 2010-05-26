@@ -134,12 +134,17 @@ SubMenu::SubMenu(string name, list<Menu *> items)
 void SubMenu::draw()
 {
     World &world = World::getInstance();
+    int hres = world.camera.getHres();
+    int wres = world.camera.getWres();
 
 
-    drawText(Vec3f(400, 400, 0), name, GLUT_BITMAP_HELVETICA_18);
+    int hPos = 100;
+
+    drawText(Vec3f(wres / 4, hPos, 0), name, GLUT_BITMAP_HELVETICA_18);
 
     for (list<Menu *>::iterator i = items.begin(); i != items.end(); i++) {
-        drawText(Vec3f(400, 400, 0), (*i)->name, GLUT_BITMAP_HELVETICA_18);
+        hPos += 25;
+        drawText(Vec3f(wres / 4, hPos, 0), (*i)->name, GLUT_BITMAP_HELVETICA_18);
     } 
 }
 
