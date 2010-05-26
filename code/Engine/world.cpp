@@ -168,7 +168,7 @@ int World::numAgents()
 void World::addAgent(Agent *agent)
 {
     BoxInfo *box = new BoxInfo(agent->width, agent->height, agent->depth);
-    ObjMeshInfo *ship = new ObjMeshInfo("ship/"); 
+    ObjMeshInfo *ship = new ObjMeshInfo("Racers/Fish/"); 
     PAgent *pobj = new PAgent(&(agent->getKinematic()), &(agent->getSteering()),
                               agent->mass, box);
     pobj->bounce = 1;
