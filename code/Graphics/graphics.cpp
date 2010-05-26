@@ -3,6 +3,7 @@
 #include "Physics/physics.h"
 #include "Utilities/vector.h"
 #include "Utilities/error.h"
+#include "Engine/scheduler.h"
 #include "Agents/ai.h"
 #include "Agents/agent.h"
 #include "hud.h"
@@ -185,6 +186,9 @@ void Graphics::render()
     {
         (*i)->draw();
     }
+
+    if (Scheduler::getInstance().raceState == PAUSE)
+        World::getInstance().pauseMenu->draw();
 
     glPopMatrix();
 

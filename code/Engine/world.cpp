@@ -90,6 +90,16 @@ ParticleStreamObject::ParticleStreamObject(PGeom *pobject, GParticleObject *gobj
 World::World() :
     error(&Error::getInstance()), nox(false), nosound(false)
 {
+    list<Menu *> items;
+    SubMenu *graphics = new SubMenu("Graphics");
+    SubMenu *gameOptions = new SubMenu("Game Options");
+    SubMenu *sound = new SubMenu("Sound");
+
+    items.push_back(graphics);
+    items.push_back(gameOptions);
+    items.push_back(sound);
+
+    pauseMenu = new SubMenu("Pause Menu", items);
 }
 
 Light::Light()

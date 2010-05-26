@@ -119,20 +119,16 @@ void Text::draw()
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text[i]);
 }
 
-Menu::Menu(Vec3f pos, string name)
-    : Widget(pos), name(name)
+Menu::Menu(string name)
+    : name(name)
 {}
 
-void Menu::draw()
-{
-}
-
-SubMenu::SubMenu(Vec3f pos, string name)
-    : Menu(pos, name)
+SubMenu::SubMenu(string name)
+    : Menu(name)
 {}
 
-SubMenu::SubMenu(Vec3f pos, string name, list<Menu *> items)
-    : Menu(pos, name), items(items)
+SubMenu::SubMenu(string name, list<Menu *> items)
+    : Menu(name), items(items)
 {}
 
 void SubMenu::draw()
@@ -147,8 +143,8 @@ void SubMenu::draw()
     } 
 }
 
-TerminalMenu::TerminalMenu(Vec3f pos, string name, void (*callback)())
-    : Menu(pos, name), callback(callback)
+TerminalMenu::TerminalMenu(string name, void (*callback)())
+    : Menu(name), callback(callback)
 {}
 
 MiniMap::MiniMap(Vec3f pos, Path *path) : Widget(pos), path(path)

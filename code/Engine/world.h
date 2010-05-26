@@ -7,6 +7,7 @@
 #include "Utilities/quat.h"
 #include "Utilities/path.h"
 #include "Graphics/camera.h"
+#include "Graphics/hud.h"
 #include "Physics/physics.h"
 #include <ode/ode.h>
 #include <vector>
@@ -118,6 +119,7 @@ class World
 
     std::vector<Light *> lights; /* !< the lights in the world */
     std::vector<Widget *> widgets; /* !< the widgets in the world */
+    SubMenu *pauseMenu;                    /* !< menu to render when the game is paused */
 
     string assetsDir;   /* !< base directory for asset files */
 

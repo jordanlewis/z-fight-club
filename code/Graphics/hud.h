@@ -51,12 +51,12 @@ class Text : public Widget
     void draw();
 };
 
-class Menu : public Widget
+class Menu
 {
     public:
         string name;
-        Menu(Vec3f, string);
-        virtual void draw();
+        Menu(string);
+        virtual void draw() {};
 };
 
 class SubMenu : public Menu
@@ -65,8 +65,8 @@ class SubMenu : public Menu
         SubMenu         *up;        /* !< the menu above this one */
         int             selection;  /* !< which item is selected */
         list<Menu *>    items;      /* !< the items in the menu */
-        SubMenu(Vec3f, string);
-        SubMenu(Vec3f, string, list<Menu *>);
+        SubMenu(string);
+        SubMenu(string, list<Menu *>);
         void draw();
 };
 
@@ -74,7 +74,7 @@ class TerminalMenu : public Menu
 {
     public:
         void (*callback)();     /* !< function to call when this button is hit */
-        TerminalMenu(Vec3f, string, void (*callback)());
+        TerminalMenu(string, void (*callback)());
 };
 
 class MiniMap : public Widget
