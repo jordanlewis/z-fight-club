@@ -424,6 +424,7 @@ void Server::gatherPlayers()
                     int successFlag = 0;
                     client.ipAddr = event.peer->address.host;
                     client.port = event.peer->address.port;
+                    client.peer = event.peer;
 
                     //Find smallest unused identifier
                     for (uint8_t i = 0; i < UINT8_MAX; i++)
@@ -543,7 +544,18 @@ void Server::serverFrame()
                                 }
                                 break;
                             }
-                        default:
+                        case RP_RTT:
+                            {
+                                RPRTT info = *(RPRTT *)payload;
+                                ENetPacket *packet=makeRacerPacket(RP_RTT,
+                                                                   &info,
+                                                                   sizeof(RPRTT),
+                                                                     0);
+                                enet_peer_send(event.peer, 0, packet);
+                                enet_packet_destroy(event.packet);
+                                break;
+                            }
+                            default:
                              break;
                     }
                 }
