@@ -416,7 +416,7 @@ Agent *World::makeAI()
     AIManager &ai = AIManager::getInstance();
     Agent *agent = makeCar();
     ai.control(agent);
-    ai.controllers.back()->lane((numAgents() + 1) % 2);
+    ai.controllers.back()->lane((numAgents()) % 2);
     return agent;
 }
 
