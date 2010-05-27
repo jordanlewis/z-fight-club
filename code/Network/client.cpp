@@ -355,6 +355,18 @@ void Client::sendStartRequest()
     error->pout(P_CLIENT);
 }
 
+void Client::sendRTTRequest()
+{
+    error->pin(P_CLIENT);
+    RPRTT toSend;
+    toSend.clientID = clientID;
+    toSend.time = htond(GetTime());
+    ENetPacket *packet = makeRacerPacket(RP_RTT, &toSend, sizeof(RPRTT),0);
+    enet_peer_send(peer, 0, packet);
+    enet_host_flush(enetClient);
+    error->pout(P_CLIENT);
+}
+
 void Client::pushToServer()
 {
     error->pin(P_CLIENT);

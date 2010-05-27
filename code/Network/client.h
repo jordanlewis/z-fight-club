@@ -59,6 +59,7 @@ class Client {
     void updateAgentsLocally();
     void sendJoinRequest(); //Register yourself as a player in this game.
     void sendStartRequest(); //Request for the game to start.
+    void sendRTTRequest(); //Determine the RTT for a connection.
     void disconnect();
 };
 
