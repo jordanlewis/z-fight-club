@@ -3,6 +3,7 @@
 #include "Engine/world.h"
 #include "Utilities/error.h"
 #include "Agents/agent.h"
+#include <boost/lexical_cast.hpp>
 
 SObject::SObject(string soundName, double startTime, bool loop) :
     startTime(startTime),
