@@ -179,4 +179,7 @@ class ParticleSystemInfo : public GeomInfo
         void draw();
         void update(Vec3f, float);
 };
+
+void makeExplosion(Vec3f, float);
+
 #endif

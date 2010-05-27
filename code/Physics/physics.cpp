@@ -64,7 +64,11 @@ void Physics::simulate(float dt)
         for (j = 0; j < world.particleSystems.size(); j++)
         {
             ParticleStreamObject * p = world.particleSystems[j];
-            Vec3f pos = p->getPos() + p->parent->getPos();
+            Vec3f pos;
+            if (p->parent)
+                pos = p->getPos() + p->parent->getPos();
+            else
+                pos = p->getPos();
             p->gobject->geominfo->update(pos, dt);
         }
 
@@ -77,6 +81,7 @@ void Physics::simulate(float dt)
             if (world.wobjects[j]->pobject &&
                 world.wobjects[j]->pobject->destroy)
             {
+                makeExplosion(world.wobjects[j]->getPos(), 1.0);
                 PMoveable *pm = dynamic_cast<PMoveable *>(world.wobjects[j]->pobject);
                 if (pm)
                     delete pm;
@@ -84,6 +89,7 @@ void Physics::simulate(float dt)
                     delete world.wobjects[j];
                 world.wobjects.erase(world.wobjects.begin() + j);
                 j--;
+                
                 continue;
             }
             if (! (a = world.wobjects[j]->agent))
