@@ -3,7 +3,6 @@
 #include "Engine/world.h"
 #include "Utilities/error.h"
 #include "Agents/agent.h"
-#include <boost/lexical_cast.hpp>
 
 SObject::SObject(string soundName, double startTime, bool loop) :
     startTime(startTime),
@@ -40,6 +39,7 @@ SObject::SObject(string soundName, double startTime, bool loop) :
     }
 
     double foo = GetTime();
+    /*
     string msg = "+SObject";
     msg += " " + boost::lexical_cast<string>(id);
     msg += " " + boost::lexical_cast<string>(sr);
@@ -47,6 +47,14 @@ SObject::SObject(string soundName, double startTime, bool loop) :
     msg += " " + boost::lexical_cast<string>(foo);
     msg += " " + soundName + "\n";
     error->log(SOUND, TRIVIAL, msg);
+    */
+    SOUND << TRIVIAL << "+SObject";
+    SOUND << TRIVIAL << " " << id;
+    SOUND << TRIVIAL << " " << sr;
+    SOUND << TRIVIAL << " " << duration;
+    SOUND << TRIVIAL << " " << foo;
+    SOUND << TRIVIAL << " " << soundName << "\n";
+
 }
 
 SObject::~SObject()
@@ -72,7 +80,8 @@ void SObject::update(WorldObject *host)
     {
         host->sobject = nextSound;
         if (nextSound) host->sobject->setStartTime(GetTime());
-        this->~SObject();
+        // this looks terrifying, but because we have a private destructor it should be fine.
+        delete this;
         return;
     }
     double now = GetTime();
@@ -86,7 +95,8 @@ void SObject::update(WorldObject *host)
         playing = false;
         host->sobject = nextSound;
         if (nextSound) host->sobject->setStartTime(GetTime());
-        this->~SObject();
+        // this looks terrifying, but because we have a private destructor it should be fine.
+        delete this;
         return;
     }
 

@@ -19,7 +19,7 @@ const char* ProfileNames[] =
 
 Error Error::_instance;
 
-Error::Error()
+Error::Error() : nonestream(0)
 {
     int i;
     for (i = 0; i < NUM_MODULE; i++)
@@ -112,4 +112,12 @@ void Error::pdisplay()
         std::cerr << std::fixed << std::setw(11) << std::setprecision(4) << accumulated[i];
     }
     std::cerr << endl;
+}
+
+ostream &operator<<(ErrorModule_t m, ErrorVerbosity_t v) {
+    Error &e = Error::getInstance();
+    if(e.module[m] && v >= e.verbosity)
+        return cout;
+    else
+        return e.nonestream; 
 }
