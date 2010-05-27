@@ -355,6 +355,7 @@ void Client::sendStartRequest()
     error->pout(P_CLIENT);
 }
 
+//Determine RTT for successfully delivered unreliable packets.
 void Client::sendRTTRequest()
 {
     error->pin(P_CLIENT);

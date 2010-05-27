@@ -391,6 +391,7 @@ void Server::gatherPlayers()
                                     agent->mass, box,netID, info.clientID);
                         delete agent;
                         */
+                        enet_packet_destroy(event.packet);
                     }
                     if (type == RP_START) {
                         RPStart toSend;
@@ -400,10 +401,20 @@ void Server::gatherPlayers()
                                                            sizeof(RPStart),
                                                            ENET_PACKET_FLAG_RELIABLE);
                         enet_host_broadcast(enetServer, 0, packet);
+                        enet_packet_destroy(event.packet);
                         return;
-                        
+                        break;
                     }
-                    enet_packet_destroy(event.packet);
+                    if (RP_RTT == type) {
+                        RPRTT info = *(RPRTT *)payload;
+                        ENetPacket *packet = makeRacerPacket(RP_RTT,
+                                                             &info,
+                                                             sizeof(RPRTT),
+                                                             0);
+                        enet_peer_send(event.peer, 0, packet);
+                        enet_packet_destroy(event.packet);
+                        break;
+                    }
                   }
                     break;
                 case ENET_EVENT_TYPE_CONNECT:
