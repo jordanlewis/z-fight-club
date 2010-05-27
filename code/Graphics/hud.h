@@ -62,7 +62,7 @@ class Menu
 class SubMenu : public Menu
 {
     public:
-        SubMenu         *up;        /* !< the menu above this one */
+        SubMenu         *parent;    /* !< the menu above this one, NULL if top level */
         int             selection;  /* !< which item is selected */
         list<Menu *>    items;      /* !< the items in the menu */
         SubMenu(string);

@@ -129,7 +129,14 @@ SubMenu::SubMenu(string name)
 
 SubMenu::SubMenu(string name, list<Menu *> items)
     : Menu(name), items(items), selection(0)
-{}
+{
+    /* set our submenu's to have us as their up menu */
+    for (list<Menu *>::iterator i = items.begin(); i != items.end(); i++) {
+        SubMenu *subMenu = dynamic_cast<SubMenu *> (*i);
+        if (subMenu)
+            subMenu->parent = this;
+    }
+}
 
 void SubMenu::draw()
 {
