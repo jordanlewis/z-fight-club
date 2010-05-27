@@ -292,8 +292,15 @@ void Server::pushAgents()
         payload.ID = htonl((*iter).first);
         WorldObject *wo = (*iter).second;
         if (wo == NULL) continue;
-        if (wo->player == NULL) continue; //We are dealing with an AI car.
-        wo->player->hton(&(payload.info));
+        if (wo->player == NULL)  //We are dealing with an AI car.
+            {
+                payload.AIFlag=1;
+            }
+        else
+            {
+                payload.AIFlag = 0;
+                wo->player->hton(&(payload.info));
+            }
         if (wo->agent == NULL) continue;
         wo->agent->kinematic.hton(&(payload.kine));
         if (wo->pobject == NULL) continue;

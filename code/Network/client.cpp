@@ -181,9 +181,14 @@ void Client::checkForPackets()
                         RPUpdateAgent *P = (RPUpdateAgent *)payload;
                         cout << "Updating agent " << ntohl(P->ID) << endl;
                         WorldObject *wo = netobjs[ntohl(P->ID)];
-                        if (wo && wo->agent && wo->player && wo->pobject)
+                        if (wo == NULL) continue;
+                        if (P->AIFlag && wo->agent && wo->pobject)
                             {
-                                cout << "entered if" << endl;
+                                wo->agent->kinematic.ntoh(&(P->kine));
+                                wo->pobject->ntohQuat(&(P->quat));
+                            }
+                        else if (wo->agent && wo->player && wo->pobject)
+                            {
                                 wo->player->ntoh(&P->info);
                                 /*cout << "PlayerController["
                                      << ntohl(P->ID) << "]: "
