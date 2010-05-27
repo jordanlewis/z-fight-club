@@ -281,19 +281,22 @@ void Server::createAll(){
 
 void Server::pushAgents()
 {
+    cout << "Pushing agents!" << endl;
+
     RPUpdateAgent payload;
     for (map<netObjID_t, WorldObject *>::iterator iter = netobjs.begin();
          iter != netobjs.end();
          iter++)
     {
+        cout << "Pushing an agent!" << endl;
         payload.ID = htonl((*iter).first);
         WorldObject *wo = (*iter).second;
-        if (wo == NULL) return;
-        if (wo->player == NULL) return;
+        if (wo == NULL) continue;
+        if (wo->player == NULL) continue;
         wo->player->hton(&(payload.info));
-        if (wo->agent == NULL) return;
+        if (wo->agent == NULL) continue;
         wo->agent->kinematic.hton(&(payload.kine));
-        if (wo->pobject == NULL) return;
+        if (wo->pobject == NULL) continue;
         wo->pobject->htonQuat(&(payload.quat));
         ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
                                              &payload, sizeof(payload),
