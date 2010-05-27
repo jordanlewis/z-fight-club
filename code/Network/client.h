@@ -5,7 +5,7 @@
 #include "network.h"
 
 #define NET_RTT_MIX_FACTOR .8 //newRTT=mix_factor*oldRTT+(1-mix_factor)freshRTT
-#define NET_RANGE_FUDGE 1.2 /* Allow a fudge factor in our calculations of 
+#define NET_RANGE_FUDGE 5 /* Allow a fudge factor in our calculations of 
                              * acceptable error in the client's dead reckoning.
                              * This helps account for acceleration, as the 
                              * acceptable error only takes velocity into

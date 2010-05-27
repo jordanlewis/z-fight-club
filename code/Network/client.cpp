@@ -18,8 +18,8 @@ Client Client::_instance;
 
 Client::Client() :
     clientID(255),
-    rtt(0.1), //CHANGE ME WHEN WE GET RTT ACTUALLY IMPLEMENTED!
-    ott(0.1),
+    rtt(0), //CHANGE ME WHEN WE GET RTT ACTUALLY IMPLEMENTED!
+    ott(0), //CHANGE ME WHEN WE GET RTT ACTUALLY IMPLEMENTED!
     player(NULL),
     world(&World::getInstance()),
     input(&Input::getInstance()),
@@ -196,7 +196,7 @@ void Client::checkForPackets()
                                 }
                             else //Server RTT request.  Return it. 
                                 {
-                                    
+                                    //NYI.  Server has no need for this... yet.
                                 }
                             break;
                         }
@@ -212,6 +212,7 @@ void Client::checkForPackets()
                         Kinematic kine;
                         kine.ntoh(&(P->kine));
                         range = ott*(kine.forwardSpeed())*NET_RANGE_FUDGE;
+                        cout << "ott is " << ott << endl;
                         cout << "Acceptable range is " << abs(range) << endl;
                         cout << "Gap is: "
                              << abs((kine.pos - wo->agent->kinematic.pos).length())
@@ -410,6 +411,7 @@ void Client::sendRTTRequest()
 void Client::pushToServer()
 {
     error->pin(P_CLIENT);
+    sendRTTRequest();
     RPUpdateAgent payload;
     payload.ID = htonl(netID);
     if (player == NULL) return;
