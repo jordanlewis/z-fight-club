@@ -163,6 +163,7 @@ void Scheduler::clientLoopForever()
             nowPh = GetTime();
             if (nowPh - lastPh > 0) physics->simulate(nowPh - lastPh);
             lastPh = nowPh;
+            ai->run();
             graphics->render();
             sound->render();
             input->processInput(); // may transition us into C_DONE

@@ -181,9 +181,14 @@ void Client::checkForPackets()
                         RPUpdateAgent *P = (RPUpdateAgent *)payload;
                         cout << "Updating agent " << ntohl(P->ID) << endl;
                         WorldObject *wo = netobjs[ntohl(P->ID)];
-                        if (wo && wo->agent && wo->player && wo->pobject)
+                        if (wo == NULL) continue;
+                        if (P->AIFlag && wo->agent && wo->pobject)
                             {
-                                cout << "entered if" << endl;
+                                wo->agent->kinematic.ntoh(&(P->kine));
+                                wo->pobject->ntohQuat(&(P->quat));
+                            }
+                        else if (wo->agent && wo->player && wo->pobject)
+                            {
                                 wo->player->ntoh(&P->info);
                                 /*cout << "PlayerController["
                                      << ntohl(P->ID) << "]: "
@@ -232,10 +237,15 @@ void Client::checkForPackets()
                         }
                     case RP_CREATE_AI_AGENT:
                         {
-                            cout << "Server sez create AI!" << endl;
-                            error->log(NETWORK, TRIVIAL, "RP_CREATE_AGENT\n");
+                            error->log(NETWORK, TRIVIAL, 
+                                       "RP_CREATE_AI_AGENT\n");
                             RPCreateAIAgent info = *(RPCreateAIAgent *)payload;
                             Agent *agent = world->makeAI();
+                            world->AIQty++;
+                            if (agent == NULL) {
+                                error->log(NETWORK, CRITICAL,
+                                           "RP_CREATE_AI_AGENT failed");
+                            }
                             attachNetID(agent->worldObject, ntohl(info.netID));
                             break;
                         }

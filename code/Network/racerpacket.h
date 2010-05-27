@@ -106,6 +106,7 @@ struct RPAgent{
 
 struct RPUpdateAgent {
     netObjID_t ID;
+    uint8_t AIFlag; //1 if we are an AI
     RPPlayerControl info;
     RPKinematic kine;
     RPQuat quat;
