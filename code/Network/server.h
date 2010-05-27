@@ -12,8 +12,10 @@ class ClientInfo {
     uint8_t identifier;  //Unique identifier assigned on connection establish
     uint32_t ipAddr;
     uint16_t port;
+    double rtt; //RTT (in seconds) of unreliable packets going to this client
     double updateRate; //Push data to this client at least updateRate ms apart.
     double lastUpdate; //last time we updated this client.
+    ENetPeer *peer;
 };
 
 //Server class

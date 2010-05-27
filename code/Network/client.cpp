@@ -18,6 +18,8 @@ Client Client::_instance;
 
 Client::Client() :
     clientID(255),
+    rtt(0.1), //CHANGE ME WHEN WE GET RTT ACTUALLY IMPLEMENTED!
+    ott(0.1),
     player(NULL),
     world(&World::getInstance()),
     input(&Input::getInstance()),
@@ -175,6 +177,29 @@ void Client::checkForPackets()
                         clientState = C_CONNECTED;
                         break;
                       }
+                    case RP_RTT:
+                        {
+                            error->log(NETWORK, TRIVIAL, "RP_RTT\n");
+                            RPRTT info = *(RPRTT *)payload;
+                            if (clientID == info.clientID) //my RTT request. 
+                                {
+                                    if (rtt == 0) {
+                                        rtt = GetTime() - ntohd(info.time);
+                                        ott = rtt/2;
+                                    }
+                                    else {
+                                        rtt = NET_RTT_MIX_FACTOR*rtt + 
+                                            (1-NET_RTT_MIX_FACTOR)*
+                                            (GetTime() - ntohd(info.time));
+                                        ott = rtt/2;
+                                    }
+                                }
+                            else //Server RTT request.  Return it. 
+                                {
+                                    
+                                }
+                            break;
+                        }
                     case RP_UPDATE_AGENT: 
                         {
                         error->log(NETWORK, TRIVIAL, "RP_UPDATE_AGENT\n");
@@ -182,12 +207,23 @@ void Client::checkForPackets()
                         cout << "Updating agent " << ntohl(P->ID) << endl;
                         WorldObject *wo = netobjs[ntohl(P->ID)];
                         if (wo == NULL) continue;
-                        if (P->AIFlag && wo->agent && wo->pobject)
+                        if (wo->agent == NULL || wo->pobject == NULL) continue;
+                        float range;
+                        Kinematic kine;
+                        kine.ntoh(&(P->kine));
+                        range = ott*(kine.forwardSpeed())*NET_RANGE_FUDGE;
+                        cout << "Acceptable range is " << range << endl;
+                        if ((kine.pos - wo->agent->kinematic.pos).length() < 
+                            range){
+                            kine.pos = wo->agent->kinematic.pos;
+                        }
+                        wo->agent->kinematic = kine;
+                        if (P->AIFlag)
                             {
-                                wo->agent->kinematic.ntoh(&(P->kine));
+                                //wo->agent->kinematic.ntoh(&(P->kine));
                                 wo->pobject->ntohQuat(&(P->quat));
                             }
-                        else if (wo->agent && wo->player && wo->pobject)
+                        else if (wo->player)
                             {
                                 wo->player->ntoh(&P->info);
                                 /*cout << "PlayerController["
