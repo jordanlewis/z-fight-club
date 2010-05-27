@@ -281,14 +281,12 @@ void Server::createAll(){
 
 void Server::pushAgents()
 {
-    cout << "Pushing agents!" << endl;
 
     RPUpdateAgent payload;
     for (map<netObjID_t, WorldObject *>::iterator iter = netobjs.begin();
          iter != netobjs.end();
          iter++)
     {
-        cout << "Pushing an agent!" << endl;
         payload.ID = htonl((*iter).first);
         WorldObject *wo = (*iter).second;
         if (wo == NULL) continue;

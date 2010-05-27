@@ -212,9 +212,12 @@ void Client::checkForPackets()
                         Kinematic kine;
                         kine.ntoh(&(P->kine));
                         range = ott*(kine.forwardSpeed())*NET_RANGE_FUDGE;
-                        cout << "Acceptable range is " << range << endl;
-                        if ((kine.pos - wo->agent->kinematic.pos).length() < 
-                            range){
+                        cout << "Acceptable range is " << abs(range) << endl;
+                        cout << "Gap is: "
+                             << abs((kine.pos - wo->agent->kinematic.pos).length())
+                             << endl;
+                        if (abs((kine.pos - wo->agent->kinematic.pos).length())
+                            < abs(range)){
                             kine.pos = wo->agent->kinematic.pos;
                         }
                         wo->agent->kinematic = kine;
@@ -230,7 +233,7 @@ void Client::checkForPackets()
                                      << ntohl(P->ID) << "]: "
                                      << *(wo->player) << endl;*/
                                 wo->player->updateAgent();
-                                wo->agent->kinematic.ntoh(&(P->kine));
+                                //wo->agent->kinematic.ntoh(&(P->kine));
                                 wo->pobject->ntohQuat(&(P->quat));
                             }
                             
