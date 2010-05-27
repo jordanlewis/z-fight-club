@@ -232,10 +232,15 @@ void Client::checkForPackets()
                         }
                     case RP_CREATE_AI_AGENT:
                         {
-                            cout << "Server sez create AI!" << endl;
-                            error->log(NETWORK, TRIVIAL, "RP_CREATE_AGENT\n");
+                            error->log(NETWORK, TRIVIAL, 
+                                       "RP_CREATE_AI_AGENT\n");
                             RPCreateAIAgent info = *(RPCreateAIAgent *)payload;
                             Agent *agent = world->makeAI();
+                            world->AIQty++;
+                            if (agent == NULL) {
+                                error->log(NETWORK, CRITICAL,
+                                           "RP_CREATE_AI_AGENT failed");
+                            }
                             attachNetID(agent->worldObject, ntohl(info.netID));
                             break;
                         }

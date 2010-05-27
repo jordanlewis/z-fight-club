@@ -104,6 +104,10 @@ int main(int argc, char *argv[])
                 world.AIQty = 3;
             }
         }
+        else if (world.runType == CLIENT) 
+            {
+                world.AIQty = 0; //We will increment this as we get more AI.
+            }
 
         if (vm.count("ipaddr"))
         {
