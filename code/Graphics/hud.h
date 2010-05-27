@@ -68,6 +68,8 @@ class SubMenu : public Menu
         SubMenu(string);
         SubMenu(string, list<Menu *>);
         void draw();
+        void selectNext();          /* !< advance the selection */
+        void selectPrev();          /* !< unadvance the selection */
 };
 
 class TerminalMenu : public Menu

@@ -128,7 +128,7 @@ SubMenu::SubMenu(string name)
 {}
 
 SubMenu::SubMenu(string name, list<Menu *> items)
-    : Menu(name), items(items)
+    : Menu(name), items(items), selection(0)
 {}
 
 void SubMenu::draw()
@@ -142,10 +142,27 @@ void SubMenu::draw()
 
     drawText(Vec3f(wres / 4, hPos, 0), name, GLUT_BITMAP_HELVETICA_18);
 
+    glBegin(GL_LINES);
+    glVertex3f((wres / 4), hPos + 25 * (selection + 1), 0);
+    glVertex3f((wres / 4) + 100, hPos + 25 * (selection + 1), 0);
+    glEnd();
+
     for (list<Menu *>::iterator i = items.begin(); i != items.end(); i++) {
         hPos += 25;
         drawText(Vec3f(wres / 4, hPos, 0), (*i)->name, GLUT_BITMAP_HELVETICA_18);
-    } 
+    }
+}
+
+void SubMenu::selectNext()
+{
+    selection++;
+    selection = selection % items.size();
+}
+
+void SubMenu::selectPrev()
+{
+    selection--;
+    selection = selection % items.size();
 }
 
 TerminalMenu::TerminalMenu(string name, void (*callback)())
