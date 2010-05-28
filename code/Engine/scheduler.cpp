@@ -43,7 +43,7 @@ void Scheduler::soloLoopForever()
     bool killLight;
 
     timeStarted = last;
-    raceState = COUNTDOWN;
+    raceState = SETUP;
 
     error->log(ENGINE, TRIVIAL, "Entering solo-play loop\n");
     StopLight *sl = new StopLight(Vec3f(0,0,0));
@@ -55,13 +55,13 @@ void Scheduler::soloLoopForever()
         now = GetTime();
         sinceStart = now - timeStarted;
 
-        if (raceState <= COUNTDOWN)
+        if (raceState == COUNTDOWN)
         {
             if (sinceStart > curCount)
             {
                 CameraFollower *c = new CameraFollower(NULL,
                                                        NULL,
-                                                       new SObject("23670.wav", GetTime(), AL_FALSE),
+                                                       new SObject("23670.wav", GetTime(), AL_FALSE, 2.0),
                                                        NULL,
                                                        &world->camera);
                 world->addObject(c);
@@ -101,6 +101,10 @@ void Scheduler::soloLoopForever()
                 if (raceState == RACE) error->pdisplay();
                 break;
             case PAUSE:
+                graphics->render();
+                last = now;
+                break;
+            case SETUP:
                 graphics->render();
                 last = now;
                 break;

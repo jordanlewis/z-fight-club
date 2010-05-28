@@ -10,6 +10,7 @@
 #include "Sound/sound.h"
 #include "Utilities/error.h"
 #include "Engine/geominfo.h"
+#include "Engine/scheduler.h"
 #include "Sound/sobject.h"
 #include <ode/ode.h>
 extern "C" {
@@ -129,6 +130,13 @@ ParticleStreamObject::ParticleStreamObject(PGeom *pobject,
     // of this is that we get extra type info with it (see the note under GParticleObject)
 }
 
+/* used in setup menu */
+void raceGo()
+{
+    Scheduler &sched = Scheduler::getInstance();
+    sched.raceState = COUNTDOWN;
+}
+
 World::World() :
     error(&Error::getInstance()), nox(false), nosound(false)
 {
@@ -172,8 +180,30 @@ World::World() :
     pauseMenu = new SubMenu("Pause Menu", items);
 
     /* create the setup menu */
-    TextboxMenu *ai = new TextboxMenu("Number of AIs");
+    TextboxMenu *ai_menu = new TextboxMenu("Number of AIs");
+    
+    vector<Option *> racers;
+    Option *racer1 = new Option("Skate", -1);
+    Option *racer2 = new Option("Fish", -1);
+    racers.push_back(racer1);
+    racers.push_back(racer2);
+    SelectorMenu *racerSelector = new SelectorMenu("Select Character", racers);
 
+    vector<Option *> tracks;
+    Option *track1 = new Option("Oval", -1);
+    tracks.push_back(track1);
+    SelectorMenu *trackSelector = new SelectorMenu("Select Track", tracks);
+
+    TerminalMenu *go = new TerminalMenu("GO!!!", &raceGo);
+
+    vector<Menu *> setup_items;
+    setup_items.push_back(go);
+    setup_items.push_back(ai_menu);
+    setup_items.push_back(racerSelector);
+    setup_items.push_back(trackSelector);
+
+    
+    setupMenu = new SubMenu("Setup", setup_items);
 }
 
 Light::Light()
@@ -281,8 +311,8 @@ void World::addAgent(Agent *agent)
     SObject *sobj = NULL;
     if (!nosound)
     {
-        sobj = new SObject("18303_start.wav", GetTime(), AL_FALSE);
-        sobj->registerNext(new SObject("18303_run.wav", 0, AL_TRUE));
+        sobj = new SObject("18303_start.wav", GetTime(), AL_FALSE, 2.0);
+        sobj->registerNext(new SObject("18303_run.wav", 0, AL_TRUE, 2.0));
     }
     WorldObject *wobject = new WorldObject(pobj, gobj, sobj, agent);
     cout << "Agent's wobject pointer is: " << agent->worldObject << endl;

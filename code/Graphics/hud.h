@@ -61,6 +61,7 @@ class Menu
         virtual void highlightNext() {};
         virtual void highlightPrev() {};
         virtual void select() {};
+        virtual bool up() {return true;};
         virtual void inputChar(char) {};
         virtual void backspace() {};
 };
@@ -93,6 +94,7 @@ class TerminalMenu : public Menu
         void highlightNext() {};          /* !< advance the selection */
         void highlightPrev() {};          /* !< unadvance the selection */
         void select();
+        bool up() {return true;};
         void inputChar(char);
         void backspace();
 };
@@ -107,6 +109,7 @@ class TextboxMenu : public Menu
         void highlightNext() {};          /* !< advance the selection */
         void highlightPrev() {};          /* !< unadvance the selection */
         void select();
+        bool up() {return true;};
         void reset();
         void inputChar(char);        /* !< pass a char in */
         void backspace();            /* !< take a char out */
@@ -132,6 +135,7 @@ class SelectorMenu : public Menu
         void highlightNext();          /* !< advance the selection */
         void highlightPrev();          /* !< unadvance the selection */
         void select();
+        bool up() {return true;};
         void reset() {};
         void inputChar(char) {};
         void backspace() {};
