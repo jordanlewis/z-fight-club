@@ -121,7 +121,7 @@ World::World() :
 
     vector<Menu *> game_items;
     TerminalMenu *game1 = new TerminalMenu("Add AI", &addAI);   
-    SubMenu *game2 = new SubMenu("game - bar");
+    TextboxMenu *game2 = new TextboxMenu("game - bar");
     SubMenu *game3 = new SubMenu("game - baz");
 
     game_items.push_back(game1);

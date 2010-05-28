@@ -86,6 +86,17 @@ class TerminalMenu : public Menu
         void select();
 };
 
+class TextboxMenu : public Menu
+{
+    public:
+        SubMenu     *parent;        /* !< the menu above this one */
+        string      entered;        /* !< what's been entered into the text box */
+        TextboxMenu(string);
+        void draw();
+        void select();
+        void reset();
+};
+
 class MiniMap : public Widget
 {
   public:
