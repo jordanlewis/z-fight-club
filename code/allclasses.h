@@ -21,6 +21,7 @@ class Light;
 class ObjMeshInfo;
 class PAgent;
 class ParticleSystemInfo;
+class ParticleStreamObject;
 class Path;
 class PGeom;
 class Physics;

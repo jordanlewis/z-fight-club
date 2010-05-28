@@ -5,6 +5,7 @@
 #include "Network/racerpacket.h"
 #include "Engine/world.h"
 #include "Graphics/gobject.h"
+#include "Physics/pobject.h"
 extern "C" {
     #include "Parser/obj-reader.h"
     #include "Utilities/load-png.h"
@@ -106,9 +107,8 @@ ParticleSystemInfo::ParticleSystemInfo(std::string filename, Vec3f area, Vec3f v
 }
 
 /* pos should be the position of the parent wobject */
-void ParticleSystemInfo::update(Vec3f newpos, float dt)
+void ParticleSystemInfo::update(ParticleStreamObject *pso, float dt)
 {
-    Vec3f dpos = newpos - pos;
     for(std::list<Particle *>::iterator i = particles.begin(); i != particles.end(); i++) {
         (*i)->ttl -= dt;
         if ((*i)->ttl < 0.0)
@@ -118,11 +118,8 @@ void ParticleSystemInfo::update(Vec3f newpos, float dt)
             delete toDestroy;
         } else {
             (*i)->pos += dt * (*i)->vel; 
-            (*i)->pos -= dpos;
         }
     }
-
-    //particles.remove_if(isDead);
 
     if (maxParticles != 0) {
         float random;
@@ -139,6 +136,10 @@ void ParticleSystemInfo::update(Vec3f newpos, float dt)
             p_pos += randomVec3f(area);
             p_pos.normalize();
             p_pos *= area.length();
+            if (pso->parent)
+                p_pos += pso->parent->getPos();
+            else
+                p_pos += pso->getPos();
 
             Vec3f p_vel = velocity;
             p_vel += randomVec3f(velocity_pm);
@@ -154,7 +155,6 @@ void ParticleSystemInfo::update(Vec3f newpos, float dt)
         }
     }
     lastUpdate += dt;
-    pos = newpos;
 }
 
 void makeExplosion(Vec3f position, float size)

@@ -81,12 +81,7 @@ void Physics::simulate(float dt)
     for (i = 0; i < world.particleSystems.size(); i++)
     {
         ParticleStreamObject * p = world.particleSystems[i];
-        Vec3f pos;
-        if (p->parent)
-            pos = p->getPos() + p->parent->getPos();
-        else
-            pos = p->getPos();
-        p->gobject->geominfo->update(pos, dt);
+        p->gobject->geominfo->update(p, dt);
     }
 
     for (i = 0; i < world.wobjects.size(); i++)

@@ -281,6 +281,10 @@ void SphereInfo::draw()
 
 void ParticleSystemInfo::draw()
 {
+    /* The particles' position are stored in world coordinates, so pop off
+     * the matrix with the object coordinate transform. Remember to push a
+     * new matrix at the end to prevent too much popping. */
+    glPopMatrix();
     glColor3f(0.0, 1.0, 0.0);
     glEnable(GL_TEXTURE_2D);
 
@@ -303,4 +307,5 @@ void ParticleSystemInfo::draw()
     glDisable(GL_BLEND);
     glDisable(GL_ALPHA_TEST);
     glDisable(GL_POINT_SPRITE_ARB);
+    glPushMatrix();
 }

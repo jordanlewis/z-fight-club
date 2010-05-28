@@ -179,7 +179,7 @@ class ParticleSystemInfo : public GeomInfo
         dGeomID createGeom(dSpaceID space);
         void createMass(dMass *, float);
         void draw();
-        void update(Vec3f, float);
+        void update(ParticleStreamObject *, float);
 };
 
 void makeExplosion(Vec3f, float);
