@@ -105,9 +105,22 @@ void Physics::simulate(float dt)
         if (!world.wobjects[i]->pobject)
             continue;
         PGeom *pg = world.wobjects[i]->pobject;
-        if (!pg->collidedWith)
+        if (pg->collidedWith.empty())
             continue;
-        pg->collisionReact();
+
+        for (vector<WorldObject *>::iterator iter = pg->collidedWith.begin();
+             iter != pg->collidedWith.end(); iter++)
+        {
+            PGeom * collidee = (*iter)->pobject;
+            /* Check to see both collidee and collider (pg) are still alive */
+            if (!pg->worldObject)
+                break;
+            if (!collidee->worldObject)
+                continue;
+
+            pg->collisionReact(collidee);
+        }
+        pg->collidedWith.clear();
 
     }
     error->pout(P_PHYSICS);

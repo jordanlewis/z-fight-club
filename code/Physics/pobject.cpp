@@ -3,6 +3,7 @@
 #include "Agents/agent.h"
 #include "Engine/scheduler.h"
 #include "Engine/geominfo.h"
+#include "Engine/world.h"
 #include "Network/network.h"
 #include "Network/racerpacket.h"
 #include <ode/ode.h>
@@ -295,5 +296,14 @@ void PProjectile::doCollisionReact(PAgent *pa)    {pa->doCollisionReact(this);}
 
 void PAgent::doCollisionReact(PGeom *pg) {return;}
 void PAgent::doCollisionReact(PMoveable *pm) {return;}
-void PAgent::doCollisionReact(PProjectile *pp) { delete pp; }
+void PAgent::doCollisionReact(PProjectile *pp)
+{
+    makeExplosion(pp->getPos(), 1.0);
+    if (pp->worldObject)
+    {
+        pp->worldObject->clear();
+    }
+    else
+        delete pp;
+}
 void PAgent::doCollisionReact(PAgent *pa) {return;}

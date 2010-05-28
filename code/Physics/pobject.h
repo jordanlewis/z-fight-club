@@ -7,6 +7,7 @@
 #include "constants.h"
 #include <ode/ode.h>
 #include <iostream>
+#include <list>
 
 using namespace std;
 
@@ -35,9 +36,9 @@ class PGeom
     CollType_t collType;
     WorldObject *worldObject;
 
-    PGeom *collidedWith;
+    vector<WorldObject *> collidedWith;
 
-    virtual void collisionReact() {collidedWith->doCollisionReact(this);}
+    virtual void collisionReact(PGeom *pg) {pg->doCollisionReact(this);}
     virtual void doCollisionReact(PGeom *pg);
     virtual void doCollisionReact(PMoveable *pm);
     virtual void doCollisionReact(PProjectile *pp);
@@ -53,7 +54,7 @@ class PGeom
 
     const dGeomID &getGeom();
     PGeom(GeomInfo *info, dSpaceID space=NULL);
-    ~PGeom();
+    virtual ~PGeom();
 };
 
 /*
@@ -71,9 +72,9 @@ class PMoveable: public PGeom
  public:
     PMoveable(const Kinematic *kinematic, float mass,
               GeomInfo *info, dSpaceID space=NULL);
-    ~PMoveable();
+    virtual ~PMoveable();
 
-    virtual void collisionReact() {collidedWith->doCollisionReact(this);}
+    virtual void collisionReact(PGeom *pg) {pg->doCollisionReact(this);}
     virtual void doCollisionReact(PGeom *pg);
     virtual void doCollisionReact(PMoveable *pm);
     virtual void doCollisionReact(PProjectile *pp);
@@ -93,7 +94,7 @@ class PProjectile: public PMoveable
     PProjectile(const Kinematic *kinematic, float mass, GeomInfo *info,
                 double liveTime=10, dSpaceID space=NULL);
 
-    virtual void collisionReact() {collidedWith->doCollisionReact(this);}
+    virtual void collisionReact(PGeom *pg) {pg->doCollisionReact(this);}
     virtual void doCollisionReact(PGeom *pg);
     virtual void doCollisionReact(PMoveable *pm);
     virtual void doCollisionReact(PProjectile *pp);
@@ -114,7 +115,7 @@ class PAgent: public PMoveable
     PAgent(const Kinematic *kinematic, const SteerInfo *steering,
             float mass, GeomInfo *info, dSpaceID space=NULL);
 
-    virtual void collisionReact() {collidedWith->doCollisionReact(this);}
+    virtual void collisionReact(PGeom *pg) {pg->doCollisionReact(this);}
     virtual void doCollisionReact(PGeom *pg);
     virtual void doCollisionReact(PMoveable *pm);
     virtual void doCollisionReact(PProjectile *pp);
