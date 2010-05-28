@@ -130,7 +130,7 @@ SubMenu::SubMenu(string name)
 {}
 
 SubMenu::SubMenu(string name, vector<Menu *> items)
-    : Menu(name), items(items), highlighted(0), selected(-1) 
+    : Menu(name), highlighted(0), selected(-1), items(items)
 {
     /* set our submenu's to have us as their up menu */
     for (vector<Menu *>::iterator i = items.begin(); i != items.end(); i++) {
