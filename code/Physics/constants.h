@@ -22,6 +22,7 @@
 #define D_MU2 0     //Default mu2
 #define D_COLL REAL //Default collision type
 
-
+//Misc parameters
+#define PH_LERP_COEFF .2
 
 #endif

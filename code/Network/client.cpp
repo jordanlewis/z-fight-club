@@ -18,8 +18,8 @@ Client Client::_instance;
 
 Client::Client() :
     clientID(255),
-    rtt(0), //CHANGE ME WHEN WE GET RTT ACTUALLY IMPLEMENTED!
-    ott(0), //CHANGE ME WHEN WE GET RTT ACTUALLY IMPLEMENTED!
+    rtt(0),
+    ott(0),
     player(NULL),
     world(&World::getInstance()),
     input(&Input::getInstance()),
@@ -212,16 +212,20 @@ void Client::checkForPackets()
                         Kinematic kine;
                         kine.ntoh(&(P->kine));
                         range = ott*(kine.forwardSpeed())*NET_RANGE_FUDGE;
-                        cout << "ott is " << ott << endl;
+                        //cout << "ott is " << ott << endl;
                         cout << "Acceptable range is " << abs(range) << endl;
-                        cout << "Gap is: "
-                             << abs((kine.pos - wo->agent->kinematic.pos).length())
-                             << endl;
-                        if (abs((kine.pos - wo->agent->kinematic.pos).length())
-                            < abs(range)){
-                            kine.pos = wo->agent->kinematic.pos;
+                        Vec3f &lerpvec = ((PAgent *)(wo->pobject))->lerpvec;
+                        lerpvec = kine.pos -wo->agent->kinematic.pos;
+                        cout << "Gap is: "<< abs(lerpvec.length()) << endl;
+                        if (abs(lerpvec.length()) > abs(range)){
+                            lerpvec = lerpvec.unit() * abs(lerpvec.length()
+                                                           - range);
                         }
-                        wo->agent->kinematic = kine;
+                        else {
+                            cout << "Setting lerpvec to 0" << endl;
+                            lerpvec.x = 0; lerpvec.y = 0; lerpvec.z = 0;
+                        }
+                        //wo->agent->kinematic = kine;
                         if (P->AIFlag)
                             {
                                 //wo->agent->kinematic.ntoh(&(P->kine));

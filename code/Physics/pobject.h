@@ -81,6 +81,8 @@ class PMoveable: public PGeom
     dMass mass;
 
  public:
+    Vec3f lerpvec; /* The direction we are lerping in.  Used by network code */
+
     PMoveable(const Kinematic *kinematic, float mass,
               GeomInfo *info, dSpaceID space=NULL);
     virtual ~PMoveable();
@@ -97,6 +99,7 @@ class PMoveable: public PGeom
                                         * the kinematic */
     const dBodyID &getBody();
     void kinematicToOde(); //writes (syncs) the kinematic coords into the body
+    void lerp(float coeff);
 };
 
 class PProjectile: public PMoveable

@@ -59,6 +59,7 @@ void Physics::simulate(float dt)
             p = static_cast<PAgent *>(a->worldObject->pobject);
             p->kinematicToOde();
             p->steeringToOde();
+            p->lerp(PH_LERP_COEFF);
             useWeapons(a);
         }
         for (j = 0; j < world.particleSystems.size(); j++)

@@ -3,6 +3,7 @@
 
 #include "allclasses.h"
 #include "network.h"
+#include "Utilities/vec3f.h"
 
 #define NET_RTT_MIX_FACTOR .8 //newRTT=mix_factor*oldRTT+(1-mix_factor)freshRTT
 #define NET_RANGE_FUDGE 5 /* Allow a fudge factor in our calculations of 
@@ -36,6 +37,9 @@ class Client {
     double ott; //One way trip time
     ENetPeer *peer;
 
+    Vec3f pushback; /* If we need to lerp to synch to the server, this tells
+                     * us what direction to lerp in. */
+        
     map<netObjID_t, WorldObject *> netobjs; //Tracks networked world objects.
     netObjID_t netID; // id for our agent
     PlayerController *player; /* the playercontroller sent across the

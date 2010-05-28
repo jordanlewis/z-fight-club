@@ -4,8 +4,8 @@
 #include <queue>
 #include "allclasses.h"
 
-#define SC_CLIENT_UPDATE_FREQ_SECONDS .01
-#define SC_SERVER_UPDATE_FREQ_SECONDS .01
+#define SC_CLIENT_UPDATE_FREQ_SECONDS .05
+#define SC_SERVER_UPDATE_FREQ_SECONDS .05
 
 typedef enum
 {

@@ -32,7 +32,7 @@ PBottomPlane::PBottomPlane(GeomInfo *info, dSpaceID space) : PGeom(info, space)
 
 PMoveable::PMoveable(const Kinematic *kinematic, float mass,
                      GeomInfo *info, dSpaceID space)
-    : PGeom(info, space), kinematic(kinematic)
+    : PGeom(info, space), kinematic(kinematic), lerpvec(0,0,0)
 {
     dQuaternion q;
     //Create a body, give it mass, and bind it to the geom
@@ -152,6 +152,15 @@ void PMoveable::kinematicToOde()
 
     dBodySetPosition(body, k->pos[0], k->pos[1], k->pos[2]);
     dBodySetLinearVel(body, k->vel[0], k->vel[1], k->vel[2]);
+}
+
+/* \brief Move current position coeff% of the way towards lerpvec */
+void PMoveable::lerp(float coeff){
+    const dReal *b_info = dBodyGetPosition(body);
+    
+    dBodySetPosition(body, b_info[0]+lerpvec.x*coeff, 
+                     b_info[1]+lerpvec.y*coeff, b_info[2]+lerpvec.z*coeff);
+    lerpvec = lerpvec*(1-coeff);
 }
 
 /* /brief Copys the ode info into the associated kinematic struct
