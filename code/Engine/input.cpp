@@ -31,16 +31,14 @@ int Input::processInput()
                     case SDLK_RIGHT:
                         if (player) player->setTurnState(RIGHT); break;
                     case SDLK_UP:
-                        if (Scheduler::getInstance().raceState == RACE)
-                            if (player) 
-                                player->setEngineState(ACCELERATE); 
+                        if (player) 
+                            player->setEngineState(ACCELERATE); 
                         if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->highlightPrev();
                         break;
                     case SDLK_DOWN:
-                        if (Scheduler::getInstance().raceState == RACE)
-                            if (player) 
-                                player->setEngineState(REVERSE); 
+                        if (player) 
+                            player->setEngineState(REVERSE); 
                         if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->highlightNext();
                         break;
