@@ -211,8 +211,13 @@ void SubMenu::highlightPrev()
 
 void SubMenu::select()
 {
-    if (selected == -1)
-        selected = highlighted;
+    if (selected == -1) {
+        TerminalMenu *term = dynamic_cast<TerminalMenu *>(items[highlighted]);
+        if (term)
+            term->select();
+        else 
+            selected = highlighted;
+    }
     else {
         SubMenu *sub = dynamic_cast<SubMenu *>(items[selected]);
         if (sub)
@@ -242,7 +247,7 @@ bool SubMenu::up()
         }
         else {
             Error &error = Error::getInstance();
-            error.log(GRAPHICS, CRITICAL, "Menu selected is of a TerminalItem, this is illegal\n");
+            error.log(GRAPHICS, CRITICAL, "Menu selected is of a Terminal menu, this is illegal\n");
             exit(0);
         }
     }
@@ -254,7 +259,7 @@ void SubMenu::reset()
     highlighted = 0;
     for (vector<Menu *>::iterator i = items.begin(); i != items.end(); i++) {
         /* reset our submenus */
-        SubMenu *sub = dynamic_cast<SubMenu *>(items[selected]);
+        SubMenu *sub = dynamic_cast<SubMenu *>(*i);
         if (sub)
             sub->reset();
     }
@@ -263,6 +268,11 @@ void SubMenu::reset()
 TerminalMenu::TerminalMenu(string name, void (*callback)())
     : Menu(name), callback(callback)
 {}
+
+void TerminalMenu::select()
+{
+    (*callback)();
+}
 
 MiniMap::MiniMap(Vec3f pos, Path *path) : Widget(pos), path(path)
 {}

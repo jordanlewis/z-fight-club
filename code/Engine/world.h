@@ -146,6 +146,8 @@ class World
     friend class Graphics;
 };
 
+void addAI();
+
 std::ostream &operator<<(std::ostream &, const WorldObject &);
 
 #endif

@@ -100,7 +100,7 @@ World::World() :
     graphics_items.push_back(graph3);
 
     vector<Menu *> game_items;
-    SubMenu *game1 = new SubMenu("game - foo");
+    TerminalMenu *game1 = new TerminalMenu("Add AI", &addAI);   
     SubMenu *game2 = new SubMenu("game - bar");
     SubMenu *game3 = new SubMenu("game - baz");
 
@@ -419,6 +419,18 @@ Agent *World::makeAI()
     ai.controllers.back()->lane((numAgents()) % 2);
     return agent;
 }
+
+void addAI()
+{
+    World &world = World::getInstance();
+    if (!world.track)
+        return ;
+    AIManager &ai = AIManager::getInstance();
+    Agent *agent = world.makeCar();
+    ai.control(agent);
+    ai.controllers.back()->lane((world.numAgents()) % 2);
+}
+
 
 Agent *World::makePlayer()
 {

@@ -58,6 +58,7 @@ class Menu
         string name;
         Menu(string);
         virtual void draw() {};
+        virtual void select() {};
 };
 
 class SubMenu : public Menu
@@ -82,6 +83,7 @@ class TerminalMenu : public Menu
     public:
         void (*callback)();     /* !< function to call when this button is hit */
         TerminalMenu(string, void (*callback)());
+        void select();
 };
 
 class MiniMap : public Widget
