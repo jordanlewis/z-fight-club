@@ -59,9 +59,12 @@ void Scheduler::soloLoopForever()
         {
             if (sinceStart > curCount)
             {
-                WorldObject *w = new WorldObject(NULL, NULL, new SObject("23670.wav", GetTime(), AL_FALSE), NULL);
-                w->setPos(world->camera.getPos());
-                world->addObject(w);
+                CameraFollower *c = new CameraFollower(NULL,
+                                                       NULL,
+                                                       new SObject("23670.wav", GetTime(), AL_FALSE),
+                                                       NULL,
+                                                       &world->camera);
+                world->addObject(c);
                 sl->nLit = curCount;
                 if (curCount == 3)
                 {
