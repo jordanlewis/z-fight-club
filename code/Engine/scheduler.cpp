@@ -61,7 +61,7 @@ void Scheduler::soloLoopForever()
             {
                 CameraFollower *c = new CameraFollower(NULL,
                                                        NULL,
-                                                       new SObject("23670.wav", GetTime(), AL_FALSE),
+                                                       new SObject("23670.wav", GetTime(), AL_FALSE, 2.0),
                                                        NULL,
                                                        &world->camera);
                 world->addObject(c);

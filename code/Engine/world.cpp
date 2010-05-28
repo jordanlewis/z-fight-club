@@ -276,8 +276,8 @@ void World::addAgent(Agent *agent)
     SObject *sobj = NULL;
     if (!nosound)
     {
-        sobj = new SObject("18303_start.wav", GetTime(), AL_FALSE);
-        sobj->registerNext(new SObject("18303_run.wav", 0, AL_TRUE));
+        sobj = new SObject("18303_start.wav", GetTime(), AL_FALSE, 2.0);
+        sobj->registerNext(new SObject("18303_run.wav", 0, AL_TRUE, 2.0));
     }
     WorldObject *wobject = new WorldObject(pobj, gobj, sobj, agent);
     cout << "Agent's wobject pointer is: " << agent->worldObject << endl;

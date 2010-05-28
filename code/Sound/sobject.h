@@ -30,11 +30,12 @@ class SObject
     ALint loop;         // whether to loop or not
     bool playing;       // whether it's playing right now
     ALfloat duration;
+    float gain;
     Error *error;
     SObject *nextSound;
     // could have lots of other data, like whether to fade in, out, etc.
   public:
-    SObject(string soundName, double startTime, bool loop);
+    SObject(string soundName, double startTime, bool loop, float gain);
     ~SObject();
     void update(WorldObject*); // play, restart, stop, update noises, etc. as appropriate
     void registerNext(SObject*); // indicate sound to start when this one stops
