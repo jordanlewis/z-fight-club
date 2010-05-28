@@ -124,12 +124,12 @@ void ParticleSystemInfo::update(Vec3f newpos, float dt)
 
     //particles.remove_if(isDead);
 
-    if (maxParticles > 0) {
+    if (maxParticles != 0) {
         float random;
         random = (float) rand() / (float) RAND_MAX;
         int toSpawn = lrint(birthRate * (dt / random));
 
-        if (toSpawn > maxParticles)
+        if (toSpawn > maxParticles && maxParticles > 0)
             toSpawn = maxParticles;
         
         maxParticles -= toSpawn;
