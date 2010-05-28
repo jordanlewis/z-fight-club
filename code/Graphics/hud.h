@@ -58,6 +58,8 @@ class Menu
         string name;
         Menu(string);
         virtual void draw() {};
+        virtual void highlightNext() {};
+        virtual void highlightPrev() {};
         virtual void select() {};
         virtual void inputChar(char) {};
         virtual void backspace() {};
@@ -87,6 +89,9 @@ class TerminalMenu : public Menu
     public:
         void (*callback)();     /* !< function to call when this button is hit */
         TerminalMenu(string, void (*callback)());
+        void draw();
+        void highlightNext() {};          /* !< advance the selection */
+        void highlightPrev() {};          /* !< unadvance the selection */
         void select();
         void inputChar(char);
         void backspace();
@@ -99,10 +104,37 @@ class TextboxMenu : public Menu
         string      entered;        /* !< what's been entered into the text box */
         TextboxMenu(string);
         void draw();
+        void highlightNext() {};          /* !< advance the selection */
+        void highlightPrev() {};          /* !< unadvance the selection */
         void select();
         void reset();
         void inputChar(char);        /* !< pass a char in */
         void backspace();            /* !< take a char out */
+};
+
+class Option
+{
+    public:
+        string      name;           /* !< name of the selection */
+        GLuint      texid;          /* !< image for the selection */
+        Option(string name, GLuint texid) :name(name), texid(texid) {}; 
+};
+
+class SelectorMenu : public Menu
+{
+    public:
+        SubMenu             *parent;        /* !< the menu above this one */
+        int                 highlighted;    /* !< which selection is highlighted */
+        int                 selected;       /* !< which selection has actually been selected */
+        vector<Option *>    options;        /* !< things that can be selected */
+        SelectorMenu(string, vector<Option *>);
+        void draw();
+        void highlightNext();          /* !< advance the selection */
+        void highlightPrev();          /* !< unadvance the selection */
+        void select();
+        void reset() {};
+        void inputChar(char) {};
+        void backspace() {};
 };
 
 class MiniMap : public Widget

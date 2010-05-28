@@ -139,6 +139,7 @@ class World
     std::vector<Light *> lights; /* !< the lights in the world */
     std::vector<Widget *> widgets; /* !< the widgets in the world */
     SubMenu *pauseMenu;                    /* !< menu to render when the game is paused */
+    SubMenu *setupMenu;                    /* !< menu for setting up the game */
 
     string assetsDir;   /* !< base directory for asset files */
 

@@ -169,18 +169,8 @@ void SubMenu::draw()
         }
     }
     else {
-        // this should be redone not to use dynamic casts
-        SubMenu *sub = dynamic_cast<SubMenu *>(items[selected]);
-        TextboxMenu *text = dynamic_cast<TextboxMenu *>(items[selected]);
-        if (sub)
-            sub->draw();
-        else if (text)
-            text->draw();
-        else {
-            Error &error = Error::getInstance();
-            error.log(GRAPHICS, CRITICAL, "Menu selected is of a TerminalItem, this is illegal\n");
-            exit(0);
-        }
+        items[selected]->draw();
+        
     }
 }
 
@@ -188,17 +178,10 @@ void SubMenu::highlightNext()
 {
     if (selected == -1) {
         highlighted++;
-        highlighted = highlighted % items.size();
+        if (highlighted >= items.size())
+            highlighted = 0;
     } else {
-        SubMenu *sub = dynamic_cast<SubMenu *>(items[selected]);
-        TextboxMenu *text = dynamic_cast<TextboxMenu *>(items[selected]);
-        if (sub)
-            sub->highlightNext();
-        else if (!text) {
-            Error &error = Error::getInstance();
-            error.log(GRAPHICS, CRITICAL, "Menu selected is of a TerminalItem, this is illegal\n");
-            exit(0);
-        }
+        items[selected]->highlightNext();
     }
 }
 
@@ -206,17 +189,10 @@ void SubMenu::highlightPrev()
 {
     if (selected == -1) {
         highlighted--;
-        highlighted = highlighted % items.size();
+        if (highlighted < 0)
+            highlighted = items.size() - 1;
     } else {
-        SubMenu *sub = dynamic_cast<SubMenu *>(items[selected]);
-        TextboxMenu *text = dynamic_cast<TextboxMenu *>(items[selected]);
-        if (sub)
-            sub->highlightPrev();
-        else if (!text) {
-            Error &error = Error::getInstance();
-            error.log(GRAPHICS, CRITICAL, "Menu selected is of a TerminalItem, this is illegal\n");
-            exit(0);
-        }
+        items[selected]->highlightPrev();
     }
 }
 
@@ -230,18 +206,7 @@ void SubMenu::select()
             selected = highlighted;
     }
     else {
-        SubMenu *sub = dynamic_cast<SubMenu *>(items[selected]);
-        TextboxMenu *text = dynamic_cast<TextboxMenu *>(items[selected]);
-        if (sub)
-            sub->select();
-        else if (text) {
-            selected = -1;
-        }
-        else {
-            Error &error = Error::getInstance();
-            error.log(GRAPHICS, CRITICAL, "Menu selected is of a TerminalItem, this is illegal\n");
-            exit(0);
-        }
+        items[selected]->select();
     }
 }
 
@@ -297,6 +262,13 @@ void SubMenu::backspace()
 TerminalMenu::TerminalMenu(string name, void (*callback)())
     : Menu(name), callback(callback)
 {}
+
+void TerminalMenu::draw()
+{
+    Error &error = Error::getInstance();
+    error.log(GRAPHICS, CRITICAL, "Menu selected is of a TerminalItem, this is illegal\n");
+    exit(0);
+}
 
 void TerminalMenu::select()
 {
@@ -360,6 +332,62 @@ void TextboxMenu::backspace()
     if (!entered.empty())
         entered.erase(--(entered.end()));
 }
+
+SelectorMenu::SelectorMenu(string name, vector<Option *> options)
+    : Menu(name), options(options)
+{}
+
+void SelectorMenu::draw()
+{
+    /* we're in this level */
+    World &world = World::getInstance();
+    int hres = world.camera.getHres();
+    int wres = world.camera.getWres();
+
+
+    int hPos = 100;
+
+    drawText(Vec3f(wres / 4, hPos, 0), name, GLUT_BITMAP_HELVETICA_18);
+
+    glBegin(GL_LINES);
+    glVertex3f((wres / 4), hPos + 25 * (highlighted + 1), 0);
+    glVertex3f((wres / 4) + 100, hPos + 25 * (highlighted + 1), 0);
+    glEnd();
+
+    if (selected != -1) {
+        glBegin(GL_LINE_LOOP);
+        glVertex3f((wres / 4), hPos + 25 * (selected + 1), 0);
+        glVertex3f((wres / 4) + 300, hPos + (25 * (selected + 1)), 0);
+        glVertex3f((wres / 4) + 300, hPos + (25 * selected), 0);
+        glVertex3f((wres / 4), hPos + (25 * selected), 0);
+        glEnd();
+    }
+
+    for (vector<Option *>::iterator i = options.begin(); i != options.end(); i++) {
+        hPos += 25;
+        drawText(Vec3f(wres / 4, hPos, 0), (*i)->name, GLUT_BITMAP_HELVETICA_18);
+    }
+}
+
+void SelectorMenu::highlightNext()
+{
+    highlighted++;
+    if (highlighted >= options.size())
+        highlighted = 0;
+}
+
+void SelectorMenu::highlightPrev()
+{
+    highlighted--;
+    if (highlighted < 0)
+        highlighted = (options.size() - 1);
+}
+
+void SelectorMenu::select()
+{
+    selected = highlighted;
+}
+
 
 MiniMap::MiniMap(Vec3f pos, Path *path) : Widget(pos), path(path)
 {}
