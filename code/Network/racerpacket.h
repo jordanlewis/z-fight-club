@@ -23,6 +23,7 @@ typedef enum {
     RP_ATTACH_PAGENT, //Attach a pagent to an existing netobject
     RP_UPDATE_PAGENT, //Update an existing pagent
     RP_PING, //Keep a connection alive
+    RP_RTT, //Determine the RTT for a connection.
     RP_ACK_CONNECTION //Acknowledge successful connection
 } racerPacketType_t;
 
@@ -51,6 +52,11 @@ struct RPStart{
 
 struct RPJoin{
     uint8_t clientID;
+};
+
+struct RPRTT{
+    uint8_t clientID;
+    uint64_t time;
 };
 
 struct RPGeomInfo{
@@ -106,6 +112,7 @@ struct RPAgent{
 
 struct RPUpdateAgent {
     netObjID_t ID;
+    uint8_t AIFlag; //1 if we are an AI
     RPPlayerControl info;
     RPKinematic kine;
     RPQuat quat;

@@ -4,6 +4,7 @@
 #include <string>
 #include "Network/racerpacket.h"
 #include "Engine/world.h"
+#include "Graphics/gobject.h"
 extern "C" {
     #include "Parser/obj-reader.h"
     #include "Utilities/load-png.h"
@@ -124,6 +125,24 @@ void ParticleSystemInfo::update(Vec3f newpos, float dt)
     }
     lastUpdate += dt;
     pos = newpos;
+}
+
+void makeExplosion(Vec3f position, float size)
+{
+    Vec3f area = Vec3f(.01, .01, .01);
+    Vec3f velocity = Vec3f(0.0, 0.0, 0.0);
+    Vec3f velocity_pm = Vec3f(4.5, 0.0, 4.5);
+    velocity_pm *= size;
+    float ttl = 1.2;
+    float ttl_pm = 0.0;
+    float birthRate = 500.0;
+
+    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/beam.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate);
+    GParticleObject *particle_gobj = new GParticleObject(particleSystem);
+    ParticleStreamObject *particle_wobj = new ParticleStreamObject(NULL, particle_gobj, NULL, NULL);
+    particle_wobj->setPos(position);
+
+    World::getInstance().addObject(particle_wobj);
 }
 
 SkyBoxInfo::SkyBoxInfo(std::string filename)

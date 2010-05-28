@@ -281,6 +281,7 @@ void Server::createAll(){
 
 void Server::pushAgents()
 {
+
     RPUpdateAgent payload;
     for (map<netObjID_t, WorldObject *>::iterator iter = netobjs.begin();
          iter != netobjs.end();
@@ -288,12 +289,19 @@ void Server::pushAgents()
     {
         payload.ID = htonl((*iter).first);
         WorldObject *wo = (*iter).second;
-        if (wo == NULL) return;
-        if (wo->player == NULL) return;
-        wo->player->hton(&(payload.info));
-        if (wo->agent == NULL) return;
+        if (wo == NULL) continue;
+        if (wo->player == NULL)  //We are dealing with an AI car.
+            {
+                payload.AIFlag=1;
+            }
+        else
+            {
+                payload.AIFlag = 0;
+                wo->player->hton(&(payload.info));
+            }
+        if (wo->agent == NULL) continue;
         wo->agent->kinematic.hton(&(payload.kine));
-        if (wo->pobject == NULL) return;
+        if (wo->pobject == NULL) continue;
         wo->pobject->htonQuat(&(payload.quat));
         ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
                                              &payload, sizeof(payload),
@@ -381,6 +389,7 @@ void Server::gatherPlayers()
                                     agent->mass, box,netID, info.clientID);
                         delete agent;
                         */
+                        enet_packet_destroy(event.packet);
                     }
                     if (type == RP_START) {
                         RPStart toSend;
@@ -390,10 +399,20 @@ void Server::gatherPlayers()
                                                            sizeof(RPStart),
                                                            ENET_PACKET_FLAG_RELIABLE);
                         enet_host_broadcast(enetServer, 0, packet);
+                        enet_packet_destroy(event.packet);
                         return;
-                        
+                        break;
                     }
-                    enet_packet_destroy(event.packet);
+                    if (RP_RTT == type) {
+                        RPRTT info = *(RPRTT *)payload;
+                        ENetPacket *packet = makeRacerPacket(RP_RTT,
+                                                             &info,
+                                                             sizeof(RPRTT),
+                                                             0);
+                        enet_peer_send(event.peer, 0, packet);
+                        enet_packet_destroy(event.packet);
+                        break;
+                    }
                   }
                     break;
                 case ENET_EVENT_TYPE_CONNECT:
@@ -403,6 +422,7 @@ void Server::gatherPlayers()
                     int successFlag = 0;
                     client.ipAddr = event.peer->address.host;
                     client.port = event.peer->address.port;
+                    client.peer = event.peer;
 
                     //Find smallest unused identifier
                     for (uint8_t i = 0; i < UINT8_MAX; i++)
@@ -522,7 +542,18 @@ void Server::serverFrame()
                                 }
                                 break;
                             }
-                        default:
+                        case RP_RTT:
+                            {
+                                RPRTT info = *(RPRTT *)payload;
+                                ENetPacket *packet=makeRacerPacket(RP_RTT,
+                                                                   &info,
+                                                                   sizeof(RPRTT),
+                                                                     0);
+                                enet_peer_send(event.peer, 0, packet);
+                                enet_packet_destroy(event.packet);
+                                break;
+                            }
+                            default:
                              break;
                     }
                 }

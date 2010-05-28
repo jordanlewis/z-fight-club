@@ -18,6 +18,8 @@ Client Client::_instance;
 
 Client::Client() :
     clientID(255),
+    rtt(0), //CHANGE ME WHEN WE GET RTT ACTUALLY IMPLEMENTED!
+    ott(0), //CHANGE ME WHEN WE GET RTT ACTUALLY IMPLEMENTED!
     player(NULL),
     world(&World::getInstance()),
     input(&Input::getInstance()),
@@ -175,21 +177,64 @@ void Client::checkForPackets()
                         clientState = C_CONNECTED;
                         break;
                       }
+                    case RP_RTT:
+                        {
+                            error->log(NETWORK, TRIVIAL, "RP_RTT\n");
+                            RPRTT info = *(RPRTT *)payload;
+                            if (clientID == info.clientID) //my RTT request. 
+                                {
+                                    if (rtt == 0) {
+                                        rtt = GetTime() - ntohd(info.time);
+                                        ott = rtt/2;
+                                    }
+                                    else {
+                                        rtt = NET_RTT_MIX_FACTOR*rtt + 
+                                            (1-NET_RTT_MIX_FACTOR)*
+                                            (GetTime() - ntohd(info.time));
+                                        ott = rtt/2;
+                                    }
+                                }
+                            else //Server RTT request.  Return it. 
+                                {
+                                    //NYI.  Server has no need for this... yet.
+                                }
+                            break;
+                        }
                     case RP_UPDATE_AGENT: 
                         {
                         error->log(NETWORK, TRIVIAL, "RP_UPDATE_AGENT\n");
                         RPUpdateAgent *P = (RPUpdateAgent *)payload;
                         cout << "Updating agent " << ntohl(P->ID) << endl;
                         WorldObject *wo = netobjs[ntohl(P->ID)];
-                        if (wo && wo->agent && wo->player && wo->pobject)
+                        if (wo == NULL) continue;
+                        if (wo->agent == NULL || wo->pobject == NULL) continue;
+                        float range;
+                        Kinematic kine;
+                        kine.ntoh(&(P->kine));
+                        range = ott*(kine.forwardSpeed())*NET_RANGE_FUDGE;
+                        cout << "ott is " << ott << endl;
+                        cout << "Acceptable range is " << abs(range) << endl;
+                        cout << "Gap is: "
+                             << abs((kine.pos - wo->agent->kinematic.pos).length())
+                             << endl;
+                        if (abs((kine.pos - wo->agent->kinematic.pos).length())
+                            < abs(range)){
+                            kine.pos = wo->agent->kinematic.pos;
+                        }
+                        wo->agent->kinematic = kine;
+                        if (P->AIFlag)
                             {
-                                cout << "entered if" << endl;
+                                //wo->agent->kinematic.ntoh(&(P->kine));
+                                wo->pobject->ntohQuat(&(P->quat));
+                            }
+                        else if (wo->player)
+                            {
                                 wo->player->ntoh(&P->info);
                                 /*cout << "PlayerController["
                                      << ntohl(P->ID) << "]: "
                                      << *(wo->player) << endl;*/
                                 wo->player->updateAgent();
-                                wo->agent->kinematic.ntoh(&(P->kine));
+                                //wo->agent->kinematic.ntoh(&(P->kine));
                                 wo->pobject->ntohQuat(&(P->quat));
                             }
                             
@@ -232,10 +277,15 @@ void Client::checkForPackets()
                         }
                     case RP_CREATE_AI_AGENT:
                         {
-                            cout << "Server sez create AI!" << endl;
-                            error->log(NETWORK, TRIVIAL, "RP_CREATE_AGENT\n");
+                            error->log(NETWORK, TRIVIAL, 
+                                       "RP_CREATE_AI_AGENT\n");
                             RPCreateAIAgent info = *(RPCreateAIAgent *)payload;
                             Agent *agent = world->makeAI();
+                            world->AIQty++;
+                            if (agent == NULL) {
+                                error->log(NETWORK, CRITICAL,
+                                           "RP_CREATE_AI_AGENT failed");
+                            }
                             attachNetID(agent->worldObject, ntohl(info.netID));
                             break;
                         }
@@ -345,9 +395,23 @@ void Client::sendStartRequest()
     error->pout(P_CLIENT);
 }
 
+//Determine RTT for successfully delivered unreliable packets.
+void Client::sendRTTRequest()
+{
+    error->pin(P_CLIENT);
+    RPRTT toSend;
+    toSend.clientID = clientID;
+    toSend.time = htond(GetTime());
+    ENetPacket *packet = makeRacerPacket(RP_RTT, &toSend, sizeof(RPRTT),0);
+    enet_peer_send(peer, 0, packet);
+    enet_host_flush(enetClient);
+    error->pout(P_CLIENT);
+}
+
 void Client::pushToServer()
 {
     error->pin(P_CLIENT);
+    sendRTTRequest();
     RPUpdateAgent payload;
     payload.ID = htonl(netID);
     if (player == NULL) return;

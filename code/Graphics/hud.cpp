@@ -2,6 +2,8 @@
 #include "Agents/agent.h"
 #include "Engine/world.h"
 #include "Agents/ai.h"
+#include "Utilities/error.h"
+#include "Engine/scheduler.h"
 #include <SDL/SDL.h>
 #include <cmath>
 #include <sstream>
@@ -127,47 +129,150 @@ SubMenu::SubMenu(string name)
     : Menu(name)
 {}
 
-SubMenu::SubMenu(string name, list<Menu *> items)
-    : Menu(name), items(items), selection(0)
-{}
-
-void SubMenu::draw()
+SubMenu::SubMenu(string name, vector<Menu *> items)
+    : Menu(name), items(items), highlighted(0), selected(-1) 
 {
-    World &world = World::getInstance();
-    int hres = world.camera.getHres();
-    int wres = world.camera.getWres();
-
-
-    int hPos = 100;
-
-    drawText(Vec3f(wres / 4, hPos, 0), name, GLUT_BITMAP_HELVETICA_18);
-
-    glBegin(GL_LINES);
-    glVertex3f((wres / 4), hPos + 25 * (selection + 1), 0);
-    glVertex3f((wres / 4) + 100, hPos + 25 * (selection + 1), 0);
-    glEnd();
-
-    for (list<Menu *>::iterator i = items.begin(); i != items.end(); i++) {
-        hPos += 25;
-        drawText(Vec3f(wres / 4, hPos, 0), (*i)->name, GLUT_BITMAP_HELVETICA_18);
+    /* set our submenu's to have us as their up menu */
+    for (vector<Menu *>::iterator i = items.begin(); i != items.end(); i++) {
+        SubMenu *subMenu = dynamic_cast<SubMenu *> (*i);
+        if (subMenu)
+            subMenu->parent = this;
     }
 }
 
-void SubMenu::selectNext()
+void SubMenu::draw()
 {
-    selection++;
-    selection = selection % items.size();
+    if (selected == -1) {
+        /* we're in this level */
+        World &world = World::getInstance();
+        int hres = world.camera.getHres();
+        int wres = world.camera.getWres();
+
+
+        int hPos = 100;
+
+        drawText(Vec3f(wres / 4, hPos, 0), name, GLUT_BITMAP_HELVETICA_18);
+
+        glBegin(GL_LINES);
+        glVertex3f((wres / 4), hPos + 25 * (highlighted + 1), 0);
+        glVertex3f((wres / 4) + 100, hPos + 25 * (highlighted + 1), 0);
+        glEnd();
+
+        for (vector<Menu *>::iterator i = items.begin(); i != items.end(); i++) {
+            hPos += 25;
+            drawText(Vec3f(wres / 4, hPos, 0), (*i)->name, GLUT_BITMAP_HELVETICA_18);
+        }
+    }
+    else {
+        SubMenu *sub = dynamic_cast<SubMenu *>(items[selected]);
+        if (sub)
+            sub->draw();
+        else {
+            Error &error = Error::getInstance();
+            error.log(GRAPHICS, CRITICAL, "Menu selected is of a TerminalItem, this is illegal\n");
+            exit(0);
+        }
+    }
 }
 
-void SubMenu::selectPrev()
+void SubMenu::highlightNext()
 {
-    selection--;
-    selection = selection % items.size();
+    if (selected == -1) {
+        highlighted++;
+        highlighted = highlighted % items.size();
+    } else {
+        SubMenu *sub = dynamic_cast<SubMenu *>(items[selected]);
+        if (sub)
+            sub->highlightNext();
+        else {
+            Error &error = Error::getInstance();
+            error.log(GRAPHICS, CRITICAL, "Menu selected is of a TerminalItem, this is illegal\n");
+            exit(0);
+        }
+    }
+}
+
+void SubMenu::highlightPrev()
+{
+    if (selected == -1) {
+        highlighted--;
+        highlighted = highlighted % items.size();
+    } else {
+        SubMenu *sub = dynamic_cast<SubMenu *>(items[selected]);
+        if (sub)
+            sub->highlightPrev();
+        else {
+            Error &error = Error::getInstance();
+            error.log(GRAPHICS, CRITICAL, "Menu selected is of a TerminalItem, this is illegal\n");
+            exit(0);
+        }
+    }
+}
+
+void SubMenu::select()
+{
+    if (selected == -1) {
+        TerminalMenu *term = dynamic_cast<TerminalMenu *>(items[highlighted]);
+        if (term)
+            term->select();
+        else 
+            selected = highlighted;
+    }
+    else {
+        SubMenu *sub = dynamic_cast<SubMenu *>(items[selected]);
+        if (sub)
+            sub->select();
+        else {
+            Error &error = Error::getInstance();
+            error.log(GRAPHICS, CRITICAL, "Menu selected is of a TerminalItem, this is illegal\n");
+            exit(0);
+        }
+    }
+}
+
+
+bool SubMenu::up()
+{
+    if (selected == -1) {
+        if (parent == NULL)
+            Scheduler::getInstance().raceState = RACE;
+        return true;
+    } else {
+        SubMenu *sub = dynamic_cast<SubMenu *>(items[selected]);
+        if (sub) {
+            if (sub->up()) {
+                /* getting here means our child was the node level the user was on */
+                selected = -1;
+            }
+        }
+        else {
+            Error &error = Error::getInstance();
+            error.log(GRAPHICS, CRITICAL, "Menu selected is of a Terminal menu, this is illegal\n");
+            exit(0);
+        }
+    }
+}
+
+void SubMenu::reset()
+{
+    selected = -1;
+    highlighted = 0;
+    for (vector<Menu *>::iterator i = items.begin(); i != items.end(); i++) {
+        /* reset our submenus */
+        SubMenu *sub = dynamic_cast<SubMenu *>(*i);
+        if (sub)
+            sub->reset();
+    }
 }
 
 TerminalMenu::TerminalMenu(string name, void (*callback)())
     : Menu(name), callback(callback)
 {}
+
+void TerminalMenu::select()
+{
+    (*callback)();
+}
 
 MiniMap::MiniMap(Vec3f pos, Path *path) : Widget(pos), path(path)
 {}

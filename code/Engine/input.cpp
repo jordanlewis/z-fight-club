@@ -35,14 +35,14 @@ int Input::processInput()
                             if (player) 
                                 player->setEngineState(ACCELERATE); 
                         if (Scheduler::getInstance().raceState == PAUSE)
-                            world.pauseMenu->selectPrev();
+                            world.pauseMenu->highlightPrev();
                         break;
                     case SDLK_DOWN:
                         if (Scheduler::getInstance().raceState == RACE)
                             if (player) 
                                 player->setEngineState(REVERSE); 
                         if (Scheduler::getInstance().raceState == PAUSE)
-                            world.pauseMenu->selectNext();
+                            world.pauseMenu->highlightNext();
                         break;
                     case SDLK_TAB:
                         if (player) player->setWeaponState(CHANGE); break;
@@ -51,20 +51,29 @@ int Input::processInput()
                     case SDLK_c:
                         World::getInstance().camera.cycleView(); break;
                     case SDLK_p:
-                        if (Scheduler::getInstance().raceState == PAUSE)
+                        if (Scheduler::getInstance().raceState == PAUSE) {
+                            world.pauseMenu->reset();
                             Scheduler::getInstance().raceState = RACE;
-                        else
+                        } else
                             Scheduler::getInstance().raceState = PAUSE;
                         break;
                     case SDLK_RETURN:
-                        if (client->clientState == C_WAITINGFORPLAYER)
-                            client->clientState = C_PLAYERHASJOINED;
+                        if (Scheduler::getInstance().raceState == PAUSE)
+                            world.pauseMenu->select();
+                        else {
+                            if (client->clientState == C_WAITINGFORPLAYER)
+                                client->clientState = C_PLAYERHASJOINED;
+                        }
                         break;
                     case SDLK_SPACE:
                         if (client->clientState == C_WAITINGFORPLAYER ||
                             client->clientState == C_PLAYERHASJOINED)
                             client->clientState = C_PLAYERREADYTOSTART;
                         break;
+                    case SDLK_ESCAPE:
+                        if (Scheduler::getInstance().raceState == PAUSE) {
+                            world.pauseMenu->up();
+                        }
                     default: break;
                 } break;
             case SDL_KEYUP:

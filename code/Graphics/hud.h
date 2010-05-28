@@ -4,6 +4,7 @@
 #include "allclasses.h"
 #include "Utilities/vec3f.h"
 #include <list>
+#include <vector>
 extern "C" {
         #include "Utilities/load-png.h"
 }
@@ -57,19 +58,24 @@ class Menu
         string name;
         Menu(string);
         virtual void draw() {};
+        virtual void select() {};
 };
 
 class SubMenu : public Menu
 {
     public:
-        SubMenu         *up;        /* !< the menu above this one */
-        int             selection;  /* !< which item is selected */
-        list<Menu *>    items;      /* !< the items in the menu */
+        SubMenu         *parent;    /* !< the menu above this one, NULL if top level */
+        int             highlighted;  /* !< which item is highlighted */
+        int             selected;    /* !< which submenu we've selectED -1 if we're still in this level */
+        vector<Menu *>    items;      /* !< the items in the menu */
         SubMenu(string);
-        SubMenu(string, list<Menu *>);
+        SubMenu(string, vector<Menu *>);
         void draw();
-        void selectNext();          /* !< advance the selection */
-        void selectPrev();          /* !< unadvance the selection */
+        void highlightNext();          /* !< advance the selection */
+        void highlightPrev();          /* !< unadvance the selection */
+        void select();                 /* !< make the highlighted item the selected */
+        bool up();                     /* !< up one menu level */
+        void reset();                  /* !< reset selected and highlighted items */
 };
 
 class TerminalMenu : public Menu
@@ -77,6 +83,7 @@ class TerminalMenu : public Menu
     public:
         void (*callback)();     /* !< function to call when this button is hit */
         TerminalMenu(string, void (*callback)());
+        void select();
 };
 
 class MiniMap : public Widget
