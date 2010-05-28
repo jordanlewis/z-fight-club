@@ -95,14 +95,17 @@ void ParticleSystemInfo::update(Vec3f newpos, float dt)
     for(std::list<Particle *>::iterator i = particles.begin(); i != particles.end(); i++) {
         (*i)->ttl -= dt;
         if ((*i)->ttl < 0.0)
+        {
+            Particle *toDestroy = *i;
             i = particles.erase(i);
-        else {
+            delete toDestroy;
+        } else {
             (*i)->pos += dt * (*i)->vel; 
             (*i)->pos -= dpos;
         }
     }
 
-    particles.remove_if(isDead);
+    //particles.remove_if(isDead);
 
     float random;
     for (int j = 0; j < birthRate; j++) {
