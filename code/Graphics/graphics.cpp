@@ -29,9 +29,11 @@ extern "C" {
 Graphics Graphics::_instance;
 
 Graphics::Graphics() :
+    Component(),
     world(&World::getInstance()),
     error(&Error::getInstance())
 {
+    frequency = 60;
     initialized = false;
 }
 
@@ -107,6 +109,8 @@ void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
 
 void Graphics::render()
 {
+    if (!start())
+        return;
     error->pin(P_GRAPHICS);
 
     if (!initialized) {
@@ -195,6 +199,7 @@ void Graphics::render()
     SDL_GL_SwapBuffers();
 
     error->pout(P_GRAPHICS);
+    finish();
 }
 
 void Graphics::render(Agent * agent)

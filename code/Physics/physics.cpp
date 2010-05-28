@@ -35,6 +35,8 @@ void DQuatToQuatf(dQuaternion dquat, Quatf_t quatf)
 
 void Physics::simulate(float dt)
 {
+    if (!start())
+        return;
     error->pin(P_PHYSICS);
     static float timeStepRemainder;
     World &world = World::getInstance();
@@ -111,11 +113,13 @@ void Physics::simulate(float dt)
 
     }
     error->pout(P_PHYSICS);
+    finish();
 }
 
 Physics::Physics() :
-    error(&Error::getInstance())
+    Component(), error(&Error::getInstance())
 {
+    frequency = 100;
     dInitODE();
     odeWorld = dWorldCreate();
     odeSpace = dHashSpaceCreate(0);

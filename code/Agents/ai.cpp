@@ -510,8 +510,10 @@ void AIController::run()
 }
 
 AIManager::AIManager() :
-    error(&Error::getInstance())
-{}
+    Component(), error(&Error::getInstance())
+{
+    frequency = 50;
+}
 
 AIManager::~AIManager() {}
 
@@ -547,6 +549,8 @@ static bool agentCmp(Agent *a, Agent *b)
 
 void AIManager::run()
 {
+    if (!start())
+        return;
     error->pin(P_AI);
     World &world = World::getInstance();
     for (unsigned int i = 0; i < controllers.size(); i++)
@@ -583,6 +587,7 @@ void AIManager::run()
 
     sort(agentsSorted.begin(), agentsSorted.end(), agentCmp);
     error->pout(P_AI);
+    finish();
 }
 
 AIManager &AIManager::getInstance()

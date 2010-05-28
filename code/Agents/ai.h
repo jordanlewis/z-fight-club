@@ -7,6 +7,7 @@
 #include "Utilities/vec3f.h"
 #include "Utilities/path.h"
 #include "Physics/collision.h"
+#include "Engine/component.h"
 
 /* A target that needs to be avoided */
 class Avoid
@@ -60,7 +61,7 @@ class AIController
     Error *error;
 };
 
-class AIManager
+class AIManager : public Component
 {
     AIManager();
     ~AIManager();

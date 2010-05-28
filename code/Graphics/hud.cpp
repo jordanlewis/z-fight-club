@@ -4,6 +4,8 @@
 #include "Agents/ai.h"
 #include "Utilities/error.h"
 #include "Engine/scheduler.h"
+#include "Graphics/graphics.h"
+#include "Physics/physics.h"
 #include <SDL/SDL.h>
 #include <cmath>
 #include <sstream>
@@ -418,7 +420,30 @@ void Places::draw()
     {
         ss << aim.agentsSorted[i]->id << ", ";
     }
+    ss << "fps: " << Graphics::getInstance().fps();
     glColor3f(0,0,1);
     drawText(Vec3f(75, world.camera.getHres() - 10, 0), ss.str(),
              GLUT_BITMAP_HELVETICA_18);
+}
+
+FPS::FPS(Vec3f pos) : Widget(pos)
+{}
+
+void FPS::draw()
+{
+    Graphics &graphics = Graphics::getInstance();
+    Physics &physics = Physics::getInstance();
+    AIManager &aim = AIManager::getInstance();
+    stringstream ss;
+    glColor3f(0,1,0);
+    ss << "gfx: " << graphics.frequency << " (" << graphics.fps() << ")";
+    drawText(Vec3f(0,10,0), ss.str(), GLUT_BITMAP_HELVETICA_10);
+    ss.seekp(0);
+    ss << "ai : " << aim.frequency << " (" << aim.fps() << ")";
+    drawText(Vec3f(0,20,0), ss.str(), GLUT_BITMAP_HELVETICA_10);
+    ss.seekp(0);
+    ss << "phs: " << physics.frequency << " (" << physics.fps() << ")";
+    drawText(Vec3f(0,30,0), ss.str(), GLUT_BITMAP_HELVETICA_10);
+
+
 }

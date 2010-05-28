@@ -9,11 +9,12 @@
 #include "allclasses.h"
 #include "constants.h"
 #include "Utilities/quat.h"
+#include "Engine/component.h"
 
 void QuatfToDQuat(Quatf_t quatf, dQuaternion dquat);
 void DQuatToQuatf(dQuaternion dquat, Quatf_t quatf);
 
-class Physics
+class Physics : public Component
 {
     dWorldID odeWorld;
     dSpaceID odeSpace;

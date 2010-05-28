@@ -120,4 +120,11 @@ class Places : public Widget
     void draw();
 };
 
+class FPS : public Widget
+{
+  public:
+    FPS(Vec3f);
+    void draw();
+};
+
 #endif

@@ -2,7 +2,7 @@
 #define GRAPHICS_H
 
 #include "allclasses.h"
-class Hud;
+#include "Engine/component.h"
 #include "color.h"
 #include <vector>
 #include <deque>
@@ -11,7 +11,7 @@ extern "C" {
 #include "Parser/track-parser.h"
 }
 
-class Graphics
+class Graphics : public Component
 {
   private:
     Graphics();

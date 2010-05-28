@@ -436,6 +436,8 @@ void World::loadTrack(const char *file)
     addWidget(mm);
     Places *places = new Places(Vec3f(0,0,0));
     addWidget(places);
+    FPS *fps = new FPS(Vec3f(0,0,0));
+    addWidget(fps);
 }
 
 Agent *World::placeAgent(int place)

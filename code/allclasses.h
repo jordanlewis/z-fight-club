@@ -9,6 +9,7 @@ class BoxInfo;
 class Camera;
 class Client;
 class ClientInfo;
+class Component;
 class Error;
 class GeomInfo;
 class GObject;
