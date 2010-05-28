@@ -21,7 +21,7 @@ World World::_instance;
 WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject,
                          Agent *agent, double ttl)
     : pos(-1,-1,-1), pobject(pobject), gobject(gobject), sobject(sobject),
-      agent(agent), parent(NULL), player(NULL), timeStarted(GetTime()), ttl(ttl)
+      agent(agent), parent(NULL), player(NULL), alive(true), timeStarted(GetTime()), ttl(ttl)
 {
     Quatf_t newquat = {0,0,0,1};
     CopyV3f(newquat, quat);
@@ -35,8 +35,16 @@ WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject,
     }
 }
 
+WorldObject::~WorldObject()
+{
+    clear();
+}
+
 void WorldObject::clear()
 {
+    if (!alive)
+        return;
+    alive = false;
     if (pobject)
     {
         delete pobject; pobject = NULL;

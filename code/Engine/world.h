@@ -46,11 +46,13 @@ class WorldObject
     WorldObject *parent;
     PlayerController *player; // for server
 
+    bool alive;
     double timeStarted;
     double ttl;
 
     WorldObject(PGeom * pobject, GObject * gobject, SObject * sobject,
                 Agent * agent, double ttl=-1);
+    ~WorldObject();
 
     void clear();
 
