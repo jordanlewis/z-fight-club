@@ -113,7 +113,7 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
         {
             WorldObject *w;
             w = new WorldObject(NULL, NULL,
-                                new SObject("menu_change.wav",
+                                new SObject("19545.wav",
                                             GetTime(),
                                             AL_FALSE),
                                 NULL);
