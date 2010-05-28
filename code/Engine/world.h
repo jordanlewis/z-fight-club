@@ -45,12 +45,16 @@ class WorldObject
     Agent *agent;
     WorldObject *parent;
     PlayerController *player; // for server
+
+    double timeStarted;
+    double ttl;
+
     WorldObject(PGeom * pobject, GObject * gobject, SObject * sobject,
-                Agent * agent);
+                Agent * agent, double ttl=-1);
 
     void clear();
 
-    Vec3f getPos();
+    virtual Vec3f getPos();
     void setPos(Vec3f position);
     void setQuat(Quatf_t quat);
     void getRot(Mat4x4f_t);
@@ -59,12 +63,23 @@ class WorldObject
     void draw();
 };
 
+class CameraFollower : public WorldObject
+{
+  public:
+    CameraFollower(PGeom * pobject, GObject * gobject, SObject * sobject,
+                   Agent * agent, Camera *camera);
+    virtual Vec3f getPos();
+  private:
+    Camera *camera;
+    CameraFollower(); // don't create a follower without a camera, and don't copy it
+};
+
 class ParticleStreamObject : public WorldObject
 {
   public:
     GParticleObject *gobject;
-    ParticleStreamObject(PGeom *pobject, GParticleObject *gobject, SObject *sobject,
-                Agent * agent);
+    ParticleStreamObject(PGeom *pobject, GParticleObject *gobject,
+                         SObject *sobject, Agent * agent, double ttl=-1);
 };
 
 /* \brief Light representation for a light in a scene

@@ -62,16 +62,6 @@ void Physics::simulate(float dt)
             p->lerp(PH_LERP_COEFF);
             useWeapons(a);
         }
-        for (j = 0; j < world.particleSystems.size(); j++)
-        {
-            ParticleStreamObject * p = world.particleSystems[j];
-            Vec3f pos;
-            if (p->parent)
-                pos = p->getPos() + p->parent->getPos();
-            else
-                pos = p->getPos();
-            p->gobject->geominfo->update(pos, dt);
-        }
 
         dSpaceCollide(odeSpace, NULL, &nearCallback);
         dWorldStep(odeWorld, PH_TIMESTEP);
@@ -87,6 +77,18 @@ void Physics::simulate(float dt)
             p->resetOdeAngularVelocity(1);
         }
     }
+
+    for (i = 0; i < world.particleSystems.size(); i++)
+    {
+        ParticleStreamObject * p = world.particleSystems[i];
+        Vec3f pos;
+        if (p->parent)
+            pos = p->getPos() + p->parent->getPos();
+        else
+            pos = p->getPos();
+        p->gobject->geominfo->update(pos, dt);
+    }
+
     for (i = 0; i < world.wobjects.size(); i++)
     {
         if (!world.wobjects[i]->pobject)
@@ -95,14 +97,13 @@ void Physics::simulate(float dt)
         if (pg->collidedWith.empty())
             continue;
 
-        for (vector<WorldObject *>::iterator iter = pg->collidedWith.begin();
-             iter != pg->collidedWith.end(); iter++)
+        for (j = 0; j < pg->collidedWith.size(); j++)
         {
-            PGeom * collidee = (*iter)->pobject;
             /* Check to see both collidee and collider (pg) are still alive */
-            if (!pg->worldObject)
+            if (!pg || !pg->worldObject)
                 break;
-            if (!collidee->worldObject)
+            PGeom * collidee = pg->collidedWith[j]->pobject;
+            if (!collidee || !collidee->worldObject)
                 continue;
 
             pg->collisionReact(collidee);

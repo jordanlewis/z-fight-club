@@ -130,13 +130,16 @@ SubMenu::SubMenu(string name)
 {}
 
 SubMenu::SubMenu(string name, vector<Menu *> items)
-    : Menu(name), items(items), highlighted(0), selected(-1) 
+    : Menu(name), highlighted(0), selected(-1), items(items)
 {
     /* set our submenu's to have us as their up menu */
     for (vector<Menu *>::iterator i = items.begin(); i != items.end(); i++) {
         SubMenu *subMenu = dynamic_cast<SubMenu *> (*i);
+        TextboxMenu *text = dynamic_cast<TextboxMenu *> (*i);
         if (subMenu)
             subMenu->parent = this;
+        if (text)
+            text->parent = this;
     }
 }
 
@@ -164,9 +167,13 @@ void SubMenu::draw()
         }
     }
     else {
+        // this should be redone not to use dynamic casts
         SubMenu *sub = dynamic_cast<SubMenu *>(items[selected]);
+        TextboxMenu *text = dynamic_cast<TextboxMenu *>(items[selected]);
         if (sub)
             sub->draw();
+        else if (text)
+            text->draw();
         else {
             Error &error = Error::getInstance();
             error.log(GRAPHICS, CRITICAL, "Menu selected is of a TerminalItem, this is illegal\n");
@@ -220,8 +227,11 @@ void SubMenu::select()
     }
     else {
         SubMenu *sub = dynamic_cast<SubMenu *>(items[selected]);
+        TextboxMenu *text = dynamic_cast<TextboxMenu *>(items[selected]);
         if (sub)
             sub->select();
+        else if (text)
+            text->select();
         else {
             Error &error = Error::getInstance();
             error.log(GRAPHICS, CRITICAL, "Menu selected is of a TerminalItem, this is illegal\n");
@@ -273,6 +283,37 @@ void TerminalMenu::select()
 {
     (*callback)();
 }
+
+TextboxMenu::TextboxMenu(string name)
+    : Menu(name)
+{}
+
+void TextboxMenu::draw()
+{
+    World &world = World::getInstance();
+    int hres = world.camera.getHres();
+    int wres = world.camera.getWres();
+
+    int hPos = 100;
+
+    drawText(Vec3f(wres / 4, hPos, 0), name, GLUT_BITMAP_HELVETICA_18);
+
+    glBegin(GL_LINE_LOOP);
+    glVertex3f((wres / 4), hPos + 25, 0);
+    glVertex3f((wres / 4) + 300, hPos + 25, 0);
+    glVertex3f((wres / 4) + 300, hPos + 50, 0);
+    glVertex3f((wres / 4), hPos + 50, 0);
+    glEnd();
+}
+
+void TextboxMenu::select()
+{
+    SubMenu *parent = dynamic_cast<SubMenu *>(parent);
+    if(parent) {
+        parent->selected = -1;
+    }
+}
+
 
 MiniMap::MiniMap(Vec3f pos, Path *path) : Widget(pos), path(path)
 {}
