@@ -318,12 +318,7 @@ void PAgent::doCollisionReact(PMoveable *pm) {return;}
 void PAgent::doCollisionReact(PProjectile *pp)
 {
     makeExplosion(pp->getPos(), 1.0);
-    if (pp->worldObject)
-    {
-        pp->worldObject->clear();
-    }
-    else
-        delete pp;
+    pp->worldObject->clear();
 }
 void PAgent::doCollisionReact(PAgent *pa) {return;}
 void PAgent::doCollisionReact(PBottomPlane *pb)
