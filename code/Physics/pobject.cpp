@@ -27,6 +27,9 @@ PGeom::~PGeom()
     dGeomDestroy(geom);
 }
 
+PBottomPlane::PBottomPlane(GeomInfo *info, dSpaceID space) : PGeom(info, space)
+{}
+
 PMoveable::PMoveable(const Kinematic *kinematic, float mass,
                      GeomInfo *info, dSpaceID space)
     : PGeom(info, space), kinematic(kinematic)
@@ -280,6 +283,7 @@ void PAgent::resetOdeAngularVelocity(int nSteps)
 
 
 void PGeom::doCollisionReact(PGeom *pg) {return;}
+void PGeom::doCollisionReact(PBottomPlane *pb){pb->doCollisionReact(this);}
 void PGeom::doCollisionReact(PMoveable *pm)   {pm->doCollisionReact(this);}
 void PGeom::doCollisionReact(PProjectile *pp) {pp->doCollisionReact(this);}
 void PGeom::doCollisionReact(PAgent *pa)      {pa->doCollisionReact(this);}
@@ -294,6 +298,12 @@ void PProjectile::doCollisionReact(PMoveable *pm) {return;}
 void PProjectile::doCollisionReact(PProjectile *pp){return;}
 void PProjectile::doCollisionReact(PAgent *pa)    {pa->doCollisionReact(this);}
 
+void PBottomPlane::doCollisionReact(PGeom *pg) {return;}
+void PBottomPlane::doCollisionReact(PAgent *pa)
+{
+    pa->doCollisionReact(this);
+}
+
 void PAgent::doCollisionReact(PGeom *pg) {return;}
 void PAgent::doCollisionReact(PMoveable *pm) {return;}
 void PAgent::doCollisionReact(PProjectile *pp)
@@ -307,3 +317,7 @@ void PAgent::doCollisionReact(PProjectile *pp)
         delete pp;
 }
 void PAgent::doCollisionReact(PAgent *pa) {return;}
+void PAgent::doCollisionReact(PBottomPlane *pb)
+{
+    worldObject->agent->resetToTrack();
+}

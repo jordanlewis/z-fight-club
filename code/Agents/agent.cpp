@@ -24,14 +24,13 @@ SteerInfo::SteerInfo() : acceleration(0), rotation(0), weapon(NONE), fire(0)
  * \param position the agent's initial position
  */
 
-Agent::Agent() : steerInfo(), kinematic(), pathPosition(0), lapCounter(0),
-                 needsReset(false)
+Agent::Agent() : steerInfo(), kinematic(), pathPosition(0), lapCounter(0)
 {
     id = maxId++;
 }
 
 Agent::Agent(Vec3f position) : steerInfo(), kinematic(position),
-                               pathPosition(0), lapCounter(0), needsReset(false)
+                               pathPosition(0), lapCounter(0)
 {
     id = maxId++;
 }
@@ -42,7 +41,7 @@ Agent::Agent(Vec3f position) : steerInfo(), kinematic(position),
  */
 Agent::Agent(Vec3f position, float orientation)
             : steerInfo(), kinematic(position, Vec3f(0,0,0), orientation),
-              pathPosition(0), lapCounter(0), needsReset(false)
+              pathPosition(0), lapCounter(0)
 {
     id = maxId++;
 }
@@ -112,7 +111,7 @@ void Agent::resetToTrack()
     FromAxisAngle(axis, theta, orient);
 
     static_cast<PMoveable *>(worldObject->pobject)->resetToStopped(pos,orient);
-
+    setKinematic(static_cast<PMoveable *>(worldObject->pobject)->odeToKinematic());
 }
 
 /* \brief set kinematic for agent
