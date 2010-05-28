@@ -104,6 +104,6 @@ void launchBox(Agent *agent)
     PProjectile *pobj = new PProjectile(k, 100, box);
     pobj->bounce = 1;
     GObject *gobj = new GObject(box);
-    WorldObject *wobj = new WorldObject(pobj, gobj, NULL, NULL);
+    WorldObject *wobj = new WorldObject(pobj, gobj, NULL, NULL, 10);
     World::getInstance().addObject(wobj);
 }
