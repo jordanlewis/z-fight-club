@@ -39,7 +39,6 @@ void Physics::simulate(float dt)
     error->pin(P_PHYSICS);
     static float timeStepRemainder;
     World &world = World::getInstance();
-    PAgent *p;
     Agent *a;
     unsigned int nSteps, i, j;
     float desiredTimeSteps;
@@ -55,13 +54,11 @@ void Physics::simulate(float dt)
     {
         for (j = 0; j < world.wobjects.size(); j++)
         {
-            if (! (a = world.wobjects[j]->agent))
+            if (!world.wobjects[j]->pobject)
                 continue;
-            p = static_cast<PAgent *>(a->worldObject->pobject);
-            p->kinematicToOde();
-            p->steeringToOde();
-            p->lerp(PH_LERP_COEFF);
-            useWeapons(a);
+            world.wobjects[j]->pobject->prePhysics();
+            if ((a = world.wobjects[j]->agent))
+                useWeapons(a);
         }
 
         dSpaceCollide(odeSpace, NULL, &nearCallback);
@@ -70,12 +67,14 @@ void Physics::simulate(float dt)
 
         for (j = 0; j < world.wobjects.size(); j++)
         {
-            if (! (a = world.wobjects[j]->agent))
+            if (!world.wobjects[j]->pobject)
                 continue;
-            p = static_cast<PAgent *>(a->worldObject->pobject);
-            const Kinematic &k = p->odeToKinematic();
-            a->setKinematic(k);
-            p->resetOdeAngularVelocity(1);
+            world.wobjects[j]->pobject->postPhysics();
+            world.wobjects[j]->pobject->odeToKinematic();
+            if ((a = world.wobjects[j]->agent))
+            {
+                a->setKinematic(static_cast<PAgent *>(world.wobjects[j]->pobject)->outputKinematic);
+            }
         }
     }
 

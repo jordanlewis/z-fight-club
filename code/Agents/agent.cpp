@@ -111,7 +111,8 @@ void Agent::resetToTrack()
     FromAxisAngle(axis, theta, orient);
 
     static_cast<PMoveable *>(worldObject->pobject)->resetToStopped(pos,orient);
-    setKinematic(static_cast<PMoveable *>(worldObject->pobject)->odeToKinematic());
+    static_cast<PMoveable *>(worldObject->pobject)->odeToKinematic();
+    setKinematic(static_cast<PMoveable *>(worldObject->pobject)->outputKinematic);
 }
 
 /* \brief set kinematic for agent

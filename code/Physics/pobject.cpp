@@ -54,12 +54,6 @@ PMoveable::~PMoveable()
     dBodyDestroy(body);
 }
 
-PProjectile::PProjectile(const Kinematic *kinematic, float mass, GeomInfo *info,
-                         double liveTime, dSpaceID space)
-             : PMoveable(kinematic, mass, info, space),
-               destroy(false), timeCreated(GetTime()), liveTime(liveTime)
-{}
-
 PAgent::PAgent(const Kinematic *kinematic, const SteerInfo *steering,
                float mass, GeomInfo *info, dSpaceID space)
     : PMoveable(kinematic, mass, info, space), steering(steering)
@@ -123,6 +117,25 @@ void PGeom::ntohQuat(RPQuat *payload){
     return;
 }
 
+void PGeom::steeringToOde()
+{
+    return;
+}
+void PGeom::odeToKinematic()
+{
+    return;
+}
+
+void PGeom::prePhysics()
+{
+    return;
+}
+
+void PGeom::postPhysics()
+{
+    return;
+}
+
 const dGeomID &PGeom::getGeom()
 {
     return geom;
@@ -165,7 +178,7 @@ void PMoveable::lerp(float coeff){
 
 /* /brief Copys the ode info into the associated kinematic struct
  */
-const Kinematic &PMoveable::odeToKinematic(){
+void PMoveable::odeToKinematic(){
     Kinematic &k = outputKinematic;
 
     dQuaternion q_result, q_result1, q_base;
@@ -215,8 +228,18 @@ const Kinematic &PMoveable::odeToKinematic(){
     k.vel[0] = b_info[0];
     k.vel[1] = b_info[1];
     k.vel[2] = b_info[2];
+}
 
-    return k;
+void PAgent::prePhysics()
+{
+    kinematicToOde();
+    steeringToOde();
+    lerp(PH_LERP_COEFF);
+}
+
+void PAgent::postPhysics()
+{
+    resetOdeAngularVelocity(1);
 }
 
 void PAgent::kinematicToOde()
@@ -281,9 +304,24 @@ void PAgent::resetOdeAngularVelocity(int nSteps)
                        angVel[2]);
 }
 
+PProjectile::PProjectile(const Kinematic *kinematic, const SteerInfo *steering,
+                         float mass, GeomInfo *info, double liveTime,
+                         dSpaceID space)
+             : PAgent(kinematic, steering, mass, info, space),
+               destroy(false), timeCreated(GetTime()), liveTime(liveTime)
+{
+    dBodySetGravityMode(body, 0);
+}
+void PProjectile::steeringToOde()
+{
+    PAgent::steeringToOde();
+}
 
-
-
+void PProjectile::odeToKinematic()
+{
+    PAgent::odeToKinematic();
+    *const_cast<Kinematic *>(kinematic) = outputKinematic;
+}
 
 
 

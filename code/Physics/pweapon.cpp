@@ -107,11 +107,12 @@ void launchBox(Agent *agent)
         rocket = new ObjMeshInfo("Weapons/Rocket/");
     BoxInfo *box = new BoxInfo(.2,.2,.2);
     Kinematic &ak = agent->getKinematic();
-    Kinematic *k = new Kinematic(ak.pos,
-                                 ak.orientation_v * 25 );
+    Kinematic *k = new Kinematic(ak.pos, ak.orientation_v * 25 );
+    SteerInfo *s = new SteerInfo;
+    s->acceleration = 50;
     k->pos += ak.orientation_v;
-    k->vel.y += 2;
-    PProjectile *pobj = new PProjectile(k, 100, box);
+    k->orientation = ak.orientation;
+    PProjectile *pobj = new PProjectile(k, s, 100, box);
     pobj->bounce = 1;
     GObject *gobj = new GObject(rocket);
     WorldObject *wobj = new WorldObject(pobj, gobj, NULL, NULL, 10);

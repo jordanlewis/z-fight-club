@@ -54,6 +54,11 @@ class PGeom
     void ntohQuat(RPQuat *payload);
     void htonQuat(RPQuat *payload);
 
+    virtual void prePhysics();
+    virtual void postPhysics();
+    virtual void steeringToOde();
+    virtual void odeToKinematic();
+
     const dGeomID &getGeom();
     PGeom(GeomInfo *info, dSpaceID space=NULL);
     virtual ~PGeom();
@@ -76,11 +81,11 @@ class PMoveable: public PGeom
 {
  protected:
     const Kinematic *kinematic;
-    Kinematic outputKinematic;
     dBodyID body;
     dMass mass;
 
  public:
+    Kinematic outputKinematic;
     Vec3f lerpvec; /* The direction we are lerping in.  Used by network code */
 
     PMoveable(const Kinematic *kinematic, float mass,
@@ -95,29 +100,11 @@ class PMoveable: public PGeom
 
     void resetToStopped(Vec3f pos, Quatf_t quat); /* Set pmoveable's ODE data
                                                      and stop its motion */
-    const Kinematic &odeToKinematic(); /* writes (syncs) the body coords into
+    virtual void odeToKinematic(); /* writes (syncs) the body coords into
                                         * the kinematic */
     const dBodyID &getBody();
-    void kinematicToOde(); //writes (syncs) the kinematic coords into the body
+    virtual void kinematicToOde(); //writes (syncs) the kinematic coords into the body
     void lerp(float coeff);
-};
-
-class PProjectile: public PMoveable
-{
-  public:
-    PProjectile(const Kinematic *kinematic, float mass, GeomInfo *info,
-                double liveTime=10, dSpaceID space=NULL);
-
-    virtual void collisionReact(PGeom *pg) {pg->doCollisionReact(this);}
-    virtual void doCollisionReact(PGeom *pg);
-    virtual void doCollisionReact(PMoveable *pm);
-    virtual void doCollisionReact(PProjectile *pp);
-    virtual void doCollisionReact(PAgent *pa);
-
-
-    bool destroy;
-    double timeCreated;
-    double liveTime;
 };
 
 // Same as PMoveable, but adds steering info and related interfaces
@@ -136,8 +123,34 @@ class PAgent: public PMoveable
     virtual void doCollisionReact(PAgent *pa);
     virtual void doCollisionReact(PBottomPlane *pb);
 
-    void kinematicToOde();
-    void steeringToOde(); //Write steering info into the ODE structs
-    void resetOdeAngularVelocity(int nsteps);
+    virtual void prePhysics();
+    virtual void postPhysics();
+
+    virtual void kinematicToOde();
+    virtual void steeringToOde(); //Write steering info into the ODE structs
+    virtual void resetOdeAngularVelocity(int nsteps);
 };
+
+class PProjectile: public PAgent
+{
+  public:
+    PProjectile(const Kinematic *kinematic, const SteerInfo *steering,
+                float mass, GeomInfo *info, double liveTime=10,
+                dSpaceID space=NULL);
+
+    virtual void collisionReact(PGeom *pg) {pg->doCollisionReact(this);}
+    virtual void doCollisionReact(PGeom *pg);
+    virtual void doCollisionReact(PMoveable *pm);
+    virtual void doCollisionReact(PProjectile *pp);
+    virtual void doCollisionReact(PAgent *pa);
+
+
+    virtual void steeringToOde();
+    virtual void odeToKinematic();
+
+    bool destroy;
+    double timeCreated;
+    double liveTime;
+};
+
 #endif
