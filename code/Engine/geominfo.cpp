@@ -137,9 +137,13 @@ void ParticleSystemInfo::update(Vec3f newpos, float dt)
             /* setup the particle including randomization */
             Vec3f p_pos = Vec3f(0.0f, 0.0f, 0.0f);
             p_pos += randomVec3f(area);
+            p_pos.normalize();
+            p_pos *= area.length();
 
             Vec3f p_vel = velocity;
             p_vel += randomVec3f(velocity_pm);
+            p_vel.normalize();
+            p_vel *= velocity_pm.length();
 
             float p_ttl = ttl;
             p_ttl += ((float) rand() / (float) RAND_MAX - 0.5f) * 2 * ttl_pm;
