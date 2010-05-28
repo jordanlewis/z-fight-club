@@ -132,6 +132,7 @@ ParticleStreamObject::ParticleStreamObject(PGeom *pobject,
 World::World() :
     error(&Error::getInstance()), nox(false), nosound(false)
 {
+    /* create the pause menu */
     vector<Menu *> graphics_items;
     SubMenu *graph1 = new SubMenu("graphics - foo");
     SubMenu *graph2 = new SubMenu("graphics - bar");
@@ -150,25 +151,29 @@ World::World() :
     game_items.push_back(game2);
     game_items.push_back(game3);
 
-    vector<Menu *> sound_items;
-    SubMenu *sound1 = new SubMenu("sound - foo");
-    SubMenu *sound2 = new SubMenu("sound - bar");
-    SubMenu *sound3 = new SubMenu("sound - baz");
+    vector<Option *> sound_options;
+    Option *sound1 = new Option("sound - foo", -1);
+    Option *sound2 = new Option("sound - bar", -1);
+    Option *sound3 = new Option("sound - baz", -1);
 
-    sound_items.push_back(sound1);
-    sound_items.push_back(sound2);
-    sound_items.push_back(sound3);
+    sound_options.push_back(sound1);
+    sound_options.push_back(sound2);
+    sound_options.push_back(sound3);
 
     vector<Menu *> items;
     SubMenu *graphics = new SubMenu("Graphics", graphics_items);
     SubMenu *gameOptions = new SubMenu("Game Options", game_items);
-    SubMenu *sound = new SubMenu("Sound", sound_items);
+    SelectorMenu *sound = new SelectorMenu("Sound", sound_options);
 
     items.push_back(graphics);
     items.push_back(gameOptions);
     items.push_back(sound);
 
     pauseMenu = new SubMenu("Pause Menu", items);
+
+    /* create the setup menu */
+    TextboxMenu *ai = new TextboxMenu("Number of AIs");
+
 }
 
 Light::Light()
