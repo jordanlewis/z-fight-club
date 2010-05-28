@@ -18,7 +18,6 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
     dBodyID b1 = dGeomGetBody(o1);
     dBodyID b2 = dGeomGetBody(o2);
     Physics &p = Physics::getInstance();
-    World &world = World::getInstance();
     dWorldID odeWorld = p.getOdeWorld();
     dJointGroupID odeContacts = p.getOdeContacts();
 
@@ -89,41 +88,6 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
                                  sizeof(dContact));
     if (numCollisions > 0)
     {
-        //cout << numCollisions << " collisions detected" << endl;
-        // William suggests using force to determine whether to
-        // make a noise, rather than velocity. This way I won't
-        // have to deal with ground scraping as a special case.
-        dVector3 b1_vel = { 0, 0, 0 };
-        dVector3 b2_vel = { 0, 0, 0 };
-        if (g1->isPlaceable() && b1)
-        {
-            const dReal *o1_pos = dGeomGetPosition(o1);
-            dBodyGetPointVel(b1, o1_pos[0], o1_pos[1], o1_pos[2],
-                                b1_vel);
-        }
-        if (g2->isPlaceable() && b2)
-        {
-            const dReal *o2_pos = dGeomGetPosition(o2);
-            dBodyGetPointVel(b2, o2_pos[0], o2_pos[1], o2_pos[2],
-                                b2_vel);
-        }
-        Vec3f v1 = Vec3f(b1_vel[0], b1_vel[1], b1_vel[2]);
-        Vec3f v2 = Vec3f(b2_vel[0], b2_vel[1], b2_vel[2]);
-        if ((v1.length() > 3) && (v2.length() > 3) && ((v1-v2).length() > 3) && !world.nosound)
-        {
-            WorldObject *w;
-            w = new WorldObject(NULL, NULL,
-                                new SObject("19545.wav",
-                                            GetTime(),
-                                            AL_FALSE),
-                                NULL);
-            Vec3f p = Vec3f(contact[0].geom.pos[0],
-                            contact[0].geom.pos[1],
-                            contact[0].geom.pos[2]);
-            w->setPos(p);
-            world.addObject(w);
-        }
-
         /* Register collisions with one object */
         g1->collidedWith.push_back(g2->worldObject);
 
@@ -134,36 +98,6 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
             contact[i].surface.mu2 = mu2;
             contact[i].surface.bounce = bounce;
             contact[i].surface.bounce_vel = 0.1;
-            /*
-            //This is all horrendously wrong, but it's a start.
-            //I mean... really horrendously wrong.
-            //We'll fix this if we decide to use friction.
-            if (b1 != 0)
-            {
-            dBodyGetPointVel(b1, contact[i].geom.pos[0],
-            contact[i].geom.pos[1],
-            contact[i].geom.pos[2], contact[i].fdir1);
-            }
-            else if (b2 != 0)
-            {
-            dBodyGetPointVel(b2, contact[i].geom.pos[0],
-            contact[i].geom.pos[1],
-            contact[i].geom.pos[2], rel_vel);
-            }
-
-            norm = 0;
-            for(int j=0; j < 2; j++){
-            contact[i].fdir1[j] -= rel_vel[j];
-            norm += contact[i].fdir1[j]*contact[i].fdir1[j];
-            }
-            norm = sqrt(norm);
-            contact[i].surface.mu *= norm;
-            contact[i].surface.mu2 *= norm;
-            */
-            /*
-            cout << "Friction coeff: " << contact[i].surface.mu << endl;
-            cout << "Bounce: " << bounce << endl;
-            */
 
             dJointID c = dJointCreateContact(odeWorld,
                                                 odeContacts,
