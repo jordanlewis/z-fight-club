@@ -9,6 +9,14 @@
 /* Call once per physics update.  Checks to see if an agents is using weapons.
  * If so, perform the physically appropriate action.
  */
+
+/* We need to cache these to avoid a file read each time we shoot an weapon
+ * right now they just get deleted when the game quits, that's not so bad since
+ * we do need them the whole time.
+ */
+static ObjMeshInfo *rocket = NULL;
+static ObjMeshInfo *mine = NULL;
+
 void useWeapons(Agent *agent){
     SteerInfo info = agent->getSteering();
     if (info.fire == 1) {
@@ -95,6 +103,8 @@ void raygun(Agent *agent, int force)
 
 void launchBox(Agent *agent)
 {
+    if (!rocket)
+        rocket = new ObjMeshInfo("Weapons/Rocket/");
     BoxInfo *box = new BoxInfo(.2,.2,.2);
     Kinematic &ak = agent->getKinematic();
     Kinematic *k = new Kinematic(ak.pos,
@@ -103,7 +113,7 @@ void launchBox(Agent *agent)
     k->vel.y += 2;
     PProjectile *pobj = new PProjectile(k, 100, box);
     pobj->bounce = 1;
-    GObject *gobj = new GObject(box);
+    GObject *gobj = new GObject(rocket);
     WorldObject *wobj = new WorldObject(pobj, gobj, NULL, NULL, 10);
     World::getInstance().addObject(wobj);
 }
