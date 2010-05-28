@@ -127,16 +127,6 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
         /* Register collisions with one object */
         g1->collidedWith.push_back(g2->worldObject);
 
-//        Agent *agent;
-//        if ((g1->worldObject == world.botPlaneObj &&
-//             (agent = g2->worldObject->agent)) ||
-//            (g2->worldObject == world.botPlaneObj &&
-//             (agent = g1->worldObject->agent)))
-//        {
-//            /* Agent has fallen off track. Reset it. */
-//            agent->needsReset = true;
-//        }
-
         for (int i = 0; i < numCollisions; i++)
         {
             contact[i].surface.mode = mode;

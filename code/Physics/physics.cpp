@@ -81,12 +81,6 @@ void Physics::simulate(float dt)
             if (! (a = world.wobjects[j]->agent))
                 continue;
             p = static_cast<PAgent *>(a->worldObject->pobject);
-            /* Do reset operation on ODE structs before syncing kinematic */
-            if (a->needsReset)
-            {
-                a->resetToTrack();
-                a->needsReset = false;
-            }
             const Kinematic &k = p->odeToKinematic();
             a->setKinematic(k);
             p->resetOdeAngularVelocity(1);

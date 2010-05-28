@@ -68,7 +68,6 @@ class Agent
     void hton(RPAgent *payload); /* Package the agent for network transfer */
     void ntoh(RPAgent *payload); /* Unpackage an agent from network transfer */
 
-    bool needsReset;
     void resetToTrack(); /* Reset agent onto track */
     /* The below method is the interface between the generic agent
      * implemented in agent.c and the two types of agent controllers - AI

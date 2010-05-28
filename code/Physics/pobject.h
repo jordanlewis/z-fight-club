@@ -20,6 +20,7 @@ typedef enum {
 class PMoveable;
 class PProjectile;
 class PAgent;
+class PBottomPlane;
 
 /* Stores geometry info for use in ODE collision calculations
  * See geominfo.h for info on member variables.
@@ -43,6 +44,7 @@ class PGeom
     virtual void doCollisionReact(PMoveable *pm);
     virtual void doCollisionReact(PProjectile *pp);
     virtual void doCollisionReact(PAgent *pa);
+    virtual void doCollisionReact(PBottomPlane *pb);
 
     bool isPlaceable();
     Vec3f getPos();
@@ -55,6 +57,15 @@ class PGeom
     const dGeomID &getGeom();
     PGeom(GeomInfo *info, dSpaceID space=NULL);
     virtual ~PGeom();
+};
+
+class PBottomPlane : public PGeom
+{
+  public:
+    PBottomPlane(GeomInfo *info, dSpaceID space=NULL);
+    virtual void collisionReact(PGeom *pg) {pg->doCollisionReact(this);}
+    virtual void doCollisionReact(PAgent *pa);
+    virtual void doCollisionReact(PGeom *pg);
 };
 
 /*
@@ -120,6 +131,7 @@ class PAgent: public PMoveable
     virtual void doCollisionReact(PMoveable *pm);
     virtual void doCollisionReact(PProjectile *pp);
     virtual void doCollisionReact(PAgent *pa);
+    virtual void doCollisionReact(PBottomPlane *pb);
 
     void kinematicToOde();
     void steeringToOde(); //Write steering info into the ODE structs
