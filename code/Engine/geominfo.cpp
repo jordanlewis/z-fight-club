@@ -161,16 +161,35 @@ void makeExplosion(Vec3f position, float size)
 {
     Vec3f area = Vec3f(.01, .01, .01);
     Vec3f velocity = Vec3f(0.0, 0.0, 0.0);
-    Vec3f velocity_pm = Vec3f(4.5, 0.0, 4.5);
-    velocity_pm *= size;
+    Vec3f velocity_pm1 = Vec3f(4.5, .1, 4.5);
+    Vec3f velocity_pm2 = Vec3f(.1, 4.5, 4.5);
+    Vec3f velocity_pm3 = Vec3f(4.5, 4.5, .1);
+    velocity_pm1 *= size;
+    velocity_pm2 *= size;
+    velocity_pm3 *= size;
     float ttl = 1.2;
     float ttl_pm = 0.0;
-    float birthRate = 1000.0;
-    int maxParticles = 500;
+    float birthRate = 1000;
+    int maxParticles = 2000;
 
-    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/beam.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate, maxParticles);
+    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/beam.png", area, velocity, velocity_pm1, ttl, ttl_pm, birthRate, maxParticles);
     GParticleObject *particle_gobj = new GParticleObject(particleSystem);
     ParticleStreamObject *particle_wobj = new ParticleStreamObject(NULL, particle_gobj, NULL, NULL, 3);
+    particle_wobj->setPos(position);
+
+    World::getInstance().addObject(particle_wobj);
+
+
+    particleSystem = new ParticleSystemInfo("particles/beam.png", area, velocity, velocity_pm2, ttl, ttl_pm, birthRate, maxParticles);
+    particle_gobj = new GParticleObject(particleSystem);
+    particle_wobj = new ParticleStreamObject(NULL, particle_gobj, NULL, NULL, 3);
+    particle_wobj->setPos(position);
+
+    World::getInstance().addObject(particle_wobj);
+
+    particleSystem = new ParticleSystemInfo("particles/beam.png", area, velocity, velocity_pm3, ttl, ttl_pm, birthRate, maxParticles);
+    particle_gobj = new GParticleObject(particleSystem);
+    particle_wobj = new ParticleStreamObject(NULL, particle_gobj, NULL, NULL, 3);
     particle_wobj->setPos(position);
 
     World::getInstance().addObject(particle_wobj);
