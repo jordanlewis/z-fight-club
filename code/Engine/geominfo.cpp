@@ -72,7 +72,24 @@ Particle::~Particle()
 {}
 
 ParticleSystemInfo::ParticleSystemInfo(std::string filename, Vec3f area, Vec3f velocity, Vec3f velocity_pm, float ttl, float ttl_pm, float birthRate)
-    : GeomInfo(), area(area), velocity(velocity), velocity_pm(velocity_pm), ttl(ttl), ttl_pm(ttl_pm), birthRate(birthRate)
+    : GeomInfo(), area(area), velocity(velocity), velocity_pm(velocity_pm), ttl(ttl), ttl_pm(ttl_pm), birthRate(birthRate), maxParticles(-1)
+{
+    World &world = World::getInstance();
+    Image2D_t *color = LoadImage((world.assetsDir + filename).c_str(), false, RGBA_IMAGE);
+    
+    /* Initialize the textures */
+    glGenTextures(1, &texid);
+
+    glBindTexture(GL_TEXTURE_2D, texid);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    TexImage(color);
+    FreeImage(color);
+    lastUpdate = GetTime();
+}
+
+ParticleSystemInfo::ParticleSystemInfo(std::string filename, Vec3f area, Vec3f velocity, Vec3f velocity_pm, float ttl, float ttl_pm, float birthRate, int maxParticles)
+    : GeomInfo(), area(area), velocity(velocity), velocity_pm(velocity_pm), ttl(ttl), ttl_pm(ttl_pm), birthRate(birthRate), maxParticles(maxParticles)
 {
     World &world = World::getInstance();
     Image2D_t *color = LoadImage((world.assetsDir + filename).c_str(), false, RGBA_IMAGE);
@@ -107,10 +124,16 @@ void ParticleSystemInfo::update(Vec3f newpos, float dt)
 
     //particles.remove_if(isDead);
 
-    float random;
-    for (int j = 0; j < birthRate; j++) {
+    if (maxParticles > 0) {
+        float random;
         random = (float) rand() / (float) RAND_MAX;
-        if (random < dt) {
+        int toSpawn = lrint(birthRate * (dt / random));
+
+        if (toSpawn > maxParticles)
+            toSpawn = maxParticles;
+        
+        maxParticles -= toSpawn;
+        for (int i = 0; i < toSpawn; i++) {
             /* setup the particle including randomization */
             Vec3f p_pos = Vec3f(0.0f, 0.0f, 0.0f);
             p_pos += randomVec3f(area);
@@ -138,9 +161,10 @@ void makeExplosion(Vec3f position, float size)
     velocity_pm *= size;
     float ttl = 1.2;
     float ttl_pm = 0.0;
-    float birthRate = 500.0;
+    float birthRate = 1000.0;
+    int maxParticles = 500;
 
-    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/beam.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate);
+    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/beam.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate, maxParticles);
     GParticleObject *particle_gobj = new GParticleObject(particleSystem);
     ParticleStreamObject *particle_wobj = new ParticleStreamObject(NULL, particle_gobj, NULL, NULL, 3);
     particle_wobj->setPos(position);

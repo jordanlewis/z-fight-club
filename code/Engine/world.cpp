@@ -282,7 +282,7 @@ void World::addAgent(Agent *agent)
     Vec3f velocity_pm = Vec3f(0, .3, .3);
     float ttl = 2.0;
     float ttl_pm = 1.0;
-    float birthRate = 200.0;
+    float birthRate = 25.0;
 
     ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/beam.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate);
     GParticleObject *particle_gobj = new GParticleObject(particleSystem);
