@@ -100,6 +100,17 @@ void WorldObject::draw()
         gobject->draw(getPos(), quat, agent);
 }
 
+CameraFollower::CameraFollower(PGeom * pobject, GObject * gobject, SObject * sobject,
+                               Agent * agent, Camera *camera) :
+    WorldObject(pobject,gobject,sobject,agent), camera(camera)
+{
+}
+
+Vec3f CameraFollower::getPos()
+{
+    return camera->getPos();
+}
+
 ParticleStreamObject::ParticleStreamObject(PGeom *pobject, GParticleObject *gobject, SObject *sobject,
   Agent *agent) : WorldObject(pobject,gobject,sobject,agent), gobject(gobject)
 {

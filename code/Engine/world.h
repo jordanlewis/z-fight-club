@@ -50,13 +50,24 @@ class WorldObject
 
     void clear();
 
-    Vec3f getPos();
+    virtual Vec3f getPos();
     void setPos(Vec3f position);
     void setQuat(Quatf_t quat);
     void getRot(Mat4x4f_t);
     void getQuat(Quatf_t);
 
     void draw();
+};
+
+class CameraFollower : public WorldObject
+{
+  public:
+    CameraFollower(PGeom * pobject, GObject * gobject, SObject * sobject,
+                   Agent * agent, Camera *camera);
+    virtual Vec3f getPos();
+  private:
+    Camera *camera;
+    CameraFollower(); // don't create a follower without a camera, and don't copy it
 };
 
 class ParticleStreamObject : public WorldObject
