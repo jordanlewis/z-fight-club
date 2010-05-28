@@ -9,6 +9,7 @@
 
 typedef enum
 {
+    SETUP,
     COUNTDOWN,
     RACE,
     PLAYER_DONE,
