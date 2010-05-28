@@ -169,10 +169,10 @@ void makeExplosion(Vec3f position, float size)
     velocity_pm3 *= size;
     float ttl = 1.2;
     float ttl_pm = 0.0;
-    float birthRate = 1000;
-    int maxParticles = 2000;
+    float birthRate = 500;
+    int maxParticles = 1000;
 
-    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/beam.png", area, velocity, velocity_pm1, ttl, ttl_pm, birthRate, maxParticles);
+    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/fire.png", area, velocity, velocity_pm1, ttl, ttl_pm, birthRate, maxParticles);
     GParticleObject *particle_gobj = new GParticleObject(particleSystem);
     ParticleStreamObject *particle_wobj = new ParticleStreamObject(NULL, particle_gobj, NULL, NULL, 3);
     particle_wobj->setPos(position);
@@ -180,14 +180,14 @@ void makeExplosion(Vec3f position, float size)
     World::getInstance().addObject(particle_wobj);
 
 
-    particleSystem = new ParticleSystemInfo("particles/beam.png", area, velocity, velocity_pm2, ttl, ttl_pm, birthRate, maxParticles);
+    particleSystem = new ParticleSystemInfo("particles/fire.png", area, velocity, velocity_pm2, ttl, ttl_pm, birthRate, maxParticles);
     particle_gobj = new GParticleObject(particleSystem);
     particle_wobj = new ParticleStreamObject(NULL, particle_gobj, NULL, NULL, 3);
     particle_wobj->setPos(position);
 
     World::getInstance().addObject(particle_wobj);
 
-    particleSystem = new ParticleSystemInfo("particles/beam.png", area, velocity, velocity_pm3, ttl, ttl_pm, birthRate, maxParticles);
+    particleSystem = new ParticleSystemInfo("particles/fire.png", area, velocity, velocity_pm3, ttl, ttl_pm, birthRate, maxParticles);
     particle_gobj = new GParticleObject(particleSystem);
     particle_wobj = new ParticleStreamObject(NULL, particle_gobj, NULL, NULL, 3);
     particle_wobj->setPos(position);
