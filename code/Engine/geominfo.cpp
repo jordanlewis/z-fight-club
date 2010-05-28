@@ -142,7 +142,7 @@ void makeExplosion(Vec3f position, float size)
 
     ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/beam.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate);
     GParticleObject *particle_gobj = new GParticleObject(particleSystem);
-    ParticleStreamObject *particle_wobj = new ParticleStreamObject(NULL, particle_gobj, NULL, NULL);
+    ParticleStreamObject *particle_wobj = new ParticleStreamObject(NULL, particle_gobj, NULL, NULL, 3);
     particle_wobj->setPos(position);
 
     World::getInstance().addObject(particle_wobj);

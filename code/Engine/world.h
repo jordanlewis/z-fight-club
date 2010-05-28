@@ -45,8 +45,12 @@ class WorldObject
     Agent *agent;
     WorldObject *parent;
     PlayerController *player; // for server
+
+    double timeStarted;
+    double ttl;
+
     WorldObject(PGeom * pobject, GObject * gobject, SObject * sobject,
-                Agent * agent);
+                Agent * agent, double ttl=-1);
 
     void clear();
 
@@ -74,8 +78,8 @@ class ParticleStreamObject : public WorldObject
 {
   public:
     GParticleObject *gobject;
-    ParticleStreamObject(PGeom *pobject, GParticleObject *gobject, SObject *sobject,
-                Agent * agent);
+    ParticleStreamObject(PGeom *pobject, GParticleObject *gobject,
+                         SObject *sobject, Agent * agent, double ttl=-1);
 };
 
 /* \brief Light representation for a light in a scene

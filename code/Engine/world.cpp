@@ -19,9 +19,9 @@ extern "C" {
 World World::_instance;
 
 WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject,
-                         Agent *agent)
+                         Agent *agent, double ttl)
     : pos(-1,-1,-1), pobject(pobject), gobject(gobject), sobject(sobject),
-      agent(agent), parent(NULL), player(NULL)
+      agent(agent), parent(NULL), player(NULL), timeStarted(GetTime()), ttl(ttl)
 {
     Quatf_t newquat = {0,0,0,1};
     CopyV3f(newquat, quat);
@@ -111,8 +111,11 @@ Vec3f CameraFollower::getPos()
     return camera->getPos();
 }
 
-ParticleStreamObject::ParticleStreamObject(PGeom *pobject, GParticleObject *gobject, SObject *sobject,
-  Agent *agent) : WorldObject(pobject,gobject,sobject,agent), gobject(gobject)
+ParticleStreamObject::ParticleStreamObject(PGeom *pobject,
+                                           GParticleObject *gobject,
+                                           SObject *sobject, Agent *agent,
+                                           double ttl)
+         : WorldObject(pobject,gobject,sobject,agent, ttl), gobject(gobject)
 {
     // As with GParticleObject, we now have two pointers to the same piece of data, but the advantage
     // of this is that we get extra type info with it (see the note under GParticleObject)
@@ -220,13 +223,24 @@ void World::addWidget(Widget *widget)
 void World::cleanObjects()
 {
     WorldObject *w;
+    double curTime = GetTime();
     for (unsigned int i = 0; i < wobjects.size(); i++)
     {
         w = wobjects[i];
-        if (!w->pobject && !w->gobject && !w->sobject && !w->agent)
+        if ((!w->pobject && !w->gobject && !w->sobject && !w->agent) ||
+             (w->ttl > 0 && curTime > w->timeStarted + w->ttl))
         {
             delete w;
             wobjects.erase(wobjects.begin() + i--);
+        }
+    }
+    for (unsigned int i = 0; i < particleSystems.size(); i++)
+    {
+        w = particleSystems[i];
+        if (w->ttl > 0 && curTime > w->timeStarted + w->ttl)
+        {
+            delete w;
+            particleSystems.erase(particleSystems.begin() + i--);
         }
     }
 }
