@@ -38,7 +38,7 @@ void BoxInfo::draw()
     glVertex3f (x,-y,-z);
     glVertex3f (x,-y,z);
     glNormal3f (0,-1,0);
-    glVertex3f (-x,-y,-lz);
+    glVertex3f (-x,-y,-z);
     glVertex3f (-x,-y,z);
     glEnd();
 
