@@ -6,6 +6,7 @@
 #include "Engine/world.h"
 #include "Network/network.h"
 #include "Network/racerpacket.h"
+#include "Sound/sobject.h"
 #include <ode/ode.h>
 
 PGeom::PGeom(GeomInfo *info, dSpaceID space)
@@ -355,11 +356,42 @@ void PAgent::doCollisionReact(PGeom *pg) {return;}
 void PAgent::doCollisionReact(PMoveable *pm) {return;}
 void PAgent::doCollisionReact(PProjectile *pp)
 {
+    // explosion noise
     makeExplosion(pp->getPos(), 1.0);
     pp->worldObject->clear();
 }
-void PAgent::doCollisionReact(PAgent *pa) {return;}
+void PAgent::doCollisionReact(PAgent *pa)
+{
+    // collision noise
+    Vec3f relVel = this->kinematic->vel - pa->kinematic->vel;
+    if (relVel.length() < 1)
+    {
+        return;
+    }
+    Vec3f inBetween = (this->kinematic->pos + pa->kinematic->pos)/2;
+    WorldObject *w;
+    w = new WorldObject(NULL, NULL,
+                        new SObject("19545.wav",
+                                    GetTime(),
+                                    AL_FALSE, relVel.length()/6),
+                        NULL);
+    w->setPos(inBetween);
+    World *world = &World::getInstance();
+    world->addObject(w);
+    return;
+}
 void PAgent::doCollisionReact(PBottomPlane *pb)
 {
+    // reset noise
+    WorldObject *w;
+    w = new WorldObject(NULL, NULL,
+                        new SObject("menu_change.wav",
+                                    GetTime(),
+                                    AL_FALSE, 2.0),
+                        NULL);
+    Vec3f p = Vec3f(pb->worldObject->getPos()); // too far away to hear, change to CameraFollower?
+    w->setPos(p);
+    World *world = &World::getInstance();
+    world->addObject(w);
     worldObject->agent->resetToTrack();
 }

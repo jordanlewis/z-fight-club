@@ -5,9 +5,10 @@
 #include "Agents/agent.h"
 #include <boost/lexical_cast.hpp>
 
-SObject::SObject(string soundName, double startTime, bool loop) :
+SObject::SObject(string soundName, double startTime, bool loop, float gain) :
     startTime(startTime),
     loop(loop),
+    gain(gain),
     error(&Error::getInstance()),
     nextSound(NULL)
 {
@@ -104,9 +105,8 @@ void SObject::update(WorldObject *host)
     // use pos, vel from host to (re)configure the source
     Vec3f p = host->getPos();
     float pos[3] = { p[0], p[1], p[2] };
-    float gain[1] = { 2.0 };
     alSourcefv(source, AL_POSITION, pos);
-    alSourcefv(source, AL_GAIN, gain);
+    alSourcefv(source, AL_GAIN, &gain);
 
     float vel[3] = { 0, 0, 0 };
     if (host->agent)

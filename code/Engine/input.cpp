@@ -35,12 +35,16 @@ int Input::processInput()
                             player->setEngineState(ACCELERATE); 
                         if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->highlightPrev();
+                        if (Scheduler::getInstance().raceState == SETUP)
+                            world.setupMenu->highlightPrev();
                         break;
                     case SDLK_DOWN:
                         if (player) 
                             player->setEngineState(REVERSE); 
                         if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->highlightNext();
+                        if (Scheduler::getInstance().raceState == SETUP)
+                            world.setupMenu->highlightNext();
                         break;
                     case SDLK_TAB:
                         if (player) player->setWeaponState(CHANGE); break;
@@ -58,6 +62,8 @@ int Input::processInput()
                     case SDLK_RETURN:
                         if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->select();
+                        if (Scheduler::getInstance().raceState == SETUP)
+                            world.setupMenu->select();
                         else {
                             if (client->clientState == C_WAITINGFORPLAYER)
                                 client->clientState = C_PLAYERHASJOINED;
@@ -69,56 +75,82 @@ int Input::processInput()
                             client->clientState = C_PLAYERREADYTOSTART;
                         break;
                     case SDLK_ESCAPE:
-                        if (Scheduler::getInstance().raceState == PAUSE) {
+                        if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->up();
-                        }
+                        if (Scheduler::getInstance().raceState == SETUP)
+                            world.setupMenu->up();
+                        break;
                     case SDLK_0:
                         if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->inputChar('0');
+                        if (Scheduler::getInstance().raceState == SETUP)
+                            world.setupMenu->inputChar('0');
                         break;
                     case SDLK_1:
                         if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->inputChar('1');
+                        if (Scheduler::getInstance().raceState == SETUP)
+                            world.setupMenu->inputChar('1');
                         break;
                     case SDLK_2:
                         if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->inputChar('2');
+                        if (Scheduler::getInstance().raceState == SETUP)
+                            world.setupMenu->inputChar('2');
                         break;
                     case SDLK_3:
                         if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->inputChar('3');
+                        if (Scheduler::getInstance().raceState == SETUP)
+                            world.setupMenu->inputChar('3');
                         break;
                     case SDLK_4:
                         if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->inputChar('4');
+                        if (Scheduler::getInstance().raceState == SETUP)
+                            world.setupMenu->inputChar('4');
                         break;
                     case SDLK_5:
                         if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->inputChar('5');
+                        if (Scheduler::getInstance().raceState == SETUP)
+                            world.setupMenu->inputChar('5');
                         break;
                     case SDLK_6:
                         if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->inputChar('6');
+                        if (Scheduler::getInstance().raceState == SETUP)
+                            world.setupMenu->inputChar('6');
                         break;
                     case SDLK_7:
                         if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->inputChar('7');
+                        if (Scheduler::getInstance().raceState == SETUP)
+                            world.setupMenu->inputChar('7');
                         break;
                     case SDLK_8:
                         if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->inputChar('8');
+                        if (Scheduler::getInstance().raceState == SETUP)
+                            world.setupMenu->inputChar('8');
                         break;
                     case SDLK_9:
                         if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->inputChar('9');
+                        if (Scheduler::getInstance().raceState == SETUP)
+                            world.setupMenu->inputChar('9');
                         break;
                     case SDLK_PERIOD:
                         if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->inputChar('.');
+                        if (Scheduler::getInstance().raceState == SETUP)
+                            world.setupMenu->inputChar('.');
                         break;
                     case SDLK_BACKSPACE:
                         if (Scheduler::getInstance().raceState == PAUSE)
                             world.pauseMenu->backspace();
+                        if (Scheduler::getInstance().raceState == SETUP)
+                            world.setupMenu->backspace();
                         break;
                     default: break;
                 } break;
