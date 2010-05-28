@@ -33,9 +33,9 @@ class SObject
     Error *error;
     SObject *nextSound;
     // could have lots of other data, like whether to fade in, out, etc.
-    ~SObject();
   public:
     SObject(string soundName, double startTime, bool loop);
+    ~SObject();
     void update(WorldObject*); // play, restart, stop, update noises, etc. as appropriate
     void registerNext(SObject*); // indicate sound to start when this one stops
 };

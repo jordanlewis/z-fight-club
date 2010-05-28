@@ -35,6 +35,26 @@ WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject,
     }
 }
 
+void WorldObject::clear()
+{
+    if (pobject)
+    {
+        delete pobject; pobject = NULL;
+    }
+    if (gobject)
+    {
+        delete gobject; gobject = NULL;
+    }
+    if (sobject)
+    {
+        delete sobject; sobject = NULL;
+    }
+    if (agent)
+    {
+        delete agent; agent = NULL;
+    }
+}
+
 Vec3f WorldObject::getPos()
 {
     if (pobject && pobject->isPlaceable()) return pobject->getPos();
@@ -157,6 +177,20 @@ void World::addLight(Light *light)
 void World::addWidget(Widget *widget)
 {
     widgets.push_back(widget);
+}
+
+void World::cleanObjects()
+{
+    WorldObject *w;
+    for (unsigned int i = 0; i < wobjects.size(); i++)
+    {
+        w = wobjects[i];
+        if (!w->pobject && !w->gobject && !w->sobject && !w->agent)
+        {
+            delete w;
+            wobjects.erase(wobjects.begin() + i--);
+        }
+    }
 }
 
 int World::numAgents()

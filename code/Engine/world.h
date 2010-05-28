@@ -48,6 +48,8 @@ class WorldObject
     WorldObject(PGeom * pobject, GObject * gobject, SObject * sobject,
                 Agent * agent);
 
+    void clear();
+
     Vec3f getPos();
     void setPos(Vec3f position);
     void setQuat(Quatf_t quat);
@@ -125,6 +127,7 @@ class World
 
     void addObject(WorldObject *obj);
     void addObject(ParticleStreamObject *obj);
+    void cleanObjects();
 
     int numAgents();
 

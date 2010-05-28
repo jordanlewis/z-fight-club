@@ -124,20 +124,24 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
             world.addObject(w);
         }
 
-        Agent *agent;
-        if ((g1->worldObject == world.botPlaneObj &&
-             (agent = g2->worldObject->agent)) ||
-            (g2->worldObject == world.botPlaneObj &&
-             (agent = g1->worldObject->agent)))
-        {
-            /* Agent has fallen off track. Reset it. */
-            agent->needsReset = true;
-        }
+        /* Register collisions with both objects */
+        g1->collidedWith = g2;
+        g2->collidedWith = g1;
 
-        if (g1->worldObject->agent && g2->ephemeral)
-            g2->destroy = true;
-        if (g2->worldObject->agent && g1->ephemeral)
-            g1->destroy = true;
+//        Agent *agent;
+//        if ((g1->worldObject == world.botPlaneObj &&
+//             (agent = g2->worldObject->agent)) ||
+//            (g2->worldObject == world.botPlaneObj &&
+//             (agent = g1->worldObject->agent)))
+//        {
+//            /* Agent has fallen off track. Reset it. */
+//            agent->needsReset = true;
+//        }
+
+//        if (g1->worldObject->agent && g2->ephemeral)
+//            g2->destroy = true;
+//        if (g2->worldObject->agent && g1->ephemeral)
+//            g1->destroy = true;
 
 
 

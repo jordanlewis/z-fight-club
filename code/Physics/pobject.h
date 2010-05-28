@@ -16,6 +16,10 @@ typedef enum {
     PHANTOM // Phantom objects do not affect the physics simulation
 } CollType_t;
 
+class PMoveable;
+class PProjectile;
+class PAgent;
+
 /* Stores geometry info for use in ODE collision calculations
  * See geominfo.h for info on member variables.
  */
@@ -24,17 +28,20 @@ class PGeom
  protected:
     dGeomID geom;
 
-    //Defining this function gives us a vtable.  The function does nothing.
-    virtual void forceVtableCreation();
-
  public:
     dSpaceID space;
-    bool ephemeral;
-    bool destroy;
     float bounce;
     float mu1, mu2;
     CollType_t collType;
     WorldObject *worldObject;
+
+    PGeom *collidedWith;
+
+    virtual void collisionReact() {collidedWith->doCollisionReact(this);}
+    virtual void doCollisionReact(PGeom *pg);
+    virtual void doCollisionReact(PMoveable *pm);
+    virtual void doCollisionReact(PProjectile *pp);
+    virtual void doCollisionReact(PAgent *pa);
 
     bool isPlaceable();
     Vec3f getPos();
@@ -60,17 +67,42 @@ class PMoveable: public PGeom
     Kinematic outputKinematic;
     dBodyID body;
     dMass mass;
+
  public:
     PMoveable(const Kinematic *kinematic, float mass,
               GeomInfo *info, dSpaceID space=NULL);
     ~PMoveable();
+
+    virtual void collisionReact() {collidedWith->doCollisionReact(this);}
+    virtual void doCollisionReact(PGeom *pg);
+    virtual void doCollisionReact(PMoveable *pm);
+    virtual void doCollisionReact(PProjectile *pp);
+    virtual void doCollisionReact(PAgent *pa);
+
     void resetToStopped(Vec3f pos, Quatf_t quat); /* Set pmoveable's ODE data
                                                      and stop its motion */
-
     const Kinematic &odeToKinematic(); /* writes (syncs) the body coords into
                                         * the kinematic */
     const dBodyID &getBody();
     void kinematicToOde(); //writes (syncs) the kinematic coords into the body
+};
+
+class PProjectile: public PMoveable
+{
+  public:
+    PProjectile(const Kinematic *kinematic, float mass, GeomInfo *info,
+                double liveTime=10, dSpaceID space=NULL);
+
+    virtual void collisionReact() {collidedWith->doCollisionReact(this);}
+    virtual void doCollisionReact(PGeom *pg);
+    virtual void doCollisionReact(PMoveable *pm);
+    virtual void doCollisionReact(PProjectile *pp);
+    virtual void doCollisionReact(PAgent *pa);
+
+
+    bool destroy;
+    double timeCreated;
+    double liveTime;
 };
 
 // Same as PMoveable, but adds steering info and related interfaces
@@ -81,6 +113,13 @@ class PAgent: public PMoveable
  public:
     PAgent(const Kinematic *kinematic, const SteerInfo *steering,
             float mass, GeomInfo *info, dSpaceID space=NULL);
+
+    virtual void collisionReact() {collidedWith->doCollisionReact(this);}
+    virtual void doCollisionReact(PGeom *pg);
+    virtual void doCollisionReact(PMoveable *pm);
+    virtual void doCollisionReact(PProjectile *pp);
+    virtual void doCollisionReact(PAgent *pa);
+
     void kinematicToOde();
     void steeringToOde(); //Write steering info into the ODE structs
     void resetOdeAngularVelocity(int nsteps);

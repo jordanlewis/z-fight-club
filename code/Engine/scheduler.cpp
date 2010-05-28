@@ -102,6 +102,7 @@ void Scheduler::soloLoopForever()
                 last = now;
                 break;
         }
+        world->cleanObjects();
 
         usleep(10000);
     }

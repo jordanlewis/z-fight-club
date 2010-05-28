@@ -8,7 +8,7 @@
 #include <ode/ode.h>
 
 PGeom::PGeom(GeomInfo *info, dSpaceID space)
-    : ephemeral(false), destroy(false), bounce(D_BOUNCE), mu1(D_MU1),
+    : bounce(D_BOUNCE), mu1(D_MU1),
       mu2(D_MU2), collType(D_COLL), worldObject(NULL)
 {
     if (space == NULL)
@@ -22,6 +22,7 @@ PGeom::PGeom(GeomInfo *info, dSpaceID space)
 
 PGeom::~PGeom()
 {
+    worldObject = NULL;
     dGeomDestroy(geom);
 }
 
@@ -49,15 +50,18 @@ PMoveable::~PMoveable()
     dBodyDestroy(body);
 }
 
+PProjectile::PProjectile(const Kinematic *kinematic, float mass, GeomInfo *info,
+                         double liveTime, dSpaceID space)
+             : PMoveable(kinematic, mass, info, space),
+               destroy(false), timeCreated(GetTime()), liveTime(liveTime)
+{}
+
 PAgent::PAgent(const Kinematic *kinematic, const SteerInfo *steering,
                float mass, GeomInfo *info, dSpaceID space)
     : PMoveable(kinematic, mass, info, space), steering(steering)
 {
 }
 
-void PGeom::forceVtableCreation(){
-    return;
-}
 
 bool PGeom::isPlaceable()
 {
@@ -202,7 +206,6 @@ const Kinematic &PMoveable::odeToKinematic(){
     return k;
 }
 
-
 void PAgent::kinematicToOde()
 {
     PMoveable::kinematicToOde();
@@ -264,3 +267,33 @@ void PAgent::resetOdeAngularVelocity(int nSteps)
                        angVel[1]-steering->rotation*pow(1-PH_ANGDAMP, nSteps),
                        angVel[2]);
 }
+
+
+
+
+
+
+
+/* COLLISION HANDLING */
+
+
+
+void PGeom::doCollisionReact(PGeom *pg) {return;}
+void PGeom::doCollisionReact(PMoveable *pm)   {pm->doCollisionReact(this);}
+void PGeom::doCollisionReact(PProjectile *pp) {pp->doCollisionReact(this);}
+void PGeom::doCollisionReact(PAgent *pa)      {pa->doCollisionReact(this);}
+
+void PMoveable::doCollisionReact(PGeom *pg)     {return;}
+void PMoveable::doCollisionReact(PMoveable *pm) {return;}
+void PMoveable::doCollisionReact(PProjectile *pp) {pp->doCollisionReact(this);}
+void PMoveable::doCollisionReact(PAgent *pa)      {pa->doCollisionReact(this);}
+
+void PProjectile::doCollisionReact(PGeom *pg) {return;}
+void PProjectile::doCollisionReact(PMoveable *pm) {return;}
+void PProjectile::doCollisionReact(PProjectile *pp){return;}
+void PProjectile::doCollisionReact(PAgent *pa)    {pa->doCollisionReact(this);}
+
+void PAgent::doCollisionReact(PGeom *pg) {return;}
+void PAgent::doCollisionReact(PMoveable *pm) {return;}
+void PAgent::doCollisionReact(PProjectile *pp) { delete pp; }
+void PAgent::doCollisionReact(PAgent *pa) {return;}

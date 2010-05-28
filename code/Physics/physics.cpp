@@ -74,18 +74,18 @@ void Physics::simulate(float dt)
 
         for (j = 0; j < world.wobjects.size(); j++)
         {
-            if (world.wobjects[j]->pobject &&
-                world.wobjects[j]->pobject->destroy)
-            {
-                PMoveable *pm = dynamic_cast<PMoveable *>(world.wobjects[j]->pobject);
-                if (pm)
-                    delete pm;
-                else
-                    delete world.wobjects[j];
-                world.wobjects.erase(world.wobjects.begin() + j);
-                j--;
-                continue;
-            }
+            //if (world.wobjects[j]->pobject &&
+            //    world.wobjects[j]->pobject->destroy)
+            //{
+            //    PMoveable *pm = dynamic_cast<PMoveable *>(world.wobjects[j]->pobject);
+            //    if (pm)
+            //        delete pm;
+            //    else
+            //        delete world.wobjects[j];
+            //    world.wobjects.erase(world.wobjects.begin() + j);
+            //    j--;
+            //    continue;
+            //}
             if (! (a = world.wobjects[j]->agent))
                 continue;
             p = static_cast<PAgent *>(a->worldObject->pobject);
@@ -99,6 +99,16 @@ void Physics::simulate(float dt)
             a->setKinematic(k);
             p->resetOdeAngularVelocity(1);
         }
+    }
+    for (i = 0; i < world.wobjects.size(); i++)
+    {
+        if (!world.wobjects[i]->pobject)
+            continue;
+        PGeom *pg = world.wobjects[i]->pobject;
+        if (!pg->collidedWith)
+            continue;
+        pg->collisionReact();
+
     }
     error->pout(P_PHYSICS);
 }

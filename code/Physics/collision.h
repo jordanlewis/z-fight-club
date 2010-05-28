@@ -27,6 +27,6 @@ void nearCallback(void *data, dGeomID o1, dGeomID o2);
 
 void rayCast(const Vec3f *origin, const Vec3f *dir, float len, CollQuery *collQuery);
 
-//void sphereCollide(sphere
+
 
 #endif
