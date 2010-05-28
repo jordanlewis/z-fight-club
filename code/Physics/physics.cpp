@@ -99,9 +99,9 @@ void Physics::simulate(float dt)
         {
             PGeom * collidee = (*iter)->pobject;
             /* Check to see both collidee and collider (pg) are still alive */
-            if (!pg->worldObject)
+            if (!pg || !pg->worldObject)
                 break;
-            if (!collidee->worldObject)
+            if (!collidee || !collidee->worldObject)
                 continue;
 
             pg->collisionReact(collidee);
