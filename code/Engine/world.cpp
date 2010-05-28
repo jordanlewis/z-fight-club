@@ -524,6 +524,8 @@ Agent *World::makePlayer()
     addWidget(s);
     LapCounter *lc = new LapCounter(Vec3f(0,0,0), agent);
     addWidget(lc);
+    WeaponDisplay *wd = new WeaponDisplay(Vec3f(0,0,0), agent);
+    addWidget(wd);
 
     return agent;
 }

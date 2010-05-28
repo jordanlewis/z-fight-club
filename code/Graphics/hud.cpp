@@ -465,13 +465,76 @@ void FPS::draw()
     stringstream ss;
     glColor3f(0,1,0);
     ss << "gfx: " << graphics.frequency << " (" << graphics.fps() << ")";
-    drawText(Vec3f(0,10,0), ss.str(), GLUT_BITMAP_HELVETICA_10);
-    ss.seekp(0);
-    ss << "ai : " << aim.frequency << " (" << aim.fps() << ")";
     drawText(Vec3f(0,20,0), ss.str(), GLUT_BITMAP_HELVETICA_10);
     ss.seekp(0);
-    ss << "phs: " << physics.frequency << " (" << physics.fps() << ")";
+    ss << "ai : " << aim.frequency << " (" << aim.fps() << ")";
     drawText(Vec3f(0,30,0), ss.str(), GLUT_BITMAP_HELVETICA_10);
+    ss.seekp(0);
+    ss << "phs: " << physics.frequency << " (" << physics.fps() << ")";
+    drawText(Vec3f(0,40,0), ss.str(), GLUT_BITMAP_HELVETICA_10);
 
 
 }
+
+WeaponDisplay::WeaponDisplay(Vec3f pos, Agent *agent) : 
+    Widget(pos), agent(agent), world(World::getInstance())
+{}
+
+void WeaponDisplay::draw()
+{
+    stringstream ss;
+    glColor3f(0, 1, 0);
+    drawText(Vec3f(0, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
+    ss.seekp(0);
+    switch(agent->steerInfo.weapon) {
+    case NONE:
+        {
+            ss << "Weapon: None";
+            break;
+        }
+    case SMACK: 
+        {
+            ss << "Weapon: Smack (segfault all)";
+            break;
+        }
+    case RAYGUN: 
+        {
+            ss << "Weapon: Raygun (segfault line of sight)";
+            break;
+        }
+    case BOXBOMB:
+        {
+            ss << "Weapon: Boxbomb";
+            break;
+        }
+    default: break;
+    }
+    drawText(Vec3f(0, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
+    ss.seekp(0);
+}
+/*
+void Speedometer::draw()
+{
+    World &w = World::getInstance();
+    DrawImage(background,
+       w.camera.getWres() - background->wid - pos[0],
+       w.camera.getHres() - pos[0]);
+    World &world = World::getInstance();
+
+    glLineWidth(5);
+    float theta = (agent->getKinematic().vel.length()*M_PI/15)-0.75;
+    while(theta > (2*M_PI)) theta -= (2*M_PI);
+    float center[2] = {105,105};
+
+    glColor3f(1,0,0);
+    glBegin(GL_LINES);
+      glVertex2f(
+          world.camera.getWres()-center[0],
+          world.camera.getHres()-center[1]);
+      glVertex2f(
+          world.camera.getWres()-center[0]-(100*cos(theta)),
+          world.camera.getHres()-center[1]-(100*sin(theta)));
+    glEnd();
+    glLineWidth(1);
+}
+*/

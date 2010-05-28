@@ -159,4 +159,13 @@ class FPS : public Widget
     void draw();
 };
 
+class WeaponDisplay : public Widget
+{
+ public:
+    Agent *agent;
+    World &world;
+    WeaponDisplay(Vec3f pos, Agent *agent);
+    void draw();
+};
+
 #endif
