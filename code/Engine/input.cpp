@@ -72,6 +72,54 @@ int Input::processInput()
                         if (Scheduler::getInstance().raceState == PAUSE) {
                             world.pauseMenu->up();
                         }
+                    case SDLK_0:
+                        if (Scheduler::getInstance().raceState == PAUSE)
+                            world.pauseMenu->inputChar('0');
+                        break;
+                    case SDLK_1:
+                        if (Scheduler::getInstance().raceState == PAUSE)
+                            world.pauseMenu->inputChar('1');
+                        break;
+                    case SDLK_2:
+                        if (Scheduler::getInstance().raceState == PAUSE)
+                            world.pauseMenu->inputChar('2');
+                        break;
+                    case SDLK_3:
+                        if (Scheduler::getInstance().raceState == PAUSE)
+                            world.pauseMenu->inputChar('3');
+                        break;
+                    case SDLK_4:
+                        if (Scheduler::getInstance().raceState == PAUSE)
+                            world.pauseMenu->inputChar('4');
+                        break;
+                    case SDLK_5:
+                        if (Scheduler::getInstance().raceState == PAUSE)
+                            world.pauseMenu->inputChar('5');
+                        break;
+                    case SDLK_6:
+                        if (Scheduler::getInstance().raceState == PAUSE)
+                            world.pauseMenu->inputChar('6');
+                        break;
+                    case SDLK_7:
+                        if (Scheduler::getInstance().raceState == PAUSE)
+                            world.pauseMenu->inputChar('7');
+                        break;
+                    case SDLK_8:
+                        if (Scheduler::getInstance().raceState == PAUSE)
+                            world.pauseMenu->inputChar('8');
+                        break;
+                    case SDLK_9:
+                        if (Scheduler::getInstance().raceState == PAUSE)
+                            world.pauseMenu->inputChar('9');
+                        break;
+                    case SDLK_PERIOD:
+                        if (Scheduler::getInstance().raceState == PAUSE)
+                            world.pauseMenu->inputChar('.');
+                        break;
+                    case SDLK_BACKSPACE:
+                        if (Scheduler::getInstance().raceState == PAUSE)
+                            world.pauseMenu->backspace();
+                        break;
                     default: break;
                 } break;
             case SDL_KEYUP:

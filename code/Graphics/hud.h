@@ -59,6 +59,8 @@ class Menu
         Menu(string);
         virtual void draw() {};
         virtual void select() {};
+        virtual void inputChar(char) {};
+        virtual void backspace() {};
 };
 
 class SubMenu : public Menu
@@ -76,6 +78,8 @@ class SubMenu : public Menu
         void select();                 /* !< make the highlighted item the selected */
         bool up();                     /* !< up one menu level */
         void reset();                  /* !< reset selected and highlighted items */
+        void inputChar(char);          /* !< pass a char in (for text boxs) */
+        void backspace();              /* !< pop a character off a textbox */
 };
 
 class TerminalMenu : public Menu
@@ -84,6 +88,8 @@ class TerminalMenu : public Menu
         void (*callback)();     /* !< function to call when this button is hit */
         TerminalMenu(string, void (*callback)());
         void select();
+        void inputChar(char);
+        void backspace();
 };
 
 class TextboxMenu : public Menu
@@ -95,6 +101,8 @@ class TextboxMenu : public Menu
         void draw();
         void select();
         void reset();
+        void inputChar(char);        /* !< pass a char in */
+        void backspace();            /* !< take a char out */
 };
 
 class MiniMap : public Widget

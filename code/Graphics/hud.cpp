@@ -189,9 +189,10 @@ void SubMenu::highlightNext()
         highlighted = highlighted % items.size();
     } else {
         SubMenu *sub = dynamic_cast<SubMenu *>(items[selected]);
+        TextboxMenu *text = dynamic_cast<TextboxMenu *>(items[selected]);
         if (sub)
             sub->highlightNext();
-        else {
+        else if (!text) {
             Error &error = Error::getInstance();
             error.log(GRAPHICS, CRITICAL, "Menu selected is of a TerminalItem, this is illegal\n");
             exit(0);
@@ -206,9 +207,10 @@ void SubMenu::highlightPrev()
         highlighted = highlighted % items.size();
     } else {
         SubMenu *sub = dynamic_cast<SubMenu *>(items[selected]);
+        TextboxMenu *text = dynamic_cast<TextboxMenu *>(items[selected]);
         if (sub)
             sub->highlightPrev();
-        else {
+        else if (!text) {
             Error &error = Error::getInstance();
             error.log(GRAPHICS, CRITICAL, "Menu selected is of a TerminalItem, this is illegal\n");
             exit(0);
@@ -230,8 +232,9 @@ void SubMenu::select()
         TextboxMenu *text = dynamic_cast<TextboxMenu *>(items[selected]);
         if (sub)
             sub->select();
-        else if (text)
-            text->select();
+        else if (text) {
+            selected = -1;
+        }
         else {
             Error &error = Error::getInstance();
             error.log(GRAPHICS, CRITICAL, "Menu selected is of a TerminalItem, this is illegal\n");
@@ -249,12 +252,14 @@ bool SubMenu::up()
         return true;
     } else {
         SubMenu *sub = dynamic_cast<SubMenu *>(items[selected]);
+        TextboxMenu *text = dynamic_cast<TextboxMenu *>(items[selected]);
         if (sub) {
             if (sub->up()) {
                 /* getting here means our child was the node level the user was on */
                 selected = -1;
             }
-        }
+        } else if (text)
+            selected = -1;
         else {
             Error &error = Error::getInstance();
             error.log(GRAPHICS, CRITICAL, "Menu selected is of a Terminal menu, this is illegal\n");
@@ -275,6 +280,18 @@ void SubMenu::reset()
     }
 }
 
+void SubMenu::inputChar(char c)
+{
+    if (selected != -1)
+        items[selected]->inputChar(c);
+}
+
+void SubMenu::backspace()
+{
+    if (selected != -1)
+        items[selected]->backspace();
+}
+
 TerminalMenu::TerminalMenu(string name, void (*callback)())
     : Menu(name), callback(callback)
 {}
@@ -283,6 +300,21 @@ void TerminalMenu::select()
 {
     (*callback)();
 }
+
+void TerminalMenu::inputChar(char c)
+{
+    Error &error = Error::getInstance();
+    error.log(GRAPHICS, CRITICAL, "Menu selected is of a Terminal menu, this is illegal\n");
+    exit(0);
+}
+
+void TerminalMenu::backspace()
+{
+    Error &error = Error::getInstance();
+    error.log(GRAPHICS, CRITICAL, "Menu selected is of a Terminal menu, this is illegal\n");
+    exit(0);
+}
+
 
 TextboxMenu::TextboxMenu(string name)
     : Menu(name)
@@ -304,6 +336,8 @@ void TextboxMenu::draw()
     glVertex3f((wres / 4) + 300, hPos + 50, 0);
     glVertex3f((wres / 4), hPos + 50, 0);
     glEnd();
+
+    drawText(Vec3f(wres / 4, hPos + 50, 0), entered, GLUT_BITMAP_HELVETICA_18);
 }
 
 void TextboxMenu::select()
@@ -314,6 +348,16 @@ void TextboxMenu::select()
     }
 }
 
+void TextboxMenu::inputChar(char c)
+{
+    entered.append(1, c);
+}
+
+void TextboxMenu::backspace()
+{
+    if (!entered.empty())
+        entered.erase(--(entered.end()));
+}
 
 MiniMap::MiniMap(Vec3f pos, Path *path) : Widget(pos), path(path)
 {}
