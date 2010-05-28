@@ -35,8 +35,7 @@ void DQuatToQuatf(dQuaternion dquat, Quatf_t quatf)
 
 void Physics::simulate(float dt)
 {
-    if (!start())
-        return;
+    start();
     error->pin(P_PHYSICS);
     static float timeStepRemainder;
     World &world = World::getInstance();
