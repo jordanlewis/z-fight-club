@@ -72,19 +72,17 @@ void Sound::initSound()
 
 void Sound::registerListener(const Camera *c)
 {
+    if (!initialized)
+    {
+        return;
+    }
     camera = c;
 }
 
 void Sound::updateListener()
 {
-    if (!initialized)
+    if ((!initialized) || (!camera))
     {
-        error->log(SOUND, IMPORTANT, "Can't update listener, sound is not initialized\n");
-        return;
-    }
-    if(!camera)
-    {
-        error->log(SOUND, IMPORTANT, "Can't update listener, no listener is registered\n");
         return;
     }
 
@@ -110,7 +108,7 @@ void Sound::render()
     error->pin(P_SOUND);
     if (!initialized)
     {
-        error->log(SOUND, IMPORTANT, "Can't render sounds, sound not initialized\n");
+        error->pout(P_SOUND);
         return;
     }
 

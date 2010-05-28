@@ -109,7 +109,7 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2)
         }
         Vec3f v1 = Vec3f(b1_vel[0], b1_vel[1], b1_vel[2]);
         Vec3f v2 = Vec3f(b2_vel[0], b2_vel[1], b2_vel[2]);
-        if ((v1.length() > 3) && (v2.length() > 3) && ((v1-v2).length() > 3))
+        if ((v1.length() > 3) && (v2.length() > 3) && ((v1-v2).length() > 3) && !world.nosound)
         {
             WorldObject *w;
             w = new WorldObject(NULL, NULL,

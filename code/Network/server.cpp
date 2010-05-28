@@ -239,7 +239,11 @@ int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
     obj->agent = agent;
     agent->worldObject = obj;
     obj->gobject = new GObject(new ObjMeshInfo("ship/"));
-    obj->sobject = new SObject("snore.wav", GetTime(), AL_TRUE);
+    obj->sobject = NULL;
+    if (!world->nosound)
+    {
+        obj->sobject = new SObject("18303_run.wav", GetTime(), AL_TRUE);
+    }
 
     PAgent *pagent = new PAgent(&(agent->getKinematic()),
                                 &(agent->getSteering()), mass, geomInfo,
