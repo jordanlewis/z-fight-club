@@ -292,6 +292,8 @@ void ParticleSystemInfo::draw()
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GREATER,0.3);
     glBegin(GL_POINTS);
     for(std::list<Particle *>::iterator i = particles.begin(); i != particles.end(); i++) {
         glVertex3f((*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
@@ -299,5 +301,6 @@ void ParticleSystemInfo::draw()
     glEnd();
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
+    glDisable(GL_ALPHA_TEST);
     glDisable(GL_POINT_SPRITE_ARB);
 }
