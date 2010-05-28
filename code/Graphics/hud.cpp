@@ -147,6 +147,7 @@ SubMenu::SubMenu(string name, vector<Menu *> items)
 
 void SubMenu::draw()
 {
+    glColor3f(1.0, 1.0, 1.0);
     if (selected == -1) {
         /* we're in this level */
         World &world = World::getInstance();
@@ -218,19 +219,9 @@ bool SubMenu::up()
             Scheduler::getInstance().raceState = RACE;
         return true;
     } else {
-        SubMenu *sub = dynamic_cast<SubMenu *>(items[selected]);
-        TextboxMenu *text = dynamic_cast<TextboxMenu *>(items[selected]);
-        if (sub) {
-            if (sub->up()) {
-                /* getting here means our child was the node level the user was on */
-                selected = -1;
-            }
-        } else if (text)
+        if (items[selected]->up()) {
+            /* getting here means our child was the node level the user was on */
             selected = -1;
-        else {
-            Error &error = Error::getInstance();
-            error.log(GRAPHICS, CRITICAL, "Menu selected is of a Terminal menu, this is illegal\n");
-            exit(0);
         }
     }
 }
@@ -356,8 +347,8 @@ void SelectorMenu::draw()
 
     if (selected != -1) {
         glBegin(GL_LINE_LOOP);
-        glVertex3f((wres / 4), hPos + 25 * (selected + 1), 0);
-        glVertex3f((wres / 4) + 300, hPos + (25 * (selected + 1)), 0);
+        glVertex3f((wres / 4), hPos + 27 * (selected + 1), 0);
+        glVertex3f((wres / 4) + 300, hPos + (27 * (selected + 1)), 0);
         glVertex3f((wres / 4) + 300, hPos + (25 * selected), 0);
         glVertex3f((wres / 4), hPos + (25 * selected), 0);
         glEnd();

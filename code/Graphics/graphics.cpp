@@ -158,7 +158,7 @@ void Graphics::render()
     }
 
 
-    glClearColor(.2f, .2, .8f, 1.0f);
+    glClearColor(.1f, .1, .1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glColor3f(0.2,0.4,0.4);
@@ -193,6 +193,9 @@ void Graphics::render()
 
     if (Scheduler::getInstance().raceState == PAUSE)
         World::getInstance().pauseMenu->draw();
+
+    if (Scheduler::getInstance().raceState == SETUP)
+        World::getInstance().setupMenu->draw();
 
     glPopMatrix();
 
