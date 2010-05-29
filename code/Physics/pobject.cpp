@@ -341,11 +341,6 @@ void PMoveable::doCollisionReact(PMoveable *pm) {return;}
 void PMoveable::doCollisionReact(PProjectile *pp) {pp->doCollisionReact(this);}
 void PMoveable::doCollisionReact(PAgent *pa)      {pa->doCollisionReact(this);}
 
-void PProjectile::doCollisionReact(PGeom *pg) {return;}
-void PProjectile::doCollisionReact(PMoveable *pm) {return;}
-void PProjectile::doCollisionReact(PProjectile *pp){return;}
-void PProjectile::doCollisionReact(PAgent *pa)    {pa->doCollisionReact(this);}
-
 void PBottomPlane::doCollisionReact(PGeom *pg) {return;}
 void PBottomPlane::doCollisionReact(PAgent *pa)
 {
@@ -354,12 +349,7 @@ void PBottomPlane::doCollisionReact(PAgent *pa)
 
 void PAgent::doCollisionReact(PGeom *pg) {return;}
 void PAgent::doCollisionReact(PMoveable *pm) {return;}
-void PAgent::doCollisionReact(PProjectile *pp)
-{
-    // explosion noise
-    makeExplosion(pp->getPos(), 1.0);
-    pp->worldObject->clear();
-}
+void PAgent::doCollisionReact(PProjectile *pp) {pp->doCollisionReact(this);}
 void PAgent::doCollisionReact(PAgent *pa)
 {
     // collision noise
@@ -394,4 +384,11 @@ void PAgent::doCollisionReact(PBottomPlane *pb)
     World *world = &World::getInstance();
     world->addObject(w);
     worldObject->agent->resetToTrack();
+}
+
+void PProjectile::doCollisionReact(PGeom *pg)
+{
+    // explosion noise
+    makeExplosion(getPos(), 1.0);
+    worldObject->clear();
 }
