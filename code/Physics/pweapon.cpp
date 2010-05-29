@@ -17,7 +17,8 @@
 static ObjMeshInfo *rocket = NULL;
 static ObjMeshInfo *mine = NULL;
 
-void useWeapons(Agent *agent){
+void useWeapons(Agent *agent)
+{
     SteerInfo info = agent->getSteering();
     if (info.fire == 1) {
         //cout << "Fire, FIRE!" << endl; // Firing once too often. Fix later.
@@ -117,4 +118,22 @@ void launchBox(Agent *agent)
     GObject *gobj = new GObject(rocket);
     WorldObject *wobj = new WorldObject(pobj, gobj, NULL, NULL, 10);
     World::getInstance().addObject(wobj);
+
+    /* create a particle generator for the agent */
+    Vec3f position = Vec3f(0.0, .5, 0.0);
+    Vec3f area = Vec3f(.01, .01, .01);
+    Vec3f velocity = Vec3f(-1.0, 0.0, 0.0);
+    Vec3f velocity_pm = Vec3f(0, .3, .3);
+    float ttl = 2.0;
+    float ttl_pm = 1.0;
+    float birthRate = 25.0;
+
+    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/beam.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate);
+    GParticleObject *particle_gobj = new GParticleObject(particleSystem);
+    ParticleStreamObject *particle_wobj = new ParticleStreamObject(NULL, particle_gobj, NULL, NULL);
+    wobj->addChild(particle_wobj);
+    particle_wobj->setPos(position);
+
+
+    World::getInstance().addObject(particle_wobj);
 }
