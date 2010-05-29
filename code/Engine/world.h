@@ -44,8 +44,11 @@ class WorldObject
     SObject *sobject;
     Agent *agent;
     WorldObject *parent;
+    int parent_index;           /* !< the index we have in our parent's array */
+    vector<WorldObject *> children;
     PlayerController *player; // for server
 
+    bool destroy;               /* !< bark the world object for destruction */
     bool alive;
     double timeStarted;
     double ttl;
@@ -61,6 +64,8 @@ class WorldObject
     void setQuat(Quatf_t quat);
     void getRot(Mat4x4f_t);
     void getQuat(Quatf_t);
+    void addChild(WorldObject *);
+    void deleteChild(int i);
 
     void draw();
 };

@@ -22,7 +22,8 @@ World World::_instance;
 WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject,
                          Agent *agent, double ttl)
     : pos(-1,-1,-1), pobject(pobject), gobject(gobject), sobject(sobject),
-      agent(agent), parent(NULL), player(NULL), alive(true), timeStarted(GetTime()), ttl(ttl)
+      agent(agent), parent(NULL), player(NULL), destroy(false), alive(true), 
+      timeStarted(GetTime()), ttl(ttl)
 {
     Quatf_t newquat = {0,0,0,1};
     CopyV3f(newquat, quat);
@@ -46,6 +47,10 @@ void WorldObject::clear()
     if (!alive)
         return;
     alive = false;
+
+    for (vector<WorldObject *>::iterator i = children.begin(); i != children.end(); i++)
+        (*i)->destroy = true;
+
     if (pobject)
     {
         delete pobject; pobject = NULL;
@@ -92,6 +97,26 @@ void WorldObject::setQuat(Quatf_t quat)
 {
     if (pobject) pobject->setQuat(quat);
     CopyQuatf(quat, this->quat);
+}
+
+void WorldObject::addChild(WorldObject *child)
+{
+    children.push_back(child);
+    child->parent = this;
+    child->parent_index = children.size() - 1;
+}
+
+void WorldObject::deleteChild(int i)
+{
+    if (i >= children.size()) {
+        Error &error = Error::getInstance();
+        error.log(ENGINE, IMPORTANT, "delete child index out of bounds\n");
+        return;
+    }
+    children[i]->alive = false;
+    /* notice that we're erasing in the initialization of this for loop!!! */
+    for (vector<WorldObject *>::iterator it = children.erase(children.begin() + i); it != children.end(); it++)
+        (*it)->parent_index = it - children.begin();
 }
 
 void WorldObject::draw()
@@ -271,7 +296,8 @@ void World::cleanObjects()
     {
         w = wobjects[i];
         if ((!w->pobject && !w->gobject && !w->sobject && !w->agent) ||
-             (w->ttl > 0 && curTime > w->timeStarted + w->ttl))
+             (w->ttl > 0 && curTime > w->timeStarted + w->ttl) ||
+             (w->destroy))
         {
             delete w;
             wobjects.erase(wobjects.begin() + i--);
