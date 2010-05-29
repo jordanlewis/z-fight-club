@@ -81,19 +81,27 @@ void Physics::simulate(float dt)
     for (i = 0; i < world.particleSystems.size(); i++)
     {
         ParticleStreamObject * p = world.particleSystems[i];
+        if (!p->alive)
+        {
+            delete p;
+            world.particleSystems.erase(world.particleSystems.begin() + i--);
+            continue;
+        }
+
         p->gobject->geominfo->update(p, dt);
     }
 
     for (i = 0; i < world.wobjects.size(); i++)
     {
-        if (!world.wobjects[i]->pobject)
-            continue;
         if (!world.wobjects[i]->alive)
         {
+            delete world.wobjects[i];
+            world.wobjects.erase(world.wobjects.begin() + i--);
             continue;
         }
+
         PGeom *pg = world.wobjects[i]->pobject;
-        if (pg->collidedWith.empty())
+        if (!pg || pg->collidedWith.empty())
             continue;
 
         for (j = 0; j < pg->collidedWith.size(); j++)

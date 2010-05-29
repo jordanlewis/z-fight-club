@@ -48,7 +48,6 @@ class WorldObject
     vector<WorldObject *> children;
     PlayerController *player; // for server
 
-    bool destroy;               /* !< bark the world object for destruction */
     bool alive;
     double timeStarted;
     double ttl;

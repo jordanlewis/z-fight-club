@@ -22,7 +22,7 @@ World World::_instance;
 WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject,
                          Agent *agent, double ttl)
     : pos(-1,-1,-1), pobject(pobject), gobject(gobject), sobject(sobject),
-      agent(agent), parent(NULL), player(NULL), destroy(false), alive(true), 
+      agent(agent), parent(NULL), player(NULL), alive(true),
       timeStarted(GetTime()), ttl(ttl)
 {
     Quatf_t newquat = {0,0,0,1};
@@ -49,7 +49,7 @@ void WorldObject::clear()
     alive = false;
 
     for (vector<WorldObject *>::iterator i = children.begin(); i != children.end(); i++)
-        (*i)->destroy = true;
+        (*i)->alive = false;
 
     if (pobject)
     {
@@ -108,7 +108,7 @@ void WorldObject::addChild(WorldObject *child)
 
 void WorldObject::deleteChild(int i)
 {
-    if (i >= children.size()) {
+    if ((unsigned int)i >= children.size()) {
         Error &error = Error::getInstance();
         error.log(ENGINE, IMPORTANT, "delete child index out of bounds\n");
         return;
@@ -295,9 +295,10 @@ void World::cleanObjects()
     for (unsigned int i = 0; i < wobjects.size(); i++)
     {
         w = wobjects[i];
-        if ((!w->pobject && !w->gobject && !w->sobject && !w->agent) ||
-             (w->ttl > 0 && curTime > w->timeStarted + w->ttl) ||
-             (w->destroy))
+
+        if (!w->alive ||
+            (!w->pobject && !w->gobject && !w->sobject && !w->agent) ||
+            (w->ttl > 0 && curTime > w->timeStarted + w->ttl))
         {
             delete w;
             wobjects.erase(wobjects.begin() + i--);
@@ -306,7 +307,8 @@ void World::cleanObjects()
     for (unsigned int i = 0; i < particleSystems.size(); i++)
     {
         w = particleSystems[i];
-        if (w->ttl > 0 && curTime > w->timeStarted + w->ttl)
+        if (!w->alive ||
+            (w->ttl > 0 && curTime > w->timeStarted + w->ttl))
         {
             delete w;
             particleSystems.erase(particleSystems.begin() + i--);
