@@ -8,12 +8,17 @@ CXXFLAGS = -Wall -Wno-long-long -Wno-deprecated -ggdb $(ODEFLAGS) -I. -fsignalin
 #CFLAGS   = -Wall --std=gnu99 -ggdb $(ODEFLAGS) -I. -pg
 #CXXFLAGS = -Wall -Wno-long-long -Wno-deprecated -ggdb $(ODEFLAGS) -I. -pg
 
-LDFLAGS  = -lenet -lSDL -lode -lboost_program_options-mt -lpng
+LIBRARIES = -lenet -lSDL -lode -lboost_program_options-mt -lpng -lz -lstdc++
+LDFLAGS =
 
 ifeq ($(OS),Darwin)
+  # Disable static linking in darwin for now, so that everything compiles
+  STATIC_LINK_FLAGS = #-Wl,-bstatic
+  DYNAMIC_LINK_FLAGS = #-Wl,-bdynamic
   GLFLAGS  = -framework GLUT -framework OpenGL -framework Foundation
   ALFLAGS  = -framework OpenAL
   SDLFLAGS = -lSDLmain -framework Cocoa
+  MATHFLAGS = 
 
   # Gets libraries downloaded by MacPorts
   CFLAGS   += -I/opt/local/include
@@ -21,13 +26,15 @@ ifeq ($(OS),Darwin)
   LDFLAGS  += -L/opt/local/lib
 
 else
+  STATIC_LINK_FLAGS = -Wl,-Bstatic
+  DYNAMIC_LINK_FLAGS = -Wl,-Bdynamic
   GLFLAGS   = -lglut -lGL -lGLU
   ALFLAGS   = -lopenal
   SDLFLAGS  =
+  MATHFLAGS = -lm
 
   CFLAGS   += -pedantic
   CXXFLAGS += -pedantic
-  LDFLAGS  += -lm
 endif
 
-LDFLAGS += $(GLFLAGS) $(ALFLAGS) $(SDLFLAGS)
+LDFLAGS += $(STATIC_LINK_FLAGS) $(LIBRARIES) $(MATHFLAGS) $(DYNAMIC_LINK_FLAGS) $(GLFLAGS) $(ALFLAGS) $(SDLFLAGS)
