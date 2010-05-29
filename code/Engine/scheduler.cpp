@@ -108,6 +108,10 @@ void Scheduler::soloLoopForever()
                 graphics->render();
                 last = now;
                 break;
+            case PLAYER_DONE:
+            case ALL_DONE:
+                // Do nothing
+                break;
         }
         world->cleanObjects();
 

@@ -217,7 +217,7 @@ int TexImage (Image2D_t *img)
 
 } /* end of TexImage */
 
-int DrawImage(Image2D_t *img, float x, float y)
+void DrawImage(Image2D_t *img, float x, float y)
 {
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
     assert(img);

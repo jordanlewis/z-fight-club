@@ -124,10 +124,13 @@ class TriMeshInfo : public GeomInfo
 
 class ObjMeshInfo : public GeomInfo
 {
-    public:
+  private:
+    GLuint displayList;    /* !< the displayList used to render the object */
+    uint32_t mode;         /* !< determines rendering options for this object */
+  public:
 	OBJmodel	*model;			/* !< pointer to obj model */
 	std::string	path;			/* !< path to model folder */
-	GLuint		texid;	                /* !< texture identifiers */
+	GLuint		texid;	        /* !< texture identifiers */
 	ObjMeshInfo(std::string);
 	~ObjMeshInfo();
 	void load(char *filename);

@@ -42,9 +42,9 @@ TriMeshInfo::TriMeshInfo(dTriMeshDataID meshID,
 {}
 
 ObjMeshInfo::ObjMeshInfo(std::string filename)
+  : path(filename)
 {
     World &world = World::getInstance();
-    path = filename;
     model = OBJReadOBJ((world.assetsDir + filename + std::string("model.obj")).c_str());
     Image2D_t *color = LoadImage((world.assetsDir + filename + std::string("color.png")).c_str(), false, RGB_IMAGE);
     
@@ -58,6 +58,52 @@ ObjMeshInfo::ObjMeshInfo(std::string filename)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     FreeImage(color);
+    
+   
+    /* -------------------------------------------------*/
+    /* --- Compile the displaylists for this object --- */
+    /* -------------------------------------------------*/
+    
+    displayList = glGenLists(model->numgroups);
+   
+    int groupIndex = 0;
+
+    // This will let us configure the rendering options easily
+    mode = OBJ_SMOOTH | OBJ_MATERIAL | OBJ_TEXTURE;
+
+    for (OBJgroup *group = model->groups;
+         group != NULL;
+         group = group->next, groupIndex++) {
+
+         glNewList(displayList + groupIndex,GL_COMPILE);
+         glBegin(GL_TRIANGLES);
+         for (unsigned int i = 0; i < group->numtriangles; i++) {
+             OBJtriangle *triangle = &(model->triangles[group->triangles[i]]);
+   
+             if (mode & OBJ_FLAT)
+                 glNormal3fv(model->facetnorms[triangle->findex]);
+   
+             if (mode & OBJ_SMOOTH)
+                 glNormal3fv(model->normals[triangle->nindices[0]]);
+             if (mode & OBJ_TEXTURE)
+                 glTexCoord2fv(model->texcoords[triangle->tindices[0]]);
+             glVertex3fv(model->vertices[triangle->vindices[0]]);
+   
+             if (mode & OBJ_SMOOTH)
+                 glNormal3fv(model->normals[triangle->nindices[1]]);
+             if (mode & OBJ_TEXTURE)
+                 glTexCoord2fv(model->texcoords[triangle->tindices[1]]);
+             glVertex3fv(model->vertices[triangle->vindices[1]]);
+   
+             if (mode & OBJ_SMOOTH)
+                 glNormal3fv(model->normals[triangle->nindices[2]]);
+             if (mode & OBJ_TEXTURE)
+                 glTexCoord2fv(model->texcoords[triangle->tindices[2]]);
+             glVertex3fv(model->vertices[triangle->vindices[2]]);
+         }
+         glEnd();
+         glEndList();
+    }
 }
 
 Particle::Particle(Vec3f pos, Vec3f vel, float ttl)
