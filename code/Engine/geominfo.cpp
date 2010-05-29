@@ -42,9 +42,9 @@ TriMeshInfo::TriMeshInfo(dTriMeshDataID meshID,
 {}
 
 ObjMeshInfo::ObjMeshInfo(std::string filename)
-  : path(filename)
 {
     World &world = World::getInstance();
+    path = filename;
     model = OBJReadOBJ((world.assetsDir + filename + std::string("model.obj")).c_str());
     Image2D_t *color = LoadImage((world.assetsDir + filename + std::string("color.png")).c_str(), false, RGB_IMAGE);
     
