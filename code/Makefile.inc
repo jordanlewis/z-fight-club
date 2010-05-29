@@ -8,7 +8,7 @@ CXXFLAGS = -Wall -Wno-long-long -Wno-deprecated -ggdb $(ODEFLAGS) -I. -fsignalin
 #CFLAGS   = -Wall --std=gnu99 -ggdb $(ODEFLAGS) -I. -pg
 #CXXFLAGS = -Wall -Wno-long-long -Wno-deprecated -ggdb $(ODEFLAGS) -I. -pg
 
-LDFLAGS  = -lenet -lSDL -lode -lboost_program_options-mt -lpng
+LDFLAGS  = -Wl,-Bstatic -lenet -lSDL -lode -lboost_program_options-mt -lpng -lz -lstdc++
 
 ifeq ($(OS),Darwin)
   GLFLAGS  = -framework GLUT -framework OpenGL -framework Foundation
@@ -21,7 +21,7 @@ ifeq ($(OS),Darwin)
   LDFLAGS  += -L/opt/local/lib
 
 else
-  GLFLAGS   = -lglut -lGL -lGLU
+  GLFLAGS   = -lglut -Wl,-Bdynamic -lGL -lGLU
   ALFLAGS   = -lopenal
   SDLFLAGS  =
 
