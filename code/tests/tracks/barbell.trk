@@ -3,6 +3,8 @@
   "version" : "2.0",
   "name" : "barbell",
   "revision" : "1",
+  "num-starts" : 0,
+  "starts" : [],
   "num-vertices" : 332,
   "vertices" : [
       [   30.000,    0.000,   27.000 ],
