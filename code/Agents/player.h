@@ -41,6 +41,7 @@ class PlayerController
     const WeaponState_t &getWeaponState();
 
     const Agent &getAgent() const;
+    void updateNetDummy(); //Updates the local "dummy" network controller.
     void updateAgent();
 
     PlayerController(Agent *agent);

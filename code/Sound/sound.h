@@ -56,6 +56,7 @@ class Sound
     string base_sound_directory;
     bool initialized;
     const Camera *camera;
+    float listenerGain;
     vector<string> *get_wav_filenames();
     map<const string, sound_resource*> sound_library;
     World *world;
@@ -94,6 +95,8 @@ class Sound
     void registerListener(const Camera*);
     // periodically update based on camera movement
     void updateListener();
+
+    void setVol(float);
 
     sound_resource *lookup(const string);
 };

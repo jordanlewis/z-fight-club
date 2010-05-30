@@ -170,6 +170,7 @@ void Scheduler::clientLoopForever()
           case C_RACE:
             client->checkForPackets();
             client->updateAgentsLocally();
+            client->updateDummyController();
             nowNet = GetTime();
             if (nowNet - lastNet > SC_CLIENT_UPDATE_FREQ_SECONDS) 
                 {

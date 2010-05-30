@@ -2,6 +2,7 @@
 #include "agent.h"
 #include "Engine/world.h"
 #include "Network/racerpacket.h"
+#include "Network/client.h"
 
 
 void PlayerController::setTurnState(TurnState_t newState)
@@ -39,6 +40,38 @@ const Agent &PlayerController::getAgent() const
     return *agent;
 }
 
+void PlayerController::updateNetDummy()
+{
+    switch (weaponState) {
+    case FIRE:
+        {
+            if(World::getInstance().runType == CLIENT)
+                {
+                    Client::getInstance().transmitWeapons();
+                }
+            else return;
+            weaponState = HOLD;
+            break;
+        }
+    case CHANGE:
+        {
+            if(World::getInstance().runType == CLIENT)
+                {
+                    Client::getInstance().transmitWeapons();
+                } 
+            else return;
+            weaponState = HOLD;
+            break;
+        }
+    case HOLD:
+        {
+            break;
+        }
+    default: break;
+    }
+    return;
+}
+
 void PlayerController::updateAgent()
 {
     if (!agent)
@@ -59,15 +92,30 @@ void PlayerController::updateAgent()
         default: break;
     }
     switch (weaponState) {
-        case FIRE: steerInfo.fire = 1; weaponState = HOLD; break;
-        case HOLD: steerInfo.fire = 0; break;
-        case CHANGE:
-            steerInfo.weapon = (Weapon_t)((int)steerInfo.weapon + 1);
-            if (steerInfo.weapon == NWEAPONS){
-                steerInfo.weapon = (Weapon_t)0;
+        case FIRE: 
+            {
+                cout << "Fire, Fire!" << endl;
+                cout << "Fire #" << steerInfo.weapon << endl;
+                steerInfo.fire = 1; 
+                weaponState = HOLD;
+                break;
             }
-            weaponState = HOLD;
-            break;
+        case HOLD:
+            {
+                steerInfo.fire = 0;
+                break;
+            }
+        case CHANGE:
+            {
+                cout << "Change weapon!" << endl;
+                steerInfo.weapon = (Weapon_t)((int)steerInfo.weapon + 1);
+                if (steerInfo.weapon == NWEAPONS)
+                    {
+                        steerInfo.weapon = (Weapon_t)0;
+                    }
+                weaponState = HOLD;
+                break;
+            }
         default: break;
     }
 

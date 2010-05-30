@@ -31,6 +31,7 @@ class Server {
     float dt;
     uint8_t pingclock;
     World *world;
+    Physics *physics;
     Error *error;
 
  public:
@@ -68,7 +69,9 @@ class Server {
     
     
     void updateFromClient(uint8_t clientId); //NYI (call within serverFrame)
-    void pushAgents(); //Push updates to the client
+    void pushAgents(); //Unreliably push non-weapon updates to the client
+    void pushWeapons(netObjID_t netID); /* Reliably push an agent's weapon
+                                         * updates to all clients */
     void updateAgentsLocally(); //Update agent info from steerinfos
  
     /* Member Functions */

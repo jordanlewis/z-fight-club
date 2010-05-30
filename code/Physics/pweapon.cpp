@@ -20,8 +20,11 @@ static ObjMeshInfo *mine = NULL;
 void useWeapons(Agent *agent)
 {
     SteerInfo info = agent->getSteering();
+    /*cout << "Attempting to use weapons in physics.  info.fire is: "
+      << info.fire << endl;*/ 
     if (info.fire == 1) {
-        //cout << "Fire, FIRE!" << endl; // Firing once too often. Fix later.
+        cout << "Firing in physics!  Weapon #" << info.weapon
+             << endl; // Firing once too often. Fix later.
         switch(info.weapon){
             case NONE: break;
             case SMACK: smackAll(agent, PH_SMACKFORCE); break;
@@ -104,6 +107,8 @@ void raygun(Agent *agent, int force)
 
 void launchBox(Agent *agent)
 {
+    cout << "Firing a box!" << endl;
+    cout.flush();
     if (!rocket)
         rocket = new ObjMeshInfo("Weapons/Rocket/");
     BoxInfo *box = new BoxInfo(.2,.2,.2);

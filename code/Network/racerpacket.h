@@ -22,6 +22,7 @@ typedef enum {
     RP_UPDATE_PMOVEABLE, //Update an existing pmoveable
     RP_ATTACH_PAGENT, //Attach a pagent to an existing netobject
     RP_UPDATE_PAGENT, //Update an existing pagent
+    RP_UPDATE_WEAPONS, //The only way to update weapon state.
     RP_PING, //Keep a connection alive
     RP_RTT, //Determine the RTT for a connection.
     RP_ACK_CONNECTION //Acknowledge successful connection
@@ -78,6 +79,11 @@ struct RPPlayerControl {
     uint32_t turnState;
     uint32_t engineState;
     uint32_t weaponState;
+};
+
+struct RPUpdateWeapons {
+    netObjID_t netID;
+    RPPlayerControl control;
 };
 
 struct RPSteerInfo{
