@@ -484,27 +484,13 @@ void WeaponDisplay::draw()
     glColor3f(0, 1, 0);
     drawText(Vec3f(0, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
     ss.seekp(0);
+    ss << "Weapon: ";
     switch(agent->steerInfo.weapon) {
-    case NONE:
-        {
-            ss << "Weapon: None";
-            break;
-        }
-    case SMACK: 
-        {
-            ss << "Weapon: Smack (segfault all)";
-            break;
-        }
-    case RAYGUN: 
-        {
-            ss << "Weapon: Raygun (segfault line of sight)";
-            break;
-        }
-    case BOXBOMB:
-        {
-            ss << "Weapon: Boxbomb";
-            break;
-        }
+    case NONE:   ss << "None"; break;
+    case SMACK:  ss << "Smack (segfault all)"; break;
+    case RAYGUN: ss << "Raygun (segfault line of sight)"; break;
+    case ROCKET: ss << "Rocket"; break;
+    case MINE:   ss << "Mine"; break;
     default: break;
     }
     drawText(Vec3f(0, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);

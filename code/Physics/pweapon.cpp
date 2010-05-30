@@ -9,7 +9,6 @@
 /* Call once per physics update.  Checks to see if an agents is using weapons.
  * If so, perform the physically appropriate action.
  */
-
 /* We need to cache these to avoid a file read each time we shoot an weapon
  * right now they just get deleted when the game quits, that's not so bad since
  * we do need them the whole time.
@@ -26,11 +25,12 @@ void useWeapons(Agent *agent)
         cout << "Firing in physics!  Weapon #" << info.weapon
              << endl; // Firing once too often. Fix later.
         switch(info.weapon){
-            case NONE: break;
-            case SMACK: smackAll(agent, PH_SMACKFORCE); break;
-            case RAYGUN:  raygun(agent, PH_SMACKFORCE); break;
-            case BOXBOMB: launchBox(agent); break;
-            default: break;
+            case SMACK:  smackAll(agent, PH_SMACKFORCE); break;
+            case RAYGUN: raygun(agent, PH_SMACKFORCE); break;
+            case ROCKET: launchBox(agent); break;
+            case MINE:   launchMine(agent); break;
+            case NONE:
+            default:     break;
         }
     }
     return;
@@ -141,4 +141,24 @@ void launchBox(Agent *agent)
 
 
     World::getInstance().addObject(particle_wobj);
+}
+
+void launchMine(Agent *agent)
+{
+    cout << "Firing a mine!" << endl;
+    cout.flush();
+
+    if (!mine)
+        mine = new ObjMeshInfo("Weapons/Mine/");
+    BoxInfo *box = new BoxInfo(.2,.2,.2);
+    Kinematic &ak = agent->getKinematic();
+    Kinematic *k = new Kinematic(ak.pos - (ak.orientation_v), Vec3f(0,0,0));
+    SteerInfo *s = new SteerInfo;
+
+    k->orientation = ak.orientation;
+    PProjectile *pobj = new PProjectile(k, s, 100, box);
+    GObject *gobj = new GObject(mine);
+    WorldObject *wobj = new WorldObject(pobj, gobj, NULL, NULL, 10);
+    World::getInstance().addObject(wobj);
+
 }
