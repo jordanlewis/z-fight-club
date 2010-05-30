@@ -160,7 +160,7 @@ void raceGo()
 {
     Scheduler &sched = Scheduler::getInstance();
     sched.raceState = COUNTDOWN;
-    sched.timeStarted = GetTime();
+    sched.timeStarted = GetTime()+1;
 }
 
 World::World() :
@@ -340,8 +340,8 @@ void World::addAgent(Agent *agent)
     SObject *sobj = NULL;
     if (!nosound)
     {
-        sobj = new SObject("18303_start.wav", GetTime(), AL_FALSE, 0.5);
-        sobj->registerNext(new SObject("18303_run.wav", 0, AL_TRUE, 0.5));
+        sobj = new SObject("18303_start.wav", GetTime(), AL_FALSE, 0.3);
+        sobj->registerNext(new SObject("18303_run.wav", 0, AL_TRUE, 0.3));
     }
     WorldObject *wobject = new WorldObject(pobj, gobj, sobj, agent);
     cout << "Agent's wobject pointer is: " << agent->worldObject << endl;

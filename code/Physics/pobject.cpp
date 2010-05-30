@@ -364,7 +364,7 @@ void PAgent::doCollisionReact(PAgent *pa)
                         new SObject("19545.wav",
                                     GetTime(),
                                     AL_FALSE,
-                                    relVel.length()/20),
+                                    relVel.length()/30),
                         NULL);
     w->setPos(inBetween);
     World *world = &World::getInstance();

@@ -35,7 +35,7 @@ Scheduler::Scheduler() :
 
 void Scheduler::soloLoopForever()
 {
-    int curCount = 0;
+    double nextLightTime = 0;
     double now;
     double last = GetTime();
     double sinceStart;
@@ -57,28 +57,33 @@ void Scheduler::soloLoopForever()
                 sl = new StopLight(Vec3f(0,0,0));
                 world->widgets.push_back(sl);
             }
-            if (sinceStart > curCount)
+            if (sinceStart > nextLightTime)
             {
-                CameraFollower *c = new CameraFollower(NULL,
-                                                       NULL,
-                                                       new SObject("23670.wav", GetTime(), AL_FALSE, 1.0),
-                                                       NULL,
-                                                       &world->camera);
-                world->addObject(c);
-                sl->nLit = curCount;
-                if (curCount == 3)
+                string s;
+                if (nextLightTime < 1.4)
                 {
-                    cout << "GO!!!!!!!!" << endl;
-                    raceState = RACE;
-                    killLight = true;
+                    s = "23670.wav";
                 }
                 else
                 {
-                    cout << 3 - curCount++ << "..." << endl;
+                    s = "23670L.wav";
+                }
+                CameraFollower *c = new CameraFollower(NULL,
+                                                       NULL,
+                                                       new SObject(s, GetTime(), AL_FALSE, 1.0),
+                                                       NULL,
+                                                       &world->camera);
+                world->addObject(c);
+                sl->nLit++;
+                nextLightTime += 0.5;
+                if (nextLightTime > 1.9)
+                {
+                    raceState = RACE;
+                    killLight = true;
                 }
             }
         }
-        if (killLight && sinceStart > 5)
+        if (killLight && sinceStart > 1.6)
         {
             killLight = false;
             world->widgets.pop_back();
