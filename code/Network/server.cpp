@@ -242,7 +242,7 @@ int Server::attachAgent(Kinematic *kine, SteerInfo *steerInfo,
     obj->sobject = NULL;
     if (!world->nosound)
     {
-        obj->sobject = new SObject("18303_run.wav", GetTime(), AL_TRUE, 2.0);
+        obj->sobject = new SObject("18303_run.wav", GetTime(), AL_TRUE, 0.5);
     }
 
     PAgent *pagent = new PAgent(&(agent->getKinematic()),

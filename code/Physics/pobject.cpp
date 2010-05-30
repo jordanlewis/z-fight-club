@@ -363,7 +363,8 @@ void PAgent::doCollisionReact(PAgent *pa)
     w = new WorldObject(NULL, NULL,
                         new SObject("19545.wav",
                                     GetTime(),
-                                    AL_FALSE, relVel.length()/6),
+                                    AL_FALSE,
+                                    relVel.length()/20),
                         NULL);
     w->setPos(inBetween);
     World *world = &World::getInstance();
@@ -377,9 +378,9 @@ void PAgent::doCollisionReact(PBottomPlane *pb)
     w = new WorldObject(NULL, NULL,
                         new SObject("menu_change.wav",
                                     GetTime(),
-                                    AL_FALSE, 2.0),
+                                    AL_FALSE, 1.0),
                         NULL);
-    Vec3f p = Vec3f(pb->worldObject->getPos()); // too far away to hear, change to CameraFollower?
+    Vec3f p = Vec3f(this->worldObject->getPos());
     w->setPos(p);
     World *world = &World::getInstance();
     world->addObject(w);
@@ -389,6 +390,17 @@ void PAgent::doCollisionReact(PBottomPlane *pb)
 void PProjectile::doCollisionReact(PGeom *pg)
 {
     // explosion noise
+    WorldObject *w;
+    w = new WorldObject(NULL, NULL,
+                        new SObject("13242.wav",
+                                    GetTime(),
+                                    AL_FALSE,
+                                    1.0),
+                        NULL);
+    Vec3f p = Vec3f(pg->worldObject->getPos());
+    w->setPos(p);
+    World *world = &World::getInstance();
+    world->addObject(w);
     makeExplosion(getPos(), 1.0);
     worldObject->clear();
 }
