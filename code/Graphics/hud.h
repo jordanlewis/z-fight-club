@@ -60,7 +60,7 @@ class Menu
         virtual void draw() {};
         virtual void highlightNext() {};
         virtual void highlightPrev() {};
-        virtual void select() {};
+        virtual bool select() {return true;};
         virtual bool up() {return true;};
         virtual void inputChar(char) {};
         virtual void backspace() {};
@@ -78,7 +78,7 @@ class SubMenu : public Menu
         void draw();
         void highlightNext();          /* !< advance the selection */
         void highlightPrev();          /* !< unadvance the selection */
-        void select();                 /* !< make the highlighted item the selected */
+        bool select();                 /* !< make the highlighted item the selected */
         bool up();                     /* !< up one menu level */
         void reset();                  /* !< reset selected and highlighted items */
         void inputChar(char);          /* !< pass a char in (for text boxs) */
@@ -93,7 +93,7 @@ class TerminalMenu : public Menu
         void draw();
         void highlightNext() {};          /* !< advance the selection */
         void highlightPrev() {};          /* !< unadvance the selection */
-        void select();
+        bool select();
         bool up() {return true;};
         void inputChar(char);
         void backspace();
@@ -108,7 +108,7 @@ class TextboxMenu : public Menu
         void draw();
         void highlightNext() {};          /* !< advance the selection */
         void highlightPrev() {};          /* !< unadvance the selection */
-        void select();
+        bool select();
         bool up() {return true;};
         void reset();
         void inputChar(char);        /* !< pass a char in */
@@ -134,7 +134,7 @@ class SelectorMenu : public Menu
         void draw();
         void highlightNext();          /* !< advance the selection */
         void highlightPrev();          /* !< unadvance the selection */
-        void select();
+        bool select();
         bool up() {return true;};
         void reset() {};
         void inputChar(char) {};

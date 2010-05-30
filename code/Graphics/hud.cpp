@@ -202,7 +202,7 @@ void SubMenu::highlightPrev()
     }
 }
 
-void SubMenu::select()
+bool SubMenu::select()
 {
     if (selected == -1) {
         TerminalMenu *term = dynamic_cast<TerminalMenu *>(items[highlighted]);
@@ -212,8 +212,11 @@ void SubMenu::select()
             selected = highlighted;
     }
     else {
-        items[selected]->select();
+        if(items[selected]->select())
+            selected = -1;
     }
+
+    return false;
 }
 
 
@@ -266,9 +269,10 @@ void TerminalMenu::draw()
     exit(0);
 }
 
-void TerminalMenu::select()
+bool TerminalMenu::select()
 {
     (*callback)();
+    return true;
 }
 
 void TerminalMenu::inputChar(char c)
@@ -310,12 +314,9 @@ void TextboxMenu::draw()
     drawText(Vec3f(wres / 4, hPos + 50, 0), entered, GLUT_BITMAP_HELVETICA_18);
 }
 
-void TextboxMenu::select()
+bool TextboxMenu::select()
 {
-    SubMenu *parent = dynamic_cast<SubMenu *>(parent);
-    if(parent) {
-        parent->selected = -1;
-    }
+    return true;
 }
 
 void TextboxMenu::inputChar(char c)
@@ -379,9 +380,10 @@ void SelectorMenu::highlightPrev()
         highlighted = (options.size() - 1);
 }
 
-void SelectorMenu::select()
+bool SelectorMenu::select()
 {
     selected = highlighted;
+    return true;
 }
 
 
