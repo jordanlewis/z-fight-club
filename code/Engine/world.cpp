@@ -12,6 +12,7 @@
 #include "Engine/geominfo.h"
 #include "Engine/scheduler.h"
 #include "Sound/sobject.h"
+#include "Network/network.h"
 #include <ode/ode.h>
 extern "C" {
     #include "Parser/track-parser.h"
@@ -155,9 +156,97 @@ ParticleStreamObject::ParticleStreamObject(PGeom *pobject,
     // of this is that we get extra type info with it (see the note under GParticleObject)
 }
 
-/* used in setup menu */
+/* grab the items from the setup menu and put them in world instance */
 void raceGo()
 {
+    /* track setting */
+    World &world = World::getInstance();
+    SubMenu *setupMenu = world.setupMenu;
+    switch ( ((SelectorMenu *) setupMenu->items[3])->selected) {
+        /* add tracks here */
+        case 0:
+            world.loadTrack("tests/tracks/oval.trk");
+            break;
+        default:
+            world.loadTrack("tests/tracks/oval.trk");
+            break;
+    }
+
+    /* set the asset dir, this can just be hardcoded at this point */
+    world.setDir("../assets/");
+
+    /* do Network options */
+    switch(((SelectorMenu *) ((SubMenu *) setupMenu->items[4])->items[0])->selected) {
+        case 0:
+            world.runType = SOLO;
+            break;
+        case 1:
+            world.runType = CLIENT;
+            break;
+        case 2:
+            world.runType = SERVER;
+            break;
+        default:
+            world.runType = SOLO;
+            break;
+    }
+
+    /* IP addr */
+    if (!((TextboxMenu *) ((SubMenu *) setupMenu->items[4])->items[1])->entered.empty()) {
+        /* someone entered an IP address */
+        setAddr(((TextboxMenu *) ((SubMenu *) setupMenu->items[4])->items[1])->entered.c_str());
+    } else
+        setAddr("127.0.0.1");
+
+    /* Port */
+     if (!((TextboxMenu *) ((SubMenu *) setupMenu->items[4])->items[2])->entered.empty()) {
+        /* someone entered an IP address */
+        setAddr(((TextboxMenu * ) ((SubMenu *) setupMenu->items[4])->items[2])->entered.c_str());
+    } else if (world.runType == CLIENT) {
+        setPort(6888);
+    }
+
+     /* toggles */
+
+     /* X */
+     switch(((SelectorMenu *) ((SubMenu *) setupMenu->items[5])->items[1])->selected) {
+         case 0:
+             world.nox = false;
+             break;
+         case 1:
+             world.nox = true;
+             break;
+         default:
+             world.nox = false;
+             break;
+     }
+
+     /* sound */
+     switch(((SelectorMenu *) ((SubMenu *) setupMenu->items[5])->items[2])->selected) {
+         case 0:
+             world.nosound = false;
+             break;
+         case 1:
+             world.nosound = true;
+             break;
+         default:
+             world.nosound = false;
+             break;
+     }
+
+    /* skin selector */
+    switch (((SubMenu *) setupMenu->items[2])->selected) {
+        case 0:
+            world.playerSkin = 0;
+            break;
+        case 1:
+            world.playerSkin = 1;
+            break;
+        default:
+            world.playerSkin = -1;
+            break;
+    }
+
     Scheduler &sched = Scheduler::getInstance();
     sched.raceState = COUNTDOWN;
     sched.timeStarted = GetTime()+1;
@@ -167,7 +256,7 @@ World::World() :
     error(&Error::getInstance()), nox(false), nosound(false)
 {
     /* create the pause menu */
-    vector<Menu *> graphics_items;
+    /* vector<Menu *> graphics_items;
     SubMenu *graph1 = new SubMenu("graphics - foo");
     SubMenu *graph2 = new SubMenu("graphics - bar");
     SubMenu *graph3 = new SubMenu("graphics - baz");
@@ -192,34 +281,95 @@ World::World() :
 
     sound_options.push_back(sound1);
     sound_options.push_back(sound2);
-    sound_options.push_back(sound3);
+    sound_options.push_back(sound3); */
 
     vector<Menu *> items;
-    SubMenu *graphics = new SubMenu("Graphics", graphics_items);
+    /* SubMenu *graphics = new SubMenu("Graphics", graphics_items);
     SubMenu *gameOptions = new SubMenu("Game Options", game_items);
     SelectorMenu *sound = new SelectorMenu("Sound", sound_options);
 
     items.push_back(graphics);
     items.push_back(gameOptions);
-    items.push_back(sound);
+    items.push_back(sound); */
 
-    pauseMenu = new SubMenu("Pause Menu", items);
+    pauseMenu = new SubMenu("Pause Menu", items); 
 
     /* create the setup menu */
+
+    /* AI menu */
     TextboxMenu *ai_menu = new TextboxMenu("Number of AIs");
     
+    /* Racer select menu */
     vector<Option *> racers;
-    Option *racer1 = new Option("Skate", -1);
+    Option *racer1 = new Option("Hummingbird", -1);
     Option *racer2 = new Option("Fish", -1);
     racers.push_back(racer1);
     racers.push_back(racer2);
     SelectorMenu *racerSelector = new SelectorMenu("Select Character", racers);
 
+    /* Track select menu */
     vector<Option *> tracks;
     Option *track1 = new Option("Oval", -1);
     tracks.push_back(track1);
     SelectorMenu *trackSelector = new SelectorMenu("Select Track", tracks);
 
+    /* Networking menu */
+    vector<Menu *> network_items;
+
+    vector<Option *> network_modes;
+    Option *solo = new Option("Solo", -1);
+    Option *client = new Option("Client", -1);
+    Option *server = new Option("Server", -1);
+    network_modes.push_back(solo);
+    network_modes.push_back(client);
+    network_modes.push_back(server);
+    SelectorMenu *networkMode = new SelectorMenu("Network Mode", network_modes);
+
+    TextboxMenu *ipaddr = new TextboxMenu("Server IP address");
+
+    TextboxMenu *port = new TextboxMenu("Server port");
+
+    network_items.push_back(networkMode);
+    network_items.push_back(ipaddr);
+    network_items.push_back(port);
+
+    SubMenu *networkMenu = new SubMenu("Networking", network_items);
+    /* Toggle menu */
+    vector<Menu *> toggle_items;
+    /* human menu */
+    vector<Option *> human_options;
+    Option *human = new Option("Human", -1);
+    Option *nohuman = new Option("No Human", -1);
+    human_options.push_back(human);
+    human_options.push_back(nohuman);
+
+    SelectorMenu *humanMenu = new SelectorMenu("Human player?", human_options);
+
+    /* X menu */
+    vector<Option *> x_options;
+    Option *x = new Option("X", -1);
+    Option *nox = new Option("No X", -1);
+    x_options.push_back(x);
+    x_options.push_back(nox);
+
+    SelectorMenu *xMenu = new SelectorMenu("X server?", x_options);
+
+    /* sound menu */
+    vector<Option *> sound_options;
+    Option *sound = new Option("Sound", -1);
+    Option *nosound = new Option("No Sound", -1);
+    sound_options.push_back(sound);
+    sound_options.push_back(nosound);
+
+    SelectorMenu *soundMenu = new SelectorMenu("Sound?", sound_options);
+
+    toggle_items.push_back(humanMenu);
+    toggle_items.push_back(xMenu);
+    toggle_items.push_back(soundMenu);
+
+    SubMenu *toggleMenu = new SubMenu("Toggles", toggle_items);
+
+    /* Go button */
     TerminalMenu *go = new TerminalMenu("GO!!!", &raceGo);
 
     vector<Menu *> setup_items;
@@ -227,7 +377,8 @@ World::World() :
     setup_items.push_back(ai_menu);
     setup_items.push_back(racerSelector);
     setup_items.push_back(trackSelector);
-
+    setup_items.push_back(networkMenu);
+    setup_items.push_back(toggleMenu);
     
     setupMenu = new SubMenu("Setup", setup_items);
 }
@@ -329,10 +480,25 @@ int World::numAgents()
     return num;
 }
 
-void World::addAgent(Agent *agent)
+void World::addAgent(Agent *agent, int model)
 {
     BoxInfo *box = new BoxInfo(agent->width, agent->height, agent->depth);
-    ObjMeshInfo *ship = new ObjMeshInfo("Racers/Fish/"); 
+    float random;
+    ObjMeshInfo *ship;
+    switch (model) {
+        case -1:
+            random = (float) rand() / (float) RAND_MAX;
+            if (random < .5)
+                ship = new ObjMeshInfo("Racers/Fish/");
+            else
+                ship = new ObjMeshInfo("Racers/HummingBird/");
+            break;
+        case 0:
+            ship = new ObjMeshInfo("Racers/Hummingbird/");
+            break;
+        case 1:
+            ship = new ObjMeshInfo("Racers/Fish/");
+    }
     PAgent *pobj = new PAgent(&(agent->getKinematic()), &(agent->getSteering()),
                               agent->mass, box);
     pobj->bounce = 1;

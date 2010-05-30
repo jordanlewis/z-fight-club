@@ -123,6 +123,7 @@ class World
     Error *error;
   public:
     int PlayerQty;
+    int playerSkin;       /* !< which mesh the player wants to use */
     int AIQty;
     bool nox;
     bool nosound;
@@ -153,7 +154,7 @@ class World
 
     int numAgents();
 
-    void addAgent(Agent *agent);
+    void addAgent(Agent *agent, int skin = -1);
     void addLight(Light *light);
     void addWidget(Widget *widget);
     Agent *placeAgent(int place);/*!<return a placed agent not yet in wobjects*/
