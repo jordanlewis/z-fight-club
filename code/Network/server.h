@@ -31,6 +31,7 @@ class Server {
     float dt;
     uint8_t pingclock;
     World *world;
+    Physics *physics;
     Error *error;
 
  public:

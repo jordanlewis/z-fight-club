@@ -43,30 +43,31 @@ const Agent &PlayerController::getAgent() const
 void PlayerController::updateNetDummy()
 {
     switch (weaponState) {
-        case FIRE:
-            {
-                if(World::getInstance().runType == CLIENT)
-                    {
-                        Client::getInstance().transmitWeapons();
-                    }
-                else return;
-                weaponState = HOLD;
-                break;
-            }
-        case HOLD:
-            {
-                break;
-            }
-        case CHANGE:
-            {
-                if(World::getInstance().runType == CLIENT)
-                    {
-                        Client::getInstance().transmitWeapons();
-                    } 
-                else return;
-                weaponState = HOLD;
-                break;
-            }
+    case FIRE:
+        {
+            if(World::getInstance().runType == CLIENT)
+                {
+                    Client::getInstance().transmitWeapons();
+                }
+            else return;
+            weaponState = HOLD;
+            break;
+        }
+    case CHANGE:
+        {
+            if(World::getInstance().runType == CLIENT)
+                {
+                    Client::getInstance().transmitWeapons();
+                } 
+            else return;
+            weaponState = HOLD;
+            break;
+        }
+    case HOLD:
+        {
+            break;
+        }
+    default: break;
     }
     return;
 }
@@ -93,6 +94,8 @@ void PlayerController::updateAgent()
     switch (weaponState) {
         case FIRE: 
             {
+                cout << "Fire, Fire!" << endl;
+                cout << "Fire #" << steerInfo.weapon << endl;
                 steerInfo.fire = 1; 
                 weaponState = HOLD;
                 break;
@@ -104,16 +107,12 @@ void PlayerController::updateAgent()
             }
         case CHANGE:
             {
+                cout << "Change weapon!" << endl;
                 steerInfo.weapon = (Weapon_t)((int)steerInfo.weapon + 1);
                 if (steerInfo.weapon == NWEAPONS)
                     {
                         steerInfo.weapon = (Weapon_t)0;
                     }
-                if(World::getInstance().runType == CLIENT)
-                    {
-                        cout << "Client transmitting weapons" << endl;
-                        Client::getInstance().transmitWeapons();
-                    } 
                 weaponState = HOLD;
                 break;
             }

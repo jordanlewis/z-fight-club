@@ -3,6 +3,7 @@
 
 #include "allclasses.h"
 #include "network.h"
+#include "Physics/pweapon.h"
 #include "Utilities/vec3f.h"
 
 typedef enum {

@@ -249,13 +249,14 @@ void Client::checkForPackets()
                             error->log(NETWORK,TRIVIAL, "RP_UPDATE_WEAPONS\n");
                             RPUpdateWeapons *info=(RPUpdateWeapons *)payload;
                             WorldObject *wo = netobjs[ntohl(info->netID)];
-                            cout << "Net ID: " << ntohl(info->netID);
+                            cout << "Net ID: " << ntohl(info->netID) << endl;
                             PlayerController netPlayer;
                             netPlayer.ntoh(&(info->control));
                             if (wo && wo->agent && wo->player){
                                 wo->player->setWeaponState(netPlayer.getWeaponState());
-                                cout << "asdf!" << endl;
-                                cout << wo->player << endl;
+                                cout << *(wo->player) << endl;
+                                wo->player->updateAgent();
+                                useWeapons(wo->agent);
                             }
                             
                             break;

@@ -7,6 +7,7 @@
 #include "Agents/ai.h"
 #include "Utilities/error.h"
 #include "Physics/pobject.h"
+#include "Physics/pweapon.h"
 #include "racerpacket.h"
 #include "Graphics/gobject.h"
 #include "Sound/sobject.h"
@@ -18,6 +19,7 @@ Server::Server() :
     maxConns(DEFAULT_MAX_SERVER_CONNECTIONS),
     pingclock(0),
     world(&World::getInstance()),
+    physics(&Physics::getInstance()),
     error(&Error::getInstance())
 {
     enetAddress.host = htonl(ENET_HOST_ANY);
@@ -574,10 +576,13 @@ void Server::serverFrame()
                             WorldObject *wo = netobjs[ntohl(P->netID)];
                             PlayerController netPlayer;
                             netPlayer.ntoh(&(P->control));
+                            cout << netPlayer << endl;
                             if (wo && wo->agent && wo->player){
                                 wo->player->setWeaponState(netPlayer.getWeaponState());
+                                pushWeapons(ntohl(P->netID));
+                                wo->player->updateAgent();
+                                useWeapons(wo->agent);
                             }
-                            pushWeapons(ntohl(P->netID));
                             break;
                         }
                         case RP_RTT:
