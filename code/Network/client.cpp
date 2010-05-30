@@ -279,9 +279,9 @@ void Client::checkForPackets()
                             error->log(NETWORK, TRIVIAL, "RP_CREATE_AGENT\n");
                             Agent *agent;
                             RPCreateAgent info = *(RPCreateAgent *)payload;
-                            player = new PlayerController;
                             if (info.clientID == clientID)
                                 {
+                                    player = new PlayerController;
                                     error->log(NETWORK, TRIVIAL, "my ID!\n");
                                     agent = world->makePlayer();
                                     Input::getInstance().controlPlayer(player);
