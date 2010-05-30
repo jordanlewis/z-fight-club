@@ -315,6 +315,23 @@ void Server::pushAgents()
     enet_host_flush(enetServer);
 }
 
+void Server::pushWeapons(netObjID_t netID)
+{
+    WorldObject *wo = netobjs[netID];
+    RPUpdateWeapons toSend;
+    toSend.netID = htonl(netID);
+    if (wo && wo->agent && wo->player)
+        {
+            wo->player->hton(&(toSend.control));
+        }
+    else return;
+    ENetPacket *packet=makeRacerPacket(RP_UPDATE_WEAPONS, &toSend, 
+                                       sizeof(toSend), 
+                                       ENET_PACKET_FLAG_RELIABLE);
+    enet_host_broadcast(enetServer, 0, packet);
+    enet_host_flush(enetServer);
+}
+
 Server &Server::getInstance()
 {
     return _instance;
@@ -536,15 +553,33 @@ void Server::serverFrame()
                         case RP_UPDATE_AGENT:
                             {
                                 RPUpdateAgent *P = (RPUpdateAgent *)payload;
-                                cout << "updating agent " << ntohl(P->ID)
-                                     << endl;
                                 WorldObject *wo = netobjs[ntohl(P->ID)];
-                                if (wo && wo->agent && wo->player)
-                                {
-                                    wo->player->ntoh(&P->info);
+                                /*Eeeewwww... we need to ignore weapon updates
+                                * here.  It's ugly, but it works, but it's not 
+                                * like we need to maintain this code beyond
+                                * two days from now.
+                                */
+                                PlayerController netPlayer;
+                                netPlayer.ntoh(&(P->info));
+                                if (wo && wo->agent && wo->player){
+                                    wo->player->setTurnState(netPlayer.getTurnState());
+                                    wo->player->setEngineState(netPlayer.getEngineState());
                                 }
                                 break;
                             }
+                    case RP_UPDATE_WEAPONS:
+                        {
+                            cout << "Server update weapons!" << endl;
+                            RPUpdateWeapons *P = (RPUpdateWeapons *)payload;
+                            WorldObject *wo = netobjs[ntohl(P->netID)];
+                            PlayerController netPlayer;
+                            netPlayer.ntoh(&(P->control));
+                            if (wo && wo->agent && wo->player){
+                                wo->player->setWeaponState(netPlayer.getWeaponState());
+                            }
+                            pushWeapons(ntohl(P->netID));
+                            break;
+                        }
                         case RP_RTT:
                             {
                                 RPRTT info = *(RPRTT *)payload;
