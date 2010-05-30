@@ -105,10 +105,8 @@ void Sound::updateListener()
 
 void Sound::render()
 {
-    error->pin(P_SOUND);
     if (!initialized)
     {
-        error->pout(P_SOUND);
         return;
     }
 
@@ -122,7 +120,6 @@ void Sound::render()
     }
 
     updateListener();
-    error->pout(P_SOUND);
 }
 
 vector<string> *Sound::get_wav_filenames()

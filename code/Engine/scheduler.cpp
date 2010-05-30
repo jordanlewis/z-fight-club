@@ -98,7 +98,6 @@ void Scheduler::soloLoopForever()
                 ai->run();
                 graphics->render();
                 sound->render();
-                if (raceState == RACE) error->pdisplay();
                 break;
             case PAUSE:
                 graphics->render();
@@ -179,7 +178,6 @@ void Scheduler::clientLoopForever()
             graphics->render();
             sound->render();
             input->processInput(); // may transition us into C_DONE
-            error->pdisplay();
             break;
           case C_DONE:
             client->disconnect();
@@ -218,7 +216,6 @@ void Scheduler::serverLoopForever()
                 lastNet = nowNet;
             } 
         server->serverFrame();
-        error->pdisplay();
     }
     return;
 }

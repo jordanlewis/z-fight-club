@@ -12,7 +12,6 @@ int Input::processInput()
 {
     World &world = World::getInstance();
 
-    error->pin(P_INPUT);
     SDL_Event SDLevt;
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
@@ -24,7 +23,6 @@ int Input::processInput()
                     case SDLK_q:
                         if (world.runType == CLIENT) client->clientState = C_DONE;
                         if (world.runType == SERVER) scheduler->raceState = ALL_DONE;
-                        error->pout(P_INPUT);
                         return 1;
                     case SDLK_LEFT:
                         if (player) player->setTurnState(LEFT); break;
@@ -189,7 +187,6 @@ int Input::processInput()
                 SDL_SetVideoMode(world.camera.wres, world.camera.hres, 32, SDL_OPENGL|SDL_RESIZABLE);
                 break;
             case SDL_QUIT:
-                error->pout(P_INPUT);
                 client->clientState = C_DONE;
                 return 1;
             default:
@@ -198,7 +195,6 @@ int Input::processInput()
     }
     if (player)
         player->updateAgent();
-    error->pout(P_INPUT);
     return 0;
 }
 

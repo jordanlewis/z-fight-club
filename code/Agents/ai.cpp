@@ -551,7 +551,6 @@ void AIManager::run()
 {
     if (!start())
         return;
-    error->pin(P_AI);
     World &world = World::getInstance();
     for (unsigned int i = 0; i < controllers.size(); i++)
     {
@@ -586,7 +585,6 @@ void AIManager::run()
     }
 
     sort(agentsSorted.begin(), agentsSorted.end(), agentCmp);
-    error->pout(P_AI);
     finish();
 }
 

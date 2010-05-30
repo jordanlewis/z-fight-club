@@ -111,7 +111,6 @@ void Graphics::render()
 {
     if (!start())
         return;
-    error->pin(P_GRAPHICS);
 
     if (!initialized) {
         error->log(GRAPHICS, IMPORTANT, "Render function called without graphics initialization\n");
@@ -201,7 +200,6 @@ void Graphics::render()
 
     SDL_GL_SwapBuffers();
 
-    error->pout(P_GRAPHICS);
     finish();
 }
 

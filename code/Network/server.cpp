@@ -506,7 +506,6 @@ ENetPacket *Server::packageObject(netObjID_t objID)
 //services incoming packets
 void Server::serverFrame()
 {
-    error->pin(P_SERVER);
     ENetEvent event;
     //usleep(10000);
     racerPacketType_t type;
@@ -573,7 +572,6 @@ void Server::serverFrame()
         }
     }
     updateAgentsLocally();
-    error->pout(P_SERVER);
 }
 
 //Updates all agents based on their current steerinfo.

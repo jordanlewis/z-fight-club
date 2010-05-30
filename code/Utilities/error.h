@@ -60,9 +60,6 @@ class Error
     void log(ErrorModule_t, ErrorVerbosity_t, const char *);
     void log(ErrorModule_t, ErrorVerbosity_t, const int);
     void log(ErrorModule_t, ErrorVerbosity_t, const float);
-    void pin(Profile_t);
-    void pout(Profile_t);
-    void pdisplay();
 };
 
 ostream &operator<<(ErrorModule_t,ErrorVerbosity_t);

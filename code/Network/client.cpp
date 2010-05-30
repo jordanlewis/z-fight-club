@@ -56,13 +56,12 @@ WorldObject *Client::getNetObj(netObjID_t ID)
 }
 
 /* Associate ID with wobject */
-netObjID_t Client::attachNetID(WorldObject *wobject, netObjID_t ID){
-
+netObjID_t Client::attachNetID(WorldObject *wobject, netObjID_t ID)
+{
     if (NULL != getNetObj(ID))
-        {
+    {
             error->log(NETWORK, IMPORTANT, "Warning: Overwriting old netobj");
-        }
-
+    }
     netobjs[ID] = wobject; 
     return ID;
 }
@@ -82,7 +81,6 @@ void Client::setServerPort(uint16_t port)
 //Taken mostly from the tutorial at enet.bespin.org
 int Client::connectToServer()
 {
-    error->pin(P_CLIENT);
     ENetAddress enetAddress;
     ENetEvent event;
 
@@ -121,13 +119,11 @@ int Client::connectToServer()
         return -1;
     }
 
-    error->pout(P_CLIENT);
     return 0;
 }
 
 void Client::checkForPackets()
 {
-    error->pin(P_CLIENT);
     ENetEvent event;
     racerPacketType_t type;
     void * payload;
@@ -217,30 +213,32 @@ void Client::checkForPackets()
                         Vec3f &lerpvec = ((PAgent *)(wo->pobject))->lerpvec;
                         lerpvec = kine.pos -wo->agent->kinematic.pos;
                         cout << "Gap is: "<< abs(lerpvec.length()) << endl;
-                        if (abs(lerpvec.length()) > abs(range)){
+                        if (abs(lerpvec.length()) > abs(range))
+                        {
                             lerpvec = lerpvec.unit() * abs(lerpvec.length()
                                                            - range);
                         }
-                        else {
+                        else
+                        {
                             cout << "Setting lerpvec to 0" << endl;
                             lerpvec.x = 0; lerpvec.y = 0; lerpvec.z = 0;
                         }
                         //wo->agent->kinematic = kine;
                         if (P->AIFlag)
-                            {
-                                //wo->agent->kinematic.ntoh(&(P->kine));
-                                wo->pobject->ntohQuat(&(P->quat));
-                            }
+                        {
+                            //wo->agent->kinematic.ntoh(&(P->kine));
+                            wo->pobject->ntohQuat(&(P->quat));
+                        }
                         else if (wo->player)
-                            {
-                                wo->player->ntoh(&P->info);
-                                /*cout << "PlayerController["
-                                     << ntohl(P->ID) << "]: "
-                                     << *(wo->player) << endl;*/
-                                wo->player->updateAgent();
-                                //wo->agent->kinematic.ntoh(&(P->kine));
-                                wo->pobject->ntohQuat(&(P->quat));
-                            }
+                        {
+                            wo->player->ntoh(&P->info);
+                            /*cout << "PlayerController["
+                                 << ntohl(P->ID) << "]: "
+                                 << *(wo->player) << endl;*/
+                            wo->player->updateAgent();
+                            //wo->agent->kinematic.ntoh(&(P->kine));
+                            wo->pobject->ntohQuat(&(P->quat));
+                        }
                             
                         break;
                         }
@@ -354,67 +352,59 @@ void Client::checkForPackets()
     //Updates all agents based on their current steerinfo.  Should be
     //factored out into another function, prehaps?
 
-    error->pout(P_CLIENT);
     return;
 }
 
-void Client::updateAgentsLocally(){
-    error->pin(P_CLIENT);
-
+void Client::updateAgentsLocally()
+{
     WorldObject *wo = NULL;
     for (map<netObjID_t, WorldObject *>::iterator iter = netobjs.begin();
          iter != netobjs.end();
-         iter++){
+         iter++)
+    {
         wo = iter->second;
         if (wo) {
-            if (wo->agent && wo->player){
+            if (wo->agent && wo->player)
+            {
                 wo->player->updateAgent();
             }
         }
     }        
-    
-    error->pout(P_CLIENT);
 }
 
-void Client::sendJoinRequest(){
-    error->pin(P_CLIENT);
+void Client::sendJoinRequest()
+{
     RPJoin toSend;
     toSend.clientID = clientID;
     ENetPacket *packet = makeRacerPacket(RP_JOIN, &toSend, sizeof(RPJoin),
                                          ENET_PACKET_FLAG_RELIABLE);
     enet_peer_send(peer, 0, packet);
     enet_host_flush(enetClient);
-    error->pout(P_CLIENT);
 }
 
 void Client::sendStartRequest()
 {
-    error->pin(P_CLIENT);
     RPStart toSend;
     toSend.clientID = clientID;
     ENetPacket *packet = makeRacerPacket(RP_START, &toSend, sizeof(RPStart),
                                          ENET_PACKET_FLAG_RELIABLE);
     enet_peer_send(peer, 0, packet);
     enet_host_flush(enetClient);
-    error->pout(P_CLIENT);
 }
 
 //Determine RTT for successfully delivered unreliable packets.
 void Client::sendRTTRequest()
 {
-    error->pin(P_CLIENT);
     RPRTT toSend;
     toSend.clientID = clientID;
     toSend.time = htond(GetTime());
     ENetPacket *packet = makeRacerPacket(RP_RTT, &toSend, sizeof(RPRTT),0);
     enet_peer_send(peer, 0, packet);
     enet_host_flush(enetClient);
-    error->pout(P_CLIENT);
 }
 
 void Client::pushToServer()
 {
-    error->pin(P_CLIENT);
     sendRTTRequest();
     RPUpdateAgent payload;
     payload.ID = htonl(netID);
@@ -425,7 +415,6 @@ void Client::pushToServer()
                                          0);
     enet_peer_send(peer, 0, packet);
     enet_host_flush(enetClient);
-    error->pout(P_CLIENT);
 }
 
 void Client::disconnect()

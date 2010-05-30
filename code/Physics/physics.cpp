@@ -36,7 +36,6 @@ void DQuatToQuatf(dQuaternion dquat, Quatf_t quatf)
 void Physics::simulate(float dt)
 {
     start();
-    error->pin(P_PHYSICS);
     static float timeStepRemainder;
     World &world = World::getInstance();
     Agent *a;
@@ -118,7 +117,6 @@ void Physics::simulate(float dt)
         pg->collidedWith.clear();
 
     }
-    error->pout(P_PHYSICS);
     finish();
 }
 
