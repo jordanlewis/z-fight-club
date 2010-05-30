@@ -11,6 +11,7 @@
 #include "Physics/physics.h"
 #include "Graphics/graphics.h"
 #include "Sound/sound.h"
+#include "Sound/sobject.h"
 #include "Network/network.h"
 #include "Network/client.h"
 #include "Network/server.h"
@@ -149,7 +150,11 @@ int main(int argc, char *argv[])
     if (!world.nox)
         graphics.initGraphics();
     if (!world.nosound)
+    {
         sound.initSound();
+        SObject *sobj = new SObject("02 I Can See It In Your Face.wav", GetTime(), AL_TRUE, 0.4);
+        world.addObject(new WorldObject(NULL, NULL, sobj, NULL));
+    }
 
     if (world.runType == SOLO)
     {
