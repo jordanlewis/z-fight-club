@@ -160,6 +160,7 @@ void raceGo()
 {
     Scheduler &sched = Scheduler::getInstance();
     sched.raceState = COUNTDOWN;
+    sched.timeStarted = GetTime();
 }
 
 World::World() :
