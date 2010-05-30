@@ -8,7 +8,7 @@ CXXFLAGS = -Wall -Wno-long-long -Wno-deprecated -ggdb $(ODEFLAGS) -I. -fsignalin
 #CFLAGS   = -Wall --std=gnu99 -ggdb $(ODEFLAGS) -I. -pg
 #CXXFLAGS = -Wall -Wno-long-long -Wno-deprecated -ggdb $(ODEFLAGS) -I. -pg
 
-LIBRARIES = -lenet -lSDL -lode -lboost_program_options-mt -lpng -lz -lstdc++
+LIBRARIES = -lode -lboost_program_options-mt -lpng -lz -lstdc++
 LDFLAGS =
 
 ifeq ($(OS),Darwin)
@@ -17,7 +17,7 @@ ifeq ($(OS),Darwin)
   DYNAMIC_LINK_FLAGS = #-Wl,-bdynamic
   GLFLAGS  = -framework GLUT -framework OpenGL -framework Foundation
   ALFLAGS  = -framework OpenAL
-  SDLFLAGS = -lSDLmain -framework Cocoa
+  SDLFLAGS = -lSDL -lSDLmain -framework Cocoa
   MATHFLAGS = 
 
   # Gets libraries downloaded by MacPorts
@@ -30,11 +30,11 @@ else
   DYNAMIC_LINK_FLAGS = -Wl,-Bdynamic
   GLFLAGS   = -lglut -lGL -lGLU
   ALFLAGS   = -lopenal
-  SDLFLAGS  =
+  SDLFLAGS  = -lSDL
   MATHFLAGS = -lm
 
   CFLAGS   += -pedantic
   CXXFLAGS += -pedantic
 endif
 
-LDFLAGS += $(STATIC_LINK_FLAGS) $(LIBRARIES) $(MATHFLAGS) $(DYNAMIC_LINK_FLAGS) $(GLFLAGS) $(ALFLAGS) $(SDLFLAGS)
+LDFLAGS += $(STATIC_LINK_FLAGS) $(LIBRARIES) $(MATHFLAGS) $(DYNAMIC_LINK_FLAGS) $(GLFLAGS) $(ALFLAGS) $(SDLFLAGS) -lenet
