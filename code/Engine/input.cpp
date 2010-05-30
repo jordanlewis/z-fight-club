@@ -22,8 +22,7 @@ int Input::processInput()
                 switch (SDLevt.key.keysym.sym) {
                     case SDLK_q:
                         if (world.runType == CLIENT) client->clientState = C_DONE;
-                        if (world.runType == SERVER) scheduler->raceState = ALL_DONE;
-                        return 1;
+                        if ((world.runType == SERVER) || (world.runType == SOLO)) scheduler->raceState = ALL_DONE;
                     case SDLK_LEFT:
                         if (player) player->setTurnState(LEFT); break;
                     case SDLK_RIGHT:

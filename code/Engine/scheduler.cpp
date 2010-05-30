@@ -35,7 +35,6 @@ Scheduler::Scheduler() :
 
 void Scheduler::soloLoopForever()
 {
-    int done = 0;
     int curCount = 0;
     double now;
     double last = GetTime();
@@ -48,10 +47,9 @@ void Scheduler::soloLoopForever()
     error->log(ENGINE, TRIVIAL, "Entering solo-play loop\n");
     StopLight *sl = new StopLight(Vec3f(0,0,0));
     world->widgets.push_back(sl);
-    while (!done)
+    while (raceState != ALL_DONE)
     {
-        done = input->processInput();
-
+        input->processInput();
         now = GetTime();
         sinceStart = now - timeStarted;
 
