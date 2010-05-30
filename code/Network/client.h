@@ -5,13 +5,6 @@
 #include "network.h"
 #include "Utilities/vec3f.h"
 
-#define NET_RTT_MIX_FACTOR .8 //newRTT=mix_factor*oldRTT+(1-mix_factor)freshRTT
-#define NET_RANGE_FUDGE 5 /* Allow a fudge factor in our calculations of 
-                             * acceptable error in the client's dead reckoning.
-                             * This helps account for acceleration, as the 
-                             * acceptable error only takes velocity into
-                             * account. */
-
 typedef enum {
     C_CONNECTING = 0,
     C_CONNECTED,
@@ -70,6 +63,8 @@ class Client {
     void pushToServer();
     void checkForPackets();
     void updateAgentsLocally();
+    void transmitWeapons();
+    void updateDummyController(); //Hack to enable networked weapons.
     void sendJoinRequest(); //Register yourself as a player in this game.
     void sendStartRequest(); //Request for the game to start.
     void sendRTTRequest(); //Determine the RTT for a connection.

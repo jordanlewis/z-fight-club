@@ -200,7 +200,7 @@ void Client::checkForPackets()
                         {
                         error->log(NETWORK, TRIVIAL, "RP_UPDATE_AGENT\n");
                         RPUpdateAgent *P = (RPUpdateAgent *)payload;
-                        cout << "Updating agent " << ntohl(P->ID) << endl;
+                        //cout << "Updating agent " << ntohl(P->ID) << endl;
                         WorldObject *wo = netobjs[ntohl(P->ID)];
                         if (wo == NULL) continue;
                         if (wo->agent == NULL || wo->pobject == NULL) continue;
@@ -209,10 +209,10 @@ void Client::checkForPackets()
                         kine.ntoh(&(P->kine));
                         range = ott*(kine.forwardSpeed())*NET_RANGE_FUDGE;
                         //cout << "ott is " << ott << endl;
-                        cout << "Acceptable range is " << abs(range) << endl;
+                        //cout << "Acceptable range is " << abs(range) << endl;
                         Vec3f &lerpvec = ((PAgent *)(wo->pobject))->lerpvec;
                         lerpvec = kine.pos -wo->agent->kinematic.pos;
-                        cout << "Gap is: "<< abs(lerpvec.length()) << endl;
+                        //cout << "Gap is: "<< abs(lerpvec.length()) << endl;
                         if (abs(lerpvec.length()) > abs(range))
                         {
                             lerpvec = lerpvec.unit() * abs(lerpvec.length()
@@ -220,7 +220,7 @@ void Client::checkForPackets()
                         }
                         else
                         {
-                            cout << "Setting lerpvec to 0" << endl;
+                            //cout << "Setting lerpvec to 0" << endl;
                             lerpvec.x = 0; lerpvec.y = 0; lerpvec.z = 0;
                         }
                         //wo->agent->kinematic = kine;
@@ -242,11 +242,30 @@ void Client::checkForPackets()
                             
                         break;
                         }
+                    case RP_UPDATE_WEAPONS:
+                        {
+                            
+                            cout << "Client update weapons!" << endl;
+                            error->log(NETWORK,TRIVIAL, "RP_UPDATE_WEAPONS\n");
+                            RPUpdateWeapons *info=(RPUpdateWeapons *)payload;
+                            WorldObject *wo = netobjs[ntohl(info->netID)];
+                            cout << "Net ID: " << ntohl(info->netID);
+                            PlayerController netPlayer;
+                            netPlayer.ntoh(&(info->control));
+                            if (wo && wo->agent && wo->player){
+                                wo->player->setWeaponState(netPlayer.getWeaponState());
+                                cout << "asdf!" << endl;
+                                cout << wo->player << endl;
+                            }
+                            
+                            break;
+                        }
                     case RP_CREATE_NET_OBJ:
-                      {
+                        {
                         error->log(NETWORK, TRIVIAL, "RP_CREATE_NET_OBJ\n");
                         RPCreateNetObj info = *(RPCreateNetObj *)payload;
-                        WorldObject *wobject = new WorldObject(NULL, NULL, NULL, NULL);
+                        WorldObject *wobject = new WorldObject(NULL, NULL,
+                                                               NULL, NULL);
                         attachNetID(wobject, ntohl(info.ID));
                         string msg = "Created netobj # ";
                         msg += boost::lexical_cast<string>(htonl(info.ID)) + "\n";
@@ -259,7 +278,7 @@ void Client::checkForPackets()
                             error->log(NETWORK, TRIVIAL, "RP_CREATE_AGENT\n");
                             Agent *agent;
                             RPCreateAgent info = *(RPCreateAgent *)payload;
-                            player = &input->getPlayerController();
+                            player = new PlayerController;
                             if (info.clientID == clientID)
                                 {
                                     error->log(NETWORK, TRIVIAL, "my ID!\n");
@@ -357,6 +376,7 @@ void Client::checkForPackets()
 
 void Client::updateAgentsLocally()
 {
+    //cout << "Local updates!" << endl;
     WorldObject *wo = NULL;
     for (map<netObjID_t, WorldObject *>::iterator iter = netobjs.begin();
          iter != netobjs.end();
@@ -370,6 +390,29 @@ void Client::updateAgentsLocally()
             }
         }
     }        
+}
+
+void Client::transmitWeapons(){
+    RPUpdateWeapons toSend;
+    toSend.netID = htonl(netID);
+    if (player == NULL) return;
+    player->hton(&(toSend.control));
+    cout << "Creating a weapons packet!" << endl;
+    cout.flush();
+    ENetPacket *packet = makeRacerPacket(RP_UPDATE_WEAPONS, &toSend,
+                                         sizeof(toSend), 
+                                         ENET_PACKET_FLAG_RELIABLE);
+    enet_peer_send(peer, 0, packet);
+    enet_host_flush(enetClient);
+    
+}
+
+void Client::updateDummyController(){
+    //cout << "updating dummy net controller" << endl;
+    cout.flush();
+    if (player == NULL) return;
+    else player->updateNetDummy();
+    return;
 }
 
 void Client::sendJoinRequest()
@@ -411,8 +454,7 @@ void Client::pushToServer()
     if (player == NULL) return;
     player->hton(&(payload.info));
     ENetPacket *packet = makeRacerPacket(RP_UPDATE_AGENT,
-                                         &payload, sizeof(payload),
-                                         0);
+                                         &payload, sizeof(payload), 0);
     enet_peer_send(peer, 0, packet);
     enet_host_flush(enetClient);
 }
