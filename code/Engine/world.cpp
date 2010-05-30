@@ -157,7 +157,7 @@ ParticleStreamObject::ParticleStreamObject(PGeom *pobject,
 }
 
 /* grab the items from the setup menu and put them in world instance */
-void raceGo()
+void inputSetupMenu()
 {
     /* track setting */
     World &world = World::getInstance();
@@ -370,7 +370,7 @@ World::World() :
     SubMenu *toggleMenu = new SubMenu("Toggles", toggle_items);
 
     /* Go button */
-    TerminalMenu *go = new TerminalMenu("GO!!!", &raceGo);
+    TerminalMenu *go = new TerminalMenu("GO!!!", &inputSetupMenu);
 
     vector<Menu *> setup_items;
     setup_items.push_back(go);
