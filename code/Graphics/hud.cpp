@@ -86,18 +86,23 @@ StopLight::StopLight(Vec3f pos) : Widget(pos), nLit(0)
 
 void StopLight::draw()
 {
+    // Sportsman Tree
+    // http://www.nhra.com/nhra101/basics.aspx
+    // http://www.rbracing-rsr.com/nhraxtreesp.html
     World &world = World::getInstance();
     float xpos = world.camera.getWres() / 2.0;
     float ypos = world.camera.getHres() / 2.0;
 
     glColor3f(1,0,0);
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 5; i++)
     {
         switch (i)
         {
-            case 0: glColor3f(1,0,0); break;
+            case 0: glColor3f(1,1,0); break;
             case 1: glColor3f(1,1,0); break;
-            case 2: glColor3f(0,1,0); break;
+            case 2: glColor3f(1,1,0); break;
+            case 3: glColor3f(0,1,0); break;
+            case 4: glColor3f(1,0,0); break;
         }
         if (i >= nLit)
             glBegin(GL_LINE_LOOP);
