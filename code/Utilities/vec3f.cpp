@@ -201,15 +201,22 @@ bool Vec3f::operator==(const Vec3f &o) const
 Vec3f Vec3f::unit() const
 {
     float len = length();
-    return Vec3f(x/len,y/len,z/len);
+    if (len == 0)
+        return Vec3f(0,0,0);
+    else
+        return Vec3f(x/len,y/len,z/len);
 }
 
 void Vec3f::normalize()
 {
     float len = length();
-    x /= len;
-    y /= len;
-    z /= len;
+
+    if (len != 0)
+    {
+        x /= len;
+        y /= len;
+        z /= len;
+    }
 }
 
 // --------- Additional Functions ---------

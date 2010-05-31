@@ -167,7 +167,7 @@ SteerInfo AIController::smartGo(const Vec3f target)
     float targetAngle = atan2(dir[0], dir[2]);
     s = align(targetAngle);
 
-    float angle = targetAngle - atan2(k.orientation_v[0], k.orientation_v[2]);
+    float angle = abs(targetAngle - atan2(k.orientation_v[0], k.orientation_v[2]));
 
     short go; /* 1 = accelerate, -1 = reverse acceleration, 0 = neither*/
     bool overrideTurn = false;
@@ -395,19 +395,37 @@ SteerInfo AIController::avoidObstacle()
         v = k.vel - obstacle.obj->agent->getKinematic().vel;
         q = k.pos - obstacle.obj->agent->getKinematic().pos;
         a = v.dot(v);
+
         b = q.dot(v) * 2;
         c = q.dot(q) - 4 * (agent->width/2) * (agent->width/2);
-        discriminant = (b * b) - (4 * a * c);
-
-        if (discriminant >= 0)
+        if (a == 0)
         {
-            sqrtdisc = sqrt(discriminant);
-            post = (-b + sqrtdisc) / (2 * a);
-            negt = (-b - sqrtdisc) / (2 * a);
-
-            if (post > 0 && negt > 0)
+            /* Linear equation */
+            if (b == 0)
             {
-                hitTime = post < negt ? post : negt;
+                /* constant, will never hit */
+                return s;
+            }
+            else
+            {
+                hitTime = -c / b;
+            }
+        }
+        else
+        {
+            /* Quadratic */
+            discriminant = (b * b) - (4 * a * c);
+
+            if (discriminant >= 0)
+            {
+                sqrtdisc = sqrt(discriminant);
+                post = (-b + sqrtdisc) / (2 * a);
+                negt = (-b - sqrtdisc) / (2 * a);
+
+                if (post > 0 && negt > 0)
+                {
+                    hitTime = post < negt ? post : negt;
+                }
             }
         }
         if (hitTime < 2)
