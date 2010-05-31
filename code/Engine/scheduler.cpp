@@ -42,11 +42,11 @@ void Scheduler::setupLoopForever()
 
     while (raceState == SETUP)
     {
-        input->processInput();
         now = GetTime();
         sinceStart = now - timeStarted;
-        graphics->render();
         last = now;
+        graphics->render();
+        input->processInput();
     }
 }
 

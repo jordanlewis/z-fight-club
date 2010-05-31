@@ -114,6 +114,11 @@ int main(int argc, char *argv[])
             {
                 world.AIQty = 0; //We will increment this as we get more AI.
             }
+        }
+        else if (world.runType == CLIENT) 
+        {
+            world.AIQty = 0; //We will increment this as we get more AI.
+        }
 
         if (vm.count("ipaddr"))
         {
@@ -157,7 +162,10 @@ int main(int argc, char *argv[])
 
 
     if (!world.nox)
-        //graphics.initGraphics();
+    {
+        graphics.initGraphics();
+        scheduler.setupLoopForever();
+    }
     if (!world.nosound)
     {
         sound.initSound();

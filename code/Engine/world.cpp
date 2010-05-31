@@ -191,9 +191,7 @@ void inputSetupMenu()
         case 2:
             world.runType = SERVER;
             break;
-        default:
-            world.runType = SOLO;
-            break;
+        default: break;
     }
 
     /* IP addr */
@@ -222,9 +220,7 @@ void inputSetupMenu()
         case 1:
             world.PlayerQty = 0;
             break;
-        default:
-            world.PlayerQty = 1;
-            break;
+        default: break;
     }
 
      /* X */
@@ -235,9 +231,7 @@ void inputSetupMenu()
          case 1:
              world.nox = true;
              break;
-         default:
-             world.nox = false;
-             break;
+         default: break;
      }
 
      /* sound */
@@ -248,9 +242,7 @@ void inputSetupMenu()
          case 1:
              world.nosound = true;
              break;
-         default:
-             world.nosound = false;
-             break;
+         default: break;
      }
 
     /* skin selector */

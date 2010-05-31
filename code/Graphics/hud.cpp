@@ -331,7 +331,7 @@ void TextboxMenu::backspace()
 }
 
 SelectorMenu::SelectorMenu(string name, vector<Option *> options)
-    : Menu(name), options(options)
+    : Menu(name), options(options), selected(-1)
 {}
 
 void SelectorMenu::draw()
