@@ -481,18 +481,56 @@ WeaponDisplay::WeaponDisplay(Vec3f pos, Agent *agent) :
 void WeaponDisplay::draw()
 {
     stringstream ss;
+    Weapon_t weapon = agent->steerInfo.weapon;
     glColor3f(0, 1, 0);
+    ss << "Weapon:";
     drawText(Vec3f(0, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
+    ss.str("None");
     ss.seekp(0);
-    ss << "Weapon: ";
-    switch(agent->steerInfo.weapon) {
+    if(weapon == NONE){
+        glColor3f(0, 0, 1);
+    }
+    drawText(Vec3f(50, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
+    glColor3f(0, 1, 0);
+
+    ss.str("Smack");
+    if (weapon == SMACK) {
+        glColor3f(0, 0, 1);
+    }
+    drawText(Vec3f(100, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
+    glColor3f(0, 1, 0);
+
+    ss.str("Raygun");
+    if (weapon == RAYGUN) {
+        glColor3f(0, 0, 1);
+    }
+    drawText(Vec3f(150, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
+    glColor3f(0, 1, 0);
+
+    ss.str("Rocket");
+    if (weapon == ROCKET) {
+        glColor3f(0, 0, 1);
+    }
+    drawText(Vec3f(200, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
+    glColor3f(0, 1, 0);
+
+    ss.str("Mine");
+    if (weapon == MINE) {
+        glColor3f(0, 0, 1);
+    }
+    drawText(Vec3f(250, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
+    glColor3f(0, 1, 0);
+    ss.str("");
+
+ 
+    /*switch(agent->steerInfo.weapon) {
     case NONE:   ss << "None"; break;
     case SMACK:  ss << "Smack (segfault all)"; break;
     case RAYGUN: ss << "Raygun (segfault line of sight)"; break;
     case ROCKET: ss << "Rocket"; break;
     case MINE:   ss << "Mine"; break;
     default: break;
-    }
+    }*/
     drawText(Vec3f(0, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
     ss.seekp(0);
 }
