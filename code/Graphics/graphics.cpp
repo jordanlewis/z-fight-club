@@ -173,6 +173,16 @@ void Graphics::render()
         (*i)->draw();
     }
 
+    // Uncomment for AI debug rendering
+    /*
+    AIManager &ai = AIManager::getInstance();
+    for (vector<AIController *>::iterator i = ai.controllers.begin();
+        i != ai.controllers.end(); i++)
+    {
+            render(*i);
+    }
+    */
+
 
     render(world->track);
 
