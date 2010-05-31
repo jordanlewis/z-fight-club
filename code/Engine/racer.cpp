@@ -50,6 +50,7 @@ int main(int argc, char *argv[])
             ("nohuman", "disable human")
             ("nox", "disable graphics")
             ("nosound", "disable sound")
+            ("nomusic", "disable music")
         ;
 
         po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -136,6 +137,10 @@ int main(int argc, char *argv[])
         {
             world.nosound = true;
         }
+        if (vm.count("nomusic"))
+        {
+            world.nomusic = true;
+        }
     }
     catch(exception& e) {
         cerr << "error: " << e.what() << "\n";
@@ -152,8 +157,11 @@ int main(int argc, char *argv[])
     if (!world.nosound)
     {
         sound.initSound();
-        SObject *sobj = new SObject("02 I Can See It In Your Face.wav", GetTime(), AL_TRUE, 0.4);
-        world.addObject(new WorldObject(NULL, NULL, sobj, NULL));
+        if (!world.nomusic)
+        {
+            SObject *sobj = new SObject("02 I Can See It In Your Face.wav", GetTime(), AL_TRUE, 0.4);
+            world.addObject(new WorldObject(NULL, NULL, sobj, NULL));
+        }
     }
 
     if (world.runType == SOLO)

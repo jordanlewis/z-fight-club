@@ -127,6 +127,7 @@ class World
     int AIQty;
     bool nox;
     bool nosound;
+    bool nomusic;
     RunType_t runType;
     Camera camera;
     TrackData_t *track;
