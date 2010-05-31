@@ -117,6 +117,8 @@ void Graphics::render()
         return;
     }
 
+    RaceState_t state = Scheduler::getInstance().raceState;
+
     world->camera.setProjectionMatrix();
 
     /* render 3d graphics */
@@ -162,49 +164,54 @@ void Graphics::render()
 
     glColor3f(0.2,0.4,0.4);
     glEnable(GL_LIGHTING);
-    for (vector<WorldObject *>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
+
+    if (state != SETUP)
     {
-        (*i)->draw();
+        /* Draw regular things */
+        for (vector<WorldObject *>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
+        {
+            (*i)->draw();
+        }
+
+        for (vector<ParticleStreamObject *>::iterator i = world->particleSystems.begin();
+            i != world->particleSystems.end(); i++)
+        {
+            (*i)->draw();
+        }
+
+        // Uncomment for AI debug rendering
+        /*
+        AIManager &ai = AIManager::getInstance();
+        for (vector<AIController *>::iterator i = ai.controllers.begin();
+            i != ai.controllers.end(); i++)
+        {
+                render(*i);
+        }
+        */
+
+        render(world->track);
+
+
+
     }
-
-    for (vector<ParticleStreamObject *>::iterator i = world->particleSystems.begin();
-         i != world->particleSystems.end(); i++)
-    {
-        (*i)->draw();
-    }
-
-    // Uncomment for AI debug rendering
-    /*
-    AIManager &ai = AIManager::getInstance();
-    for (vector<AIController *>::iterator i = ai.controllers.begin();
-        i != ai.controllers.end(); i++)
-    {
-            render(*i);
-    }
-    */
-
-
-    render(world->track);
-
-
-
-    /* draw the widgets */
 
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
     glPushMatrix();
     world->camera.setOrthoMatrix();
+    /* draw the widgets */
 
-    for (vector<Widget *>::iterator i = world->widgets.begin(); i != world->widgets.end(); i++)
+    if (state == SETUP)
+        world->setupMenu->draw();
+    else
     {
-        (*i)->draw();
+        for (vector<Widget *>::iterator i = world->widgets.begin(); i != world->widgets.end(); i++)
+        {
+            (*i)->draw();
+        }
+        if (state == PAUSE)
+            world->pauseMenu->draw();
     }
-
-    if (Scheduler::getInstance().raceState == PAUSE)
-        World::getInstance().pauseMenu->draw();
-
-    if (Scheduler::getInstance().raceState == SETUP)
-        World::getInstance().setupMenu->draw();
 
     glPopMatrix();
 
