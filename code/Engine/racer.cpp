@@ -36,7 +36,11 @@ int main(int argc, char *argv[])
     Client &client = Client::getInstance();
     Server &server = Server::getInstance();
 
-    try {
+    srand(time(NULL));
+    graphics.initGraphics();
+    scheduler.setupLoopForever();
+
+    /* try {
         // Declare the supported options.
         po::options_description desc("Allowed options");
         desc.add_options()
@@ -149,11 +153,11 @@ int main(int argc, char *argv[])
     catch(...) {
         cerr << "Exception of unknown type!\n";
         return 2;
-    }
-    srand(time(NULL));
+    } */
+
 
     if (!world.nox)
-        graphics.initGraphics();
+        //graphics.initGraphics();
     if (!world.nosound)
     {
         sound.initSound();

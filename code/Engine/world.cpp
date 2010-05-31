@@ -159,9 +159,14 @@ ParticleStreamObject::ParticleStreamObject(PGeom *pobject,
 /* grab the items from the setup menu and put them in world instance */
 void inputSetupMenu()
 {
-    /* track setting */
     World &world = World::getInstance();
     SubMenu *setupMenu = world.setupMenu;
+
+    /* AI */
+    if(!((TextboxMenu *) setupMenu->items[1])->entered.empty())
+        world.AIQty = atoi(((TextboxMenu *) setupMenu->items[1])->entered.c_str());
+
+    /* track setting */
     switch ( ((SelectorMenu *) setupMenu->items[3])->selected) {
         /* add tracks here */
         case 0:
@@ -192,21 +197,35 @@ void inputSetupMenu()
     }
 
     /* IP addr */
-    if (!((TextboxMenu *) ((SubMenu *) setupMenu->items[4])->items[1])->entered.empty()) {
-        /* someone entered an IP address */
-        setAddr(((TextboxMenu *) ((SubMenu *) setupMenu->items[4])->items[1])->entered.c_str());
-    } else
-        setAddr("127.0.0.1");
+    if (world.runType == CLIENT || world.runType == SERVER) {
+        if (!((TextboxMenu *) ((SubMenu *) setupMenu->items[4])->items[1])->entered.empty()) {
+            /* someone entered an IP address */
+            setAddr(((TextboxMenu *) ((SubMenu *) setupMenu->items[4])->items[1])->entered.c_str());
+        } else
+            setAddr("127.0.0.1");
 
-    /* Port */
-     if (!((TextboxMenu *) ((SubMenu *) setupMenu->items[4])->items[2])->entered.empty()) {
-        /* someone entered an IP address */
-        setAddr(((TextboxMenu * ) ((SubMenu *) setupMenu->items[4])->items[2])->entered.c_str());
-    } else if (world.runType == CLIENT) {
-        setPort(6888);
+        /* Port */
+        if (!((TextboxMenu *) ((SubMenu *) setupMenu->items[4])->items[2])->entered.empty()) {
+            /* someone entered an IP address */
+            setPort(atoi(((TextboxMenu * ) ((SubMenu *) setupMenu->items[4])->items[2])->entered.c_str()));
+        } else if (world.runType == CLIENT)
+            setPort(6888);
     }
 
      /* toggles */
+
+     /* Human */
+    switch(((SelectorMenu *) ((SubMenu *) setupMenu->items[5])->items[0])->selected) {
+        case 0:
+            world.PlayerQty = 1;
+            break;
+        case 1:
+            world.PlayerQty = 0;
+            break;
+        default:
+            world.PlayerQty = 1;
+            break;
+    }
 
      /* X */
      switch(((SelectorMenu *) ((SubMenu *) setupMenu->items[5])->items[1])->selected) {

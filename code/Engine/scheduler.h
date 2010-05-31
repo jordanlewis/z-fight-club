@@ -39,6 +39,7 @@ class Scheduler
     RaceState_t raceState;
     double timeStarted;
     void welcomeScreen();
+    void setupLoopForever();
     void soloLoopForever();
     void clientLoopForever();
     void serverLoopForever();

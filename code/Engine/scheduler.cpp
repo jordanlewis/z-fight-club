@@ -33,6 +33,23 @@ Scheduler::Scheduler() :
 {
 }
 
+void Scheduler::setupLoopForever()
+{
+    double now;
+    double last = GetTime();
+    double sinceStart;
+    raceState = SETUP;
+
+    while (raceState == SETUP)
+    {
+        input->processInput();
+        now = GetTime();
+        sinceStart = now - timeStarted;
+        graphics->render();
+        last = now;
+    }
+}
+
 void Scheduler::soloLoopForever()
 {
     double nextLightTime = 0;
@@ -40,7 +57,7 @@ void Scheduler::soloLoopForever()
     double last = GetTime();
     double sinceStart;
     bool killLight = false;
-    raceState = SETUP;
+    //raceState = SETUP;
 
     error->log(ENGINE, TRIVIAL, "Entering solo-play loop\n");
     StopLight *sl = NULL;
