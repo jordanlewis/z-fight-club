@@ -364,7 +364,7 @@ void PAgent::doCollisionReact(PAgent *pa)
                         new SObject("19545.wav",
                                     GetTime(),
                                     AL_FALSE,
-                                    relVel.length()/30),
+                                    relVel.length()/35),
                         NULL);
     w->setPos(inBetween);
     World *world = &World::getInstance();
@@ -378,7 +378,7 @@ void PAgent::doCollisionReact(PBottomPlane *pb)
     w = new WorldObject(NULL, NULL,
                         new SObject("menu_change.wav",
                                     GetTime(),
-                                    AL_FALSE, 1.0),
+                                    AL_FALSE, 0.5),
                         NULL);
     Vec3f p = Vec3f(this->worldObject->getPos());
     w->setPos(p);
@@ -392,7 +392,7 @@ void PProjectile::doCollisionReact(PGeom *pg)
     // explosion noise
     WorldObject *w;
     w = new WorldObject(NULL, NULL,
-                        new SObject("13242.wav",
+                        new SObject("13242loud.wav",
                                     GetTime(),
                                     AL_FALSE,
                                     1.0),

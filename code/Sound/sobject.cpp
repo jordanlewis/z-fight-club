@@ -106,7 +106,7 @@ void SObject::update(WorldObject *host)
     Vec3f p = host->getPos();
     float pos[3] = { p[0], p[1], p[2] };
     alSourcefv(source, AL_POSITION, pos);
-    alSourcef(source, AL_ROLLOFF_FACTOR, 0.5);
+    alSourcef(source, AL_ROLLOFF_FACTOR, 0.1);
     alSourcef(source, AL_GAIN, gain);
 
     float vel[3] = { 0, 0, 0 };
