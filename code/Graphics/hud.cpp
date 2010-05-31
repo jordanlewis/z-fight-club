@@ -485,78 +485,40 @@ void WeaponDisplay::draw()
     glColor3f(0, 1, 0);
     ss << "Weapon:";
     drawText(Vec3f(0, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
+    
     ss.str("None");
-    ss.seekp(0);
     if(weapon == NONE){
         glColor3f(0, 0, 1);
     }
-    drawText(Vec3f(50, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
+    drawText(Vec3f(75, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
     glColor3f(0, 1, 0);
-
-    ss.str("Smack");
-    if (weapon == SMACK) {
-        glColor3f(0, 0, 1);
-    }
-    drawText(Vec3f(100, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
-    glColor3f(0, 1, 0);
-
-    ss.str("Raygun");
+    
+    ss.str("");
+    ss.seekp(0);
+    ss << "Raygun - " << agent->ammo[RAYGUN];
     if (weapon == RAYGUN) {
         glColor3f(0, 0, 1);
     }
     drawText(Vec3f(150, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
     glColor3f(0, 1, 0);
 
-    ss.str("Rocket");
+    ss.str("");
+    ss.seekp(0);
+    ss << "Rocket - " << agent->ammo[ROCKET];
     if (weapon == ROCKET) {
         glColor3f(0, 0, 1);
     }
-    drawText(Vec3f(200, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
+    drawText(Vec3f(225, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
     glColor3f(0, 1, 0);
 
-    ss.str("Mine");
+    ss.str("");
+    ss.seekp(0);
+    ss << "Mine - " << agent->ammo[MINE];
     if (weapon == MINE) {
         glColor3f(0, 0, 1);
     }
-    drawText(Vec3f(250, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
+    drawText(Vec3f(300, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
     glColor3f(0, 1, 0);
     ss.str("");
-
- 
-    /*switch(agent->steerInfo.weapon) {
-    case NONE:   ss << "None"; break;
-    case SMACK:  ss << "Smack (segfault all)"; break;
-    case RAYGUN: ss << "Raygun (segfault line of sight)"; break;
-    case ROCKET: ss << "Rocket"; break;
-    case MINE:   ss << "Mine"; break;
-    default: break;
-    }*/
-    drawText(Vec3f(0, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
     ss.seekp(0);
 }
-/*
-void Speedometer::draw()
-{
-    World &w = World::getInstance();
-    DrawImage(background,
-       w.camera.getWres() - background->wid - pos[0],
-       w.camera.getHres() - pos[0]);
-    World &world = World::getInstance();
-
-    glLineWidth(5);
-    float theta = (agent->getKinematic().vel.length()*M_PI/15)-0.75;
-    while(theta > (2*M_PI)) theta -= (2*M_PI);
-    float center[2] = {105,105};
-
-    glColor3f(1,0,0);
-    glBegin(GL_LINES);
-      glVertex2f(
-          world.camera.getWres()-center[0],
-          world.camera.getHres()-center[1]);
-      glVertex2f(
-          world.camera.getWres()-center[0]-(100*cos(theta)),
-          world.camera.getHres()-center[1]-(100*sin(theta)));
-    glEnd();
-    glLineWidth(1);
-}
-*/
