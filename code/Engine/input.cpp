@@ -207,6 +207,12 @@ void Input::controlPlayer(PlayerController *p)
     player = p;
 }
 
+void Input::releasePlayer()
+{
+    delete player;
+    player = new PlayerController();
+}
+
 Input &Input::getInstance()
 {
     return _instance;

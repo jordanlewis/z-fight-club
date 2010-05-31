@@ -72,7 +72,7 @@ class AIManager : public Component
     std::vector<AIController *> controllers; /* !< active AI controllers */
     std::vector<Agent *> agentsSorted; /*!< Used for computing place info */
 
-    void control(Agent *); /* !< assume AI control of given agent */
+    AIController *control(Agent *); /* !< assume AI control of given agent */
     void release(Agent *); /* !< release AI control of given agent */
     void run(); /* !< Give new steering information to each agent under our control*/
 

@@ -35,9 +35,9 @@ const WeaponState_t &PlayerController::getWeaponState()
     return weaponState;
 }
 
-const Agent &PlayerController::getAgent() const
+const Agent *PlayerController::getAgent() const
 {
-    return *agent;
+    return agent;
 }
 
 void PlayerController::updateNetDummy()

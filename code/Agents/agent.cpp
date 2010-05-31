@@ -4,6 +4,9 @@
 #include "Engine/world.h"
 #include "Physics/pobject.h"
 #include "Sound/sound.h"
+#include "Engine/input.h"
+#include "Agents/player.h"
+#include "Agents/ai.h"
 #include <iomanip>
 
 unsigned int Agent::maxId = 0;    /* !<highest id number we've reached */
@@ -88,6 +91,17 @@ void Agent::nextLap()
     ammo[weapon] += 3;
     if ((ammo[steerInfo.weapon] == 0) || steerInfo.weapon == NONE)
         steerInfo.weapon = weapon;
+
+    if (lapCounter > World::getInstance().nLaps)
+    {
+        if (this == Input::getInstance().getPlayerController().getAgent())
+        {
+            Scheduler::getInstance().raceState = PLAYER_DONE;
+            Input::getInstance().releasePlayer();
+            AIController *ai = AIManager::getInstance().control(this);
+            ai->lane(0);
+        }
+    }
 }
 
 /* \brief Package an agent for network transfer
@@ -102,7 +116,7 @@ void Agent::hton(RPAgent *payload){
     payload->depth = htonf(depth);
     kinematic.hton(&(payload->kinematic));
     steerInfo.hton(&(payload->steerInfo));
-    return; 
+    return;
 }
 
 

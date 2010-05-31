@@ -19,6 +19,7 @@ class Input
     PlayerController &getPlayerController();
     int processInput();
     void controlPlayer(PlayerController *p);
+    void releasePlayer();
 };
 
 #endif

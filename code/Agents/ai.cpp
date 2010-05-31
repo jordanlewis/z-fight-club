@@ -536,10 +536,11 @@ AIManager::AIManager() :
 
 AIManager::~AIManager() {}
 
-void AIManager::control(Agent *agent)
+AIController *AIManager::control(Agent *agent)
 {
     AIController *newController = new AIController(agent);
     controllers.push_back(newController);
+    return newController;
 }
 
 void AIManager::release(Agent *agent)
