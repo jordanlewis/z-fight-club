@@ -37,8 +37,8 @@ int main(int argc, char *argv[])
     Server &server = Server::getInstance();
 
     srand(time(NULL));
-    graphics.initGraphics();
-    scheduler.setupLoopForever();
+    //graphics.initGraphics();
+    //scheduler.setupLoopForever();
 
     try {
         // Declare the supported options.
