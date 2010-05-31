@@ -176,8 +176,7 @@ int main(int argc, char *argv[])
         sound.initSound();
         if (!world.nomusic)
         {
-            SObject *sobj = new SObject("02 I Can See It In Your Face.wav", GetTime(), AL_TRUE, 0.4);
-            world.addObject(new WorldObject(NULL, NULL, sobj, NULL));
+            sound.addSoundAt("02 I Can See It In Your Face.wav", GetTime(), AL_TRUE, 0.2, Vec3f(0,0,0));
         }
     }
 
