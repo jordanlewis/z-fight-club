@@ -257,6 +257,7 @@ void Client::checkForPackets()
                                 cout << *(wo->player) << endl;
                                 wo->player->updateAgent();
                                 useWeapons(wo->agent);
+                                wo->agent->steerInfo.fire = 0;
                             }
                             
                             break;
