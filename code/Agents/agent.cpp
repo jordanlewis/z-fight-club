@@ -78,7 +78,9 @@ const Kinematic &Agent::getKinematic () const
 
 void Agent::nextLap()
 {
-     ammo[rand() % NWEAPONS] += 3;
+    Weapon_t weapon = (Weapon_t) (rand() % (int)NWEAPONS);
+    ammo[weapon] += 3;
+    steerInfo.weapon = weapon;
 }
 
 /* \brief Package an agent for network transfer
