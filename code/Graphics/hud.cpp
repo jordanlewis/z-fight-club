@@ -446,7 +446,9 @@ void Places::draw()
     {
         ss << aim.agentsSorted[i]->id << ", ";
     }
-    ss << "fps: " << Graphics::getInstance().fps();
+    long pos = ss.tellp();
+    ss.seekp(pos - 2);
+    ss << " ";
     glColor3f(0,0,1);
     drawText(Vec3f(75, world.camera.getHres() - 10, 0), ss.str(),
              GLUT_BITMAP_HELVETICA_18);
