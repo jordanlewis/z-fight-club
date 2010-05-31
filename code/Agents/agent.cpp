@@ -3,6 +3,7 @@
 #include "Utilities/vec3f.h"
 #include "Engine/world.h"
 #include "Physics/pobject.h"
+#include "Sound/sound.h"
 #include <iomanip>
 
 unsigned int Agent::maxId = 0;    /* !<highest id number we've reached */
@@ -24,13 +25,15 @@ SteerInfo::SteerInfo() : acceleration(0), rotation(0), weapon(RAYGUN), fire(0)
  * \param position the agent's initial position
  */
 
-Agent::Agent() : steerInfo(), kinematic(), pathPosition(0), lapCounter(0)
+Agent::Agent() : sound(&Sound::getInstance()), steerInfo(), kinematic(),
+                 pathPosition(0), lapCounter(0)
 {
     setup();
 }
 
-Agent::Agent(Vec3f position) : steerInfo(), kinematic(position),
-                               pathPosition(0), lapCounter(0)
+Agent::Agent(Vec3f position) : sound(&Sound::getInstance()), steerInfo(),
+                               kinematic(position), pathPosition(0),
+                               lapCounter(0)
 {
     setup();
 }
@@ -40,7 +43,8 @@ Agent::Agent(Vec3f position) : steerInfo(), kinematic(position),
  * \param orientation the agent's initial orientation
  */
 Agent::Agent(Vec3f position, float orientation)
-            : steerInfo(), kinematic(position, Vec3f(0,0,0), orientation),
+            : sound(&Sound::getInstance()), steerInfo(),
+              kinematic(position, Vec3f(0,0,0), orientation),
               pathPosition(0), lapCounter(0)
 {
     setup();
