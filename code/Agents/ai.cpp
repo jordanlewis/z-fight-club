@@ -164,9 +164,10 @@ SteerInfo AIController::smartGo(const Vec3f target)
     float distance = dir.length();
     dir.normalize();
 
-    s = align(atan2(dir[0], dir[2]));
+    float targetAngle = atan2(dir[0], dir[2]);
+    s = align(targetAngle);
 
-    float angle = acos(dir.dot(k.orientation_v));
+    float angle = targetAngle - atan2(k.orientation_v[0], k.orientation_v[2]);
 
     short go; /* 1 = accelerate, -1 = reverse acceleration, 0 = neither*/
     bool overrideTurn = false;
