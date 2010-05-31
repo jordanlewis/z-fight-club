@@ -17,7 +17,6 @@ Server Server::_instance;
 
 Server::Server() :
     maxConns(DEFAULT_MAX_SERVER_CONNECTIONS),
-    pingclock(0),
     world(&World::getInstance()),
     physics(&Physics::getInstance()),
     error(&Error::getInstance())
@@ -527,12 +526,6 @@ void Server::serverFrame()
     //usleep(10000);
     racerPacketType_t type;
     void * payload;
-    if (pingclock++ == 0)
-    {
-        // keep clients from disconnecting
-        ENetPacket *packet = makeRacerPacket(RP_PING, NULL, 0, 0);
-        enet_host_broadcast(enetServer, 0, packet);
-    }
 
     while (enet_host_service(enetServer, &event, 0) > 0)
     {
@@ -626,4 +619,18 @@ void Server::updateAgentsLocally(){
             }
         }
     }        
+}
+
+void Server::pingClients()
+{
+    // inspired by Engine/component.cpp
+    // didn't use it because ping needs a different frequency than Server 
+    static double lastRun = 0;
+    double time = GetTime();
+    if (lastRun + 10 < time)
+    {
+        lastRun = time;
+        ENetPacket *packet = makeRacerPacket(RP_PING, NULL, 0, 0);
+        enet_host_broadcast(enetServer, 0, packet);
+    }
 }

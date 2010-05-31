@@ -239,6 +239,7 @@ void Scheduler::serverLoopForever()
                 server->pushAgents();
                 lastNet = nowNet;
             } 
+        server->pingClients();
         server->serverFrame();
         server->updateAgentsLocally();
     }

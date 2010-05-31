@@ -29,7 +29,6 @@ class Server {
     ENetHost *enetServer;
     int maxConns;
     float dt;
-    uint8_t pingclock;
     World *world;
     Physics *physics;
     Error *error;
@@ -88,6 +87,7 @@ class Server {
                          *are connected */
     void serverFrame(); //Service incoming packets during gameplay
     int closeClient(uint8_t clientID); //NYI
+    void pingClients();
 };
 
 
