@@ -5,6 +5,7 @@
 #include "Engine/world.h"
 #include "Engine/geominfo.h"
 #include "Graphics/gobject.h"
+#include "Sound/sound.h"
 
 /* Call once per physics update.  Checks to see if an agents is using weapons.
  * If so, perform the physically appropriate action.
@@ -22,15 +23,22 @@ void useWeapons(Agent *agent)
     /*cout << "Attempting to use weapons in physics.  info.fire is: "
       << info.fire << endl;*/ 
     if (info.fire == 1) {
-        cout << "Firing in physics!  Weapon #" << info.weapon
-             << endl; // Firing once too often. Fix later.
-        switch(info.weapon){
-            case SMACK:  smackAll(agent, PH_SMACKFORCE); break;
-            case RAYGUN: raygun(agent, PH_SMACKFORCE); break;
-            case ROCKET: launchBox(agent); break;
-            case MINE:   launchMine(agent); break;
-            case NONE:
-            default:     break;
+        if (agent->ammo[info.weapon] > 0)
+        {
+            agent->ammo[info.weapon]--;
+            switch(info.weapon) {
+                case RAYGUN: raygun(agent, PH_SMACKFORCE); break;
+                case ROCKET: launchBox(agent); break;
+                case MINE:   launchMine(agent); break;
+                default:     break;
+            }
+        }
+        else
+        {
+            /* No ammo! Make 'chk' noise or something. */
+            Sound *sound = &Sound::getInstance();
+            sound->addSoundAt("empty.wav", GetTime(), AL_FALSE, 1.0,
+                              agent->worldObject->getPos());
         }
     }
     return;
@@ -107,8 +115,6 @@ void raygun(Agent *agent, int force)
 
 void launchBox(Agent *agent)
 {
-    cout << "Firing a box!" << endl;
-    cout.flush();
     if (!rocket)
         rocket = new ObjMeshInfo("Weapons/Rocket/");
     BoxInfo *box = new BoxInfo(.2,.2,.2);
@@ -145,9 +151,6 @@ void launchBox(Agent *agent)
 
 void launchMine(Agent *agent)
 {
-    cout << "Firing a mine!" << endl;
-    cout.flush();
-
     if (!mine)
         mine = new ObjMeshInfo("Weapons/Mine/");
     BoxInfo *box = new BoxInfo(.2,.2,.2);

@@ -129,6 +129,7 @@ void ObjMeshInfo::draw()
     }
 
     glDisable(GL_TEXTURE_2D);
+    glEnable(GL_COLOR_MATERIAL);
 }
 
 void SkyBoxInfo::draw()
@@ -244,7 +245,7 @@ void ParticleSystemInfo::draw()
      * the matrix with the object coordinate transform. Remember to push a
      * new matrix at the end to prevent too much popping. */
     glPopMatrix();
-    glColor3f(0.0, 1.0, 0.0);
+    glDisable(GL_COLOR_MATERIAL);
     glEnable(GL_TEXTURE_2D);
 
     glPointSize(5);
@@ -266,5 +267,6 @@ void ParticleSystemInfo::draw()
     glDisable(GL_BLEND);
     glDisable(GL_ALPHA_TEST);
     glDisable(GL_POINT_SPRITE_ARB);
+    glEnable(GL_COLOR_MATERIAL);
     glPushMatrix();
 }

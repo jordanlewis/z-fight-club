@@ -582,6 +582,7 @@ void Server::serverFrame()
                                 pushWeapons(ntohl(P->netID));
                                 wo->player->updateAgent();
                                 useWeapons(wo->agent);
+                                wo->agent->steerInfo.fire = 0;
                             }
                             break;
                         }

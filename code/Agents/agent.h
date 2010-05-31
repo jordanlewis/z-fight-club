@@ -13,7 +13,6 @@ using namespace std;
 
 typedef enum {
     NONE = 0,
-    SMACK,
     RAYGUN,
     ROCKET,
     MINE,
@@ -42,6 +41,8 @@ struct RPAgent;
 class Agent
 {
     static uint32_t maxId; /* !<highest id number we've reached */
+    void setup();
+    Sound *sound;
 
   public:
     Agent();
@@ -60,11 +61,14 @@ class Agent
     Kinematic kinematic;   /* !<car's current kinematic */
     std::vector<Vec3f> trail;   /* !<record of where the agent has been */
 
+    short ammo[NWEAPONS];
+
     float getMaxAccel(); /* Calculate the current max acceleration */
 
     unsigned int pathPosition; /*!< index into world path */
     unsigned int lapCounter;   /*!< how many laps have we completed */
     unsigned int pathDistance; /*!< distance around track */
+    void nextLap();            /*!< any actions that occur per-lap */
 
     void hton(RPAgent *payload); /* Package the agent for network transfer */
     void ntoh(RPAgent *payload); /* Unpackage an agent from network transfer */
