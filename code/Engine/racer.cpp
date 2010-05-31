@@ -103,11 +103,13 @@ int main(int argc, char *argv[])
             if (vm.count("ai-players"))
             {
                 world.AIQty = vm["ai-players"].as<int>();
+                ((TextboxMenu *) world.setupMenu->items[1])->entered = vm["ai-players"].as<string>();
             }
             else
             {
                 cout << "Using default ai-players=3" << endl;
-                world.AIQty = 3;
+                ((TextboxMenu *) world.setupMenu->items[1])->entered = "3";
+                //world.AIQty = 3;
             }
         }
         else if (world.runType == CLIENT) 
