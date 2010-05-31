@@ -369,8 +369,6 @@ void Server::gatherPlayers()
     racerPacketType_t type;
     void * payload;
 
-    createAllAIAgents();
-
     while(1)
     {
         ENetEvent event;
@@ -612,7 +610,6 @@ void Server::serverFrame()
                 break;
         }
     }
-    updateAgentsLocally();
 }
 
 //Updates all agents based on their current steerinfo.

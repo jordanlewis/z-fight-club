@@ -215,6 +215,7 @@ void Scheduler::clientLoopForever()
 
 void Scheduler::serverLoopForever()
 {
+    server->createAllAIAgents();
     server->gatherPlayers();
     raceState = RACE;
     server->createAll();
@@ -239,6 +240,7 @@ void Scheduler::serverLoopForever()
                 lastNet = nowNet;
             } 
         server->serverFrame();
+        server->updateAgentsLocally();
     }
     return;
 }
