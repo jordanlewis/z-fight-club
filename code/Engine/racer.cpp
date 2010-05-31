@@ -111,9 +111,8 @@ int main(int argc, char *argv[])
             }
         }
         else if (world.runType == CLIENT) 
-            {
+        {
                 world.AIQty = 0; //We will increment this as we get more AI.
-            }
         }
         else if (world.runType == CLIENT) 
         {
