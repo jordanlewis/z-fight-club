@@ -43,6 +43,8 @@ Graphics::~Graphics()
 
 void Graphics::initGraphics()
 {
+    if (initialized == true)
+        return ;
     /* set up SDL */
     int wres = world->camera.wres, hres = world->camera.hres;
     int colorDepth = 32;
