@@ -1,3 +1,34 @@
 Codebase for z-fight-club
 
+Quickstart:
+
+run make && make test to run single player mode
+
+arrows move your car
+c controls the camera
+tab changes your weapon
+f fires your weapon
+
+=== NETWORK ===
+run --network=server to be server
+run --network=client --ipaddr=<ip-of-server> to be client
+
+once clients window appears, press enter twice to register.
+once all clients are registered, anyone can press space to start the game
+
+
+
+
+
+
+
+Dependencies:
+
+boost
+enet
+glut/opengl
+openal
+ode
+sdl
+
 doc/ contains the design document and any other documentation
