@@ -57,7 +57,10 @@ void Physics::simulate(float dt)
                 continue;
             world.wobjects[j]->pobject->prePhysics();
             if ((a = world.wobjects[j]->agent))
-                useWeapons(a);
+                {
+                    useWeapons(a);
+                    a->steerInfo.fire = 0;
+                }
         }
 
         dSpaceCollide(odeSpace, NULL, &nearCallback);
