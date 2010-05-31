@@ -1,6 +1,7 @@
 #include "gobject.h"
 #include "Engine/geominfo.h"
 #include "Agents/agent.h"
+#include "Graphics/graphics.h"
 #if defined(__APPLE__) && defined(__MACH__)
 #  include <OpenGL/gl.h>
 #  include <OpenGL/glu.h>
@@ -13,7 +14,7 @@
 GObject::GObject(GeomInfo *geominfo) : geominfo(geominfo),agentBank(0)
 {}
 
-void GObject::draw(Vec3f pos, Quatf_t quat)
+void GObject::draw(Vec3f pos, Quatf_t quat, Layer_t layer)
 {
     Mat4x4f_t matrix;
     ToRotMatrix(quat, matrix);
@@ -26,12 +27,12 @@ void GObject::draw(Vec3f pos, Quatf_t quat)
     glPushMatrix();
     glMultMatrixf(matrix);
 
-    geominfo->draw();
+    geominfo->draw(layer);
 
     glPopMatrix();
 }
 
-void GObject::draw(Vec3f pos, Quatf_t quat, Agent* agent)
+void GObject::draw(Vec3f pos, Quatf_t quat, Agent* agent, Layer_t layer)
 {
     SteerInfo s = agent->getSteering();
     if (s.acceleration > 0)
@@ -91,7 +92,7 @@ void GObject::draw(Vec3f pos, Quatf_t quat, Agent* agent)
     newquat[1] = s1 * c2 * c3 + c1 * s2 * s3; // y
     newquat[2] = c1 * s2 * c3 - s1 * c2 * s3; // z
     newquat[3] = c1 * c2 * c3 - s1 * s2 * s3; // w
-    draw(pos, newquat);
+    draw(pos, newquat, layer);
 }
 
 GParticleObject::GParticleObject(ParticleSystemInfo *psysteminfo)

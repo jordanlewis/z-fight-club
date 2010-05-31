@@ -120,7 +120,7 @@ void WorldObject::deleteChild(int i)
         (*it)->parent_index = it - children.begin();
 }
 
-void WorldObject::draw()
+void WorldObject::draw(Layer_t layer)
 {
     if (gobject == NULL)
         return;
@@ -130,9 +130,9 @@ void WorldObject::draw()
         Vec3f pos = getPos();
         if (parent != NULL)
             pos += parent->getPos();
-        gobject->draw(pos, quat);
+        gobject->draw(pos, quat,layer);
     } else
-        gobject->draw(getPos(), quat, agent);
+        gobject->draw(getPos(), quat, agent, layer);
 }
 
 CameraFollower::CameraFollower(PGeom * pobject, GObject * gobject, SObject * sobject,

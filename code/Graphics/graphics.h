@@ -11,6 +11,12 @@ extern "C" {
 #include "Parser/track-parser.h"
 }
 
+typedef enum
+{
+    COLOR,
+    GLOW
+} Layer_t;
+
 class Graphics : public Component
 {
   private:
@@ -36,6 +42,9 @@ class Graphics : public Component
   public:
     void initGraphics();
     void render();
+    void renderGlowLayer();
+    void renderColorLayer();
+    void renderHUD();
     void render(Agent * agent);
     void render(TrackData_t *track);
     void render(AIController *);

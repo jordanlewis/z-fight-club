@@ -107,38 +107,18 @@ void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
     glEnable(GL_LIGHTING);
 }
 
-void Graphics::render()
+void Graphics::renderColorLayer()
 {
-    if (!start())
-        return;
-
-    if (!initialized) {
-        error->log(GRAPHICS, IMPORTANT, "Render function called without graphics initialization\n");
-        return;
-    }
+    World *world = &World::getInstance();
 
     world->camera.setProjectionMatrix();
 
     /* render 3d graphics */
 
-    GLfloat mat_specular[]={ .2, .2, .2, 1.0 };
-    glShadeModel(GL_SMOOTH);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glEnable(GL_COLOR_MATERIAL);
-    glEnable(GL_DEPTH_TEST);
-
-    /* fog */
-    /* GLfloat fog_color[] = {.5, .2, .2, 1.0};
-    glEnable(GL_FOG);
-    glFogfv(GL_FOG_COLOR, fog_color);
-    glFogf(GL_FOG_START, 5.0f);
-    glFogf(GL_FOG_END, 100.0f);
-    glFogi(GL_FOG_MODE, GL_LINEAR); */
-
     if(world->lights.size() > 0) {
-        for (vector<Light *>::iterator i = world->lights.begin(); i != world->lights.end() && world->lights.begin() - i < GL_MAX_LIGHTS; i++)
+        for (vector<Light *>::iterator i = world->lights.begin();
+             i != world->lights.end() && world->lights.begin() - i < GL_MAX_LIGHTS;
+             i++)
         {
 
         }
@@ -164,13 +144,13 @@ void Graphics::render()
     glEnable(GL_LIGHTING);
     for (vector<WorldObject *>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
     {
-        (*i)->draw();
+        (*i)->draw(COLOR);
     }
 
     for (vector<ParticleStreamObject *>::iterator i = world->particleSystems.begin();
          i != world->particleSystems.end(); i++)
     {
-        (*i)->draw();
+        (*i)->draw(COLOR);
     }
 
     // Uncomment for AI debug rendering
@@ -183,13 +163,13 @@ void Graphics::render()
     }
     */
 
-
     render(world->track);
+}
 
-
-
+void Graphics::renderHUD()
+{
+    World *world = &World::getInstance();
     /* draw the widgets */
-
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
     glPushMatrix();
@@ -207,9 +187,38 @@ void Graphics::render()
         World::getInstance().setupMenu->draw();
 
     glPopMatrix();
+}
+
+void Graphics::renderGlowLayer() {
+    return;
+}
+
+void Graphics::render()
+{
+    if (!start())
+        return;
+
+    if (!initialized) {
+        error->log(GRAPHICS, IMPORTANT, "Render function called without graphics initialization\n");
+        return;
+    }
+
+    // I feel like most of this should not get called every frame, but whatever
+    GLfloat mat_specular[]={ .2, .2, .2, 1.0 };
+    glShadeModel(GL_SMOOTH);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_DEPTH_TEST);
+
+    renderColorLayer();
+    renderGlowLayer();
+    // Composite;
+
+    renderHUD();
 
     SDL_GL_SwapBuffers();
-
     finish();
 }
 

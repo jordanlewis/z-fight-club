@@ -10,6 +10,7 @@
 #include "Engine/geominfo.h"
 #include "Engine/world.h"
 #include "Utilities/vector.h"
+#include "Graphics/graphics.h"
 #include <string>
 extern "C" {
     #include "Parser/obj-reader.h"
@@ -18,8 +19,10 @@ extern "C" {
 }
 
 /* Credit to ODE's drawstuff library */
-void BoxInfo::draw()
+void BoxInfo::draw(Layer_t layer)
 {
+    if(layer == GLOW) return;
+
     float x = lx*0.5f;
     float y = ly*0.5f;
     float z = lz*0.5f;
@@ -61,8 +64,10 @@ void BoxInfo::draw()
     glEnd();
 }
 
-void ObjMeshInfo::draw()
+void ObjMeshInfo::draw(Layer_t layer)
 {
+    if(layer == GLOW) return;
+
     glBindTexture(GL_TEXTURE_2D, texid);
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     glEnable(GL_TEXTURE_2D);
@@ -132,8 +137,9 @@ void ObjMeshInfo::draw()
     glEnable(GL_COLOR_MATERIAL);
 }
 
-void SkyBoxInfo::draw()
+void SkyBoxInfo::draw(Layer_t layer)
 {
+    if(layer == GLOW) return;
 
     glEnable(GL_TEXTURE_2D);
 
@@ -206,8 +212,10 @@ void SkyBoxInfo::draw()
     glDisable(GL_TEXTURE_2D);
 }
 
-void TriMeshInfo::draw()
+void TriMeshInfo::draw(Layer_t layer)
 {
+    if(layer == GLOW) return;
+
     if (normals == NULL)
     {
         normals = new Vec3f_t[nTris];
@@ -233,14 +241,17 @@ void TriMeshInfo::draw()
     glEnable(GL_CULL_FACE);
 }
 
-void SphereInfo::draw()
+void SphereInfo::draw(Layer_t layer)
 {
+    if(layer == GLOW) return;
     GLUquadric * quad = gluNewQuadric();
     gluSphere(quad, radius, 20, 20);
 }
 
-void ParticleSystemInfo::draw()
+void ParticleSystemInfo::draw(Layer_t layer)
 {
+    if(layer == GLOW) return;
+
     /* The particles' position are stored in world coordinates, so pop off
      * the matrix with the object coordinate transform. Remember to push a
      * new matrix at the end to prevent too much popping. */

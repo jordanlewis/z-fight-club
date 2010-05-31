@@ -8,6 +8,7 @@
 #include "Utilities/path.h"
 #include "Graphics/camera.h"
 #include "Graphics/hud.h"
+#include "Graphics/graphics.h"
 #include "Physics/physics.h"
 #include <ode/ode.h>
 #include <vector>
@@ -66,7 +67,7 @@ class WorldObject
     void addChild(WorldObject *);
     void deleteChild(int i);
 
-    void draw();
+    void draw(Layer_t);
 };
 
 class CameraFollower : public WorldObject
