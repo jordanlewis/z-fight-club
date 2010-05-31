@@ -94,8 +94,6 @@ void PlayerController::updateAgent()
     switch (weaponState) {
         case FIRE: 
             {
-                cout << "Fire, Fire!" << endl;
-                cout << "Fire #" << steerInfo.weapon << endl;
                 steerInfo.fire = 1; 
                 weaponState = HOLD;
                 break;
@@ -107,7 +105,6 @@ void PlayerController::updateAgent()
             }
         case CHANGE:
             {
-                cout << "Change weapon!" << endl;
                 steerInfo.weapon = (Weapon_t)((int)steerInfo.weapon + 1);
                 if (steerInfo.weapon == NWEAPONS)
                     {

@@ -22,8 +22,6 @@ void useWeapons(Agent *agent)
     /*cout << "Attempting to use weapons in physics.  info.fire is: "
       << info.fire << endl;*/ 
     if (info.fire == 1) {
-        cout << "Firing in physics!  Weapon #" << info.weapon
-             << endl; // Firing once too often. Fix later.
         switch(info.weapon){
             case SMACK:  smackAll(agent, PH_SMACKFORCE); break;
             case RAYGUN: raygun(agent, PH_SMACKFORCE); break;
