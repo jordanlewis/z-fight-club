@@ -191,7 +191,9 @@ void inputSetupMenu()
         case 2:
             world.runType = SERVER;
             break;
-        default: break;
+        default:
+            world.runType = SOLO;
+            break;
     }
 
     /* IP addr */
@@ -204,7 +206,7 @@ void inputSetupMenu()
 
         /* Port */
         if (!((TextboxMenu *) ((SubMenu *) setupMenu->items[4])->items[2])->entered.empty()) {
-            /* someone entered an IP address */
+            /* someone entered a Port */
             setPort(atoi(((TextboxMenu * ) ((SubMenu *) setupMenu->items[4])->items[2])->entered.c_str()));
         } else if (world.runType == CLIENT)
             setPort(6888);
@@ -244,6 +246,18 @@ void inputSetupMenu()
              break;
          default: break;
      }
+
+     /* music */
+     switch(((SelectorMenu *) ((SubMenu *) setupMenu->items[5])->items[3])->selected) {
+         case 0:
+             world.nomusic = false;
+             break;
+         case 1:
+             world.nomusic = true;
+             break;
+         default: break;
+     }
+
 
     /* skin selector */
     switch (((SubMenu *) setupMenu->items[2])->selected) {
@@ -374,9 +388,19 @@ World::World() :
 
     SelectorMenu *soundMenu = new SelectorMenu("Sound?", sound_options);
 
+    /* Music menu */
+    vector<Option *> music_options;
+    Option *music = new Option("Music", -1);
+    Option *nomusic = new Option("No Music", -1);
+    music_options.push_back(music);
+    music_options.push_back(nomusic);
+
+    SelectorMenu *musicMenu = new SelectorMenu("Music?", music_options);
+
     toggle_items.push_back(humanMenu);
     toggle_items.push_back(xMenu);
     toggle_items.push_back(soundMenu);
+    toggle_items.push_back(musicMenu);
 
     SubMenu *toggleMenu = new SubMenu("Toggles", toggle_items);
 
@@ -797,17 +821,21 @@ void World::makeSkybox()
 void World::setRunType(const string str){
     if ( (str == "server") || (str == "Server") ){
         runType = SERVER;
+        ((SelectorMenu *) ((SubMenu *) setupMenu->items[4])->items[0])->selected = 2;
     }
     else if ( (str =="client") || (str == "Client") ) {
         runType = CLIENT;
+        ((SelectorMenu *) ((SubMenu *) setupMenu->items[4])->items[0])->selected = 1;
     }
     else if ( (str == "solo") || (str == "Solo") ) {
         runType = SOLO;
+        ((SelectorMenu *) ((SubMenu *) setupMenu->items[4])->items[0])->selected = 0;
     }
     else {
         error->log(NETWORK, IMPORTANT,
                   "Unrecognized netmode. Defaulting to solo\n.");
         runType = SOLO;
+        ((SelectorMenu *) ((SubMenu *) setupMenu->items[4])->items[0])->selected = 0;
     }
     return;
 }

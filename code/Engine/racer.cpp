@@ -109,46 +109,50 @@ int main(int argc, char *argv[])
             {
                 cout << "Using default ai-players=3" << endl;
                 ((TextboxMenu *) world.setupMenu->items[1])->entered = "3";
-                //world.AIQty = 3;
+                world.AIQty = 3;
             }
         }
         else if (world.runType == CLIENT) 
         {
-                world.AIQty = 0; //We will increment this as we get more AI.
-        }
-        else if (world.runType == CLIENT) 
-        {
+            ((TextboxMenu *) world.setupMenu->items[1])->entered = "0";
             world.AIQty = 0; //We will increment this as we get more AI.
         }
 
         if (vm.count("ipaddr"))
         {
             setAddr(vm["ipaddr"].as<string>().c_str());
+            ((TextboxMenu *) ((SubMenu *) world.setupMenu->items[4])->items[1])->entered = vm["ipaddr"].as<string>(); 
         }
         else if (world.runType == CLIENT)
         {
             cout << "Using default ipaddr 127.0.0.1" << endl;
             setAddr("127.0.0.1");
+            ((TextboxMenu *) ((SubMenu *) world.setupMenu->items[4])->items[1])->entered = "127.0.0.1";
         }
         if (vm.count("port"))
         {
+            ((TextboxMenu * ) ((SubMenu *) world.setupMenu->items[4])->items[2])->entered = vm["port"].as<string>();
             setPort(vm["port"].as<int>());
         }
         else if (world.runType == CLIENT)
         {
             cout << "Using default port 6888" << endl;
+            ((TextboxMenu * ) ((SubMenu *) world.setupMenu->items[4])->items[2])->entered = "6888"; 
             setPort(6888);
         }
         if (vm.count("nox"))
         {
+            ((SelectorMenu *) ((SubMenu *) world.setupMenu->items[5])->items[1])->selected = 1;
             world.nox = true;
         }
         if (vm.count("nosound"))
         {
+            ((SelectorMenu *) ((SubMenu *) world.setupMenu->items[5])->items[2])->selected = 1;
             world.nosound = true;
         }
         if (vm.count("nomusic"))
         {
+            ((SelectorMenu *) ((SubMenu *) world.setupMenu->items[5])->items[3])->selected = 1;
             world.nomusic = true;
         }
     }
