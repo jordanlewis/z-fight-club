@@ -78,6 +78,8 @@ const Kinematic &Agent::getKinematic () const
 
 void Agent::nextLap()
 {
+    sound->addSoundAt("empty.wav", GetTime(), AL_FALSE, 1.0,
+                      worldObject->getPos());
     Weapon_t weapon = (Weapon_t) ((rand() % ((int)NWEAPONS - 1)) +1);
     ammo[weapon] += 3;
     if ((ammo[steerInfo.weapon] == 0) || steerInfo.weapon == NONE)

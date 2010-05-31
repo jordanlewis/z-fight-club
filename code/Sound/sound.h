@@ -97,6 +97,7 @@ class Sound
     void updateListener();
 
     void setVol(float);
+    void addSoundAt(string name, double time, bool loop, float gain, Vec3f pos);
 
     sound_resource *lookup(const string);
 };

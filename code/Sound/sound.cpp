@@ -319,3 +319,19 @@ int Sound::ends_with(string a, string b)
     int spot = a.rfind(b);
     return (spot+b.size() == a.size());
 }
+
+void Sound::addSoundAt(string name, double time, bool loop, float gain, Vec3f pos)
+{
+    if (!initialized)
+    {
+        return;
+    }
+    WorldObject *w = new WorldObject(NULL, NULL,
+                                     new SObject(name,
+                                                 time,
+                                                 AL_FALSE,
+                                                 gain),
+                                     NULL);
+    w->setPos(pos);
+    world->addObject(w);
+}
