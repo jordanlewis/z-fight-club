@@ -78,7 +78,7 @@ const Kinematic &Agent::getKinematic () const
 
 void Agent::nextLap()
 {
-     ammo[rand() % NWEAPONS] += 3;
+    ammo[(rand() % (NWEAPONS -1)) + 1] += 3;
 }
 
 /* \brief Package an agent for network transfer

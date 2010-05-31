@@ -12,7 +12,8 @@
 using namespace std;
 
 typedef enum {
-    RAYGUN = 0,
+    NONE = 0,
+    RAYGUN,
     ROCKET,
     MINE,
     NWEAPONS
