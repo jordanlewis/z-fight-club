@@ -486,13 +486,12 @@ void WeaponDisplay::draw()
     ss.seekp(0);
     ss << "Weapon: ";
     switch(agent->steerInfo.weapon) {
-    case NONE:   ss << "None"; break;
-    case SMACK:  ss << "Smack (segfault all)"; break;
-    case RAYGUN: ss << "Raygun (segfault line of sight)"; break;
-    case ROCKET: ss << "Rocket"; break;
-    case MINE:   ss << "Mine"; break;
-    default: break;
+        case RAYGUN: ss << "Raygun"; break;
+        case ROCKET: ss << "Rocket"; break;
+        case MINE:   ss << "Mine  "; break;
+        default: break;
     }
+    ss << ": " << agent->ammo[agent->steerInfo.weapon];
     drawText(Vec3f(0, 10, 0), ss.str(), GLUT_BITMAP_HELVETICA_10);
     ss.seekp(0);
 }

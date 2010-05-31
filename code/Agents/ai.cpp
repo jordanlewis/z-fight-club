@@ -580,6 +580,7 @@ void AIManager::run()
             else if (agent->pathPosition == 1)
             {
                 agent->lapCounter++;
+                agent->nextLap();
             }
         }
     }

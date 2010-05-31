@@ -15,7 +15,7 @@ float        Agent::depth = AG_DEFAULT_DEPTH;
 
 /* \brief initialize a SteerInfo class
  */
-SteerInfo::SteerInfo() : acceleration(0), rotation(0), weapon(NONE), fire(0)
+SteerInfo::SteerInfo() : acceleration(0), rotation(0), weapon(RAYGUN), fire(0)
 {
 }
 
@@ -26,13 +26,13 @@ SteerInfo::SteerInfo() : acceleration(0), rotation(0), weapon(NONE), fire(0)
 
 Agent::Agent() : steerInfo(), kinematic(), pathPosition(0), lapCounter(0)
 {
-    id = maxId++;
+    setup();
 }
 
 Agent::Agent(Vec3f position) : steerInfo(), kinematic(position),
                                pathPosition(0), lapCounter(0)
 {
-    id = maxId++;
+    setup();
 }
 
 /* \brief initialize an agent class
@@ -43,7 +43,14 @@ Agent::Agent(Vec3f position, float orientation)
             : steerInfo(), kinematic(position, Vec3f(0,0,0), orientation),
               pathPosition(0), lapCounter(0)
 {
+    setup();
+}
+
+
+void Agent::setup()
+{
     id = maxId++;
+    memset(ammo, 0, sizeof(short) * NWEAPONS);
 }
 
 /* \brief Calculate this agent's current maximum acceleration as a function
@@ -67,6 +74,11 @@ Kinematic &Agent::getKinematic ()
 const Kinematic &Agent::getKinematic () const
 {
     return kinematic;
+}
+
+void Agent::nextLap()
+{
+     ammo[rand() % NWEAPONS] += 3;
 }
 
 /* \brief Package an agent for network transfer
