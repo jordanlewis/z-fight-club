@@ -42,6 +42,7 @@ class Agent
 {
     static uint32_t maxId; /* !<highest id number we've reached */
     void setup();
+    Sound *sound;
 
   public:
     Agent();

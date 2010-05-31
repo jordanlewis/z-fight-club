@@ -5,6 +5,7 @@
 #include "Engine/world.h"
 #include "Engine/geominfo.h"
 #include "Graphics/gobject.h"
+#include "Sound/sound.h"
 
 /* Call once per physics update.  Checks to see if an agents is using weapons.
  * If so, perform the physically appropriate action.
@@ -35,6 +36,9 @@ void useWeapons(Agent *agent)
         else
         {
             /* No ammo! Make 'chk' noise or something. */
+            Sound *sound = &Sound::getInstance();
+            sound->addSoundAt("empty.wav", GetTime(), AL_FALSE, 1.0,
+                              agent->worldObject->getPos());
         }
     }
     return;
