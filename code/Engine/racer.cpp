@@ -37,10 +37,8 @@ int main(int argc, char *argv[])
     Server &server = Server::getInstance();
 
     srand(time(NULL));
-    graphics.initGraphics();
-    scheduler.setupLoopForever();
-
-    /* try {
+   
+    try {
         // Declare the supported options.
         po::options_description desc("Allowed options");
         desc.add_options()
@@ -57,93 +55,97 @@ int main(int argc, char *argv[])
             ("nomusic", "disable music")
         ;
 
-        po::store(po::parse_command_line(argc, argv, desc), vm);
-        po::notify(vm);
+        if (vm.count("nox"))
+        {
+            world.nox = true;
 
-        if (vm.count("help"))
-        {
-            cout << desc << "\n";
-            return 0;
-        }
+            po::store(po::parse_command_line(argc, argv, desc), vm);
+            po::notify(vm);
 
-        if (vm.count("track"))
-        {
-            world.loadTrack(vm["track"].as<string>().c_str());
-        }
-        else
-        {
-            cout << "Using default track tests/tracks/oval.trk" << endl;
-            world.loadTrack("tests/tracks/oval.trk");
-        }
-
-        if (vm.count("assets"))
-        {
-            world.setDir(vm["assets"].as<string>().c_str());
-        }
-        else
-        {
-            cout << "Using default assets dir ../assets/" << endl;
-            world.setDir("../assets/");
-        }
-
-        if (vm.count("network"))
-        {
-            world.setRunType(vm["network"].as<string>().c_str());
-        }
-        else
-        {
-            world.setRunType("Solo");
-        }
-        if (!vm.count("nohuman"))
-        {
-            world.PlayerQty = 1;
-        }
-        if (world.runType == SOLO || world.runType == SERVER)
-        {
-            if (vm.count("ai-players"))
+            if (vm.count("help"))
             {
-                world.AIQty = vm["ai-players"].as<int>();
+                cout << desc << "\n";
+                return 0;
+            }
+
+            if (vm.count("track"))
+            {
+                world.loadTrack(vm["track"].as<string>().c_str());
             }
             else
             {
-                cout << "Using default ai-players=3" << endl;
-                world.AIQty = 3;
+                cout << "Using default track tests/tracks/oval.trk" << endl;
+                world.loadTrack("tests/tracks/oval.trk");
             }
-        }
-        else if (world.runType == CLIENT) 
+
+            if (vm.count("assets"))
+            {
+                world.setDir(vm["assets"].as<string>().c_str());
+            }
+            else
+            {
+                cout << "Using default assets dir ../assets/" << endl;
+                world.setDir("../assets/");
+            }
+
+            if (vm.count("network"))
+            {
+                world.setRunType(vm["network"].as<string>().c_str());
+            }
+            else
+            {
+                world.setRunType("Solo");
+            }
+            if (!vm.count("nohuman"))
+            {
+                world.PlayerQty = 1;
+            }
+            if (world.runType == SOLO || world.runType == SERVER)
+            {
+                if (vm.count("ai-players"))
+                {
+                    world.AIQty = vm["ai-players"].as<int>();
+                }
+                else
+                {
+                    cout << "Using default ai-players=3" << endl;
+                    world.AIQty = 3;
+                }
+            }
+            else if (world.runType == CLIENT) 
             {
                 world.AIQty = 0; //We will increment this as we get more AI.
             }
 
-        if (vm.count("ipaddr"))
-        {
-            setAddr(vm["ipaddr"].as<string>().c_str());
-        }
-        else if (world.runType == CLIENT)
-        {
-            cout << "Using default ipaddr 127.0.0.1" << endl;
-            setAddr("127.0.0.1");
-        }
-        if (vm.count("port"))
-        {
-            setPort(vm["port"].as<int>());
-        }
-        else if (world.runType == CLIENT)
-        {
-            cout << "Using default port 6888" << endl;
-            setPort(6888);
-        }
-        if (vm.count("nox"))
-        {
-            world.nox = true;
-        }
-        if (vm.count("nosound"))
-        {
-            world.nosound = true;
-        }
-        if (vm.count("nomusic"))
-        {
-            world.nomusic = true;
+            if (vm.count("ipaddr"))
+            {
+                setAddr(vm["ipaddr"].as<string>().c_str());
+            }
+            else if (world.runType == CLIENT)
+            {
+                cout << "Using default ipaddr 127.0.0.1" << endl;
+                setAddr("127.0.0.1");
+            }
+            if (vm.count("port"))
+            {
+                setPort(vm["port"].as<int>());
+            }
+            else if (world.runType == CLIENT)
+            {
+                cout << "Using default port 6888" << endl;
+                setPort(6888);
+            }
+            if (vm.count("nosound"))
+            {
+                world.nosound = true;
+            }
+            if (vm.count("nomusic"))
+            {
+                world.nomusic = true;
+            }
+        } else {
+            graphics.initGraphics();
+            scheduler.setupLoopForever();
         }
     }
     catch(exception& e) {
@@ -153,7 +155,7 @@ int main(int argc, char *argv[])
     catch(...) {
         cerr << "Exception of unknown type!\n";
         return 2;
-    } */
+    }
 
 
     if (!world.nox)
