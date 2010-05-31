@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
         desc.add_options()
             ("help", "produce help message")
             ("track", po::value<string>(), "set track file")
+            ("laps",  po::value<int>(),    "set number of laps in race")
             ("assets", po::value<string>(), "set assets directory")
             ("network", po::value<string>(), "set network mode")
             ("ipaddr", po::value<string>(), "set server ip address")
@@ -74,6 +75,16 @@ int main(int argc, char *argv[])
         {
             cout << "Using default track tests/tracks/oval.trk" << endl;
             world.loadTrack("tests/tracks/oval.trk");
+        }
+
+        if (vm.count("laps"))
+        {
+            world.nLaps = vm["laps"].as<int>();
+        }
+        else
+        {
+            cout << "Using default lapcount 3" << endl;
+            world.nLaps = 3;
         }
 
         if (vm.count("assets"))

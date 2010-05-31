@@ -137,6 +137,8 @@ class World
     dWorldID ode_world;
     dSpaceID ode_space;
 
+    unsigned int nLaps;
+
     std::vector<WorldObject *> wobjects; /* the objects in the world */
     /* the particle systems in the world -- these need to be rendered after everything else
        to avoid transparency bugs */

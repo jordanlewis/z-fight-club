@@ -109,6 +109,8 @@ void Scheduler::soloLoopForever()
 
         switch (raceState) {
 
+            case PLAYER_DONE:
+            case ALL_DONE:
             case RACE:
             case COUNTDOWN:
                 if (now - last > 0)
@@ -129,8 +131,6 @@ void Scheduler::soloLoopForever()
                 graphics->render();
                 last = now;
                 break;
-            case PLAYER_DONE:
-            case ALL_DONE:
                 // Do nothing
                 break;
         }
