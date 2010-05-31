@@ -80,7 +80,7 @@ void Agent::nextLap()
 {
     Weapon_t weapon = (Weapon_t) ((rand() % ((int)NWEAPONS - 1)) +1);
     ammo[weapon] += 3;
-    if (ammo[steerInfo.weapon] || steerInfo.weapon == NONE)
+    if ((ammo[steerInfo.weapon] == 0) || steerInfo.weapon == NONE)
         steerInfo.weapon = weapon;
 }
 
