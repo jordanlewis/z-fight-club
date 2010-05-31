@@ -485,19 +485,28 @@ void World::addAgent(Agent *agent, int model)
     BoxInfo *box = new BoxInfo(agent->width, agent->height, agent->depth);
     float random;
     ObjMeshInfo *ship;
+    string idle_sound;
     switch (model) {
         case -1:
             random = (float) rand() / (float) RAND_MAX;
             if (random < .5)
+            {
                 ship = new ObjMeshInfo("Racers/Fish/");
+                idle_sound = "18smooth.wav";
+            }
             else
+            {
                 ship = new ObjMeshInfo("Racers/HummingBird/");
+                idle_sound = "30smooth.wav";
+            }
             break;
         case 0:
             ship = new ObjMeshInfo("Racers/Hummingbird/");
+            idle_sound = "30smooth.wav";
             break;
         case 1:
             ship = new ObjMeshInfo("Racers/Fish/");
+            idle_sound = "18smooth.wav";
     }
     PAgent *pobj = new PAgent(&(agent->getKinematic()), &(agent->getSteering()),
                               agent->mass, box);
@@ -507,7 +516,7 @@ void World::addAgent(Agent *agent, int model)
     if (!nosound)
     {
         sobj = new SObject("18303_start.wav", GetTime(), AL_FALSE, 0.3);
-        sobj->registerNext(new SObject("18303_run.wav", 0, AL_TRUE, 0.3));
+        sobj->registerNext(new SObject(idle_sound, 0, AL_TRUE, 0.3));
     }
     WorldObject *wobject = new WorldObject(pobj, gobj, sobj, agent);
     cout << "Agent's wobject pointer is: " << agent->worldObject << endl;
