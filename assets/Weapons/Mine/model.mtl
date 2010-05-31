@@ -1,10 +1,12 @@
-# Exported from Wings 3D 1.0.2
+# Blender3D MTL File: 
+# Material Count: 1
 newmtl textured
-Ns 100.0
-d 1.0
+Ns 98.039216
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
 illum 2
-Kd 1.0 1.0 1.0
-Ka 1.0 1.0 1.0
-Ks 1.0 1.0 1.0
-Ke 0.0 0.0 0.0
+
 
