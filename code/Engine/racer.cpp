@@ -103,7 +103,8 @@ int main(int argc, char *argv[])
             if (vm.count("ai-players"))
             {
                 world.AIQty = vm["ai-players"].as<int>();
-                ((TextboxMenu *) world.setupMenu->items[1])->entered = vm["ai-players"].as<string>();
+                ((TextboxMenu *) world.setupMenu->items[1])->entered = 
+                    boost::lexical_cast<string>(vm["ai-players"].as<int>());
             }
             else
             {
@@ -121,7 +122,8 @@ int main(int argc, char *argv[])
         if (vm.count("ipaddr"))
         {
             setAddr(vm["ipaddr"].as<string>().c_str());
-            ((TextboxMenu *) ((SubMenu *) world.setupMenu->items[4])->items[1])->entered = vm["ipaddr"].as<string>(); 
+            ((TextboxMenu *) ((SubMenu *) world.setupMenu->items[4])->items[1])->entered =
+                vm["ipaddr"].as<string>(); 
         }
         else if (world.runType == CLIENT)
         {
@@ -131,10 +133,11 @@ int main(int argc, char *argv[])
         }
         if (vm.count("port"))
         {
-            ((TextboxMenu * ) ((SubMenu *) world.setupMenu->items[4])->items[2])->entered = vm["port"].as<string>();
+            ((TextboxMenu * ) ((SubMenu *) world.setupMenu->items[4])->items[2])->entered =
+                boost::lexical_cast<string>(vm["port"].as<int>());
             setPort(vm["port"].as<int>());
         }
-        else if (world.runType == CLIENT)
+        else if ((world.runType == CLIENT) || (world.runType == SERVER))
         {
             cout << "Using default port 6888" << endl;
             ((TextboxMenu * ) ((SubMenu *) world.setupMenu->items[4])->items[2])->entered = "6888"; 

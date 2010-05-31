@@ -277,6 +277,11 @@ void inputSetupMenu()
     sched.timeStarted = GetTime()+1;
 }
 
+void exitGame()
+{
+   exit(0);
+}
+
 World::World() :
     error(&Error::getInstance()), nox(false), nosound(false)
 {
@@ -406,6 +411,7 @@ World::World() :
 
     /* Go button */
     TerminalMenu *go = new TerminalMenu("GO!!!", &inputSetupMenu);
+    TerminalMenu *quit = new TerminalMenu("Quit", &exitGame);
 
     vector<Menu *> setup_items;
     setup_items.push_back(go);
@@ -414,6 +420,7 @@ World::World() :
     setup_items.push_back(trackSelector);
     setup_items.push_back(networkMenu);
     setup_items.push_back(toggleMenu);
+    setup_items.push_back(quit);
     
     setupMenu = new SubMenu("Setup", setup_items);
 }
