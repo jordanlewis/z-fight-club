@@ -111,8 +111,6 @@ void raygun(Agent *agent, int force)
 
 void launchBox(Agent *agent)
 {
-    cout << "Firing a box!" << endl;
-    cout.flush();
     if (!rocket)
         rocket = new ObjMeshInfo("Weapons/Rocket/");
     BoxInfo *box = new BoxInfo(.2,.2,.2);
@@ -149,9 +147,6 @@ void launchBox(Agent *agent)
 
 void launchMine(Agent *agent)
 {
-    cout << "Firing a mine!" << endl;
-    cout.flush();
-
     if (!mine)
         mine = new ObjMeshInfo("Weapons/Mine/");
     BoxInfo *box = new BoxInfo(.2,.2,.2);
