@@ -249,7 +249,7 @@ void PAgent::kinematicToOde()
 
     const Kinematic *k = kinematic;
     Vec3f newvel = Vec3f(k->vel[0], 0, k->vel[2]);
-    float angle = acos(newvel.unit().dot(k->orientation_v.unit()));
+    float angle = abs(atan2(newvel[0], newvel[2]) -atan2(k->vel[0], k->vel[2]));
     if (angle <= M_PI_2)
         newvel = .995 * k->vel + .005 * k->orientation_v * newvel.length();
     else
