@@ -216,15 +216,19 @@ void Scheduler::clientLoopForever()
 void Scheduler::serverLoopForever()
 {
     server->createAllAIAgents();
-    server->gatherPlayers();
-    raceState = RACE;
-    server->createAll();
+    bool agentsSent = false;
     double nowPh, nowNet;
     double lastPh = GetTime();
     double lastNet = GetTime();
     while (raceState != ALL_DONE)
     {
+        if ((raceState == RACE) && !agentsSent)
+        {
+            agentsSent = true;
+            server->createAll();
+        }
         input->processInput(); /* hoping to get quit */
+        server->checkForPackets();
         nowPh = GetTime();
         if (nowPh - lastPh > 0)
         {
@@ -235,12 +239,11 @@ void Scheduler::serverLoopForever()
         graphics->render();
         nowNet = GetTime();
         if (nowNet - lastNet > SC_SERVER_UPDATE_FREQ_SECONDS)
-            {
-                server->pushAgents();
-                lastNet = nowNet;
-            } 
+        {
+            server->pushAgents();
+            lastNet = nowNet;
+        } 
         server->pingClients();
-        server->serverFrame();
         server->updateAgentsLocally();
     }
     return;

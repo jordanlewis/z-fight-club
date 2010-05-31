@@ -67,7 +67,6 @@ class Server {
     void createAllAIAgents();
     
     
-    void updateFromClient(uint8_t clientId); //NYI (call within serverFrame)
     void pushAgents(); //Unreliably push non-weapon updates to the client
     void pushWeapons(netObjID_t netID); /* Reliably push an agent's weapon
                                          * updates to all clients */
@@ -81,13 +80,13 @@ class Server {
     void setServerAddr(uint32_t addr);
     void setServerPort(uint16_t port);
 
-    ENetPacket *packageObject(netObjID_t ID); //NYI
+    ENetPacket *packageObject(netObjID_t ID);
     void gatherPlayers(); //Service (dis)connections and RP_START requests during setup
     void createAll();   /*Sends out queued up pre-game packets once all clients
                          *are connected */
-    void serverFrame(); //Service incoming packets during gameplay
     int closeClient(uint8_t clientID); //NYI
     void pingClients();
+    void checkForPackets();
 };
 
 

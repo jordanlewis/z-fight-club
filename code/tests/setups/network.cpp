@@ -5,4 +5,5 @@ void testSetup()
 {
     Error &error = Error::getInstance();
     error.on(NETWORK);
+    error.setVerbosity(TRIVIAL);
 }
