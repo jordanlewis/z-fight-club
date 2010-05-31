@@ -55,7 +55,7 @@ void smackAll(Agent * agent, int force)
 
 //Push a target agent in a random direction
 void smack(Agent *agent, int force){
-    PAgent *target = dynamic_cast<PAgent *>(agent->worldObject->pobject);
+    PAgent *target = static_cast<PAgent *>(agent->worldObject->pobject);
     int rng = rand();
     int rng2 = rand();
     int rng3 = rand();

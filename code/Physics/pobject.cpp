@@ -404,3 +404,8 @@ void PProjectile::doCollisionReact(PGeom *pg)
     makeExplosion(getPos(), 1.0);
     worldObject->clear();
 }
+void PProjectile::doCollisionReact(PMoveable *pm)
+{
+    doCollisionReact(static_cast<PGeom *>(pm));
+    dBodyAddForce(pm->getBody(), 0,100000,0);
+}

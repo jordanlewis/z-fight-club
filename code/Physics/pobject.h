@@ -140,6 +140,7 @@ class PProjectile: public PAgent
 
     virtual void collisionReact(PGeom *pg) {pg->doCollisionReact(this);}
     virtual void doCollisionReact(PGeom *pg);
+    virtual void doCollisionReact(PMoveable *pm);
 
     virtual void steeringToOde();
     virtual void odeToKinematic();
