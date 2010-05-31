@@ -440,12 +440,20 @@ void Client::sendStartRequest()
 //Determine RTT for successfully delivered unreliable packets.
 void Client::sendRTTRequest()
 {
-    RPRTT toSend;
-    toSend.clientID = clientID;
-    toSend.time = htond(GetTime());
-    ENetPacket *packet = makeRacerPacket(RP_RTT, &toSend, sizeof(RPRTT),0);
-    enet_peer_send(peer, 0, packet);
-    enet_host_flush(enetClient);
+    // inspired by Engine/component.cpp
+    // didn't use it because rtt calc needs a different frequency than Server
+    static double lastRun = 0;
+    double time = GetTime();
+    if (lastRun + 3 < time)
+    {
+        lastRun = time;
+        RPRTT toSend;
+        toSend.clientID = clientID;
+        toSend.time = htond(GetTime());
+        ENetPacket *packet = makeRacerPacket(RP_RTT, &toSend, sizeof(RPRTT),0);
+        enet_peer_send(peer, 0, packet);
+        enet_host_flush(enetClient);
+    }
 }
 
 void Client::pushToServer()
