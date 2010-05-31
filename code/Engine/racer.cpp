@@ -55,8 +55,7 @@ int main(int argc, char *argv[])
             ("nomusic", "disable music")
         ;
 
-        if (vm.count("nox"))
-        {
+        if (vm.count("nox")) {
             world.nox = true;
 
             po::store(po::parse_command_line(argc, argv, desc), vm);
