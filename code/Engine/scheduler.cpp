@@ -40,13 +40,22 @@ void Scheduler::setupLoopForever()
     double sinceStart;
     raceState = SETUP;
 
-    while (raceState == SETUP)
+    while (1)
     {
-        input->processInput();
-        now = GetTime();
-        sinceStart = now - timeStarted;
-        graphics->render();
-        last = now;
+        switch (raceState)
+        {
+          case SETUP:
+            now = GetTime();
+            sinceStart = now - timeStarted;
+            last = now;
+            graphics->render();
+            input->processInput();
+            break;
+          case ALL_DONE:
+            exit(0);
+          default:
+            return;
+        }
     }
 }
 
@@ -57,7 +66,6 @@ void Scheduler::soloLoopForever()
     double last = GetTime();
     double sinceStart;
     bool killLight = false;
-    //raceState = SETUP;
 
     error->log(ENGINE, TRIVIAL, "Entering solo-play loop\n");
     StopLight *sl = NULL;
@@ -108,9 +116,12 @@ void Scheduler::soloLoopForever()
         }
 
         switch (raceState) {
-
+            case WAITING:
+                raceState = COUNTDOWN; // nothing to wait for in solo mode
             case RACE:
             case COUNTDOWN:
+            case SOMEONE_DONE:
+            case PLAYER_DONE:
                 if (now - last > 0)
                 {
                     physics->simulate(now - last);
@@ -125,26 +136,17 @@ void Scheduler::soloLoopForever()
                 graphics->render();
                 last = now;
                 break;
-            case SETUP:
-                graphics->render();
-                last = now;
-                break;
-            case PLAYER_DONE:
             case ALL_DONE:
-                // Do nothing
+                break;
+            case SETUP:
+            default:
+                assert(0);
                 break;
         }
         world->cleanObjects();
 
         usleep(10000);
     }
-}
-
-void Scheduler::welcomeScreen()
-{
-    cout << "z fight club presents: Tensor Rundown" << endl << endl
-         << "    up and down arrow keys accelerate forwards and backwards" << endl
-         << "       left and right rotate your vehicle" << endl;
 }
 
 void Scheduler::clientLoopForever()
@@ -184,6 +186,13 @@ void Scheduler::clientLoopForever()
           case C_WAITINGFORSTART:
             client->checkForPackets(); // may transition us into C_RACE
             break;
+          case C_PAUSE:
+            client->checkForPackets();
+            graphics->render();
+            sound->render();
+            lastPh = nowPh = GetTime();
+            input->processInput(); // may transition us into C_DONE
+            break;
           case C_RACE:
             client->checkForPackets();
             client->updateAgentsLocally();
@@ -215,30 +224,62 @@ void Scheduler::clientLoopForever()
 
 void Scheduler::serverLoopForever()
 {
-    server->gatherPlayers();
-    raceState = RACE;
-    server->createAll();
+    server->createAllAIAgents();
+    bool agentsSent = false;
     double nowPh, nowNet;
     double lastPh = GetTime();
     double lastNet = GetTime();
     while (raceState != ALL_DONE)
     {
-        input->processInput(); /* hoping to get quit */
-        nowPh = GetTime();
-        if (nowPh - lastPh > 0)
+        switch (raceState)
         {
-            physics->simulate(nowPh - lastPh);
-        }
-        lastPh = nowPh;
-        ai->run();
-        graphics->render();
-        nowNet = GetTime();
-        if (nowNet - lastNet > SC_SERVER_UPDATE_FREQ_SECONDS)
+          case WAITING:
+            server->checkForPackets();
+            input->processInput();
+            break;
+          case COUNTDOWN:
+          case RACE:
+          case SOMEONE_DONE:
+          case PLAYER_DONE:
+            if (!agentsSent)
+            {
+                agentsSent = true;
+                server->createAll();
+            }
+            input->processInput();
+            server->checkForPackets();
+            nowPh = GetTime();
+            if (nowPh - lastPh > 0)
+            {
+                physics->simulate(nowPh - lastPh);
+            }
+            lastPh = nowPh;
+            ai->run();
+            graphics->render();
+            nowNet = GetTime();
+            if (nowNet - lastNet > SC_SERVER_UPDATE_FREQ_SECONDS)
             {
                 server->pushAgents();
                 lastNet = nowNet;
             } 
-        server->serverFrame();
+            server->pingClients();
+            server->updateAgentsLocally();
+            break;
+          case PAUSE:
+            // not sending updates to clients should keep them in one place
+            server->checkForPackets();
+            server->pingClients();
+            input->processInput();
+            graphics->render();
+            lastPh = nowPh = GetTime();
+            break;
+          case ALL_DONE:
+            break;
+          case SETUP:
+          default:
+            assert(0);
+            break;
+        }
     }
     return;
 }

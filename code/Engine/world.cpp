@@ -12,7 +12,6 @@
 #include "Engine/geominfo.h"
 #include "Engine/scheduler.h"
 #include "Sound/sobject.h"
-#include "Network/network.h"
 #include <ode/ode.h>
 extern "C" {
     #include "Parser/track-parser.h"
@@ -23,8 +22,8 @@ World World::_instance;
 WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject,
                          Agent *agent, double ttl)
     : pos(-1,-1,-1), pobject(pobject), gobject(gobject), sobject(sobject),
-      agent(agent), parent(NULL), player(NULL), alive(true),
-      timeStarted(GetTime()), ttl(ttl)
+      agent(agent), parent(NULL), netID(NETOBJID_NONE), player(NULL),
+      alive(true), timeStarted(GetTime()), ttl(ttl)
 {
     Quatf_t newquat = {0,0,0,1};
     CopyV3f(newquat, quat);
@@ -206,7 +205,7 @@ void inputSetupMenu()
 
         /* Port */
         if (!((TextboxMenu *) ((SubMenu *) setupMenu->items[4])->items[2])->entered.empty()) {
-            /* someone entered an IP address */
+            /* someone entered a Port */
             setPort(atoi(((TextboxMenu * ) ((SubMenu *) setupMenu->items[4])->items[2])->entered.c_str()));
         } else if (world.runType == CLIENT)
             setPort(6888);
@@ -222,9 +221,7 @@ void inputSetupMenu()
         case 1:
             world.PlayerQty = 0;
             break;
-        default:
-            world.PlayerQty = 1;
-            break;
+        default: break;
     }
 
      /* X */
@@ -235,9 +232,7 @@ void inputSetupMenu()
          case 1:
              world.nox = true;
              break;
-         default:
-             world.nox = false;
-             break;
+         default: break;
      }
 
      /* sound */
@@ -248,10 +243,20 @@ void inputSetupMenu()
          case 1:
              world.nosound = true;
              break;
-         default:
-             world.nosound = false;
-             break;
+         default: break;
      }
+
+     /* music */
+     switch(((SelectorMenu *) ((SubMenu *) setupMenu->items[5])->items[3])->selected) {
+         case 0:
+             world.nomusic = false;
+             break;
+         case 1:
+             world.nomusic = true;
+             break;
+         default: break;
+     }
+
 
     /* skin selector */
     switch (((SubMenu *) setupMenu->items[2])->selected) {
@@ -267,49 +272,19 @@ void inputSetupMenu()
     }
 
     Scheduler &sched = Scheduler::getInstance();
-    sched.raceState = COUNTDOWN;
+    sched.raceState = WAITING;
     sched.timeStarted = GetTime()+1;
 }
 
-World::World() :
-    error(&Error::getInstance()), nox(false), nosound(false)
+void exitGame()
 {
-    /* create the pause menu */
-    /* vector<Menu *> graphics_items;
-    SubMenu *graph1 = new SubMenu("graphics - foo");
-    SubMenu *graph2 = new SubMenu("graphics - bar");
-    SubMenu *graph3 = new SubMenu("graphics - baz");
+   exit(0);
+}
 
-    graphics_items.push_back(graph1);
-    graphics_items.push_back(graph2);
-    graphics_items.push_back(graph3);
-
-    vector<Menu *> game_items;
-    TerminalMenu *game1 = new TerminalMenu("Add AI", &addAI);   
-    TextboxMenu *game2 = new TextboxMenu("game - bar");
-    SubMenu *game3 = new SubMenu("game - baz");
-
-    game_items.push_back(game1);
-    game_items.push_back(game2);
-    game_items.push_back(game3);
-
-    vector<Option *> sound_options;
-    Option *sound1 = new Option("sound - foo", -1);
-    Option *sound2 = new Option("sound - bar", -1);
-    Option *sound3 = new Option("sound - baz", -1);
-
-    sound_options.push_back(sound1);
-    sound_options.push_back(sound2);
-    sound_options.push_back(sound3); */
-
+World::World() :
+    error(&Error::getInstance()), nox(false), nosound(false), fullscreen(false)
+{
     vector<Menu *> items;
-    /* SubMenu *graphics = new SubMenu("Graphics", graphics_items);
-    SubMenu *gameOptions = new SubMenu("Game Options", game_items);
-    SelectorMenu *sound = new SelectorMenu("Sound", sound_options);
-
-    items.push_back(graphics);
-    items.push_back(gameOptions);
-    items.push_back(sound); */
 
     pauseMenu = new SubMenu("Pause Menu", items); 
 
@@ -320,15 +295,15 @@ World::World() :
     
     /* Racer select menu */
     vector<Option *> racers;
-    Option *racer1 = new Option("Hummingbird", -1);
-    Option *racer2 = new Option("Fish", -1);
+    Option *racer1 = new Option("Hummingbird", 0);
+    Option *racer2 = new Option("Fish", 0);
     racers.push_back(racer1);
     racers.push_back(racer2);
     SelectorMenu *racerSelector = new SelectorMenu("Select Character", racers);
 
     /* Track select menu */
     vector<Option *> tracks;
-    Option *track1 = new Option("Oval", -1);
+    Option *track1 = new Option("Oval", 0);
     tracks.push_back(track1);
     SelectorMenu *trackSelector = new SelectorMenu("Select Track", tracks);
 
@@ -336,17 +311,19 @@ World::World() :
     vector<Menu *> network_items;
 
     vector<Option *> network_modes;
-    Option *solo = new Option("Solo", -1);
-    Option *client = new Option("Client", -1);
-    Option *server = new Option("Server", -1);
+    Option *solo = new Option("Solo", 0);
+    Option *client = new Option("Client", 0);
+    Option *server = new Option("Server", 0);
     network_modes.push_back(solo);
     network_modes.push_back(client);
     network_modes.push_back(server);
     SelectorMenu *networkMode = new SelectorMenu("Network Mode", network_modes);
 
     TextboxMenu *ipaddr = new TextboxMenu("Server IP address");
+    ipaddr->entered = "127.0.0.1";
 
     TextboxMenu *port = new TextboxMenu("Server port");
+    port->entered = "6888";
 
     network_items.push_back(networkMode);
     network_items.push_back(ipaddr);
@@ -357,8 +334,8 @@ World::World() :
     vector<Menu *> toggle_items;
     /* human menu */
     vector<Option *> human_options;
-    Option *human = new Option("Human", -1);
-    Option *nohuman = new Option("No Human", -1);
+    Option *human = new Option("Human", 0);
+    Option *nohuman = new Option("No Human", 0);
     human_options.push_back(human);
     human_options.push_back(nohuman);
 
@@ -366,8 +343,8 @@ World::World() :
 
     /* X menu */
     vector<Option *> x_options;
-    Option *x = new Option("X", -1);
-    Option *nox = new Option("No X", -1);
+    Option *x = new Option("X", 0);
+    Option *nox = new Option("No X", 0);
     x_options.push_back(x);
     x_options.push_back(nox);
 
@@ -375,21 +352,32 @@ World::World() :
 
     /* sound menu */
     vector<Option *> sound_options;
-    Option *sound = new Option("Sound", -1);
-    Option *nosound = new Option("No Sound", -1);
+    Option *sound = new Option("Sound", 0);
+    Option *nosound = new Option("No Sound", 0);
     sound_options.push_back(sound);
     sound_options.push_back(nosound);
 
     SelectorMenu *soundMenu = new SelectorMenu("Sound?", sound_options);
 
+    /* Music menu */
+    vector<Option *> music_options;
+    Option *music = new Option("Music", 0);
+    Option *nomusic = new Option("No Music", 0);
+    music_options.push_back(music);
+    music_options.push_back(nomusic);
+
+    SelectorMenu *musicMenu = new SelectorMenu("Music?", music_options);
+
     toggle_items.push_back(humanMenu);
     toggle_items.push_back(xMenu);
     toggle_items.push_back(soundMenu);
+    toggle_items.push_back(musicMenu);
 
     SubMenu *toggleMenu = new SubMenu("Toggles", toggle_items);
 
     /* Go button */
     TerminalMenu *go = new TerminalMenu("GO!!!", &inputSetupMenu);
+    TerminalMenu *quit = new TerminalMenu("Quit", &exitGame);
 
     vector<Menu *> setup_items;
     setup_items.push_back(go);
@@ -398,6 +386,7 @@ World::World() :
     setup_items.push_back(trackSelector);
     setup_items.push_back(networkMenu);
     setup_items.push_back(toggleMenu);
+    setup_items.push_back(quit);
     
     setupMenu = new SubMenu("Setup", setup_items);
 }
@@ -538,7 +527,6 @@ void World::addAgent(Agent *agent, int model)
         sobj->registerNext(new SObject(idle_sound, 0, AL_TRUE, 0.3));
     }
     WorldObject *wobject = new WorldObject(pobj, gobj, sobj, agent);
-    cout << "Agent's wobject pointer is: " << agent->worldObject << endl;
     addObject(wobject);
 
     /* create a particle generator for the agent */
@@ -805,17 +793,21 @@ void World::makeSkybox()
 void World::setRunType(const string str){
     if ( (str == "server") || (str == "Server") ){
         runType = SERVER;
+        ((SelectorMenu *) ((SubMenu *) setupMenu->items[4])->items[0])->selected = 2;
     }
     else if ( (str =="client") || (str == "Client") ) {
         runType = CLIENT;
+        ((SelectorMenu *) ((SubMenu *) setupMenu->items[4])->items[0])->selected = 1;
     }
     else if ( (str == "solo") || (str == "Solo") ) {
         runType = SOLO;
+        ((SelectorMenu *) ((SubMenu *) setupMenu->items[4])->items[0])->selected = 0;
     }
     else {
         error->log(NETWORK, IMPORTANT,
                   "Unrecognized netmode. Defaulting to solo\n.");
         runType = SOLO;
+        ((SelectorMenu *) ((SubMenu *) setupMenu->items[4])->items[0])->selected = 0;
     }
     return;
 }

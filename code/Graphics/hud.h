@@ -3,6 +3,7 @@
 
 #include "allclasses.h"
 #include "Utilities/vec3f.h"
+#include "Engine/scheduler.h"
 #include <list>
 #include <vector>
 extern "C" {
@@ -69,10 +70,11 @@ class Menu
 class SubMenu : public Menu
 {
     public:
-        SubMenu         *parent;    /* !< the menu above this one, NULL if top level */
-        int             highlighted;  /* !< which item is highlighted */
-        int             selected;    /* !< which submenu we've selectED -1 if we're still in this level */
-        vector<Menu *>    items;      /* !< the items in the menu */
+        SubMenu         *parent;        /* !< the menu above this one, NULL if top level */
+        int             highlighted;    /* !< which item is highlighted */
+        int             selected;       /* !< which submenu we've selectED -1 if we're still in this level */
+        RaceState_t     unpause;        /* !< what to set the scheduler to when we unpause */
+        vector<Menu *>    items;        /* !< the items in the menu */
         SubMenu(string);
         SubMenu(string, vector<Menu *>);
         void draw();
@@ -169,6 +171,13 @@ class WeaponDisplay : public Widget
     Agent *agent;
     World &world;
     WeaponDisplay(Vec3f pos, Agent *agent);
+    void draw();
+};
+
+class WinnerDisplay : public Widget
+{
+  public:
+    WinnerDisplay(Vec3f pos);
     void draw();
 };
 

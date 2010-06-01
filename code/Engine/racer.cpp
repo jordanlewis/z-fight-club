@@ -6,6 +6,8 @@
 
 #include <iostream>
 #include <SDL/SDL.h>
+#include <unistd.h>
+#include  <sys/types.h>
 #include "math.h"
 #include "scheduler.h"
 #include "Physics/physics.h"
@@ -15,6 +17,7 @@
 #include "Network/network.h"
 #include "Network/client.h"
 #include "Network/server.h"
+#include "Utilities/error.h"
 #include "world.h"
 #include "input.h"
 #include "setup.h"
@@ -28,6 +31,7 @@ namespace po = boost::program_options;
 
 int main(int argc, char *argv[])
 {
+    //sleep(20.8);
     po::variables_map vm;
     World &world = World::getInstance();
     Sound     &sound    = Sound::getInstance();
@@ -37,13 +41,14 @@ int main(int argc, char *argv[])
     Server &server = Server::getInstance();
 
     srand(time(NULL));
-   
+
     try {
         // Declare the supported options.
         po::options_description desc("Allowed options");
         desc.add_options()
             ("help", "produce help message")
             ("track", po::value<string>(), "set track file")
+            ("laps",  po::value<int>(),    "set number of laps in race")
             ("assets", po::value<string>(), "set assets directory")
             ("network", po::value<string>(), "set network mode")
             ("ipaddr", po::value<string>(), "set server ip address")
@@ -53,126 +58,162 @@ int main(int argc, char *argv[])
             ("nox", "disable graphics")
             ("nosound", "disable sound")
             ("nomusic", "disable music")
-        ;
+            ("nointro", "disable intro video")
+            ("fullscreen", "run in fullscreen mode")
+            ;
 
-        if (vm.count("nox")) {
+        po::store(po::parse_command_line(argc, argv, desc), vm);
+        po::notify(vm);
+
+        if (!vm.count("nointro") && !vm.count("nox")) {
+            int forkrv = fork();
+            if (forkrv == 0)
+                execlp("mplayer", "mplayer", "../assets/CutScene/cutscene.ogv", NULL);
+            else
+                sleep(20.8);
+        }
+
+
+        if (vm.count("help"))
+        {
+            cout << desc << "\n";
+            return 0;
+        }
+
+        if (vm.count("track"))
+        {
+            world.loadTrack(vm["track"].as<string>().c_str());
+        }
+        else
+        {
+            ENGINE << TRIVIAL << "Using default track tests/tracks/oval.trk" << endl;
+            world.loadTrack("tests/tracks/oval.trk");
+        }
+
+        if (vm.count("laps"))
+        {
+            world.nLaps = vm["laps"].as<int>();
+        }
+        else
+        {
+            ENGINE << TRIVIAL << "Using default lapcount 3" << endl;
+            world.nLaps = 3;
+        }
+
+        if (vm.count("assets"))
+        {
+            world.setDir(vm["assets"].as<string>().c_str());
+        }
+        else
+        {
+            ENGINE << TRIVIAL << "Using default assets dir ../assets/" << endl;
+            world.setDir("../assets/");
+        }
+
+        if (vm.count("network"))
+        {
+            world.setRunType(vm["network"].as<string>().c_str());
+        }
+        else
+        {
+            world.setRunType("Solo");
+        }
+        if (!vm.count("nohuman"))
+        {
+            world.PlayerQty = 1;
+        }
+        if (world.runType == SOLO || world.runType == SERVER)
+        {
+            if (vm.count("ai-players"))
+            {
+                world.AIQty = vm["ai-players"].as<int>();
+                ((TextboxMenu *) world.setupMenu->items[1])->entered = 
+                    boost::lexical_cast<string>(vm["ai-players"].as<int>());
+            }
+            else
+            {
+                ENGINE << TRIVIAL << "Using default ai-players=3" << endl;
+                ((TextboxMenu *) world.setupMenu->items[1])->entered = "3";
+                world.AIQty = 3;
+            }
+        }
+        else if (world.runType == CLIENT) 
+        {
+            ((TextboxMenu *) world.setupMenu->items[1])->entered = "0";
+            world.AIQty = 0; //We will increment this as we get more AI.
+        }
+
+        if (vm.count("ipaddr"))
+        {
+            setAddr(vm["ipaddr"].as<string>().c_str());
+            ((TextboxMenu *) ((SubMenu *) world.setupMenu->items[4])->items[1])->entered =
+                vm["ipaddr"].as<string>(); 
+        }
+        else if (world.runType == CLIENT)
+        {
+            ENGINE << TRIVIAL << "Using default ipaddr 127.0.0.1" << endl;
+            setAddr("127.0.0.1");
+            ((TextboxMenu *) ((SubMenu *) world.setupMenu->items[4])->items[1])->entered = "127.0.0.1";
+        }
+        if (vm.count("port"))
+        {
+            ((TextboxMenu * ) ((SubMenu *) world.setupMenu->items[4])->items[2])->entered =
+                boost::lexical_cast<string>(vm["port"].as<int>());
+            setPort(vm["port"].as<int>());
+        }
+        else if ((world.runType == CLIENT) || (world.runType == SERVER))
+        {
+            ENGINE << TRIVIAL << "Using default port 6888" << endl;
+            ((TextboxMenu * ) ((SubMenu *) world.setupMenu->items[4])->items[2])->entered = "6888"; 
+            setPort(6888);
+        }
+        if (vm.count("nox"))
+        {
+            ((SelectorMenu *) ((SubMenu *) world.setupMenu->items[5])->items[1])->selected = 1;
             world.nox = true;
-
-            po::store(po::parse_command_line(argc, argv, desc), vm);
-            po::notify(vm);
-
-            if (vm.count("help"))
-            {
-                cout << desc << "\n";
-                return 0;
-            }
-
-            if (vm.count("track"))
-            {
-                world.loadTrack(vm["track"].as<string>().c_str());
-            }
-            else
-            {
-                cout << "Using default track tests/tracks/oval.trk" << endl;
-                world.loadTrack("tests/tracks/oval.trk");
-            }
-
-            if (vm.count("assets"))
-            {
-                world.setDir(vm["assets"].as<string>().c_str());
-            }
-            else
-            {
-                cout << "Using default assets dir ../assets/" << endl;
-                world.setDir("../assets/");
-            }
-
-            if (vm.count("network"))
-            {
-                world.setRunType(vm["network"].as<string>().c_str());
-            }
-            else
-            {
-                world.setRunType("Solo");
-            }
-            if (!vm.count("nohuman"))
-            {
-                world.PlayerQty = 1;
-            }
-            if (world.runType == SOLO || world.runType == SERVER)
-            {
-                if (vm.count("ai-players"))
-                {
-                    world.AIQty = vm["ai-players"].as<int>();
-                }
-                else
-                {
-                    cout << "Using default ai-players=3" << endl;
-                    world.AIQty = 3;
-                }
-            }
-            else if (world.runType == CLIENT) 
-            {
-                world.AIQty = 0; //We will increment this as we get more AI.
-            }
-
-            if (vm.count("ipaddr"))
-            {
-                setAddr(vm["ipaddr"].as<string>().c_str());
-            }
-            else if (world.runType == CLIENT)
-            {
-                cout << "Using default ipaddr 127.0.0.1" << endl;
-                setAddr("127.0.0.1");
-            }
-            if (vm.count("port"))
-            {
-                setPort(vm["port"].as<int>());
-            }
-            else if (world.runType == CLIENT)
-            {
-                cout << "Using default port 6888" << endl;
-                setPort(6888);
-            }
-            if (vm.count("nosound"))
-            {
-                world.nosound = true;
-            }
-            if (vm.count("nomusic"))
-            {
-                world.nomusic = true;
-            }
-        } else {
-            graphics.initGraphics();
-            scheduler.setupLoopForever();
+        }
+        if (vm.count("nosound"))
+        {
+            ((SelectorMenu *) ((SubMenu *) world.setupMenu->items[5])->items[2])->selected = 1;
+            world.nosound = true;
+        }
+        if (vm.count("nomusic"))
+        {
+            ((SelectorMenu *) ((SubMenu *) world.setupMenu->items[5])->items[3])->selected = 1;
+            world.nomusic = true;
+        }
+        if (vm.count("fullscreen"))
+        {
+            world.fullscreen = true;
         }
     }
     catch(exception& e) {
-        cerr << "error: " << e.what() << "\n";
+        ENGINE << CRITICAL << "error: " << e.what() << "\n";
         return 1;
     }
     catch(...) {
-        cerr << "Exception of unknown type!\n";
+        ENGINE << CRITICAL << "Exception of unknown type!\n";
         return 2;
     }
 
 
     if (!world.nox)
-        //graphics.initGraphics();
+    {
+        graphics.initGraphics();
+        scheduler.setupLoopForever();
+    }
     if (!world.nosound)
     {
         sound.initSound();
         if (!world.nomusic)
         {
-            SObject *sobj = new SObject("02 I Can See It In Your Face.wav", GetTime(), AL_TRUE, 0.4);
-            world.addObject(new WorldObject(NULL, NULL, sobj, NULL));
+            sound.addSoundAt("02 I Can See It In Your Face.wav", GetTime(), AL_TRUE, 0.2, Vec3f(0,0,0));
         }
     }
 
     if (world.runType == SOLO)
     {
         testSetup();
-        scheduler.welcomeScreen();
         world.makeAgents();
         world.makeSkybox();
         scheduler.soloLoopForever();
@@ -182,10 +223,9 @@ int main(int argc, char *argv[])
         testSetup();
         if (client.connectToServer() < 0)
         {
-            cerr << "Fatal error:  Cannot connect to server" << endl;
+            NETWORK << CRITICAL << "Fatal error:  Cannot connect to server" << endl;
             return -1;
         }
-        scheduler.welcomeScreen();
         world.makeSkybox();
         scheduler.clientLoopForever();
     }
@@ -194,7 +234,7 @@ int main(int argc, char *argv[])
         testSetup();
         if (server.createHost() < 0)
         {
-            cerr << "Fatal error:  Server could not be established" << endl;
+            NETWORK << CRITICAL << "Fatal error:  Server could not be established" << endl;
             return -1;
         }
         world.makeSkybox();

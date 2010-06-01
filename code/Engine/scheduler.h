@@ -10,8 +10,10 @@
 typedef enum
 {
     SETUP,
+    WAITING,
     COUNTDOWN,
     RACE,
+    SOMEONE_DONE,
     PLAYER_DONE,
     ALL_DONE,
     PAUSE
@@ -38,7 +40,6 @@ class Scheduler
   public:
     RaceState_t raceState;
     double timeStarted;
-    void welcomeScreen();
     void setupLoopForever();
     void soloLoopForever();
     void clientLoopForever();

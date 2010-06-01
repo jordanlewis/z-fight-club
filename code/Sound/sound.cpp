@@ -31,7 +31,14 @@ Sound &Sound::getInstance()
 
 void Sound::setVol(float v)
 {
+    if (v > 1) v = 1;
+    if (v < 0) v = 0;
     listenerGain = v;
+}
+
+float Sound::getVol()
+{
+    return listenerGain;
 }
 
 void Sound::setDir(string dirname)

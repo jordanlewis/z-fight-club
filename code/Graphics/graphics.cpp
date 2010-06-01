@@ -44,6 +44,8 @@ Graphics::~Graphics()
 
 void Graphics::initGraphics()
 {
+    if (initialized == true)
+        return ;
     /* set up SDL */
     int wres = world->camera.wres, hres = world->camera.hres;
     int colorDepth = 32;
@@ -52,7 +54,16 @@ void Graphics::initGraphics()
     SDL_Init(SDL_INIT_VIDEO);
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    screen = SDL_SetVideoMode(wres, hres, colorDepth, SDL_OPENGL|SDL_RESIZABLE);
+    if (world->fullscreen)
+    {
+        const SDL_VideoInfo *vinfo = SDL_GetVideoInfo();
+        world->hres = vinfo->current_h;
+        world->wres = vinfo->current_w;
+        screen = SDL_SetVideoMode(world->wres, world->hres,
+                                  colorDepth, SDL_OPENGL|SDL_FULLSCREEN);
+    }
+    else
+        screen = SDL_SetVideoMode(wres, hres, colorDepth, SDL_OPENGL|SDL_RESIZABLE);
 
     if (!screen) {
         fprintf(stderr, "Failed to set video mode resolution to %i by %i: %s\n", wres, hres, SDL_GetError());
@@ -72,9 +83,10 @@ void Graphics::initGraphics()
     glActiveTexture(GL_TEXTURE0);
     glowEnabled = (GL_VERSION_2_0 ? true : false);
     if(glowEnabled) initGlow();
+
+    initialized = true;
     int argc = 0;
     glutInit(&argc, NULL);
-    initialized = true;
 
 }
 
@@ -129,7 +141,6 @@ void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
 void Graphics::renderColorLayer()
 {
     World *world = &World::getInstance();
-
     world->camera.setProjectionMatrix();
 
     /* render 3d graphics */
@@ -165,8 +176,9 @@ void Graphics::renderColorLayer()
         (*i)->draw(COLOR);
     }
 
+
     for (vector<ParticleStreamObject *>::iterator i = world->particleSystems.begin();
-         i != world->particleSystems.end(); i++)
+        i != world->particleSystems.end(); i++)
     {
         (*i)->draw(COLOR);
     }
@@ -187,22 +199,24 @@ void Graphics::renderColorLayer()
 void Graphics::renderHUD()
 {
     World *world = &World::getInstance();
+    RaceState_t state = (Scheduler::getInstance()).raceState;
     /* draw the widgets */
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
     glPushMatrix();
     world->camera.setOrthoMatrix();
+    /* draw the widgets */
 
-    for (vector<Widget *>::iterator i = world->widgets.begin(); i != world->widgets.end(); i++)
-    {
-        (*i)->draw();
+    if (state == SETUP) {
+        world->setupMenu->draw();
+    } else {
+        for (vector<Widget *>::iterator i = world->widgets.begin(); i != world->widgets.end(); i++)
+        {
+            (*i)->draw();
+        }
+        if (state == PAUSE)
+            world->pauseMenu->draw();
     }
-
-    if (Scheduler::getInstance().raceState == PAUSE)
-        World::getInstance().pauseMenu->draw();
-
-    if (Scheduler::getInstance().raceState == SETUP)
-        World::getInstance().setupMenu->draw();
 
     glPopMatrix();
 }
@@ -221,12 +235,6 @@ void Graphics::renderGlowLayer() {
     glAlphaFunc(GL_GREATER,0.1);
 
     for (vector<WorldObject *>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
-    {
-        (*i)->draw(GLOW);
-    }
-
-    for (vector<ParticleStreamObject *>::iterator i = world->particleSystems.begin();
-         i != world->particleSystems.end(); i++)
     {
         (*i)->draw(GLOW);
     }

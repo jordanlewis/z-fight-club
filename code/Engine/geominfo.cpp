@@ -157,7 +157,7 @@ ParticleSystemInfo::ParticleSystemInfo(std::string filename, Vec3f area, Vec3f v
 }
 
 ParticleSystemInfo::ParticleSystemInfo(std::string filename, Vec3f area, Vec3f velocity, Vec3f velocity_pm, float ttl, float ttl_pm, float birthRate, int maxParticles)
-    : GeomInfo(), area(area), velocity(velocity), velocity_pm(velocity_pm), ttl(ttl), ttl_pm(ttl_pm), birthRate(birthRate), maxParticles(maxParticles)
+    : GeomInfo(), area(area), velocity(velocity), velocity_pm(velocity_pm), ttl(ttl), ttl_pm(ttl_pm), birthRate(birthRate), maxParticles(maxParticles), linearArea(false)
 {
     World &world = World::getInstance();
     Image2D_t *color = LoadImage((world.assetsDir + filename).c_str(), false, RGBA_IMAGE);
@@ -200,9 +200,23 @@ void ParticleSystemInfo::update(ParticleStreamObject *pso, float dt)
         for (int i = 0; i < toSpawn; i++) {
             /* setup the particle including randomization */
             Vec3f p_pos = Vec3f(0.0f, 0.0f, 0.0f);
-            p_pos += randomVec3f(area);
-            p_pos.normalize();
-            p_pos *= area.length();
+            if (!linearArea)
+            {
+                p_pos += randomVec3f(area);
+                p_pos.normalize();
+                p_pos *= area.length();
+            }
+            else
+            {
+                random = (float)rand() / (float) RAND_MAX;
+                float dir = atan2(area[2], area[0]);
+                random *= area.length();
+                if (abs(dir) > M_PI_2)
+                    random *= -1;
+                p_pos[0] += random;
+                p_pos[2] += random * area[2] / area[0];
+            }
+
             if (pso->parent)
                 p_pos += pso->parent->getPos();
             else

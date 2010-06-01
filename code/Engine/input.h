@@ -12,6 +12,9 @@ class Input
     Input &operator=(const Input&);
     PlayerController *player;
     Client *client;
+    World *world;
+    Sound *sound;
+    Server *server;
     Error *error;
     Scheduler *scheduler;
   public:
@@ -19,6 +22,7 @@ class Input
     PlayerController &getPlayerController();
     int processInput();
     void controlPlayer(PlayerController *p);
+    void releasePlayer();
 };
 
 #endif

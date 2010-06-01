@@ -76,7 +76,7 @@ void LapCounter::draw()
     World &world = World::getInstance();
     int ypos = world.camera.getHres() - 10;
     stringstream ss;
-    ss << "lap " << agent->lapCounter;
+    ss << "lap " << agent->lapCounter << "/" << world.nLaps;
     glColor3f(0,0,1);
     drawText(Vec3f(10, ypos, 0), ss.str(), NULL);
 }
@@ -156,7 +156,6 @@ void SubMenu::draw()
     if (selected == -1) {
         /* we're in this level */
         World &world = World::getInstance();
-        int hres = world.camera.getHres();
         int wres = world.camera.getWres();
 
 
@@ -184,7 +183,7 @@ void SubMenu::highlightNext()
 {
     if (selected == -1) {
         highlighted++;
-        if (highlighted >= items.size())
+        if (highlighted >= (int) items.size())
             highlighted = 0;
     } else {
         items[selected]->highlightNext();
@@ -232,6 +231,7 @@ bool SubMenu::up()
             selected = -1;
         }
     }
+    return false;
 }
 
 void SubMenu::reset()
@@ -297,7 +297,6 @@ TextboxMenu::TextboxMenu(string name)
 void TextboxMenu::draw()
 {
     World &world = World::getInstance();
-    int hres = world.camera.getHres();
     int wres = world.camera.getWres();
 
     int hPos = 100;
@@ -331,14 +330,13 @@ void TextboxMenu::backspace()
 }
 
 SelectorMenu::SelectorMenu(string name, vector<Option *> options)
-    : Menu(name), options(options)
+    : Menu(name), selected(-1), options(options)
 {}
 
 void SelectorMenu::draw()
 {
     /* we're in this level */
     World &world = World::getInstance();
-    int hres = world.camera.getHres();
     int wres = world.camera.getWres();
 
 
@@ -369,7 +367,7 @@ void SelectorMenu::draw()
 void SelectorMenu::highlightNext()
 {
     highlighted++;
-    if (highlighted >= options.size())
+    if (highlighted >= (int)options.size())
         highlighted = 0;
 }
 
@@ -523,4 +521,27 @@ void WeaponDisplay::draw()
     glColor3f(0, 1, 0);
     ss.str("");
     ss.seekp(0);
+}
+
+WinnerDisplay::WinnerDisplay(Vec3f pos) : Widget(pos)
+{}
+
+void WinnerDisplay::draw()
+{
+    World &world = World::getInstance();
+    stringstream ss;
+
+    ss << "Player " << world.winner->id << " wins!!!";
+
+    Vec3f color = randomVec3f(Vec3f(1,1,1));
+
+    for (int i = 0; i < 3; i++)
+    {
+        if (color[i] < .3)
+            color[i] += .3;
+    }
+    glColor3f(color[0], color[1], color[2]);
+    drawText(Vec3f(world.camera.getWres() / 3, world.camera.getHres() / 2, 0),
+             ss.str(), GLUT_BITMAP_HELVETICA_18);
+
 }

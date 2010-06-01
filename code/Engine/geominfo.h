@@ -177,6 +177,7 @@ class ParticleSystemInfo : public GeomInfo
         float                   birthRate;    /* !< mean number of particle births per second */
         float                   lastUpdate;   /* !< time the Particle system was last updated */
         int                     maxParticles; /* !< set a maximum number of particles to spawn */
+        bool linearArea; /*!< spawn particles in a line? off by default */
         std::list<Particle *>     particles;  /* !< the live particles in the system */
         ParticleSystemInfo(std::string, Vec3f, Vec3f, Vec3f, float, float, float);
         ParticleSystemInfo(std::string, Vec3f, Vec3f, Vec3f, float, float, float, int);

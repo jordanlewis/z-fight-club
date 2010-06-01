@@ -5,6 +5,7 @@
 #include <cstring>
 #include "allclasses.h"
 #include "network.h"
+#include "Agents/agent.h"
 
 typedef enum {
     RP_START = 0, //Begin the race
@@ -25,6 +26,8 @@ typedef enum {
     RP_UPDATE_WEAPONS, //The only way to update weapon state.
     RP_PING, //Keep a connection alive
     RP_RTT, //Determine the RTT for a connection.
+    RP_PAUSE,
+    RP_UNPAUSE,
     RP_ACK_CONNECTION //Acknowledge successful connection
 } racerPacketType_t;
 
@@ -60,6 +63,14 @@ struct RPRTT{
     uint64_t time;
 };
 
+struct RPPause{
+    uint64_t time;
+};
+
+struct RPUnpause{
+    uint64_t time;
+};
+
 struct RPGeomInfo{
     uint32_t type;
     uint32_t radius;
@@ -84,6 +95,7 @@ struct RPPlayerControl {
 struct RPUpdateWeapons {
     netObjID_t netID;
     RPPlayerControl control;
+    uint16_t ammo[NWEAPONS];
 };
 
 struct RPSteerInfo{
