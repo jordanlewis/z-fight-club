@@ -284,42 +284,7 @@ void exitGame()
 World::World() :
     error(&Error::getInstance()), nox(false), nosound(false), fullscreen(false)
 {
-    /* create the pause menu */
-    /* vector<Menu *> graphics_items;
-    SubMenu *graph1 = new SubMenu("graphics - foo");
-    SubMenu *graph2 = new SubMenu("graphics - bar");
-    SubMenu *graph3 = new SubMenu("graphics - baz");
-
-    graphics_items.push_back(graph1);
-    graphics_items.push_back(graph2);
-    graphics_items.push_back(graph3);
-
-    vector<Menu *> game_items;
-    TerminalMenu *game1 = new TerminalMenu("Add AI", &addAI);   
-    TextboxMenu *game2 = new TextboxMenu("game - bar");
-    SubMenu *game3 = new SubMenu("game - baz");
-
-    game_items.push_back(game1);
-    game_items.push_back(game2);
-    game_items.push_back(game3);
-
-    vector<Option *> sound_options;
-    Option *sound1 = new Option("sound - foo", 0);
-    Option *sound2 = new Option("sound - bar", 0);
-    Option *sound3 = new Option("sound - baz", 0);
-
-    sound_options.push_back(sound1);
-    sound_options.push_back(sound2);
-    sound_options.push_back(sound3); */
-
     vector<Menu *> items;
-    /* SubMenu *graphics = new SubMenu("Graphics", graphics_items);
-    SubMenu *gameOptions = new SubMenu("Game Options", game_items);
-    SelectorMenu *sound = new SelectorMenu("Sound", sound_options);
-
-    items.push_back(graphics);
-    items.push_back(gameOptions);
-    items.push_back(sound); */
 
     pauseMenu = new SubMenu("Pause Menu", items); 
 
