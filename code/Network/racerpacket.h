@@ -5,6 +5,7 @@
 #include <cstring>
 #include "allclasses.h"
 #include "network.h"
+#include "Agents/agent.h"
 
 typedef enum {
     RP_START = 0, //Begin the race
@@ -94,6 +95,7 @@ struct RPPlayerControl {
 struct RPUpdateWeapons {
     netObjID_t netID;
     RPPlayerControl control;
+    uint16_t ammo[NWEAPONS];
 };
 
 struct RPSteerInfo{

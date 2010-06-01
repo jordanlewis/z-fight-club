@@ -68,6 +68,7 @@ netObjID_t Server::attachNetID(WorldObject *wobject)
         if (netobjs.find(i) == netobjs.end())
         {
             netobjs[i] = wobject;
+            wobject->netID = i;
             successFlag = 1;
             break;
         }
@@ -90,6 +91,7 @@ netObjID_t Server::attachNetID(WorldObject *wobject, netObjID_t ID)
         }
 
     netobjs[ID] = wobject; 
+    wobject->netID = ID;
     return ID;
 }
 
@@ -321,6 +323,11 @@ void Server::pushWeapons(netObjID_t netID)
     if (wo && wo->agent && wo->player)
         {
             wo->player->hton(&(toSend.control));
+            for (int i = 0; i < NWEAPONS; i++){
+                toSend.ammo[i] = htons(wo->agent->ammo[i]);
+                cout << "Server writes weapon #" << i << "has ammo "
+                     << ntohs(toSend.ammo[i]) << endl;
+            }
         }
     else return;
     ENetPacket *packet=makeRacerPacket(RP_UPDATE_WEAPONS, &toSend, 
@@ -548,6 +555,7 @@ void Server::checkForPackets()
                             pushWeapons(ntohl(P->netID));
                             wo->player->updateAgent();
                             useWeapons(wo->agent);
+                            pushWeapons(ntohl(P->netID));
                             wo->agent->steerInfo.fire = 0;
                         }
                         break;

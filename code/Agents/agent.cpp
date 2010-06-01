@@ -1,5 +1,6 @@
 #include "agent.h"
 #include "Network/racerpacket.h"
+#include "Network/server.h"
 #include "Utilities/vec3f.h"
 #include "Engine/world.h"
 #include "Physics/pobject.h"
@@ -90,10 +91,20 @@ void Agent::nextLap()
 
     sound->addSoundAt("empty.wav", GetTime(), AL_FALSE, 1.0,
                       worldObject->getPos());
-    Weapon_t weapon = (Weapon_t) ((rand() % ((int)NWEAPONS - 1)) +1);
-    ammo[weapon] += 3;
-    if ((ammo[steerInfo.weapon] == 0) || steerInfo.weapon == NONE)
-        steerInfo.weapon = weapon;
+    if ((world.runType == SOLO) || (world.runType == SERVER))
+        {
+            Weapon_t weapon = (Weapon_t) ((rand() % ((int)NWEAPONS - 1)) +1);
+            ammo[weapon] += 3;
+            if ((ammo[steerInfo.weapon] == 0) || steerInfo.weapon == NONE) {
+                //steerInfo.weapon = weapon;
+            }
+            if (world.runType == SERVER){
+                /*cout << "pusing weapons belonging to " 
+                  << worldObject->netID << endl;*/
+                if (worldObject->netID != NETOBJID_NONE)
+                    Server::getInstance().pushWeapons(worldObject->netID);
+            }
+        }
 
     if (lapCounter > World::getInstance().nLaps)
     {

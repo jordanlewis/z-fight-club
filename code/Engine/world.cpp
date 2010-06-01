@@ -12,7 +12,6 @@
 #include "Engine/geominfo.h"
 #include "Engine/scheduler.h"
 #include "Sound/sobject.h"
-#include "Network/network.h"
 #include <ode/ode.h>
 extern "C" {
     #include "Parser/track-parser.h"
@@ -23,8 +22,8 @@ World World::_instance;
 WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject,
                          Agent *agent, double ttl)
     : pos(-1,-1,-1), pobject(pobject), gobject(gobject), sobject(sobject),
-      agent(agent), parent(NULL), player(NULL), alive(true),
-      timeStarted(GetTime()), ttl(ttl)
+      agent(agent), parent(NULL), netID(NETOBJID_NONE), player(NULL),
+      alive(true), timeStarted(GetTime()), ttl(ttl)
 {
     Quatf_t newquat = {0,0,0,1};
     CopyV3f(newquat, quat);

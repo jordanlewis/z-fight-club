@@ -9,6 +9,7 @@
 #include "Graphics/camera.h"
 #include "Graphics/hud.h"
 #include "Physics/physics.h"
+#include "Network/network.h"
 #include <ode/ode.h>
 #include <vector>
 #include <string>
@@ -44,7 +45,9 @@ class WorldObject
     SObject *sobject;
     Agent *agent;
     WorldObject *parent;
-    int parent_index;           /* !< the index we have in our parent's array */
+    int parent_index;           /* !< the index we have in our parent's array*/
+    netObjID_t netID;
+
     vector<WorldObject *> children;
     PlayerController *player; // for server
 

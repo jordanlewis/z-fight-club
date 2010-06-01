@@ -63,6 +63,7 @@ netObjID_t Client::attachNetID(WorldObject *wobject, netObjID_t ID)
             error->log(NETWORK, IMPORTANT, "Warning: Overwriting old netobj");
     }
     netobjs[ID] = wobject; 
+    wobject->netID = ID;
     return ID;
 }
 
@@ -252,6 +253,14 @@ void Client::checkForPackets()
                                 wo->player->updateAgent();
                                 useWeapons(wo->agent);
                                 wo->agent->steerInfo.fire = 0;
+                                
+                                for(int i = 0; i < NWEAPONS; i++){
+                                    cout << "updating weapon #" << i
+                                         << " with ammo " << ntohs(info->ammo[i])
+                                         << endl;
+                                    
+                                    wo->agent->ammo[i] = ntohs(info->ammo[i]);
+                                }
                             }
                             
                             break;
