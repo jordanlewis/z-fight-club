@@ -32,7 +32,8 @@ void useWeapons(Agent *agent)
                 case RAYGUN:
                     raygun(agent, PH_SMACKFORCE);
                     sound->addSoundAt("lazer.wav", GetTime(), AL_FALSE, 1.0,
-                        pos);
+                                      pos);
+
                     break;
                 case ROCKET:
                     launchBox(agent);
@@ -123,6 +124,22 @@ void raygun(Agent *agent, int force)
             }
         }
     }
+
+    Vec3f area = agent->getKinematic().orientation_v * 50;
+    Vec3f velocity = Vec3f(100.0, 0.0, 0.0);
+    Vec3f velocity_pm = Vec3f(0, .3, .3);
+    float ttl = 3.0;
+    float ttl_pm = 1.0;
+    float birthRate = 100.0;
+
+    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/fire.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate);
+    particleSystem->linearArea = true;
+    GParticleObject *particle_gobj = new GParticleObject(particleSystem);
+    ParticleStreamObject *particle_wobj = new ParticleStreamObject(NULL, particle_gobj, NULL, NULL, 2);
+    particle_wobj->setPos(agent->getKinematic().pos);
+
+    World::getInstance().addObject(particle_wobj);
+
 }
 
 void launchBox(Agent *agent)
