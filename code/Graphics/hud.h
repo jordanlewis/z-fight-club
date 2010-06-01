@@ -174,4 +174,11 @@ class WeaponDisplay : public Widget
     void draw();
 };
 
+class WinnerDisplay : public Widget
+{
+  public:
+    WinnerDisplay(Vec3f pos);
+    void draw();
+};
+
 #endif

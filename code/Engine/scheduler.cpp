@@ -109,10 +109,11 @@ void Scheduler::soloLoopForever()
 
         switch (raceState) {
 
-            case PLAYER_DONE:
-            case ALL_DONE:
             case RACE:
             case COUNTDOWN:
+            case SOMEONE_DONE:
+            case PLAYER_DONE:
+            case ALL_DONE:
                 if (now - last > 0)
                 {
                     physics->simulate(now - last);
@@ -130,8 +131,6 @@ void Scheduler::soloLoopForever()
             case SETUP:
                 graphics->render();
                 last = now;
-                break;
-                // Do nothing
                 break;
         }
         world->cleanObjects();

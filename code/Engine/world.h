@@ -139,6 +139,8 @@ class World
 
     unsigned int nLaps;
 
+    Agent *winner;
+
     std::vector<WorldObject *> wobjects; /* the objects in the world */
     /* the particle systems in the world -- these need to be rendered after everything else
        to avoid transparency bugs */

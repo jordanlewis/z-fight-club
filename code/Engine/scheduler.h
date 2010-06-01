@@ -12,6 +12,7 @@ typedef enum
     SETUP,
     COUNTDOWN,
     RACE,
+    SOMEONE_DONE,
     PLAYER_DONE,
     ALL_DONE,
     PAUSE

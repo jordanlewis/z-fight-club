@@ -85,6 +85,9 @@ const Kinematic &Agent::getKinematic () const
 
 void Agent::nextLap()
 {
+    Scheduler &scheduler = Scheduler::getInstance();
+    World &world = World::getInstance();
+
     sound->addSoundAt("empty.wav", GetTime(), AL_FALSE, 1.0,
                       worldObject->getPos());
     Weapon_t weapon = (Weapon_t) ((rand() % ((int)NWEAPONS - 1)) +1);
@@ -94,9 +97,20 @@ void Agent::nextLap()
 
     if (lapCounter > World::getInstance().nLaps)
     {
+        /* We finished the race */
+        if (scheduler.raceState < SOMEONE_DONE)
+        {
+            /* We finished the race first */
+            scheduler.raceState = SOMEONE_DONE;
+            WinnerDisplay *winner = new WinnerDisplay(Vec3f(0,0,0));
+            world.winner = this;
+            world.addWidget(winner);
+        }
         if (this == Input::getInstance().getPlayerController().getAgent())
         {
-            Scheduler::getInstance().raceState = PLAYER_DONE;
+            /* The player finished the race */
+            if (scheduler.raceState < PLAYER_DONE)
+                scheduler.raceState = PLAYER_DONE;
             Input::getInstance().releasePlayer();
             AIController *ai = AIManager::getInstance().control(this);
             ai->lane(0);
