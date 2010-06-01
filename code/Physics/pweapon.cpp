@@ -190,7 +190,7 @@ void launchMine(Agent *agent)
     k->orientation = ak.orientation;
     PProjectile *pobj = new PProjectile(k, s, 100, box);
     GObject *gobj = new GObject(mine);
-    WorldObject *wobj = new WorldObject(pobj, gobj, NULL, NULL, 10);
+    WorldObject *wobj = new WorldObject(pobj, gobj, NULL, NULL, 100);
     World::getInstance().addObject(wobj);
 
 }
