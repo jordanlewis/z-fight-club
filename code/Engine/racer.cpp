@@ -6,6 +6,8 @@
 
 #include <iostream>
 #include <SDL/SDL.h>
+#include <unistd.h>
+#include  <sys/types.h>
 #include "math.h"
 #include "scheduler.h"
 #include "Physics/physics.h"
@@ -29,6 +31,7 @@ namespace po = boost::program_options;
 
 int main(int argc, char *argv[])
 {
+    //sleep(20.8);
     po::variables_map vm;
     World &world = World::getInstance();
     Sound     &sound    = Sound::getInstance();
@@ -55,10 +58,20 @@ int main(int argc, char *argv[])
             ("nox", "disable graphics")
             ("nosound", "disable sound")
             ("nomusic", "disable music")
-        ;
+            ("nointro", "disable intro video")
+            ;
 
         po::store(po::parse_command_line(argc, argv, desc), vm);
         po::notify(vm);
+
+        if (!vm.count("nointro") && !vm.count("nox")) {
+            int forkrv = fork();
+            if (forkrv == 0)
+                execlp("mplayer", "mplayer", "../assets/CutScene/cutscene.ogv", NULL);
+            else
+                sleep(20.8);
+        }
+
 
         if (vm.count("help"))
         {

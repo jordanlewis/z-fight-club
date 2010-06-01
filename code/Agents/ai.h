@@ -28,6 +28,7 @@ class AIController
     /* cached AI data? paths? etc */
     bool wallTrapped; /*Can we not even turn due to a wall in front of us? */
     bool turnedAround; /*Are we turned around? */
+    double lastShot; /*!<last time we shot */
   public:
     Vec3f target;
     Vec3f antiTarget;
