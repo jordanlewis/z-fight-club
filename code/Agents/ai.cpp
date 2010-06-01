@@ -433,6 +433,25 @@ SteerInfo AIController::avoidObstacle()
             s = face(obstacle.obj->agent->getKinematic().orientation_v.perp() +
                      k.pos);
         }
+        if (hitTime > 0)
+        {
+            double curTime = GetTime();
+            if (curTime - lastShot > 5)
+            {
+                if (agent->ammo[RAYGUN] > 0)
+                {
+                    s.weapon = RAYGUN;
+                    s.fire = 1;
+                    lastShot = curTime;
+                }
+                else if (agent->ammo[ROCKET] > 0)
+                {
+                    s.weapon = ROCKET;
+                    s.fire = 1;
+                    lastShot = curTime;
+                }
+            }
+        }
 
     }
     else
@@ -520,11 +539,25 @@ SteerInfo AIController::followCarrot(int stickLength)
 
 void AIController::run()
 {
+    AIManager &aim = AIManager::getInstance();
     detectWalls();
     SteerInfo s = followPath(1);
     SteerInfo obst = avoidObstacle();
     if (obst.rotation != 0)
         s.rotation = obst.rotation;
+    s.fire = obst.fire;
+    s.weapon = obst.weapon;
+    double curTime = GetTime();
+    if (curTime - lastShot > 5 && agent->ammo[MINE] > 0)
+    {
+        /* shoot a mine if we have one and we're not in last place */
+        if (agent->id != aim.agentsSorted.back()->id)
+        {
+            s.weapon = MINE;
+            s.fire = 1;
+            lastShot = curTime;
+        }
+    }
     agent->setSteering(s);
 }
 
