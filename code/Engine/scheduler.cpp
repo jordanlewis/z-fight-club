@@ -149,13 +149,6 @@ void Scheduler::soloLoopForever()
     }
 }
 
-void Scheduler::welcomeScreen()
-{
-    cout << "z fight club presents: Tensor Rundown" << endl << endl
-         << "    up and down arrow keys accelerate forwards and backwards" << endl
-         << "       left and right rotate your vehicle" << endl;
-}
-
 void Scheduler::clientLoopForever()
 {
     error->log(ENGINE, TRIVIAL, "Entering client loop\n");

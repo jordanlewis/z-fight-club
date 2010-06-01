@@ -305,9 +305,9 @@ World::World() :
     game_items.push_back(game3);
 
     vector<Option *> sound_options;
-    Option *sound1 = new Option("sound - foo", -1);
-    Option *sound2 = new Option("sound - bar", -1);
-    Option *sound3 = new Option("sound - baz", -1);
+    Option *sound1 = new Option("sound - foo", 0);
+    Option *sound2 = new Option("sound - bar", 0);
+    Option *sound3 = new Option("sound - baz", 0);
 
     sound_options.push_back(sound1);
     sound_options.push_back(sound2);
@@ -331,15 +331,15 @@ World::World() :
     
     /* Racer select menu */
     vector<Option *> racers;
-    Option *racer1 = new Option("Hummingbird", -1);
-    Option *racer2 = new Option("Fish", -1);
+    Option *racer1 = new Option("Hummingbird", 0);
+    Option *racer2 = new Option("Fish", 0);
     racers.push_back(racer1);
     racers.push_back(racer2);
     SelectorMenu *racerSelector = new SelectorMenu("Select Character", racers);
 
     /* Track select menu */
     vector<Option *> tracks;
-    Option *track1 = new Option("Oval", -1);
+    Option *track1 = new Option("Oval", 0);
     tracks.push_back(track1);
     SelectorMenu *trackSelector = new SelectorMenu("Select Track", tracks);
 
@@ -347,9 +347,9 @@ World::World() :
     vector<Menu *> network_items;
 
     vector<Option *> network_modes;
-    Option *solo = new Option("Solo", -1);
-    Option *client = new Option("Client", -1);
-    Option *server = new Option("Server", -1);
+    Option *solo = new Option("Solo", 0);
+    Option *client = new Option("Client", 0);
+    Option *server = new Option("Server", 0);
     network_modes.push_back(solo);
     network_modes.push_back(client);
     network_modes.push_back(server);
@@ -368,8 +368,8 @@ World::World() :
     vector<Menu *> toggle_items;
     /* human menu */
     vector<Option *> human_options;
-    Option *human = new Option("Human", -1);
-    Option *nohuman = new Option("No Human", -1);
+    Option *human = new Option("Human", 0);
+    Option *nohuman = new Option("No Human", 0);
     human_options.push_back(human);
     human_options.push_back(nohuman);
 
@@ -377,8 +377,8 @@ World::World() :
 
     /* X menu */
     vector<Option *> x_options;
-    Option *x = new Option("X", -1);
-    Option *nox = new Option("No X", -1);
+    Option *x = new Option("X", 0);
+    Option *nox = new Option("No X", 0);
     x_options.push_back(x);
     x_options.push_back(nox);
 
@@ -386,8 +386,8 @@ World::World() :
 
     /* sound menu */
     vector<Option *> sound_options;
-    Option *sound = new Option("Sound", -1);
-    Option *nosound = new Option("No Sound", -1);
+    Option *sound = new Option("Sound", 0);
+    Option *nosound = new Option("No Sound", 0);
     sound_options.push_back(sound);
     sound_options.push_back(nosound);
 
@@ -395,8 +395,8 @@ World::World() :
 
     /* Music menu */
     vector<Option *> music_options;
-    Option *music = new Option("Music", -1);
-    Option *nomusic = new Option("No Music", -1);
+    Option *music = new Option("Music", 0);
+    Option *nomusic = new Option("No Music", 0);
     music_options.push_back(music);
     music_options.push_back(nomusic);
 
@@ -561,7 +561,6 @@ void World::addAgent(Agent *agent, int model)
         sobj->registerNext(new SObject(idle_sound, 0, AL_TRUE, 0.3));
     }
     WorldObject *wobject = new WorldObject(pobj, gobj, sobj, agent);
-    cout << "Agent's wobject pointer is: " << agent->worldObject << endl;
     addObject(wobject);
 
     /* create a particle generator for the agent */
