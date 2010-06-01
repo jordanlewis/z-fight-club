@@ -356,8 +356,10 @@ World::World() :
     SelectorMenu *networkMode = new SelectorMenu("Network Mode", network_modes);
 
     TextboxMenu *ipaddr = new TextboxMenu("Server IP address");
+    ipaddr->entered = "127.0.0.1";
 
     TextboxMenu *port = new TextboxMenu("Server port");
+    port->entered = "6888";
 
     network_items.push_back(networkMode);
     network_items.push_back(ipaddr);
