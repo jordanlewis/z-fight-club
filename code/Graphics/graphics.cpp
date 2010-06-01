@@ -7,6 +7,7 @@
 #include "Agents/ai.h"
 #include "Agents/agent.h"
 #include "hud.h"
+#include "Graphics/graphics.h"
 #include <SDL/SDL.h>
 
 #define MAX_TRAIL_LENGTH 3600
@@ -274,7 +275,7 @@ void Graphics::renderGlowTexture() {
 
     glClear(GL_DEPTH_BUFFER_BIT);
     glEnable(GL_BLEND);
-    glBlendFunc(GL_ALPHA,GL_ONE);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE);
 
     glDisable(GL_LIGHTING);
     glColor3f(1.0,1.0,1.0);
@@ -292,6 +293,7 @@ void Graphics::renderGlowTexture() {
     glEnd();
 
     UseProgram(0);
+    glDisable(GL_BLEND);
     glEnable(GL_LIGHTING);
 
     glMatrixMode(GL_PROJECTION);
