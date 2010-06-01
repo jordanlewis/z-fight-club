@@ -12,6 +12,7 @@ class Input
     Input &operator=(const Input&);
     PlayerController *player;
     Client *client;
+    Server *server;
     Error *error;
     Scheduler *scheduler;
   public:

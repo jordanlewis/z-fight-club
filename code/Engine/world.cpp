@@ -273,7 +273,7 @@ void inputSetupMenu()
     }
 
     Scheduler &sched = Scheduler::getInstance();
-    sched.raceState = COUNTDOWN;
+    sched.raceState = WAITING;
     sched.timeStarted = GetTime()+1;
 }
 

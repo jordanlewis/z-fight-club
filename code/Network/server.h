@@ -87,6 +87,8 @@ class Server {
     int closeClient(uint8_t clientID); //NYI
     void pingClients();
     void checkForPackets();
+    void sendPause();
+    void sendUnpause();
 };
 
 

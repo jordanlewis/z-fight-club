@@ -1,6 +1,7 @@
 #include <SDL/SDL.h>
 #include "input.h"
 #include "world.h"
+#include "Network/server.h"
 #include "Network/client.h"
 #include "Agents/player.h"
 #include "Utilities/error.h"
@@ -50,11 +51,27 @@ int Input::processInput()
                     case SDLK_c:
                         World::getInstance().camera.cycleView(); break;
                     case SDLK_p:
-                        if (Scheduler::getInstance().raceState == PAUSE) {
+                        if (Scheduler::getInstance().raceState == PAUSE)
+                        {
+                            if (world.runType == CLIENT)
+                            {
+                                client->sendUnpause();
+                                client->clientState = C_RACE;
+                            }
+                            else if (world.runType == SERVER) server->sendUnpause();
                             world.pauseMenu->reset();
                             Scheduler::getInstance().raceState = RACE;
-                        } else
+                        }
+                        else if (Scheduler::getInstance().raceState == RACE)
+                        {
+                            if (world.runType == CLIENT)
+                            {
+                                client->sendPause();
+                                client->clientState = C_PAUSE;
+                            }
+                            else if (world.runType == SERVER) server->sendPause();
                             Scheduler::getInstance().raceState = PAUSE;
+                        }
                         break;
                     case SDLK_RETURN:
                         if (Scheduler::getInstance().raceState == PAUSE)
@@ -186,8 +203,8 @@ int Input::processInput()
                 SDL_SetVideoMode(world.camera.wres, world.camera.hres, 32, SDL_OPENGL|SDL_RESIZABLE);
                 break;
             case SDL_QUIT:
-                client->clientState = C_DONE;
-                return 1;
+                if (world.runType == CLIENT) client->clientState = C_DONE;
+                if ((world.runType == SERVER) || (world.runType == SOLO)) scheduler->raceState = ALL_DONE;
             default:
                 break;
         }
@@ -220,6 +237,7 @@ Input &Input::getInstance()
 
 Input::Input() :
     client(&Client::getInstance()),
+    server(&Server::getInstance()),
     error(&Error::getInstance()),
     scheduler(&Scheduler::getInstance())
 {

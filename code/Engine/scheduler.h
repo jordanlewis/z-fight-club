@@ -10,6 +10,7 @@
 typedef enum
 {
     SETUP,
+    WAITING,
     COUNTDOWN,
     RACE,
     SOMEONE_DONE,

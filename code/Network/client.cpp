@@ -144,11 +144,20 @@ void Client::checkForPackets()
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
               {
-                error->log(NETWORK, TRIVIAL, "EVENT RECEIVE: ");
                 type = getRacerPacketType(event.packet);
                 payload = event.packet->data+sizeof(racerPacketType_t);
                 switch(type)
                 {
+                    case RP_PAUSE:
+                        error->log(NETWORK, TRIVIAL, "RP_PAUSE\n");
+                        clientState = C_PAUSE;
+                        Scheduler::getInstance().raceState = PAUSE;
+                        break;
+                    case RP_UNPAUSE:
+                        error->log(NETWORK, TRIVIAL, "RP_UNPAUSE\n");
+                        clientState = C_RACE;
+                        Scheduler::getInstance().raceState = RACE;
+                        break;
                     case RP_PING:
                         error->log(NETWORK, TRIVIAL, "RP_PING\n");
                         break;
@@ -162,14 +171,12 @@ void Client::checkForPackets()
                       }
                     case RP_ACK_CONNECTION:
                       {
-                        error->log(NETWORK, TRIVIAL, "RP_ACK_CONNECTION\n");
-                        // this has my clientID in it, so I'll know when an
+                        // this has my clientID in it, so I'll know if/when an
                         // agent is created just for me
                         RPAck info = *(RPAck *)payload;
                         clientID = info.clientID;
-                        string msg = "I'm client # ";
-                        msg += boost::lexical_cast<string>((int) clientID) + "\n";
-                        error->log(NETWORK, TRIVIAL, msg);
+                        NETWORK << TRIVIAL << "RP_ACK_CONNECTION ("
+                                << (int)clientID << ")" << endl;
                         clientState = C_CONNECTED;
                         break;
                       }
@@ -198,9 +205,8 @@ void Client::checkForPackets()
                         }
                     case RP_UPDATE_AGENT: 
                         {
-                        error->log(NETWORK, TRIVIAL, "RP_UPDATE_AGENT\n");
+                        NETWORK << TRIVIAL << "RP_UPDATE_AGENT" << endl;
                         RPUpdateAgent *P = (RPUpdateAgent *)payload;
-                        //cout << "Updating agent " << ntohl(P->ID) << endl;
                         WorldObject *wo = netobjs[ntohl(P->ID)];
                         if (wo == NULL) continue;
                         if (wo->agent == NULL || wo->pobject == NULL) continue;
@@ -410,8 +416,6 @@ void Client::transmitWeapons(){
 }
 
 void Client::updateDummyController(){
-    //cout << "updating dummy net controller" << endl;
-    cout.flush();
     if (player == NULL) return;
     else player->updateNetDummy();
     return;
@@ -488,4 +492,24 @@ void Client::disconnect()
         }
     }
     enet_peer_reset(peer);
+}
+
+void Client::sendPause()
+{
+        cerr << "sending pause to server" << endl;
+        RPPause toSend;
+        toSend.time = htond(GetTime());
+        ENetPacket *packet = makeRacerPacket(RP_PAUSE, &toSend, sizeof(RPPause),0);
+        enet_peer_send(peer, 0, packet);
+        enet_host_flush(enetClient);
+}
+
+void Client::sendUnpause()
+{
+        cerr << "sending unpause to server" << endl;
+        RPUnpause toSend;
+        toSend.time = htond(GetTime());
+        ENetPacket *packet = makeRacerPacket(RP_UNPAUSE, &toSend, sizeof(RPUnpause),0);
+        enet_peer_send(peer, 0, packet);
+        enet_host_flush(enetClient);
 }

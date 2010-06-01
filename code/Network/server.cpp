@@ -430,12 +430,33 @@ void Server::checkForPackets()
                     {
                         NETWORK << TRIVIAL << "RP_JOIN" << endl;
                         RPJoin info = *(RPJoin *)payload;
-                        NETWORK << TRIVIAL << "Client # " << info.clientID << " requested join" << endl;
+                        NETWORK << TRIVIAL << "Client # " << (int) info.clientID
+                                << " requested join" << endl;
+                        NETWORK << TRIVIAL << "raceState: "
+                                << Scheduler::getInstance().raceState << endl;
                         if (Scheduler::getInstance().raceState == SETUP)
                         {
+                            NETWORK << TRIVIAL
+                                    << "how did we get here during SETUP?"
+                                    << endl;
+                        }
+                        if (Scheduler::getInstance().raceState == WAITING)
+                        {
+                            NETWORK << TRIVIAL << "creating human player" << endl;
                             createHumanAgent(info.clientID);
                         }
+                        else
+                        {
+                            NETWORK << TRIVIAL << "telling observer about agents" << endl;
+                            for (list<ENetPacket *>::iterator iter = toCreate.begin();
+                                 iter != toCreate.end();
+                                 iter++)
+                            {
+                                enet_peer_send(event.peer, 0, *iter);
+                            }
+                        }
                         enet_packet_destroy(event.packet);
+                        break;
                     }
                     case RP_START:
                         error->log(NETWORK, TRIVIAL, "RP_START\n");
@@ -464,6 +485,16 @@ void Server::checkForPackets()
                         enet_packet_destroy(event.packet);
                         break;
                     }
+                    case RP_PAUSE:
+                        NETWORK << TRIVIAL << "RP_PAUSE" << endl;
+                        Scheduler::getInstance().raceState = PAUSE;
+                        sendPause();
+                        break;
+                    case RP_UNPAUSE:
+                        NETWORK << TRIVIAL << "RP_UNPAUSE" << endl;
+                        Scheduler::getInstance().raceState = RACE;
+                        sendUnpause();
+                        break;
                     case RP_PING:
                         error->log(NETWORK, TRIVIAL, "RP_PING\n");
                         break;
@@ -487,7 +518,7 @@ void Server::checkForPackets()
                     }
                     case RP_UPDATE_WEAPONS:
                     {
-                        NETWORK << TRIVIAL << "Server update weapons!" << endl;
+                        NETWORK << TRIVIAL << "RP_UPDATE_WEAPONS" << endl;
                         RPUpdateWeapons *P = (RPUpdateWeapons *)payload;
                         WorldObject *wo = netobjs[ntohl(P->netID)];
                         PlayerController netPlayer;
@@ -581,4 +612,20 @@ void Server::pingClients()
         ENetPacket *packet = makeRacerPacket(RP_PING, NULL, 0, 0);
         enet_host_broadcast(enetServer, 0, packet);
     }
+}
+
+void Server::sendPause()
+{
+        RPPause toSend;
+        toSend.time = htond(GetTime());
+        ENetPacket *packet = makeRacerPacket(RP_PAUSE, &toSend, sizeof(RPPause),0);
+        enet_host_broadcast(enetServer, 0, packet);
+}
+
+void Server::sendUnpause()
+{
+        RPUnpause toSend;
+        toSend.time = htond(GetTime());
+        ENetPacket *packet = makeRacerPacket(RP_UNPAUSE, &toSend, sizeof(RPUnpause),0);
+        enet_host_broadcast(enetServer, 0, packet);
 }
