@@ -131,6 +131,9 @@ class World
     bool nox;
     bool nosound;
     bool nomusic;
+    bool fullscreen;
+    int wres; /* these are for fullscreen resolution only */
+    int hres;
     RunType_t runType;
     Camera camera;
     TrackData_t *track;

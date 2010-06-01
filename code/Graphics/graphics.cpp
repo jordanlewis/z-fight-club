@@ -53,7 +53,16 @@ void Graphics::initGraphics()
     SDL_Init(SDL_INIT_VIDEO);
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    screen = SDL_SetVideoMode(wres, hres, colorDepth, SDL_OPENGL|SDL_RESIZABLE);
+    if (world->fullscreen)
+    {
+        const SDL_VideoInfo *vinfo = SDL_GetVideoInfo();
+        world->hres = vinfo->current_h;
+        world->wres = vinfo->current_w;
+        screen = SDL_SetVideoMode(world->wres, world->hres,
+                                  colorDepth, SDL_OPENGL|SDL_FULLSCREEN);
+    }
+    else
+        screen = SDL_SetVideoMode(wres, hres, colorDepth, SDL_OPENGL|SDL_RESIZABLE);
 
     if (!screen) {
         fprintf(stderr, "Failed to set video mode resolution to %i by %i: %s\n", wres, hres, SDL_GetError());

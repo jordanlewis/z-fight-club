@@ -282,7 +282,7 @@ void exitGame()
 }
 
 World::World() :
-    error(&Error::getInstance()), nox(false), nosound(false)
+    error(&Error::getInstance()), nox(false), nosound(false), fullscreen(false)
 {
     /* create the pause menu */
     /* vector<Menu *> graphics_items;
