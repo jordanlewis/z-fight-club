@@ -31,7 +31,6 @@ namespace po = boost::program_options;
 
 int main(int argc, char *argv[])
 {
-    //sleep(20.8);
     po::variables_map vm;
     World &world = World::getInstance();
     Sound     &sound    = Sound::getInstance();
