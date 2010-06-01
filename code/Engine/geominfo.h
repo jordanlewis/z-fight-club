@@ -131,7 +131,8 @@ class ObjMeshInfo : public GeomInfo
   public:
 	OBJmodel	*model;			/* !< pointer to obj model */
 	std::string	path;			/* !< path to model folder */
-	GLuint		texid;	        /* !< texture identifiers */
+	GLuint		colorTexId;	    /* !< texture identifiers */
+	GLuint		glowTexId;	    /* !< texture identifiers */
 	ObjMeshInfo(std::string);
 	~ObjMeshInfo();
 	void load(char *filename);

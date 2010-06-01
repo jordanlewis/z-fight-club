@@ -90,7 +90,8 @@ void Camera::setProjectionMatrix()
         smooth_orientation = smoothness * smooth_orientation +
                              (1 - smoothness) * agent->kinematic.orientation_v;
 
-    glViewport(0, 0, wres, hres);
+    // This actually gets modified if we're using glow, so don't set it here
+    //glViewport(0, 0, wres, hres);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective((GLdouble) FOVY, (GLdouble) wres / (GLdouble) hres, zNear, zFar);

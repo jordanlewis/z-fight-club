@@ -7,8 +7,16 @@
 #include <vector>
 #include <deque>
 
+#if defined(__APPLE__) && defined(__MACH__)
+#  include <OpenGL/gl.h>
+#else
+#  define GL_GLEXT_PROTOTYPES
+#  include <GL/gl.h>
+#endif
+
 extern "C" {
 #include "Parser/track-parser.h"
+#include "shader.h"
 }
 
 typedef enum
@@ -39,11 +47,20 @@ class Graphics : public Component
     World *world;
     Error *error;
 
+    GLuint glowTexId;
+    bool glowEnabled;
+    static const int glowTexWidth = 512,
+                     glowTexHeight = 512;
+    ShaderProgram_t *glowShader;
+    void copyBufferToTexture(); // Should replace this with a FBO
+    void renderGlowTexture();
+    void renderGlowLayer();
+    void renderColorLayer();
+    void initGlow();
+
   public:
     void initGraphics();
     void render();
-    void renderGlowLayer();
-    void renderColorLayer();
     void renderHUD();
     void render(Agent * agent);
     void render(TrackData_t *track);

@@ -45,21 +45,42 @@ ObjMeshInfo::ObjMeshInfo(std::string filename)
 {
     World &world = World::getInstance();
     path = filename;
-    model = OBJReadOBJ((world.assetsDir + filename + std::string("model.obj")).c_str());
-    Image2D_t *color = LoadImage((world.assetsDir + filename + std::string("color.png")).c_str(), false, RGB_IMAGE);
-    
-    /* Initialize the textures */
-    glGenTextures(1, &texid);
+    model = OBJReadOBJ((world.assetsDir + filename + "model.obj").c_str());
 
-    glBindTexture(GL_TEXTURE_2D, texid);
+    /* Initialize textures */
+
+    Image2D_t *color = LoadImage(
+        (world.assetsDir + filename + "color.png").c_str(),
+        false,
+        RGB_IMAGE);
+
+    glGenTextures(1, &colorTexId);
+    glBindTexture(GL_TEXTURE_2D, colorTexId);
     TexImage(color);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     FreeImage(color);
+
+    Image2D_t *glow  = LoadImage(
+        (world.assetsDir + filename + "glow.png").c_str(),
+        false,
+        RGBA_IMAGE);
+
+    if(glow) {
+        glGenTextures(1, &glowTexId);
+        glBindTexture(GL_TEXTURE_2D, glowTexId);
+        TexImage(glow);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        FreeImage(glow);
+    } else {
+        glowTexId = 0;
+    }
     
-   
     /* -------------------------------------------------*/
     /* --- Compile the displaylists for this object --- */
     /* -------------------------------------------------*/

@@ -66,11 +66,7 @@ void BoxInfo::draw(Layer_t layer)
 
 void ObjMeshInfo::draw(Layer_t layer)
 {
-    if(layer == GLOW) return;
-
-    glBindTexture(GL_TEXTURE_2D, texid);
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    glEnable(GL_TEXTURE_2D);
+    if(layer == GLOW && glowTexId == 0) return;
 
     /* do a bit of warning */
     if (mode & OBJ_FLAT && !model->facetnorms) {
@@ -108,33 +104,46 @@ void ObjMeshInfo::draw(Layer_t layer)
             "using only material mode.\n");
         mode &= ~OBJ_COLOR;
     }
-    
-    /* draw the mesh */
 
-    int groupIndex = 0;
     if (mode & OBJ_COLOR)
         glEnable(GL_COLOR_MATERIAL);
     else if (mode & OBJ_MATERIAL)
         glDisable(GL_COLOR_MATERIAL);
+    
+    /* draw the mesh */
+    if(layer == COLOR) {
+        glBindTexture(GL_TEXTURE_2D, colorTexId);
+        glEnable(GL_TEXTURE_2D);
+    } else {
+        glBindTexture(GL_TEXTURE_2D, glowTexId);
+        glEnable(GL_TEXTURE_2D);
+        glColor3f(1.0,1.0,1.0); // Lighting is disabled, so we need to set this
+                                // so that textures render normally
+    }
+
+    int groupIndex = 0;
 
     for (OBJgroup *group = model->groups;
          group != NULL;
          group = group->next, groupIndex++) {
              OBJmaterial *material = &model->materials[group->material];
-             if (mode & OBJ_COLOR) {
-                 glColor3fv(material->diffuse);
-             } else if (mode & OBJ_MATERIAL) {
-                 glDisable(GL_COLOR_MATERIAL);
-                 glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  material->ambient);
-                 glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  material->diffuse);
-                 glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, material->specular);
-                 glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material->shininess);
+             if(layer == COLOR) {
+                if (mode & OBJ_COLOR) {
+                    glColor3fv(material->diffuse);
+                } else if (mode & OBJ_MATERIAL) {
+                    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  material->ambient);
+                    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  material->diffuse);
+                    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, material->specular);
+                    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material->shininess);
+                }
              }
+             
              glCallList(displayList + groupIndex);
     }
 
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_COLOR_MATERIAL);
+        
 }
 
 void SkyBoxInfo::draw(Layer_t layer)
@@ -256,6 +265,8 @@ void ParticleSystemInfo::draw(Layer_t layer)
      * the matrix with the object coordinate transform. Remember to push a
      * new matrix at the end to prevent too much popping. */
     glPopMatrix();
+    glDisable(GL_LIGHTING);
+    glColor3f(1.0,1.0,1.0);
     glDisable(GL_COLOR_MATERIAL);
     glEnable(GL_TEXTURE_2D);
 

@@ -13,6 +13,7 @@
 
 extern "C" {
 #include "Parser/track-parser.h"
+#include "shader.h"
 }
 
 #if defined(__APPLE__) && defined(__MACH__)
@@ -67,10 +68,28 @@ void Graphics::initGraphics()
     {
         SDL_WM_SetCaption("z fight club presents: Tensor Rundown", "Tensor Rundown");
     }
+
+    glActiveTexture(GL_TEXTURE0);
+    glowEnabled = (GL_VERSION_2_0 ? true : false);
+    if(glowEnabled) initGlow();
     int argc = 0;
     glutInit(&argc, NULL);
     initialized = true;
 
+}
+
+void Graphics::initGlow() {
+    glGenTextures(1,&glowTexId);
+    glBindTexture(GL_TEXTURE_2D,glowTexId);
+
+    glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,glowTexWidth,glowTexHeight,0,GL_RGB,GL_UNSIGNED_BYTE,0);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    
+    glowShader = NULL;
 }
 
 void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
@@ -140,7 +159,6 @@ void Graphics::renderColorLayer()
     glClearColor(.1f, .1, .1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glColor3f(0.2,0.4,0.4);
     glEnable(GL_LIGHTING);
     for (vector<WorldObject *>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
     {
@@ -190,7 +208,88 @@ void Graphics::renderHUD()
 }
 
 void Graphics::renderGlowLayer() {
-    return;
+    World *world = &World::getInstance();
+
+    world->camera.setProjectionMatrix();
+
+    /* render 3d graphics */
+    glDisable(GL_LIGHTING);
+
+    glClearColor(0.0,0.0,0.0,0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GREATER,0.1);
+
+    for (vector<WorldObject *>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
+    {
+        (*i)->draw(GLOW);
+    }
+
+    for (vector<ParticleStreamObject *>::iterator i = world->particleSystems.begin();
+         i != world->particleSystems.end(); i++)
+    {
+        (*i)->draw(GLOW);
+    }
+
+    glEnable(GL_LIGHTING);
+}
+
+void Graphics::copyBufferToTexture() {
+    glBindTexture(GL_TEXTURE_2D, glowTexId);
+    glCopyTexSubImage2D(GL_TEXTURE_2D,0,0,0,0,0,glowTexWidth,glowTexHeight);
+}
+
+void Graphics::renderGlowTexture() {
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(-1,1,-1,1,0.5,5);
+    
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    gluLookAt(0.0,0.0,1.0,
+              0.0,0.0,0.0,
+              0.0,1.0,0.0);
+    
+    if(glowShader == NULL) {
+        World &world = World::getInstance();
+        glowShader = InitProgram(
+            (world.assetsDir + "shaders/glow.vert").c_str(),
+            (world.assetsDir + "shaders/glow.frag").c_str()
+        );
+    }
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, glowTexId);
+    int glowLoc = UniformLocation(glowShader,"glowTexture");
+    glUniform1i(glowLoc,0);
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ALPHA,GL_ONE);
+
+    glDisable(GL_LIGHTING);
+    glColor3f(1.0,1.0,1.0);
+    UseProgram(glowShader);       
+
+    glBegin(GL_QUADS);
+      glTexCoord2f(0,0);
+      glVertex3f(-1,-1,0);
+      glTexCoord2f(1,0);
+      glVertex3f(1,-1,0);
+      glTexCoord2f(1,1);
+      glVertex3f(1,1,0);
+      glTexCoord2f(0,1);
+      glVertex3f(-1,1,0);
+    glEnd();
+
+    UseProgram(0);
+    glEnable(GL_LIGHTING);
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
 }
 
 void Graphics::render()
@@ -211,12 +310,34 @@ void Graphics::render()
     glCullFace(GL_BACK);
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_DEPTH_TEST);
+    
+    if (Scheduler::getInstance().raceState == SETUP) {
+        glClearColor(0.0,0.0,0.0,0.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        World::getInstance().setupMenu->draw();
+        renderHUD();
+    } else {
+        if(glowEnabled) {
+            glViewport(0,0,glowTexWidth,glowTexHeight);
+            renderGlowLayer();
 
-    renderColorLayer();
-    renderGlowLayer();
-    // Composite;
+            World &world = World::getInstance();
+            glViewport(0,0,world.camera.getWres(),world.camera.getHres());
+            copyBufferToTexture();
 
-    renderHUD();
+            renderColorLayer();
+
+            // Composite;
+            renderGlowTexture();
+            renderHUD();
+        } else {
+            World &world = World::getInstance();
+            glViewport(0,0,world.camera.getWres(),world.camera.getHres());
+            renderColorLayer();
+            renderHUD();
+        }
+    }
+
 
     SDL_GL_SwapBuffers();
     finish();

@@ -265,3 +265,31 @@ GLint UniformLocation (ShaderProgram_t *prog, const char *name)
     }
     return id;
 }
+
+ShaderProgram_t *InitProgram (const char *vsName, const char *fsName)
+{
+    char		buf[1024];
+    VertexShader_t	*vsh = 0;
+    FragmentShader_t	*fsh = 0;
+    ShaderProgram_t	*prog;
+
+    if (vsName != 0) {
+      // load the vertex shader
+	if ((vsh = LoadVertexShader (vsName)) == 0)
+	    exit (1);
+    }
+
+    if (fsName != 0) {
+      // load the vertex shader
+	if ((fsh = LoadFragmentShader (fsName)) == 0)
+	    exit (1);
+    }
+
+    if ((prog = CreateShaderProgram (vsh, fsh)) == 0)
+	exit (1);
+
+    FreeVertexShader (vsh);
+    FreeFragmentShader (fsh);
+
+    return prog;
+}
