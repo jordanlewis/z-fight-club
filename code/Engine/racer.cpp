@@ -66,10 +66,14 @@ int main(int argc, char *argv[])
 
         if (!vm.count("nointro") && !vm.count("nox")) {
             int forkrv = fork();
-            if (forkrv == 0)
-                execlp("mplayer", "mplayer", "../assets/CutScene/cutscene.ogv", NULL);
-            else
+            if (forkrv == 0) {
+                if (vm.count("fullscreen"))
+                    execlp("mplayer", "mplayer", "-fs", "../assets/CutScene/cutscene.ogv", NULL);
+                else
+                    execlp("mplayer", "mplayer", "../assets/CutScene/cutscene.ogv", NULL);
+            } else {
                 sleep(20.8);
+            }
         }
 
 
