@@ -156,7 +156,6 @@ void SubMenu::draw()
     if (selected == -1) {
         /* we're in this level */
         World &world = World::getInstance();
-        int hres = world.camera.getHres();
         int wres = world.camera.getWres();
 
 
@@ -184,7 +183,7 @@ void SubMenu::highlightNext()
 {
     if (selected == -1) {
         highlighted++;
-        if (highlighted >= items.size())
+        if (highlighted >= (int) items.size())
             highlighted = 0;
     } else {
         items[selected]->highlightNext();
@@ -232,6 +231,7 @@ bool SubMenu::up()
             selected = -1;
         }
     }
+    return false;
 }
 
 void SubMenu::reset()
@@ -297,7 +297,6 @@ TextboxMenu::TextboxMenu(string name)
 void TextboxMenu::draw()
 {
     World &world = World::getInstance();
-    int hres = world.camera.getHres();
     int wres = world.camera.getWres();
 
     int hPos = 100;
@@ -331,14 +330,13 @@ void TextboxMenu::backspace()
 }
 
 SelectorMenu::SelectorMenu(string name, vector<Option *> options)
-    : Menu(name), options(options), selected(-1)
+    : Menu(name), selected(-1), options(options)
 {}
 
 void SelectorMenu::draw()
 {
     /* we're in this level */
     World &world = World::getInstance();
-    int hres = world.camera.getHres();
     int wres = world.camera.getWres();
 
 
@@ -369,7 +367,7 @@ void SelectorMenu::draw()
 void SelectorMenu::highlightNext()
 {
     highlighted++;
-    if (highlighted >= options.size())
+    if (highlighted >= (int)options.size())
         highlighted = 0;
 }
 
