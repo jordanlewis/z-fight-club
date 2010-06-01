@@ -15,6 +15,7 @@
 #include "Network/network.h"
 #include "Network/client.h"
 #include "Network/server.h"
+#include "Utilities/error.h"
 #include "world.h"
 #include "input.h"
 #include "setup.h"
@@ -37,8 +38,6 @@ int main(int argc, char *argv[])
     Server &server = Server::getInstance();
 
     srand(time(NULL));
-    //graphics.initGraphics();
-    //scheduler.setupLoopForever();
 
     try {
         // Declare the supported options.
@@ -73,7 +72,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            cout << "Using default track tests/tracks/oval.trk" << endl;
+            ENGINE << TRIVIAL << "Using default track tests/tracks/oval.trk" << endl;
             world.loadTrack("tests/tracks/oval.trk");
         }
 
@@ -83,7 +82,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            cout << "Using default lapcount 3" << endl;
+            ENGINE << TRIVIAL << "Using default lapcount 3" << endl;
             world.nLaps = 3;
         }
 
@@ -93,7 +92,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            cout << "Using default assets dir ../assets/" << endl;
+            ENGINE << TRIVIAL << "Using default assets dir ../assets/" << endl;
             world.setDir("../assets/");
         }
 
@@ -119,7 +118,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                cout << "Using default ai-players=3" << endl;
+                ENGINE << TRIVIAL << "Using default ai-players=3" << endl;
                 ((TextboxMenu *) world.setupMenu->items[1])->entered = "3";
                 world.AIQty = 3;
             }
@@ -138,7 +137,7 @@ int main(int argc, char *argv[])
         }
         else if (world.runType == CLIENT)
         {
-            cout << "Using default ipaddr 127.0.0.1" << endl;
+            ENGINE << TRIVIAL << "Using default ipaddr 127.0.0.1" << endl;
             setAddr("127.0.0.1");
             ((TextboxMenu *) ((SubMenu *) world.setupMenu->items[4])->items[1])->entered = "127.0.0.1";
         }
@@ -150,7 +149,7 @@ int main(int argc, char *argv[])
         }
         else if ((world.runType == CLIENT) || (world.runType == SERVER))
         {
-            cout << "Using default port 6888" << endl;
+            ENGINE << TRIVIAL << "Using default port 6888" << endl;
             ((TextboxMenu * ) ((SubMenu *) world.setupMenu->items[4])->items[2])->entered = "6888"; 
             setPort(6888);
         }
@@ -171,11 +170,11 @@ int main(int argc, char *argv[])
         }
     }
     catch(exception& e) {
-        cerr << "error: " << e.what() << "\n";
+        ENGINE << CRITICAL << "error: " << e.what() << "\n";
         return 1;
     }
     catch(...) {
-        cerr << "Exception of unknown type!\n";
+        ENGINE << CRITICAL << "Exception of unknown type!\n";
         return 2;
     }
 
@@ -197,7 +196,6 @@ int main(int argc, char *argv[])
     if (world.runType == SOLO)
     {
         testSetup();
-        scheduler.welcomeScreen();
         world.makeAgents();
         world.makeSkybox();
         scheduler.soloLoopForever();
@@ -207,10 +205,9 @@ int main(int argc, char *argv[])
         testSetup();
         if (client.connectToServer() < 0)
         {
-            cerr << "Fatal error:  Cannot connect to server" << endl;
+            NETWORK << CRITICAL << "Fatal error:  Cannot connect to server" << endl;
             return -1;
         }
-        scheduler.welcomeScreen();
         world.makeSkybox();
         scheduler.clientLoopForever();
     }
@@ -219,7 +216,7 @@ int main(int argc, char *argv[])
         testSetup();
         if (server.createHost() < 0)
         {
-            cerr << "Fatal error:  Server could not be established" << endl;
+            NETWORK << CRITICAL << "Fatal error:  Server could not be established" << endl;
             return -1;
         }
         world.makeSkybox();

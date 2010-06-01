@@ -14,6 +14,7 @@ typedef enum {
     C_PLAYERREADYTOSTART,
     C_WAITINGFORSTART,
     C_RACE,
+    C_PAUSE,
     C_DONE
 } clientState_t;
 
@@ -68,6 +69,8 @@ class Client {
     void updateDummyController(); //Hack to enable networked weapons.
     void sendJoinRequest(); //Register yourself as a player in this game.
     void sendStartRequest(); //Request for the game to start.
+    void sendPause();
+    void sendUnpause();
     void sendRTTRequest(); //Determine the RTT for a connection.
     void disconnect();
 };
