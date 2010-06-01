@@ -77,13 +77,9 @@ void smackAll(Agent * agent, int force)
 //Push a target agent in a random direction
 void smack(Agent *agent, int force){
     PAgent *target = static_cast<PAgent *>(agent->worldObject->pobject);
-    int rng = rand();
-    int rng2 = rand();
-    int rng3 = rand();
-    Vec3f f = Vec3f(sin(rng), sin(abs(rng2)), sin(rng3));
-    f *= force;
-    dBodyAddForce(target->getBody(), f[0], f[1], f[2]);
-    dBodyAddTorque(target->getBody(), f[0], f[1], f[2]);
+    Vec3f f = randomVec3f(Vec3f(force, 1, force));
+    Vec3f p = randomVec3f(Vec3f(1,1,1));
+    dBodyAddForceAtRelPos(target->getBody(), f[0], f[1], f[2], p[0],0,p[2]);
 }
 
 void raygun(Agent *agent, int force)
