@@ -66,8 +66,6 @@ void BoxInfo::draw(Layer_t layer)
 
 void ObjMeshInfo::draw(Layer_t layer)
 {
-    if(layer == GLOW && glowTexId == 0) return;
-
     /* do a bit of warning */
     if (mode & OBJ_FLAT && !model->facetnorms) {
         printf("OBJDraw() warning: flat render mode requested "
@@ -115,10 +113,16 @@ void ObjMeshInfo::draw(Layer_t layer)
         glBindTexture(GL_TEXTURE_2D, colorTexId);
         glEnable(GL_TEXTURE_2D);
     } else {
-        glBindTexture(GL_TEXTURE_2D, glowTexId);
-        glEnable(GL_TEXTURE_2D);
-        glColor3f(1.0,1.0,1.0); // Lighting is disabled, so we need to set this
-                                // so that textures render normally
+        if(glowTexId) {
+            glBindTexture(GL_TEXTURE_2D, glowTexId);
+            glEnable(GL_TEXTURE_2D);
+            glColor3f(1.0,1.0,1.0); // Lighting is disabled, so we need to set this
+                                    // so that textures render normally
+        } else {
+            glAlphaFunc(GL_ALWAYS,0.0);
+            glDisable(GL_TEXTURE_2D);
+            glColor4f(0.0,0.0,0.0,0.0);
+        }
     }
 
     int groupIndex = 0;
