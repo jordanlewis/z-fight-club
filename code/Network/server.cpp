@@ -359,6 +359,26 @@ void Server::setServerPort(uint16_t port)
     return;
 }
 
+void Server::initObserver(ENetPeer *peer)
+{
+    NETWORK << TRIVIAL << "telling observer to start" << endl;
+    RPStart toSend;
+    toSend.clientID = -1; // from the server
+    ENetPacket *packet=makeRacerPacket(RP_START,
+                                       &toSend,
+                                       sizeof(RPStart),
+                                       ENET_PACKET_FLAG_RELIABLE);
+    enet_peer_send(peer, 0, packet);
+    NETWORK << TRIVIAL << "telling observer about agents" << endl;
+    for (list<ENetPacket *>::iterator iter = toCreate.begin();
+         iter != toCreate.end();
+         iter++)
+    {
+        enet_peer_send(peer, 0, *iter);
+    }
+    enet_host_flush(enetServer);
+}
+
 void Server::checkForPackets()
 {
     ENetEvent event;
@@ -440,20 +460,14 @@ void Server::checkForPackets()
                                     << "how did we get here during SETUP?"
                                     << endl;
                         }
-                        if (Scheduler::getInstance().raceState == WAITING)
+                        else if (Scheduler::getInstance().raceState == WAITING)
                         {
                             NETWORK << TRIVIAL << "creating human player" << endl;
                             createHumanAgent(info.clientID);
                         }
                         else
                         {
-                            NETWORK << TRIVIAL << "telling observer about agents" << endl;
-                            for (list<ENetPacket *>::iterator iter = toCreate.begin();
-                                 iter != toCreate.end();
-                                 iter++)
-                            {
-                                enet_peer_send(event.peer, 0, *iter);
-                            }
+                            initObserver(event.peer);
                         }
                         enet_packet_destroy(event.packet);
                         break;
@@ -470,6 +484,10 @@ void Server::checkForPackets()
                                                                ENET_PACKET_FLAG_RELIABLE);
                             enet_host_broadcast(enetServer, 0, packet);
                             Scheduler::getInstance().raceState = RACE;
+                        }
+                        else
+                        {
+                            initObserver(event.peer);
                         }
                         // causes double free: enet_packet_destroy(event.packet);
                         break;

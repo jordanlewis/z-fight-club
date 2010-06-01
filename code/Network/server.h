@@ -32,6 +32,7 @@ class Server {
     World *world;
     Physics *physics;
     Error *error;
+    void initObserver(ENetPeer *);
 
  public:
     Server();

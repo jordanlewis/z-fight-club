@@ -110,7 +110,7 @@ int Client::connectToServer()
     if (enet_host_service(enetClient, &event, 5000) > 0 &&
         event.type == ENET_EVENT_TYPE_CONNECT)
     {
-        error->log(NETWORK, TRIVIAL, "Client reports successful connection.\n");
+        NETWORK << TRIVIAL << "Client reports successful connection." << endl;
     }
     else
     {
@@ -214,11 +214,8 @@ void Client::checkForPackets()
                         Kinematic kine;
                         kine.ntoh(&(P->kine));
                         range = ott*(kine.forwardSpeed())*NET_RANGE_FUDGE;
-                        //cout << "ott is " << ott << endl;
-                        //cout << "Acceptable range is " << abs(range) << endl;
                         Vec3f &lerpvec = ((PAgent *)(wo->pobject))->lerpvec;
                         lerpvec = kine.pos -wo->agent->kinematic.pos;
-                        //cout << "Gap is: "<< abs(lerpvec.length()) << endl;
                         if (abs(lerpvec.length()) > abs(range))
                         {
                             lerpvec = lerpvec.unit() * abs(lerpvec.length()
@@ -226,23 +223,16 @@ void Client::checkForPackets()
                         }
                         else
                         {
-                            //cout << "Setting lerpvec to 0" << endl;
                             lerpvec.x = 0; lerpvec.y = 0; lerpvec.z = 0;
                         }
-                        //wo->agent->kinematic = kine;
                         if (P->AIFlag)
                         {
-                            //wo->agent->kinematic.ntoh(&(P->kine));
                             wo->pobject->ntohQuat(&(P->quat));
                         }
                         else if (wo->player)
                         {
                             wo->player->ntoh(&P->info);
-                            /*cout << "PlayerController["
-                                 << ntohl(P->ID) << "]: "
-                                 << *(wo->player) << endl;*/
                             wo->player->updateAgent();
-                            //wo->agent->kinematic.ntoh(&(P->kine));
                             wo->pobject->ntohQuat(&(P->quat));
                         }
                             
@@ -250,17 +240,15 @@ void Client::checkForPackets()
                         }
                     case RP_UPDATE_WEAPONS:
                         {
-                            
-                            cout << "Client update weapons!" << endl;
-                            error->log(NETWORK,TRIVIAL, "RP_UPDATE_WEAPONS\n");
+                            NETWORK << TRIVIAL << "RP_UPDATE_WEAPONS" << endl;
                             RPUpdateWeapons *info=(RPUpdateWeapons *)payload;
                             WorldObject *wo = netobjs[ntohl(info->netID)];
-                            cout << "Net ID: " << ntohl(info->netID) << endl;
+                            NETWORK << TRIVIAL << "Net ID: " << ntohl(info->netID) << endl;
                             PlayerController netPlayer;
                             netPlayer.ntoh(&(info->control));
                             if (wo && wo->agent && wo->player){
                                 wo->player->setWeaponState(netPlayer.getWeaponState());
-                                cout << *(wo->player) << endl;
+                                NETWORK << TRIVIAL << *(wo->player) << endl;
                                 wo->player->updateAgent();
                                 useWeapons(wo->agent);
                                 wo->agent->steerInfo.fire = 0;
@@ -376,15 +364,11 @@ void Client::checkForPackets()
         }
     }
     
-    //Updates all agents based on their current steerinfo.  Should be
-    //factored out into another function, prehaps?
-
     return;
 }
 
 void Client::updateAgentsLocally()
 {
-    //cout << "Local updates!" << endl;
     WorldObject *wo = NULL;
     for (map<netObjID_t, WorldObject *>::iterator iter = netobjs.begin();
          iter != netobjs.end();
@@ -405,8 +389,6 @@ void Client::transmitWeapons(){
     toSend.netID = htonl(netID);
     if (player == NULL) return;
     player->hton(&(toSend.control));
-    cout << "Creating a weapons packet!" << endl;
-    cout.flush();
     ENetPacket *packet = makeRacerPacket(RP_UPDATE_WEAPONS, &toSend,
                                          sizeof(toSend), 
                                          ENET_PACKET_FLAG_RELIABLE);
@@ -496,7 +478,6 @@ void Client::disconnect()
 
 void Client::sendPause()
 {
-        cerr << "sending pause to server" << endl;
         RPPause toSend;
         toSend.time = htond(GetTime());
         ENetPacket *packet = makeRacerPacket(RP_PAUSE, &toSend, sizeof(RPPause),0);
@@ -506,7 +487,6 @@ void Client::sendPause()
 
 void Client::sendUnpause()
 {
-        cerr << "sending unpause to server" << endl;
         RPUnpause toSend;
         toSend.time = htond(GetTime());
         ENetPacket *packet = makeRacerPacket(RP_UNPAUSE, &toSend, sizeof(RPUnpause),0);
