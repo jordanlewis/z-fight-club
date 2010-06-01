@@ -7,12 +7,14 @@
 #include "Agents/ai.h"
 #include "Agents/agent.h"
 #include "hud.h"
+#include "Graphics/graphics.h"
 #include <SDL/SDL.h>
 
 #define MAX_TRAIL_LENGTH 3600
 
 extern "C" {
 #include "Parser/track-parser.h"
+#include "shader.h"
 }
 
 #if defined(__APPLE__) && defined(__MACH__)
@@ -53,7 +55,16 @@ void Graphics::initGraphics()
     SDL_Init(SDL_INIT_VIDEO);
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    screen = SDL_SetVideoMode(wres, hres, colorDepth, SDL_OPENGL|SDL_RESIZABLE);
+    if (world->fullscreen)
+    {
+        const SDL_VideoInfo *vinfo = SDL_GetVideoInfo();
+        world->hres = vinfo->current_h;
+        world->wres = vinfo->current_w;
+        screen = SDL_SetVideoMode(world->wres, world->hres,
+                                  colorDepth, SDL_OPENGL|SDL_FULLSCREEN);
+    }
+    else
+        screen = SDL_SetVideoMode(wres, hres, colorDepth, SDL_OPENGL|SDL_RESIZABLE);
 
     if (!screen) {
         fprintf(stderr, "Failed to set video mode resolution to %i by %i: %s\n", wres, hres, SDL_GetError());
@@ -69,10 +80,29 @@ void Graphics::initGraphics()
     {
         SDL_WM_SetCaption("z fight club presents: Tensor Rundown", "Tensor Rundown");
     }
+
+    glActiveTexture(GL_TEXTURE0);
+    glowEnabled = (GL_VERSION_2_0 ? true : false);
+    if(glowEnabled) initGlow();
+
     initialized = true;
     int argc = 0;
     glutInit(&argc, NULL);
 
+}
+
+void Graphics::initGlow() {
+    glGenTextures(1,&glowTexId);
+    glBindTexture(GL_TEXTURE_2D,glowTexId);
+
+    glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,glowTexWidth,glowTexHeight,0,GL_RGB,GL_UNSIGNED_BYTE,0);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    
+    glowShader = NULL;
 }
 
 void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
@@ -109,40 +139,17 @@ void Graphics::DrawArrow(Vec3f pos, Vec3f dir)
     glEnable(GL_LIGHTING);
 }
 
-void Graphics::render()
+void Graphics::renderColorLayer()
 {
-    if (!start())
-        return;
-
-    if (!initialized) {
-        error->log(GRAPHICS, IMPORTANT, "Render function called without graphics initialization\n");
-        return;
-    }
-
-    RaceState_t state = Scheduler::getInstance().raceState;
-
+    World *world = &World::getInstance();
     world->camera.setProjectionMatrix();
 
     /* render 3d graphics */
 
-    GLfloat mat_specular[]={ .2, .2, .2, 1.0 };
-    glShadeModel(GL_SMOOTH);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glEnable(GL_COLOR_MATERIAL);
-    glEnable(GL_DEPTH_TEST);
-
-    /* fog */
-    /* GLfloat fog_color[] = {.5, .2, .2, 1.0};
-    glEnable(GL_FOG);
-    glFogfv(GL_FOG_COLOR, fog_color);
-    glFogf(GL_FOG_START, 5.0f);
-    glFogf(GL_FOG_END, 100.0f);
-    glFogi(GL_FOG_MODE, GL_LINEAR); */
-
     if(world->lights.size() > 0) {
-        for (vector<Light *>::iterator i = world->lights.begin(); i != world->lights.end() && world->lights.begin() - i < GL_MAX_LIGHTS; i++)
+        for (vector<Light *>::iterator i = world->lights.begin();
+             i != world->lights.end() && world->lights.begin() - i < GL_MAX_LIGHTS;
+             i++)
         {
 
         }
@@ -164,49 +171,46 @@ void Graphics::render()
     glClearColor(.1f, .1, .1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glColor3f(0.2,0.4,0.4);
     glEnable(GL_LIGHTING);
-
-    if (state != SETUP)
+    for (vector<WorldObject *>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
     {
-        /* Draw regular things */
-        for (vector<WorldObject *>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
-        {
-            (*i)->draw();
-        }
-
-        for (vector<ParticleStreamObject *>::iterator i = world->particleSystems.begin();
-            i != world->particleSystems.end(); i++)
-        {
-            (*i)->draw();
-        }
-
-        // Uncomment for AI debug rendering
-        /*
-        AIManager &ai = AIManager::getInstance();
-        for (vector<AIController *>::iterator i = ai.controllers.begin();
-            i != ai.controllers.end(); i++)
-        {
-                render(*i);
-        }
-        */
-
-        render(world->track);
-
-
-
+        (*i)->draw(COLOR);
     }
 
+
+    for (vector<ParticleStreamObject *>::iterator i = world->particleSystems.begin();
+        i != world->particleSystems.end(); i++)
+    {
+        (*i)->draw(COLOR);
+    }
+
+    // Uncomment for AI debug rendering
+    /*
+    AIManager &ai = AIManager::getInstance();
+    for (vector<AIController *>::iterator i = ai.controllers.begin();
+        i != ai.controllers.end(); i++)
+    {
+            render(*i);
+    }
+    */
+
+    render(world->track);
+}
+
+void Graphics::renderHUD()
+{
+    World *world = &World::getInstance();
+    RaceState_t state = (Scheduler::getInstance()).raceState;
+    /* draw the widgets */
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
     glPushMatrix();
     world->camera.setOrthoMatrix();
     /* draw the widgets */
 
-    if (state == SETUP)
+    if (state == SETUP) {
         world->setupMenu->draw();
-    else
-    {
+    } else {
         for (vector<Widget *>::iterator i = world->widgets.begin(); i != world->widgets.end(); i++)
         {
             (*i)->draw();
@@ -216,9 +220,136 @@ void Graphics::render()
     }
 
     glPopMatrix();
+}
+
+void Graphics::renderGlowLayer() {
+    World *world = &World::getInstance();
+
+    world->camera.setProjectionMatrix();
+
+    /* render 3d graphics */
+    glDisable(GL_LIGHTING);
+
+    glClearColor(0.0,0.0,0.0,0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GREATER,0.1);
+
+    for (vector<WorldObject *>::iterator i = world->wobjects.begin(); i != world->wobjects.end(); i++)
+    {
+        (*i)->draw(GLOW);
+    }
+
+    glEnable(GL_LIGHTING);
+}
+
+void Graphics::copyBufferToTexture() {
+    glBindTexture(GL_TEXTURE_2D, glowTexId);
+    glCopyTexSubImage2D(GL_TEXTURE_2D,0,0,0,0,0,glowTexWidth,glowTexHeight);
+}
+
+void Graphics::renderGlowTexture() {
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(-1,1,-1,1,0.5,5);
+    
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    gluLookAt(0.0,0.0,1.0,
+              0.0,0.0,0.0,
+              0.0,1.0,0.0);
+    
+    if(glowShader == NULL) {
+        World &world = World::getInstance();
+        glowShader = InitProgram(
+            (world.assetsDir + "shaders/glow.vert").c_str(),
+            (world.assetsDir + "shaders/glow.frag").c_str()
+        );
+    }
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, glowTexId);
+    int glowLoc = UniformLocation(glowShader,"glowTexture");
+    glUniform1i(glowLoc,0);
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE);
+
+    glDisable(GL_LIGHTING);
+    glColor3f(1.0,1.0,1.0);
+    UseProgram(glowShader);       
+
+    glBegin(GL_QUADS);
+      glTexCoord2f(0,0);
+      glVertex3f(-1,-1,0);
+      glTexCoord2f(1,0);
+      glVertex3f(1,-1,0);
+      glTexCoord2f(1,1);
+      glVertex3f(1,1,0);
+      glTexCoord2f(0,1);
+      glVertex3f(-1,1,0);
+    glEnd();
+
+    UseProgram(0);
+    glDisable(GL_BLEND);
+    glEnable(GL_LIGHTING);
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+}
+
+void Graphics::render()
+{
+    if (!start())
+        return;
+
+    if (!initialized) {
+        error->log(GRAPHICS, IMPORTANT, "Render function called without graphics initialization\n");
+        return;
+    }
+
+    // I feel like most of this should not get called every frame, but whatever
+    GLfloat mat_specular[]={ .2, .2, .2, 1.0 };
+    glShadeModel(GL_SMOOTH);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_DEPTH_TEST);
+    
+    if (Scheduler::getInstance().raceState == SETUP) {
+        glClearColor(0.0,0.0,0.0,0.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        World::getInstance().setupMenu->draw();
+        renderHUD();
+    } else {
+        if(glowEnabled) {
+            glViewport(0,0,glowTexWidth,glowTexHeight);
+            renderGlowLayer();
+
+            World &world = World::getInstance();
+            glViewport(0,0,world.camera.getWres(),world.camera.getHres());
+            copyBufferToTexture();
+
+            renderColorLayer();
+
+            // Composite;
+            renderGlowTexture();
+            renderHUD();
+        } else {
+            World &world = World::getInstance();
+            glViewport(0,0,world.camera.getWres(),world.camera.getHres());
+            renderColorLayer();
+            renderHUD();
+        }
+    }
+
 
     SDL_GL_SwapBuffers();
-
     finish();
 }
 

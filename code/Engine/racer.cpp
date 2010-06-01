@@ -58,6 +58,7 @@ int main(int argc, char *argv[])
             ("nosound", "disable sound")
             ("nomusic", "disable music")
             ("nointro", "disable intro video")
+            ("fullscreen", "run in fullscreen mode")
             ;
 
         po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -179,6 +180,10 @@ int main(int argc, char *argv[])
         {
             ((SelectorMenu *) ((SubMenu *) world.setupMenu->items[5])->items[3])->selected = 1;
             world.nomusic = true;
+        }
+        if (vm.count("fullscreen"))
+        {
+            world.fullscreen = true;
         }
     }
     catch(exception& e) {

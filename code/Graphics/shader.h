@@ -85,4 +85,11 @@ extern int AttributeLocation (ShaderProgram_t *prog, const char *name);
  */
 extern int UniformLocation (ShaderProgram_t *prog, const char *name);
 
+/*! \brief return the shader created from the given vertex/fragment shader files
+ *  \param vsName the filename of the vertex shader
+ *  \param fsName the name of the fragment shader
+ *  \return the shader program
+ */
+extern ShaderProgram_t *InitProgram (const char *vsName, const char *fsName);
+
 #endif /* !_SHADER_H_ */

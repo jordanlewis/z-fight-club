@@ -32,7 +32,8 @@ void useWeapons(Agent *agent)
                 case RAYGUN:
                     raygun(agent, PH_SMACKFORCE);
                     sound->addSoundAt("lazer.wav", GetTime(), AL_FALSE, 1.0,
-                        pos);
+                                      pos);
+
                     break;
                 case ROCKET:
                     launchBox(agent);
@@ -76,13 +77,9 @@ void smackAll(Agent * agent, int force)
 //Push a target agent in a random direction
 void smack(Agent *agent, int force){
     PAgent *target = static_cast<PAgent *>(agent->worldObject->pobject);
-    int rng = rand();
-    int rng2 = rand();
-    int rng3 = rand();
-    Vec3f f = Vec3f(sin(rng), sin(abs(rng2)), sin(rng3));
-    f *= force;
-    dBodyAddForce(target->getBody(), f[0], f[1], f[2]);
-    dBodyAddTorque(target->getBody(), f[0], f[1], f[2]);
+    Vec3f f = randomVec3f(Vec3f(force, 1, force));
+    Vec3f p = randomVec3f(Vec3f(1,1,1));
+    dBodyAddForceAtRelPos(target->getBody(), f[0], f[1], f[2], p[0],0,p[2]);
 }
 
 void raygun(Agent *agent, int force)
@@ -123,6 +120,22 @@ void raygun(Agent *agent, int force)
             }
         }
     }
+
+    Vec3f area = agent->getKinematic().orientation_v * 50;
+    Vec3f velocity = Vec3f(100.0, 0.0, 0.0);
+    Vec3f velocity_pm = Vec3f(0, .3, .3);
+    float ttl = 3.0;
+    float ttl_pm = 1.0;
+    float birthRate = 100.0;
+
+    ParticleSystemInfo *particleSystem = new ParticleSystemInfo("particles/fire.png", area, velocity, velocity_pm, ttl, ttl_pm, birthRate);
+    particleSystem->linearArea = true;
+    GParticleObject *particle_gobj = new GParticleObject(particleSystem);
+    ParticleStreamObject *particle_wobj = new ParticleStreamObject(NULL, particle_gobj, NULL, NULL, 2);
+    particle_wobj->setPos(agent->getKinematic().pos);
+
+    World::getInstance().addObject(particle_wobj);
+
 }
 
 void launchBox(Agent *agent)
@@ -173,7 +186,7 @@ void launchMine(Agent *agent)
     k->orientation = ak.orientation;
     PProjectile *pobj = new PProjectile(k, s, 100, box);
     GObject *gobj = new GObject(mine);
-    WorldObject *wobj = new WorldObject(pobj, gobj, NULL, NULL, 10);
+    WorldObject *wobj = new WorldObject(pobj, gobj, NULL, NULL, 100);
     World::getInstance().addObject(wobj);
 
 }

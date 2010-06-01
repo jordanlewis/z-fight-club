@@ -1,6 +1,8 @@
 #include "camera.h"
 #include "Utilities/error.h"
 #include "Agents/agent.h"
+#include "allclasses.h"
+#include "Engine/world.h"
 #include <SDL/SDL.h>
 
 #if defined (__APPLE__) && defined (__MACH__)
@@ -17,35 +19,41 @@ Camera::Camera() :
     agent = NULL;
     mode = OVERHEAD;
 
-    FOVY = 65.0;
 
-    pos = Vec3f(100.0f, 20.0f, 50.0f);
-    up = Vec3f(0.0f, 1.0f, 0.0f);
-    target = Vec3f(0.0f, 0.0f, 0.0f);
-
-    wres = 800;
-    hres = 600;
-    zNear = 0.1f;
-    zFar = 1000.0f;
+    setup();
 }
 
-Camera::Camera(CameraMode_t mode, Agent *agent)
+Camera::Camera(CameraMode_t mode, Agent *agent) : error(&Error::getInstance())
 {
     this->agent = agent;
     this->mode = mode;
 
-    FOVY = 65.0;
-
     smooth_orientation = agent->kinematic.orientation_v;
+    setup();
+}
+
+void Camera::setup()
+{
+    FOVY = 65.0;
     pos = Vec3f(100.0f, 20.0f, 50.0f);
     up = Vec3f(0.0f, 1.0f, 0.0f);
     target = Vec3f(0.0f, 0.0f, 0.0f);
 
-    wres = 800;
-    hres = 600;
+    World &world = World::getInstance();
+    if (world.fullscreen)
+    {
+        hres = world.hres;
+        wres = world.wres;
+    }
+    else
+    {
+        wres = 800;
+        hres = 600;
+    }
     zNear = 0.1f;
     zFar = 1000.0f;
 }
+
 
 Camera::~Camera()
 {
@@ -90,7 +98,8 @@ void Camera::setProjectionMatrix()
         smooth_orientation = smoothness * smooth_orientation +
                              (1 - smoothness) * agent->kinematic.orientation_v;
 
-    glViewport(0, 0, wres, hres);
+    // This actually gets modified if we're using glow, so don't set it here
+    //glViewport(0, 0, wres, hres);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective((GLdouble) FOVY, (GLdouble) wres / (GLdouble) hres, zNear, zFar);

@@ -4,6 +4,7 @@
 #include "allclasses.h"
 #include "Utilities/quat.h"
 #include "Utilities/vec3f.h"
+#include "Graphics/graphics.h"
 
 class GObject
 {
@@ -11,8 +12,8 @@ class GObject
   public:
     float agentBank;
     GObject(GeomInfo *geominfo);
-    void draw(Vec3f pos, Quatf_t quat);
-    void draw(Vec3f pos, Quatf_t quat, Agent *agent);
+    void draw(Vec3f, Quatf_t, Layer_t);
+    void draw(Vec3f, Quatf_t, Agent*, Layer_t);
 
     friend class Physics;
 };

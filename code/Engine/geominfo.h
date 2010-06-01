@@ -4,6 +4,7 @@
 #include "allclasses.h"
 #include <ode/ode.h>
 #include "Utilities/vec3f.h"
+#include "Graphics/graphics.h"
 #include <string>
 #include <list>
 extern "C" {
@@ -51,7 +52,7 @@ class GeomInfo
     virtual void createMass(dMass *, float) {return;};
     /*! \brief draw() simply render the appropriate shape for this geom type.
      * the caller will deal with position and orientation setup. */
-    virtual void draw() {return;};
+    virtual void draw(Layer_t layer) {return;};
     virtual void ntoh(RPGeomInfo *payload) {return;};
     virtual void hton(RPGeomInfo *payload) {return;};
 };
@@ -65,7 +66,7 @@ class SphereInfo : public GeomInfo
     SphereInfo(float radius);
     dGeomID createGeom(dSpaceID space);
     void createMass(dMass *, float);
-    void draw();
+    void draw(Layer_t);
     void ntoh(RPGeomInfo *payload);
     void hton(RPGeomInfo *payload);
 };
@@ -79,7 +80,7 @@ class BoxInfo : public GeomInfo
     BoxInfo(float lx, float ly, float lz);
     dGeomID createGeom(dSpaceID space);
     void createMass(dMass *, float);
-    void draw();
+    void draw(Layer_t);
     void ntoh(RPGeomInfo *payload);
     void hton(RPGeomInfo *payload);
 };
@@ -119,7 +120,7 @@ class TriMeshInfo : public GeomInfo
                                        int nTris,  const int * tris,
                                        Vec3f_t * normals);
     dGeomID createGeom(dSpaceID space);
-    void draw();
+    void draw(Layer_t);
 };
 
 class ObjMeshInfo : public GeomInfo
@@ -130,13 +131,14 @@ class ObjMeshInfo : public GeomInfo
   public:
 	OBJmodel	*model;			/* !< pointer to obj model */
 	std::string	path;			/* !< path to model folder */
-	GLuint		texid;	        /* !< texture identifiers */
+	GLuint		colorTexId;	    /* !< texture identifiers */
+	GLuint		glowTexId;	    /* !< texture identifiers */
 	ObjMeshInfo(std::string);
 	~ObjMeshInfo();
 	void load(char *filename);
 	dGeomID createGeom(dSpaceID space);
 	void createMass(dMass *, float);
-	void draw();
+	void draw(Layer_t);
 };
 
 class SkyBoxInfo : public GeomInfo
@@ -147,7 +149,7 @@ class SkyBoxInfo : public GeomInfo
         ~SkyBoxInfo();
         dGeomID createGeom(dSpaceID space);
         void createMass(dMass *, float);
-        void draw();
+        void draw(Layer_t);
 };
 
 class Particle
@@ -175,13 +177,14 @@ class ParticleSystemInfo : public GeomInfo
         float                   birthRate;    /* !< mean number of particle births per second */
         float                   lastUpdate;   /* !< time the Particle system was last updated */
         int                     maxParticles; /* !< set a maximum number of particles to spawn */
+        bool linearArea; /*!< spawn particles in a line? off by default */
         std::list<Particle *>     particles;  /* !< the live particles in the system */
         ParticleSystemInfo(std::string, Vec3f, Vec3f, Vec3f, float, float, float);
         ParticleSystemInfo(std::string, Vec3f, Vec3f, Vec3f, float, float, float, int);
         ~ParticleSystemInfo();
         dGeomID createGeom(dSpaceID space);
         void createMass(dMass *, float);
-        void draw();
+        void draw(Layer_t);
         void update(ParticleStreamObject *, float);
 };
 

@@ -61,7 +61,7 @@ class Agent
     Kinematic kinematic;   /* !<car's current kinematic */
     std::vector<Vec3f> trail;   /* !<record of where the agent has been */
 
-    short ammo[NWEAPONS];
+    uint16_t ammo[NWEAPONS];
 
     float getMaxAccel(); /* Calculate the current max acceleration */
 

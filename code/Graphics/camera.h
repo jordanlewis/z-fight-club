@@ -22,9 +22,6 @@ class Camera {
     float FOVY;
     Vec3f smooth_orientation;
 
-    int wres,
-        hres;
-
     Vec3f pos,
           up,
           target;
@@ -36,6 +33,11 @@ class Camera {
     Camera();
     Camera(CameraMode_t, Agent *);
     ~Camera();
+
+    void setup();
+
+    int wres,
+        hres;
 
     void setTarget(Vec3f target);
     void cycleView(); /* !< cycle camera views */

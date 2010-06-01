@@ -12,7 +12,6 @@
 #include "Engine/geominfo.h"
 #include "Engine/scheduler.h"
 #include "Sound/sobject.h"
-#include "Network/network.h"
 #include <ode/ode.h>
 extern "C" {
     #include "Parser/track-parser.h"
@@ -23,8 +22,8 @@ World World::_instance;
 WorldObject::WorldObject(PGeom *pobject, GObject *gobject, SObject *sobject,
                          Agent *agent, double ttl)
     : pos(-1,-1,-1), pobject(pobject), gobject(gobject), sobject(sobject),
-      agent(agent), parent(NULL), player(NULL), alive(true),
-      timeStarted(GetTime()), ttl(ttl)
+      agent(agent), parent(NULL), netID(NETOBJID_NONE), player(NULL),
+      alive(true), timeStarted(GetTime()), ttl(ttl)
 {
     Quatf_t newquat = {0,0,0,1};
     CopyV3f(newquat, quat);
@@ -120,7 +119,7 @@ void WorldObject::deleteChild(int i)
         (*it)->parent_index = it - children.begin();
 }
 
-void WorldObject::draw()
+void WorldObject::draw(Layer_t layer)
 {
     if (gobject == NULL)
         return;
@@ -130,9 +129,9 @@ void WorldObject::draw()
         Vec3f pos = getPos();
         if (parent != NULL)
             pos += parent->getPos();
-        gobject->draw(pos, quat);
+        gobject->draw(pos, quat,layer);
     } else
-        gobject->draw(getPos(), quat, agent);
+        gobject->draw(getPos(), quat, agent, layer);
 }
 
 CameraFollower::CameraFollower(PGeom * pobject, GObject * gobject, SObject * sobject,
@@ -283,44 +282,9 @@ void exitGame()
 }
 
 World::World() :
-    error(&Error::getInstance()), nox(false), nosound(false)
+    error(&Error::getInstance()), nox(false), nosound(false), fullscreen(false)
 {
-    /* create the pause menu */
-    /* vector<Menu *> graphics_items;
-    SubMenu *graph1 = new SubMenu("graphics - foo");
-    SubMenu *graph2 = new SubMenu("graphics - bar");
-    SubMenu *graph3 = new SubMenu("graphics - baz");
-
-    graphics_items.push_back(graph1);
-    graphics_items.push_back(graph2);
-    graphics_items.push_back(graph3);
-
-    vector<Menu *> game_items;
-    TerminalMenu *game1 = new TerminalMenu("Add AI", &addAI);   
-    TextboxMenu *game2 = new TextboxMenu("game - bar");
-    SubMenu *game3 = new SubMenu("game - baz");
-
-    game_items.push_back(game1);
-    game_items.push_back(game2);
-    game_items.push_back(game3);
-
-    vector<Option *> sound_options;
-    Option *sound1 = new Option("sound - foo", 0);
-    Option *sound2 = new Option("sound - bar", 0);
-    Option *sound3 = new Option("sound - baz", 0);
-
-    sound_options.push_back(sound1);
-    sound_options.push_back(sound2);
-    sound_options.push_back(sound3); */
-
     vector<Menu *> items;
-    /* SubMenu *graphics = new SubMenu("Graphics", graphics_items);
-    SubMenu *gameOptions = new SubMenu("Game Options", game_items);
-    SelectorMenu *sound = new SelectorMenu("Sound", sound_options);
-
-    items.push_back(graphics);
-    items.push_back(gameOptions);
-    items.push_back(sound); */
 
     pauseMenu = new SubMenu("Pause Menu", items); 
 
