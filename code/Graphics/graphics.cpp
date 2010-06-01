@@ -70,6 +70,8 @@ void Graphics::initGraphics()
         SDL_WM_SetCaption("z fight club presents: Tensor Rundown", "Tensor Rundown");
     }
     initialized = true;
+    int argc = 0;
+    glutInit(&argc, NULL);
 
 }
 
