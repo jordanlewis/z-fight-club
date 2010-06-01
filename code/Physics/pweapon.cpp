@@ -27,15 +27,23 @@ void useWeapons(Agent *agent)
         if (agent->ammo[info.weapon] > 0)
         {
             agent->ammo[info.weapon]--;
+            Vec3f pos = agent->worldObject->getPos();
             switch(info.weapon) {
                 case RAYGUN:
                     raygun(agent, PH_SMACKFORCE);
                     sound->addSoundAt("lazer.wav", GetTime(), AL_FALSE, 1.0,
-                        agent->worldObject->getPos());
+                        pos);
                     break;
-                case ROCKET: launchBox(agent); break;
-                case MINE:   launchMine(agent); break;
-                default:     break;
+                case ROCKET:
+                    launchBox(agent);
+                    sound->addSoundAt("rocketwhoosh.wav", GetTime(), AL_FALSE,
+                                      1.0, pos);
+                    break;
+                case MINE:
+                    launchMine(agent);
+                    break;
+                default:
+                    break;
             }
         }
         else
