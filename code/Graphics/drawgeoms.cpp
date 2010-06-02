@@ -116,6 +116,10 @@ void ObjMeshInfo::draw(Layer_t layer)
         if(glowTexId) {
             glBindTexture(GL_TEXTURE_2D, glowTexId);
             glEnable(GL_TEXTURE_2D);
+
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA,GL_ZERO);
+
             glColor3f(1.0,1.0,1.0); // Lighting is disabled, so we need to set this
                                     // so that textures render normally
         } else {
@@ -146,6 +150,7 @@ void ObjMeshInfo::draw(Layer_t layer)
     }
 
     glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
     glEnable(GL_COLOR_MATERIAL);
         
 }
