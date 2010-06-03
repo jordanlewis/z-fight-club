@@ -71,6 +71,7 @@ int main(int argc, char *argv[])
                     execlp("mplayer", "mplayer", "-fs", "../assets/CutScene/cutscene.ogv", NULL);
                 else
                     execlp("mplayer", "mplayer", "../assets/CutScene/cutscene.ogv", NULL);
+                return -1;
             } else {
                 sleep(20.8);
             }
