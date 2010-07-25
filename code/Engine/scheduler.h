@@ -46,14 +46,14 @@ class Scheduler
     Scheduler &operator=(const Scheduler&); /*!< private assignment constructor blocks use */
 
   public:
-    RaceState_t raceState; /*!< */
-    double timeStarted; /*!< */
-    void setupLoopForever(); /*!< */
-    void soloLoopForever(); /*!< */
-    void clientLoopForever(); /*!< */
-    void serverLoopForever(); /*!< */
+    RaceState_t raceState; /*!< current phase of game */
+    double timeStarted; /*!< 1 second after inputSetupMenu finishes creating menu */
+    void setupLoopForever(); /*!< process user input while setup menu is shown */
+    void soloLoopForever(); /*!< process user input and display game in solo play mode */
+    void clientLoopForever(); /*!< process user input, server input, and display game in network play mode */
+    void serverLoopForever(); /*!< process client input and display game in server mode */
 
-    static Scheduler &getInstance(); /*!< */
+    static Scheduler &getInstance(); /*!< return reference to Scheduler singleton */
 };
 
 #endif
