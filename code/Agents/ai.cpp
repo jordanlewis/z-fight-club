@@ -19,12 +19,17 @@
 
 AIManager AIManager::_instance;
 
+/* default constructor for Avoid
+ */
 Avoid::Avoid()
 {
     time = GetTime();
     ttl = 3.0f;
 }
 
+/*! Constructor for avoid
+ *  \param pos the position to be avoided
+ */
 Avoid::Avoid(Vec3f &pos)
 {
     this->pos = pos;
@@ -33,6 +38,10 @@ Avoid::Avoid(Vec3f &pos)
     ttl = 3.0f;
 }
 
+/*! Constructor for avoid
+ * \param pos the position to be avoided
+ * \param str the strength of the position
+ */
 Avoid::Avoid(Vec3f &pos, float str)
 {
     this->pos = pos;
@@ -41,14 +50,24 @@ Avoid::Avoid(Vec3f &pos, float str)
     ttl = 3.0f;
 }
 
+/*! destructor
+ */
 Avoid::~Avoid() {}
 
+/*! Constructor
+ *  \param agent to be controlled
+ */
 AIController::AIController(Agent *agent) :
     wallTrapped(false), seeObstacle(false), path(Path()),
     obstacles(std::deque<Avoid>()), agent(agent), error(&Error::getInstance())
 {
 }
 
+/*! return the steerinfo to help the agent get to a target
+ *  \param target the target being sought (seeked)
+ *  \param slowRadius radius within which the agent should slow down so prevent over shooting (0 for now slowdown)
+ *  \param targetRadius radius within which the target can consider himself on target (0 for problems)
+ */
 SteerInfo AIController::seek(const Vec3f target, float slowRadius, float targetRadius)
 {
     Vec3f dir;
@@ -88,6 +107,9 @@ SteerInfo AIController::seek(const Vec3f target, float slowRadius, float targetR
     return s;
 }
 
+/*! allign to a target rather than to an angle
+ *  \param target the target to align to
+ */
 SteerInfo AIController::face(Vec3f target)
 {
     Vec3f dir = target - agent->getKinematic().pos;
@@ -96,6 +118,11 @@ SteerInfo AIController::face(Vec3f target)
     return align(angle);
 }
 
+/*! return the steerinfo to help the agent point in a direction
+ *  \param target the angle in radians to point at
+ *  \param how close the the angle to slow down turning so as not to overshoot
+ *  \param targetRadius the radius aroung the target withing which the align is satisfied.
+ */
 SteerInfo AIController::align(float target, float slowRadius, float targetRadius)
 {
     float diff;
@@ -135,6 +162,8 @@ SteerInfo AIController::align(float target, float slowRadius, float targetRadius
     return s;
 }
 
+/*! decrease speed as fast as posible
+ */
 SteerInfo AIController::brake()
 {
     Kinematic k = agent->getKinematic();
@@ -148,6 +177,9 @@ SteerInfo AIController::brake()
     return s;
 }
 
+/*! seek out the target but avoid any obstacles that we've been given
+ *  \param target the target to seek
+ */
 SteerInfo AIController::smartGo(const Vec3f target)
 {
     Vec3f dir;
@@ -203,6 +235,9 @@ SteerInfo AIController::smartGo(const Vec3f target)
     return s;
 }
 
+/*! take a lane from the current map and set it as our path
+ *  \param laneIndex which lane to join
+ */
 void AIController::lane(int laneIndex)
 {
     int i, j;
@@ -281,11 +316,15 @@ void AIController::lane(int laneIndex)
     path.computeDistances();
 }
 
+/*! add an obstacle to be avoided
+ */
 void AIController::avoid(Vec3f &pos)
 {
     obstacles.push_back(Avoid(pos));
 }
 
+/*! check for impending collisions with walls and add obstacles to prevent them
+ */
 void AIController::detectWalls()
 {
     const Kinematic k = agent->getKinematic();
@@ -373,6 +412,8 @@ void AIController::detectWalls()
     }
 }
 
+/* return a steerinfo which will dodge an obstacle
+ */
 SteerInfo AIController::avoidObstacle()
 {
     SteerInfo s;
@@ -462,6 +503,8 @@ SteerInfo AIController::avoidObstacle()
     return s;
 }
 
+/*! Travel around the specified path
+ */
 SteerInfo AIController::cruise()
 {
     double now = GetTime();
@@ -485,6 +528,8 @@ SteerInfo AIController::cruise()
     return smartGo(path.knots[tgtIdx]);
 }
 
+/*! An improved algorithm to follow around a path
+ */
 SteerInfo AIController::followPath(int tubeRadius)
 {
     SteerInfo s;
@@ -524,6 +569,8 @@ SteerInfo AIController::followPath(int tubeRadius)
 
 }
 
+/*! yet another algorithm to follow around the specified path
+ */
 SteerInfo AIController::followCarrot(int stickLength)
 {
     SteerInfo s;
@@ -537,6 +584,8 @@ SteerInfo AIController::followCarrot(int stickLength)
 
 }
 
+/*! main function called by AIManager which gives us the AIController cpu time to run on
+ */
 void AIController::run()
 {
     AIManager &aim = AIManager::getInstance();
@@ -561,14 +610,21 @@ void AIController::run()
     agent->setSteering(s);
 }
 
+/*! default contstructure
+ */
 AIManager::AIManager() :
     Component(), error(&Error::getInstance())
 {
     frequency = 50;
 }
 
+/*! destructor
+ */
 AIManager::~AIManager() {}
 
+/*! take control of an agent
+ * \param agent the agent to start controlling 
+ */
 AIController *AIManager::control(Agent *agent)
 {
     AIController *newController = new AIController(agent);
@@ -576,6 +632,9 @@ AIController *AIManager::control(Agent *agent)
     return newController;
 }
 
+/*! stop controlling an agent
+ * \param agent the agent to stop controlling
+ */
 void AIManager::release(Agent *agent)
 {
     /* is there a less ugly way of doing an iterator loop like this? */
@@ -592,6 +651,8 @@ void AIManager::release(Agent *agent)
     }
 }
 
+/*! figure out which agent is ahead in the race
+ */
 static bool agentCmp(Agent *a, Agent *b)
 {
     if (a->lapCounter != b->lapCounter)
@@ -600,6 +661,8 @@ static bool agentCmp(Agent *a, Agent *b)
     return b->pathDistance < a->pathDistance;
 }
 
+/*! function called by the scheduler to give cpu time to the AIManager
+ */
 void AIManager::run()
 {
     if (!start())
@@ -642,6 +705,8 @@ void AIManager::run()
     finish();
 }
 
+/*! return the singleton instantation of the AIManager
+ */
 AIManager &AIManager::getInstance()
 {
     return _instance;
