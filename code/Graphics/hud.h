@@ -22,6 +22,8 @@ class Widget
       Widget(Vec3f);
 };
 
+/*! A Widget to show current speed
+ */
 class Speedometer : public Widget
 {
   public:
@@ -31,6 +33,8 @@ class Speedometer : public Widget
     void draw();
 };
 
+/*! A Widget to show number of laps completed
+ */
 class LapCounter : public Widget
 {
   public:
@@ -39,6 +43,8 @@ class LapCounter : public Widget
     void draw();
 };
 
+/*! A Widget to show the racing start lights
+ */
 class StopLight : public Widget
 {
   public:
@@ -47,6 +53,8 @@ class StopLight : public Widget
     void draw();
 };
 
+/*! A Widget to show arbitrary text
+ */
 class Text : public Widget
 {
   public:
