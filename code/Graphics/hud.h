@@ -12,6 +12,8 @@ extern "C" {
 #include <vector>
 using namespace std;
 
+/*! A Widget is drawn in 2D on the hud to display information
+ */
 class Widget
 {
   public:
@@ -143,6 +145,8 @@ class SelectorMenu : public Menu
         void backspace() {};
 };
 
+/*! A Widget showing a top-down view of the track, including player positions
+ */
 class MiniMap : public Widget
 {
   public:
@@ -151,6 +155,8 @@ class MiniMap : public Widget
     void draw();
 };
 
+/*! A Widget showing the real-time ranks of the players in the race
+ */
 class Places : public Widget
 {
   public:
@@ -158,6 +164,8 @@ class Places : public Widget
     void draw();
 };
 
+/*! A Widget to show the performance of various subsytems, in frames-per-second
+ */
 class FPS : public Widget
 {
   public:
@@ -165,6 +173,8 @@ class FPS : public Widget
     void draw();
 };
 
+/*! A Widget to show quantity of ammunition and currently selected weapon for currently player
+ */
 class WeaponDisplay : public Widget
 {
  public:
@@ -174,6 +184,8 @@ class WeaponDisplay : public Widget
     void draw();
 };
 
+/*! A Widget to show which player won the race
+ */
 class WinnerDisplay : public Widget
 {
   public:

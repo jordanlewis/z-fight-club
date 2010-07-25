@@ -114,6 +114,8 @@ typedef enum {
     SERVER = 2
 } RunType_t;
 
+/*! World contains entire game state
+ */
 class World
 {
   private:
