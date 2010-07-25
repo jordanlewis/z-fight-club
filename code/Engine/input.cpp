@@ -272,6 +272,7 @@ Input::Input() :
 
 /* !~Input
  * \brief Input destructor
+ */
 Input::~Input()
 {
 }
