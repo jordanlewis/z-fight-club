@@ -7,7 +7,7 @@
 #define SC_CLIENT_UPDATE_FREQ_SECONDS .05 /*!< minimum elapsed time before sending update to server */ 
 #define SC_SERVER_UPDATE_FREQ_SECONDS .05 /*!< minimum elapsed time before sending update to client */ 
 
-/*! \brief RaceState_t enumeration
+/*! RaceState_t enumeration
  *
  * The RaceState_t type is used by *some* of the game loops.
  */
@@ -23,7 +23,7 @@ typedef enum
     PAUSE
 } RaceState_t;
 
-/*! \brief Scheduler singleton
+/*! Scheduler singleton
  *
  * The Scheduler singleton runs the main loops.
  */
