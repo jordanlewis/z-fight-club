@@ -129,7 +129,7 @@ FILE_PATTERNS          = *.c \
                          *.M \
                          *.MM
 RECURSIVE              = YES
-EXCLUDE                = ../code/build
+EXCLUDE                = ../code/tests ../code/build_x86_64 ../code/build_ppc
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 EXCLUDE_SYMBOLS        = 
@@ -144,7 +144,7 @@ FILTER_SOURCE_FILES    = NO
 # configuration options related to source browsing
 #---------------------------------------------------------------------------
 SOURCE_BROWSER         = YES
-INLINE_SOURCES         = YES
+INLINE_SOURCES         = NO
 STRIP_CODE_COMMENTS    = YES
 REFERENCED_BY_RELATION = YES
 REFERENCES_RELATION    = YES
@@ -255,17 +255,17 @@ CLASS_DIAGRAMS         = YES
 MSCGEN_PATH            = /Applications/addon/Doxygen.app/Contents/Resources/
 HIDE_UNDOC_RELATIONS   = YES
 HAVE_DOT               = YES
-CLASS_GRAPH            = YES
-COLLABORATION_GRAPH    = YES
-GROUP_GRAPHS           = YES
+CLASS_GRAPH            = NO
+COLLABORATION_GRAPH    = NO
+GROUP_GRAPHS           = NO
 UML_LOOK               = NO
 TEMPLATE_RELATIONS     = NO
-INCLUDE_GRAPH          = YES
-INCLUDED_BY_GRAPH      = YES
-CALL_GRAPH             = YES
+INCLUDE_GRAPH          = NO
+INCLUDED_BY_GRAPH      = NO
+CALL_GRAPH             = NO
 CALLER_GRAPH           = NO
 GRAPHICAL_HIERARCHY    = YES
-DIRECTORY_GRAPH        = YES
+DIRECTORY_GRAPH        = NO
 DOT_IMAGE_FORMAT       = png
 DOT_PATH               = /Applications/addon/Doxygen.app/Contents/Resources/
 DOTFILE_DIRS           = 
