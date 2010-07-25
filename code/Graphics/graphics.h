@@ -1,5 +1,5 @@
 /*! \file graphics.h
- * \brief declaration of the graphics singleton class
+ * \brief Contains the declaration of the graphics singleton class
  *
  * This file contains the class declaration for the graphics singleton class,
  * which provides all of the game's rendering functions
