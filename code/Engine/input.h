@@ -3,6 +3,10 @@
 
 #include "allclasses.h"
 
+/* !Input
+ * \brief Singleton class responsible for mainting the link between a users
+ * input device and an in game racer
+ */
 class Input
 {
     static Input _instance;

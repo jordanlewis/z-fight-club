@@ -10,6 +10,9 @@
 
 Input Input::_instance;
 
+/*! processInput
+ *  \brief parse an SDL_Event from SDL and send it to the appropriate module.
+ */
 int Input::processInput()
 {
     SDL_Event SDLevt;
@@ -219,27 +222,43 @@ int Input::processInput()
     return 0;
 }
 
+/*! getPlayerController
+ *  \brief return the player which is currently being controlled by the controller
+ */
 PlayerController &Input::getPlayerController()
 {
     return *player;
 }
 
+/*! controlPlayer
+ *  \brief link to a PlayerController passing the input to it
+ *  \param p the player controller to link with
+ */
 void Input::controlPlayer(PlayerController *p)
 {
     player = p;
 }
 
+/*! releasePlayer
+ *  \brief break the link with a player controller (also delete the controller)
+ */
 void Input::releasePlayer()
 {
     delete player;
     player = new PlayerController();
 }
 
+/*! getInstance
+ *  \brief return the single instantation of Input
+ */
 Input &Input::getInstance()
 {
     return _instance;
 }
 
+/*! Input
+ *  \brief default contructor, allocates a new PlayerController
+ */
 Input::Input() :
     client(&Client::getInstance()),
     world(&World::getInstance()),
@@ -251,6 +270,8 @@ Input::Input() :
     player = new PlayerController();
 }
 
+/* !~Input
+ * \brief Input destructor
 Input::~Input()
 {
 }
