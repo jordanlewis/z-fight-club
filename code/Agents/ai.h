@@ -37,13 +37,13 @@ class AIController
   public:
     Vec3f target;                       // !< where we want to go
     Vec3f antiTarget;                   // !< a target to be avoided
-    AIController(Agent /);
+    AIController(Agent*);
 
     bool seeObstacle;                   // !< do we see and obstacle
     CollContact obstacle;
-    Path                path;           // !< the path we're on
+    Path path;                          // !< the path we're on
     std::deque<Avoid> obstacles;        // !< targets to be avoided
-    Agent               /agent;         // !< the agent being controlled
+    Agent *agent;                        // !< the agent being controlled
 
     void detectWalls();                 // !< checks for possible wall collisions and creates obstacles so that they are avoided
     void avoid(Vec3f&);                 // !< add a new point to be avoided
